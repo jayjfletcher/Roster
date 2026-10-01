@@ -1,0 +1,84 @@
+<?php
+
+declare(strict_types=1);
+
+use JayI\Cortex\Actions\CreateMcpInstructionVersionAction;
+use JayI\Cortex\Actions\CreateToolDescriptionVersionAction;
+use JayI\Cortex\Mcp\McpServerRegistry;
+use JayI\Cortex\Tools\ToolRegistry;
+use JayI\Roster\Cortex\CortexIntegration;
+use JayI\Roster\Mcp\RosterServer;
+use JayI\Roster\Mcp\Tools\ListUsersTool;
+use Laravel\Ai\Contracts\Tool as AgentTool;
+use Laravel\Ai\Tools\Request;
+use Laravel\Mcp\Server\Transport\FakeTransporter;
+
+it('registers the MCP server with Cortex', function (): void {
+    $servers = app(McpServerRegistry::class);
+
+    expect($servers->has('roster'))->toBeTrue()
+        ->and($servers->get('roster'))->toBe(RosterServer::class)
+        ->and($servers->defaultInstructions('roster'))->toStartWith("Manage this application's users");
+});
+
+it('offers every Roster tool to Cortex agents under its own name', function (): void {
+    $tools = app(ToolRegistry::class);
+
+    $names = array_map(fn (string $class): string => app($class)->name(), RosterServer::TOOLS);
+
+    expect(array_diff($names, $tools->names()))->toBe([])
+        ->and($tools->get('list-users-tool'))->toBeInstanceOf(AgentTool::class)
+        ->and($tools->tagsFor('list-users-tool'))->toContain('roster');
+});
+
+it('offers only the tools listed in config', function (): void {
+    config()->set('roster.cortex.tools', ['list-users-tool', 'show-user-tool']);
+    app()->forgetInstance(ToolRegistry::class);
+
+    $tools = app(ToolRegistry::class);
+
+    expect($tools->has('list-users-tool'))->toBeTrue()
+        ->and($tools->has('show-user-tool'))->toBeTrue()
+        ->and($tools->has('delete-user-tool'))->toBeFalse();
+});
+
+it('serves the instructions published in Cortex', function (): void {
+    app(CreateMcpInstructionVersionAction::class)->execute('roster', ['content' => 'Never delete users.', 'publish' => true]);
+
+    expect((new RosterServer(new FakeTransporter))->createContext()->instructions)->toBe('Never delete users.');
+});
+
+it('serves tool descriptions published in Cortex, to MCP clients and agents alike', function (): void {
+    app(CreateToolDescriptionVersionAction::class)->execute('list-users-tool', ['content' => 'List our staff.', 'publish' => true]);
+
+    expect(app(ListUsersTool::class)->description())->toBe('List our staff.')
+        ->and(app(ToolRegistry::class)->get('list-users-tool')->description())->toBe('List our staff.');
+});
+
+it('lets an agent call a tool as the signed-in user, with Roster permissions applied', function (): void {
+    $ada = user(['name' => 'Ada']);
+    $tool = app(ToolRegistry::class)->get('list-users-tool');
+
+    // No one signed in: refused.
+    expect((string) $tool->handle(new Request([])))->toContain('Unauthorized.');
+
+    $this->actingAs($ada);
+
+    expect((string) $tool->handle(new Request([])))->toContain('Unauthorized.');
+
+    grant($ada, 'super-admin');
+
+    expect((string) $tool->handle(new Request([])))->toContain('Ada');
+});
+
+it('stays out of Cortex when turned off', function (): void {
+    $integration = app(CortexIntegration::class);
+
+    expect($integration->active())->toBeTrue();
+
+    config()->set('roster.cortex.enabled', false);
+
+    expect($integration->active())->toBeFalse()
+        ->and($integration->instructions())->toBeNull()
+        ->and($integration->description('list-users-tool'))->toBeNull();
+});

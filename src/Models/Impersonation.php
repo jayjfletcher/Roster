@@ -1,0 +1,120 @@
+<?php
+
+declare(strict_types=1);
+
+namespace JayI\Roster\Models;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
+use JayI\Roster\Database\Factories\ImpersonationFactory;
+use JayI\Roster\Support\Users;
+
+/**
+ * One impersonation: requested (link issued), started (link used), ended.
+ *
+ * @property string $id
+ * @property int|string $impersonator_id
+ * @property int|string $user_id
+ * @property string|null $organization_id
+ * @property string $reason
+ * @property string|null $token_hash
+ * @property Carbon $link_expires_at
+ * @property Carbon|null $started_at
+ * @property Carbon|null $expires_at
+ * @property Carbon|null $ended_at
+ * @property string|null $end_reason
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
+final class Impersonation extends Model
+{
+    /** @use HasFactory<ImpersonationFactory> */
+    use HasFactory;
+
+    use HasUlids;
+
+    public const string ENDED_STOPPED = 'stopped';
+
+    public const string ENDED_EXPIRED = 'expired';
+
+    public const string ENDED_FORCED = 'forced';
+
+    protected $table = 'roster_impersonations';
+
+    protected $fillable = [
+        'impersonator_id',
+        'user_id',
+        'organization_id',
+        'reason',
+        'token_hash',
+        'link_expires_at',
+        'started_at',
+        'expires_at',
+        'ended_at',
+        'end_reason',
+    ];
+
+    protected $hidden = ['token_hash'];
+
+    /**
+     * @return BelongsTo<Model, $this>
+     */
+    public function impersonator(): BelongsTo
+    {
+        return $this->belongsTo(app(Users::class)->model(), 'impersonator_id');
+    }
+
+    /**
+     * @return BelongsTo<Model, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(app(Users::class)->model(), 'user_id');
+    }
+
+    /**
+     * @return BelongsTo<Organization, $this>
+     */
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class, 'organization_id');
+    }
+
+    /**
+     * Started, not ended and not past its time limit.
+     */
+    public function isActive(): bool
+    {
+        return $this->started_at !== null
+            && $this->ended_at === null
+            && $this->expires_at !== null
+            && $this->expires_at->isFuture();
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     */
+    public function scopeActive(Builder $query): void
+    {
+        $query->whereNotNull('started_at')->whereNull('ended_at')->where('expires_at', '>', now());
+    }
+
+    protected static function newFactory(): ImpersonationFactory
+    {
+        return ImpersonationFactory::new();
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'link_expires_at' => 'datetime',
+            'started_at' => 'datetime',
+            'expires_at' => 'datetime',
+            'ended_at' => 'datetime',
+        ];
+    }
+}

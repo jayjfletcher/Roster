@@ -1,0 +1,583 @@
+<div align="center">
+    <h1>Roster</h1>
+</div>
+
+<p align="center">
+    <a href="https://packagist.org/packages/jayi/roster"><img src="https://img.shields.io/packagist/v/jayi/roster.svg?style=flat-square" alt="Packagist"></a>
+    <a href="https://packagist.org/packages/jayi/roster"><img src="https://img.shields.io/packagist/php-v/jayi/roster.svg?style=flat-square" alt="PHP from Packagist"></a>
+    <a href="https://packagist.org/packages/jayi/roster"><img src="https://badge.laravel.cloud/badge/jayi/roster?style=flat" alt="Laravel versions"></a>
+    <a href="https://github.com/jayjfletcher/roster/actions"><img alt="GitHub Workflow Status (main)" src="https://img.shields.io/github/actions/workflow/status/jayi/roster/tests.yml?branch=main&label=Tests&style=flat-square"></a>
+    <a href="https://packagist.org/packages/jayi/roster"><img src="https://img.shields.io/packagist/dt/jayi/roster.svg?style=flat-square" alt="Total Downloads"></a>
+</p>
+
+Headless, Action-first user management for Laravel. Every operation is a single Action class, reachable from PHP, a JSON API, an MCP server, and the [Atrium](https://github.com/jayjfletcher/Atrium) dashboard.
+
+- User create, update, delete and listing on **your own** user model
+- Profiles (display name, avatar, timezone, locale, bio, meta) in a side table, so your `users` table is never altered
+- An active / suspended / deactivated lifecycle with a `roster.active` middleware
+- Organizations with teams, members, email invitations, optional domain auto-join, and a per-user current organization/team
+- Roles and permissions at global, organization and team scope, resolved through Laravel's Gate (`$user->can()`, `@can`)
+- An append-only, hash-chained audit log of every change, with an API for your app's own events
+- Impersonation through one-time links, with time limits, a banner, blocked abilities and a full audit trail
+- Single sign-on per organization: OpenID Connect, SAML 2.0 and Microsoft Entra ID, with just-in-time accounts and optional enforcement
+- SCIM 2.0 provisioning per organization: identity providers create, update and deprovision members and teams
+
+## Installation
+
+```bash
+composer require jayi/roster
+```
+
+Publish the config and migrations, then migrate:
+
+```bash
+php artisan vendor:publish --tag="roster-config"
+php artisan vendor:publish --tag="roster-migrations"
+php artisan migrate
+```
+
+Set `roster.users.key_type` (`int`, `ulid` or `uuid`) to match your user model's primary key **before** migrating, because it decides the type of the `roster_profiles.user_id` column.
+
+The views and translations can be published with `roster-views` and `roster-lang`.
+
+## Choosing a user mode
+
+Roster manages whatever model `roster.users.model` points at (default `App\Models\User`).
+
+**1. Your model with the trait (recommended).** This gives typed helpers:
+
+```php
+use JayI\Roster\Concerns\HasRoster;
+
+class User extends Authenticatable
+{
+    use HasRoster;
+}
+
+$user->roster();          // the Profile, created on first access
+$user->rosterStatus();    // UserStatus::Active | Suspended | Deactivated
+$user->isRosterActive();
+```
+
+**2. Your model, untouched.** Without the trait, Roster registers the `rosterProfile` relation on the configured model at boot. Everything works the same; use `app(JayI\Roster\Support\Users::class)->profile($user)` / `->status($user)` in place of the helpers.
+
+**3. Roster's model.** For apps without a users table, point `roster.users.model` and your auth provider at `JayI\Roster\Models\User`, then publish its migration:
+
+```bash
+php artisan vendor:publish --tag="roster-users-migration"
+```
+
+If your users table names its columns differently, map them:
+
+```php
+'columns' => ['name' => 'full_name', 'email' => 'email_address', 'password' => 'secret'],
+```
+
+## Actions
+
+Every operation is an Action in `JayI\Roster\Actions`. Each has a static `rules()` method, and every surface validates with those same rules.
+
+```php
+use JayI\Roster\Actions\CreateUserAction;
+use JayI\Roster\Actions\SuspendUserAction;
+
+$user = app(CreateUserAction::class)->execute([
+    'name' => 'Ada Lovelace',
+    'email' => 'ada@example.com',
+    'display_name' => 'Ada',      // profile fields are accepted too
+]);
+
+app(SuspendUserAction::class)->execute($user, ['reason' => 'Chargeback'], actor: auth()->user());
+```
+
+| Action | Does |
+|---|---|
+| `ListUsersAction` | Paginated list; `search` (name, email, display name), `status`, `per_page` |
+| `ShowUserAction` | One user with profile |
+| `CreateUserAction` | User + profile in one transaction; random password when none is given |
+| `UpdateUserAction` | Name, email, password |
+| `DeleteUserAction` | Deletes the user; the profile too, unless the model soft-deletes |
+| `UpdateProfileAction` | Profile fields; creates the profile if missing |
+| `SuspendUserAction` / `DeactivateUserAction` | Optional `reason` |
+| `ReactivateUserAction` | Back to active |
+
+Business-rule failures, such as suspending yourself or suspending a user who is already suspended, throw a field-keyed `ValidationException`. Each Action dispatches an event before and after it runs (`JayI\Roster\Events\Action\*`). They implement `ActionStartingEvent` / `ActionFinishedEvent`, so you can listen to every action at once.
+
+## Organizations and teams
+
+An organization is the tenant. Users join it as members, and teams group members inside it. A user can belong to many organizations. Organizations and teams are identified by slug; team slugs are unique within their organization.
+
+```php
+use JayI\Roster\Actions\{CreateOrganizationAction, AddMemberAction, CreateTeamAction, AddTeamMemberAction};
+
+$acme = app(CreateOrganizationAction::class)->execute(['name' => 'Acme'], owner: $user);
+app(AddMemberAction::class)->execute($acme, ['user' => $ada->getRouteKey()]);
+
+$ops = app(CreateTeamAction::class)->execute($acme, ['name' => 'Ops']);
+app(AddTeamMemberAction::class)->execute($ops, ['user' => $ada->getRouteKey()]); // must be an org member
+```
+
+- Every organization has one **owner**. The owner can't be removed, and `TransferOwnershipAction` hands ownership to another member. A user who owns a shared organization can't be deleted until they transfer it.
+- Removing a member also removes their team seats.
+- **Personal organizations:** set `roster.organizations.personal` to `true` and every user created through Roster gets one. It is deleted with its owner and can't be deleted or transferred on its own.
+
+### Current organization and team
+
+```php
+app(SwitchContextAction::class)->execute($user, ['organization' => 'acme', 'team' => 'ops']);
+
+$user->currentOrganization(); // falls back to the first organization joined
+$user->currentTeam();         // null unless set and the user still holds a seat
+```
+
+Without the trait, use `app(JayI\Roster\Roster::class)->organization($user)` and `->team($user)`. Add the `roster.organization` middleware to routes that need a tenant; users who belong to no organization get a 403.
+
+### Invitations
+
+`CreateInvitationAction` invites an email address, optionally onto some teams, and emails a link. The address doesn't need an account yet.
+
+- The link opens Roster's page at `/roster/invitation/{token}`. The page is signed, expires with the invitation, and sits behind `roster.invitations.middleware` (default `['web', 'auth']`). Guests go through your login or registration first.
+- Only a signed-in user **whose email matches the invitation** can accept or decline it, so a forwarded link is useless to anyone else.
+- After answering, the user is redirected to `roster.invitations.redirect`.
+- To use your own page instead, set `roster.invitations.accept_url` (e.g. `https://app.test/join/{token}`) and call `AcceptInvitationAction` / `DeclineInvitationAction` from it.
+- Only a hash of the token is stored.
+
+### Domain auto-join
+
+Give an organization domains and turn on `auto_join`. Users then join automatically **when they verify their email** (Laravel's `Verified` event), or when created already verified. Only user models implementing `MustVerifyEmail` ever count as verified, because an unverified address on `acme.com` proves nothing. A domain can belong to one organization only.
+
+## Roles and permissions
+
+Permissions are named abilities (`roster.users.update`, or your own `invoices.edit`). Roles bundle permissions and are assigned **globally**, **in an organization**, or **on a team**. Both live in the database and can be edited from Atrium, the API or MCP.
+
+```php
+use JayI\Roster\Actions\{AssignRoleAction, CreatePermissionAction, CreateRoleAction};
+
+app(CreatePermissionAction::class)->execute(['name' => 'invoices.edit']);
+
+$billing = app(CreateRoleAction::class)->execute([
+    'name' => 'Billing',
+    'scope' => 'organization',          // global | organization | team
+    'permissions' => ['invoices.edit'],
+]);
+
+app(AssignRoleAction::class)->execute($user, ['role' => $billing->id, 'organization' => 'acme']);
+
+$user->can('invoices.edit', $acme);  // true
+$user->can('invoices.edit');         // checks the user's current organization/team
+```
+
+How a check resolves:
+
+- **Scopes add up.** A user's permissions in an organization are their global roles plus their roles in that organization. On a team, they also include the team's roles.
+- **Owners.** An organization's owner holds every permission inside it, except the global-only ones (`roster.users.*`, `roster.organizations.create`, `atrium.*`).
+- **Super-admins** pass every Gate check, Roster's or your app's.
+- **Gate integration.** `Gate::before` answers any ability that is a known permission. When the user lacks it, Roster returns `null` rather than `false`, so your own gates and policies still run.
+- **Shared and custom roles.** A role without an organization is shared by every organization. With `organization`, it is that organization's own.
+- **No escalation.** Actors can only grant permissions they hold in that scope. Only super-admins can assign or revoke super roles.
+
+Built-in roles (re-sync with `php artisan roster:sync-permissions` after upgrading; existing edits are kept):
+
+| Role | Scope | Grants |
+|---|---|---|
+| `super-admin` | global | everything |
+| `admin` | organization | every organization-scoped `roster.*` permission, including `roster.audit.view` and `roster.audit.record` |
+| `member` | organization | `roster.organizations.view`, `roster.members.view`, `roster.teams.view`; given to every new member (`roster.roles.default_member`) |
+| `lead` | team | `roster.teams.view`, `roster.teams.manage` |
+
+### The first super-admin
+
+```bash
+php artisan roster:grant-super-admin admin@example.com
+```
+
+Alternatively, list emails in `roster.super_admins`. Listed emails only count once **verified**, on user models implementing `MustVerifyEmail`.
+
+### Authorization of Roster's own surfaces
+
+With `roster.authorization` on (the default), every API route, MCP tool and Atrium screen needs a signed-in user holding the matching `roster.*` permission. Guests get a 401 and other users a 403. Users can always view themselves and edit their own profile and current context.
+
+If your app hasn't defined Atrium's `viewAtrium` gate, Roster defines it as the `atrium.view` permission.
+
+## Audit log
+
+Every change Roster makes is recorded: users, profiles and status, organizations, members, teams, invitations, roles, permissions and assignments. Reads are not recorded. Each entry holds:
+
+- who did it (or "system"), the action (`user.suspended`), and what it happened to
+- the organization it belongs to, and the surface it came through (`http`, `mcp`, `atrium`, `web`, `cli`, `code`) with IP and user agent
+- the field changes as `{"field": [old, new]}`, including profile fields (`profile.status`), role permission lists and organization domains
+
+Passwords, remember tokens and invitation tokens are always written as `[redacted]`. Add your own field names to `roster.audit.redact`.
+
+### Your app's events
+
+Record your own events in the same log:
+
+```php
+use JayI\Roster\Facades\Roster;
+
+Roster::audit('invoice.paid')
+    ->on($invoice)                // any model (or subject_type/subject_id/subject_label via the API)
+    ->in($organization)           // so its admins can see it
+    ->with(['amount' => 4200])    // extra details
+    ->changes(['status' => ['open', 'paid']])
+    ->record();                   // actor defaults to the signed-in user
+```
+
+App entries carry `source: app`; Roster's own carry `source: roster`. The API (`POST /roster/audit`), the MCP tool and Atrium's "Record an entry" form always record `app`, so they can never forge Roster's entries. They need the `roster.audit.record` permission. Code calls are trusted and need none.
+
+### Reading it
+
+`roster.audit.view` (included in the `admin` organization role) controls access:
+
+- held globally: read everything, including IP addresses and user agents
+- held in an organization: read that organization's entries (`?organization=acme`)
+- anyone can read entries about themselves or made by them (`?user={your id}`)
+
+Atrium has an Audit log page, an Activity card on each user and an Activity tab on each organization. Filter by `action` (exact, or a prefix such as `user.`), `source`, `subject_type`, `since` and `until`.
+
+### Retention and tamper evidence
+
+The log is append-only: entries can't be updated or deleted through Eloquent. Each entry stores a hash of its content plus the previous entry's hash, so altering or removing a stored row breaks the chain.
+
+```bash
+php artisan roster:verify-audit   # exits non-zero and names the first altered entry
+php artisan roster:prune-audit    # deletes entries older than roster.audit.retention_days (365; null keeps all)
+```
+
+Schedule the prune, e.g. `Schedule::command('roster:prune-audit')->daily();`. After pruning, verification starts from the oldest remaining entry. Turn the whole log off with `roster.audit.enabled`.
+
+## Single sign-on
+
+Each organization can sign its people in through its own identity provider: **OpenID Connect** (Okta, Auth0, Google Workspace, Keycloak …), **Microsoft Entra ID**, or **SAML 2.0** (ADFS, Okta, OneLogin …). SSO is built on Laravel Socialite, and its packages are optional. Install the ones you need:
+
+```bash
+composer require laravel/socialite firebase/php-jwt                      # OpenID Connect
+composer require laravel/socialite socialiteproviders/microsoft-azure    # Microsoft Entra ID
+composer require laravel/socialite socialiteproviders/saml2              # SAML 2.0
+```
+
+### Connecting an identity provider
+
+Add a connection on the organization's **SSO** tab in Atrium, or with `CreateSsoConnectionAction`, the API or MCP:
+
+| Protocol | Settings |
+|---|---|
+| `oidc` | `issuer` (https), `client_id`, `client_secret` |
+| `azure` | `tenant` (tenant ID or verified domain), `client_id`, `client_secret` |
+| `saml` | `metadata_url`, **or** `entity_id`, `sso_url` and `certificate` |
+
+Register the connection's **callback URL** at the provider. It's shown in Atrium and returned by the API: `/roster/sso/{connection}/callback`, the SAML ACS. For SAML, give the provider the service provider metadata at `/roster/sso/{connection}/metadata`. Secrets are encrypted at rest and never returned by any surface.
+
+### Signing in
+
+Send people to `/roster/sso?email=ada@acme.com`, which finds their organization's connection by email domain, or straight to `/roster/sso/{connection}`. After the provider confirms them:
+
+1. **A returning user** is matched by their identity at the provider (its subject), not by email.
+2. **An existing account with the same email** is linked automatically, but **only if the organization owns that email's domain**. Anyone else can link from their account while signed in (`POST /roster/sso/{connection}/link`).
+3. **Otherwise, a new account is created** (`jit`, on by default), again only for the organization's own domains, with the email marked verified.
+
+The user becomes a member of the organization. Suspended or deactivated users are refused. Every sign-in and refusal is in the audit log (`sso_login.succeeded` / `sso_login.failed`).
+
+**Security notes**
+
+- An identity provider is only trusted for its organization's verified domains, so a provider can't vouch for `ceo@someone-else.com`.
+- **OIDC** id_tokens are verified against the provider's published keys (signature, issuer, audience, expiry, nonce).
+- **SAML** assertions are verified by LightSAML.
+- **Entra ID** connections need a specific tenant (`common`, `organizations` and `consumers` are refused), and use the account's `userPrincipalName`. Roster never uses the `mail` attribute, which tenant admins can set to any address.
+
+### Requiring SSO
+
+Turn on `enforced` to make SSO mandatory for an organization's domains. Roster has no password login of its own; add the rule to yours:
+
+```php
+use JayI\Roster\Rules\NotSsoEnforced;
+
+$request->validate(['email' => ['required', 'email', new NotSsoEnforced]]);
+```
+
+It fails with a link to the organization's SSO sign-in. Super-admins are never forced, so you can't lock yourself out. `Roster::ssoRequiredFor($email)` gives the same answer in code.
+
+## SCIM provisioning
+
+Each organization gets a SCIM 2.0 endpoint, so its identity provider (Okta, Microsoft Entra ID, OneLogin, JumpCloud …) keeps its members and teams in sync:
+
+| Okta / Entra setting | Value |
+|---|---|
+| SCIM base URL (Tenant URL) | `https://your-app.test/scim/v2/{organization-slug}` |
+| Authentication | Bearer token, from the organization's **SCIM** tab in Atrium (or `POST /roster/organizations/{organization}/scim-tokens`) |
+| Unique identifier | `userName` (email) |
+
+Tokens are shown **once**, stored only as a hash, can expire, can be revoked, and record when they were last used. A token only works for its own organization.
+
+**What the provider can do**
+
+- **Users are the organization's members.** Creating one makes the person a member, linking their existing account when the organization owns the email's domain, or creating a new account. Emails on other domains are refused, so a SCIM token can't claim accounts it doesn't own.
+- **Groups are the organization's teams.** The provider can create and rename them and sync their members.
+- **Deprovisioning** (`active: false`, or `DELETE`) removes the membership, with its team seats and roles. The account is deactivated only if SCIM created it and it belongs to no other organization. Accounts are never deleted. Setting `active: true` restores the membership.
+- **The owner** can't be deprovisioned; that's a 409 until ownership is transferred.
+
+**Supported (RFC 7643/7644)**
+
+- `/Users` and `/Groups` with GET, POST, PUT, PATCH and DELETE, plus `/Bulk`, `/ServiceProviderConfig`, `/ResourceTypes` and `/Schemas`.
+- **Filters:** `eq`, `co` and `sw`, joined by `and`, on `userName`, `externalId`, `emails.value`, `id`, `displayName` and `members.value`.
+- **PATCH:** `add`, `replace` and `remove`, including Entra's capitalised ops and string booleans, and Okta's `members[value eq "…"]`.
+- **Paging:** `startIndex` and `count`.
+- **ETags:** `If-Match` returns 412 on a stale version; `If-None-Match` returns 304.
+- **Bulk:** `bulkId` references and `failOnErrors`, up to `roster.scim.bulk.max_operations` operations.
+
+**Linking to SSO.** When you issue a token, you can name one of the organization's SSO connections. The provider's `externalId` then becomes that connection's SSO subject, so a provisioned user's first SSO sign-in lands on their account. Map Okta's user ID or Entra's objectId to `externalId`.
+
+**Audit.** Every SCIM change runs through Roster's Actions and is recorded with surface `scim` and the name of the token that made it.
+
+## Impersonation
+
+Holders of `roster.users.impersonate` can temporarily act as another user to see what they see. Nobody gets it by default, so grant it deliberately: globally to impersonate anyone, or in an organization to impersonate its members.
+
+```php
+use JayI\Roster\Actions\StartImpersonationAction;
+
+$started = app(StartImpersonationAction::class)->execute($user, ['reason' => 'Ticket #4521'], actor: $admin);
+
+return redirect($started->url); // a one-time link, valid for a few minutes
+```
+
+In Atrium, use the **Impersonate** card on a user's page. Over the API and MCP, the link is returned once for the operator to open.
+
+**Safety rails**
+
+- **The link only works in the impersonator's own browser** (signed in as them), works once, and expires after `link_minutes` (5). Only its hash is stored.
+- **Refused targets:** yourself, inactive users, super-admins (unless you are one), and anyone holding a permission you lack. You can't impersonate while already impersonating.
+- **A reason is required**, and the session ends on its own after `ttl_minutes` (30).
+- **Blocked while impersonating:** the abilities in `roster.impersonation.blocked` are refused, even for super-admins. This works through Roster's checks and Laravel's Gate, so your own abilities can be listed too (wildcards like `billing.*`). The impersonated account's email and password can't be changed.
+- **Ending it:** a global holder can end anyone's impersonation (Atrium → Impersonations). The browser switches back on its next request.
+
+**The banner.** Show it in your own layout:
+
+```blade
+<x-roster::impersonation-banner />
+```
+
+It names who you're acting as and who you really are, shows the time left, and has a "Return to my account" button. Roster's Atrium pages already include it.
+
+**Audit.** Everything done while impersonating is recorded as the impersonated user, with `context.impersonator` naming the real person. Starting, entering and ending each get their own entry, with the reason.
+
+The `roster.impersonation` middleware, which ends expired or revoked sessions, is added to the `web` group automatically. Set `roster.impersonation.middleware_group` to null to add it yourself.
+
+## CSV import and export
+
+Bulk-add members, users and teams from a CSV, and export members, users or the audit log. Imports and exports run in the background as [`jayi/impex`](https://github.com/jayjfletcher/Impex) flows, so Impex is needed for this feature:
+
+```bash
+composer require jayi/impex
+php artisan vendor:publish --tag="impex-migrations"
+php artisan migrate
+```
+
+Run a queue worker, and schedule Laravel's scheduler (Impex's `impex:tick` expires unconfirmed imports) and `roster:prune-transfers`. Without Impex, the transfer Actions throw a `TransfersUnavailableException` that names the missing package, and the Atrium page shows the same setup note.
+
+**Imports are previewed, then confirmed.** Uploading checks every row against the current data and stores a preview. Nothing changes until someone confirms it:
+
+| Row outcome | Meaning |
+|---|---|
+| `create` | A new account (or team) is created |
+| `link` | An existing account on the organization's domains joins |
+| `invite` | The email is outside the organization's domains, so an invitation is sent |
+| `update` | Adds teams, a role or team members; nothing is ever removed |
+| `skip` | Already as the row describes |
+| `error` | The reason is shown, and the row is left out |
+
+Confirming applies the rows one by one, as the person who confirmed. Their permissions are checked again, and each row is checked again against the data at that moment. Errors are reported per row; the rest still apply. A retried row is never applied twice. An import not confirmed within `roster.transfers.confirm_within_hours` (24) expires.
+
+| Type | Columns (first row is the header) | Permission |
+|---|---|---|
+| `import_members` | `email` required; `name`, `display_name`, `teams`, `role` | `roster.members.manage` in the organization; `invite` rows also need `roster.invitations.manage` |
+| `import_users` | `email` required; `name`, `display_name` | `roster.users.create` |
+| `import_teams` | `name` required; `slug`, `members` (emails of existing members) | `roster.teams.manage` in the organization |
+| `export_members` | email, name, display name, status, teams, roles, owner, source, joined | `roster.members.view` in the organization |
+| `export_users` | id, email, name, display name, status, created | `roster.users.view` |
+| `export_audit` | the audit log, optionally one organization's, with `filters` (`source`, `action`, `since`, `until`) | `roster.audit.view` (globally, or in the organization) |
+
+Separate lists (`teams`, `members`) with `;`, `,` or `|`. Teams are matched by slug or name, and roles by slug. You can only assign roles whose permissions you hold.
+
+```php
+use JayI\Roster\Actions\ConfirmImportAction;
+use JayI\Roster\Actions\StartExportAction;
+use JayI\Roster\Actions\StartImportAction;
+
+$import = app(StartImportAction::class)->execute([
+    'type' => 'import_members',
+    'organization' => 'acme',
+    'file' => $request->file('csv'),      // or 'content' => $csvText
+], $request->user());
+
+$import->rows();                            // [['line' => 2, 'action' => 'invite', 'reasons' => [...]], ...]
+
+app(ConfirmImportAction::class)->execute($import, $request->user());
+
+$export = app(StartExportAction::class)->execute(['type' => 'export_members', 'organization' => 'acme'], $request->user());
+```
+
+**Safety**
+
+- **No passwords.** A file with a `password` column is refused. New accounts get a random password; people reset it or sign in with SSO.
+- **Accounts outside the organization's domains are never claimed.** Those rows become invitations, the same rule SCIM follows.
+- **Limits:** `max_bytes` (5 MB) and `max_rows` (10,000). UTF-8 with or without a BOM is accepted.
+- **Formula injection:** exported cells starting with `=`, `+`, `-`, `@`, a tab or a carriage return get a leading `'`, so spreadsheets show them as text.
+- **Files** live on `roster.transfers.disk` (keep it private) under `roster/transfers/{id}`. They are only served through Roster's authorized download route, to whoever started the transfer or holds its permission in scope. MCP gets a signed link valid for 15 minutes. `roster:prune-transfers` deletes files older than `retention_days` (7).
+
+**Audit.** Every row is recorded as the person who confirmed, with surface `import` and `context.transfer` naming the import. Starting, confirming, cancelling and finishing each have their own entry.
+
+## Blocking inactive users
+
+```php
+Route::middleware(['auth', 'roster.active'])->group(...);
+```
+
+Suspended and deactivated users get a 403. A user with no profile row is active.
+
+## HTTP API and MCP
+
+> **Security:** both are **off by default**. Every route and tool checks the caller's Roster permissions, but that needs an authenticated user, so add authentication middleware before enabling them.
+
+```php
+'routes' => ['enabled' => true, 'prefix' => 'roster', 'middleware' => ['api', 'auth:sanctum']],
+'mcp' => ['web' => ['enabled' => true, 'route' => 'mcp/roster', 'middleware' => ['api', 'auth:sanctum']]],
+```
+
+| Method | URI | Name |
+|---|---|---|
+| GET | `/roster/users` | `roster.users.index` |
+| POST | `/roster/users` | `roster.users.store` |
+| GET | `/roster/users/{user}` | `roster.users.show` |
+| PATCH | `/roster/users/{user}` | `roster.users.update` |
+| DELETE | `/roster/users/{user}` | `roster.users.destroy` |
+| PATCH | `/roster/users/{user}/profile` | `roster.users.profile.update` |
+| POST | `/roster/users/{user}/suspend` | `roster.users.suspend` |
+| POST | `/roster/users/{user}/deactivate` | `roster.users.deactivate` |
+| POST | `/roster/users/{user}/reactivate` | `roster.users.reactivate` |
+| PUT | `/roster/users/{user}/context` | `roster.users.context.update` |
+| POST | `/roster/users/{user}/domain-join` | `roster.users.domain-join` |
+| GET, POST | `/roster/organizations` | `roster.organizations.index`, `.store` |
+| GET, PATCH, DELETE | `/roster/organizations/{organization}` | `roster.organizations.show`, `.update`, `.destroy` |
+| POST | `/roster/organizations/{organization}/transfer` | `roster.organizations.transfer` |
+| GET, POST | `/roster/organizations/{organization}/members` | `roster.organizations.members.index`, `.store` |
+| DELETE | `/roster/organizations/{organization}/members/{user}` | `roster.organizations.members.destroy` |
+| GET, POST | `/roster/organizations/{organization}/teams` | `roster.organizations.teams.index`, `.store` |
+| GET, PATCH, DELETE | `/roster/organizations/{organization}/teams/{team}` | `roster.organizations.teams.show`, `.update`, `.destroy` |
+| POST | `/roster/organizations/{organization}/teams/{team}/members` | `roster.organizations.teams.members.store` |
+| DELETE | `/roster/organizations/{organization}/teams/{team}/members/{user}` | `roster.organizations.teams.members.destroy` |
+| GET, POST | `/roster/organizations/{organization}/invitations` | `roster.organizations.invitations.index`, `.store` |
+| DELETE | `/roster/organizations/{organization}/invitations/{invitation}` | `roster.organizations.invitations.revoke` |
+| POST | `/roster/invitations/{token}/accept` | `roster.invitations.accept` (as the authenticated user) |
+| POST | `/roster/invitations/{token}/decline` | `roster.invitations.decline` (as the authenticated user) |
+| GET, POST | `/roster/permissions` | `roster.permissions.index`, `.store` |
+| PATCH, DELETE | `/roster/permissions/{permission}` | `roster.permissions.update`, `.destroy` |
+| GET, POST | `/roster/roles` | `roster.roles.index`, `.store` |
+| GET, PATCH, DELETE | `/roster/roles/{role}` | `roster.roles.show`, `.update`, `.destroy` |
+| GET, POST | `/roster/users/{user}/roles` | `roster.users.roles.index`, `.store` |
+| DELETE | `/roster/users/{user}/roles/{assignment}` | `roster.users.roles.destroy` |
+| GET | `/roster/users/{user}/permissions` | `roster.users.permissions` |
+| GET, POST | `/roster/organizations/{organization}/sso-connections` | `roster.organizations.sso-connections.index`, `.store` |
+| GET, PATCH, DELETE | `/roster/sso-connections/{connection}` | `roster.sso-connections.show`, `.update`, `.destroy` |
+| GET | `/roster/users/{user}/sso-identities` | `roster.users.sso-identities.index` |
+| DELETE | `/roster/sso-identities/{identity}` | `roster.sso-identities.destroy` |
+| GET, POST | `/roster/organizations/{organization}/scim-tokens` | `roster.organizations.scim-tokens.index`, `.store` |
+| DELETE | `/roster/scim-tokens/{token}` | `roster.scim-tokens.destroy` |
+| POST | `/roster/users/{user}/impersonate` | `roster.users.impersonate` |
+| GET | `/roster/impersonations` | `roster.impersonations.index` |
+| DELETE | `/roster/impersonations/{impersonation}` | `roster.impersonations.destroy` |
+| GET, POST | `/roster/audit` | `roster.audit.index`, `.store` |
+| GET | `/roster/audit/{entry}` | `roster.audit.show` |
+| POST | `/roster/imports` | `roster.imports.store` (multipart `file`, or `content`) |
+| POST | `/roster/imports/{transfer}/confirm` | `roster.imports.confirm` |
+| POST | `/roster/exports` | `roster.exports.store` |
+| GET | `/roster/transfers` | `roster.transfers.index` |
+| GET, DELETE | `/roster/transfers/{transfer}` | `roster.transfers.show`, `.destroy` (cancel) |
+| GET | `/roster/transfers/{transfer}/download` | `roster.transfers.download` |
+| GET | `/roster/transfer-files/{transfer}` | `roster.transfers.file` (signed links for MCP; always on) |
+
+`{user}` is the user model's route key; `{organization}` and `{team}` are slugs; `{role}`, `{assignment}`, `{invitation}` and `{entry}` are ids; `{permission}` is the permission name. Responses use a `data` envelope. The MCP server offers one tool per Action, and each tool returns the same payload as the HTTP API.
+
+MCP tools (all behind Laravel MCP's tool search):
+
+| Area | Tools |
+|---|---|
+| Users | `list-users-tool`, `show-user-tool`, `create-user-tool`, `update-user-tool`, `delete-user-tool`, `update-profile-tool`, `suspend-user-tool`, `deactivate-user-tool`, `reactivate-user-tool`, `switch-context-tool`, `join-by-domain-tool` |
+| Organizations | `list-organizations-tool`, `show-organization-tool`, `create-organization-tool`, `update-organization-tool`, `delete-organization-tool`, `transfer-ownership-tool`, `list-members-tool`, `add-member-tool`, `remove-member-tool` |
+| Teams | `list-teams-tool`, `show-team-tool`, `create-team-tool`, `update-team-tool`, `delete-team-tool`, `add-team-member-tool`, `remove-team-member-tool` |
+| Invitations | `list-invitations-tool`, `create-invitation-tool`, `revoke-invitation-tool`, `accept-invitation-tool`, `decline-invitation-tool` |
+| Single sign-on | `list-sso-connections-tool`, `show-sso-connection-tool`, `create-sso-connection-tool`, `update-sso-connection-tool`, `delete-sso-connection-tool`, `list-sso-identities-tool`, `unlink-sso-identity-tool` |
+| SCIM | `list-scim-tokens-tool`, `create-scim-token-tool`, `revoke-scim-token-tool` |
+| Impersonation | `start-impersonation-tool`, `list-impersonations-tool`, `stop-impersonation-tool` |
+| Audit | `list-audit-entries-tool`, `show-audit-entry-tool`, `record-audit-event-tool` |
+| CSV import and export | `start-import-tool`, `confirm-import-tool`, `start-export-tool`, `list-transfers-tool`, `show-transfer-tool`, `cancel-transfer-tool` |
+| Roles | `list-permissions-tool`, `create-permission-tool`, `update-permission-tool`, `delete-permission-tool`, `list-roles-tool`, `show-role-tool`, `create-role-tool`, `update-role-tool`, `delete-role-tool`, `list-role-assignments-tool`, `assign-role-tool`, `revoke-role-tool`, `list-user-permissions-tool` |
+
+### Rate limiting
+
+The default API and MCP middleware include `throttle:roster`: 120 requests per minute per signed-in user, or per IP for guests. Change it with `roster.rate_limit.per_minute` (null turns it off). Missing records answer `404 {"message": "Not found."}` without naming internal classes.
+
+## Cortex
+
+When [`jayi/cortex`](https://github.com/jayjfletcher/cortex) is installed, Roster registers its MCP server and every tool with Cortex. Nothing needs registering in your app. Cortex agents can then manage users, organizations and roles, and you can publish new versions of the server instructions and tool descriptions in Cortex.
+
+- Agents act as the **signed-in user**, so Roster's permission checks apply. A run with no signed-in user is refused.
+- Limit what agents see with `roster.cortex.tools` (a list of tool names), or turn the integration off with `roster.cortex.enabled`.
+
+## Atrium dashboard
+
+Roster registers itself with Atrium automatically. It adds:
+
+- a **Users** section: list, filter, create, edit account and profile, suspend/deactivate/reactivate, delete, memberships and context switching
+- an **Organizations** section: members, ownership, teams, invitations and settings (domains, auto-join)
+- **Roles** and **Permissions** sections, a Roles card on each user, and a Roles tab on each organization
+- **Impersonations** (active and history, end any) and an Impersonate card on each user
+- an **SSO** tab on each organization (connections with their callback and metadata URLs) and SSO identities on each user
+- a **SCIM** tab on each organization (base URL, issue tokens that are shown once, revoke)
+- **Imports & exports**: upload a CSV, review the preview, confirm or cancel, follow progress, and download exports, also reached from each organization and from Users
+- "Users by status" and "Organizations" widgets
+- navigation, widgets and search hidden from users without the matching permission
+- search over users and organizations Access follows Atrium's `viewAtrium` gate. To hide it, add `'roster'` to `atrium.disabled`.
+
+## Trying it locally
+
+The workbench is a demo app with Atrium and seeded data:
+
+```bash
+composer serve
+```
+
+It signs you in as the super-admin `admin@example.com` (password `password`) and opens `/atrium`. You'll find organizations Acme and Globex with teams, members and a pending invitation, plus a custom `invoices.edit` permission and a Billing role. The JSON API is mounted at `/roster`. To run the MCP server over stdio:
+
+```bash
+php vendor/bin/testbench mcp:start roster
+```
+
+## Testing
+
+```bash
+composer test          # static analysis, formatting, type coverage, Pest
+composer test:browser  # Atrium in a real browser (run `npm install` first for Playwright)
+```
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
+## Contributing
+
+Thank you for considering contributing to Roster! Please review our [contributing guide](.github/CONTRIBUTING.md) to get started.
+
+## Security Vulnerabilities
+
+Please review [our security policy](.github/SECURITY.md) on how to report security vulnerabilities.
+
+## Credits
+
+- [Jay Fletcher](https://github.com/jayjfletcher)
+- [All Contributors](../../contributors)
+
+## License
+
+Roster is open-sourced software licensed under the [MIT license](LICENSE.md).

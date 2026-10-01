@@ -1,0 +1,78 @@
+<?php
+
+declare(strict_types=1);
+
+require_once __DIR__.'/fixtures.php';
+
+use JayI\Roster\Mcp\RosterServer;
+use JayI\Roster\Mcp\Tools\AcceptInvitationTool;
+use JayI\Roster\Mcp\Tools\DeclineInvitationTool;
+
+/**
+ * Arguments that name existing records for every tool.
+ *
+ * @return array<class-string, Closure(array<string, mixed>): array<string, mixed>>
+ */
+function toolArguments(): array
+{
+    $user = fn (array $w): array => ['user' => $w['target']->getRouteKey()];
+    $org = fn (): array => ['organization' => 'acme'];
+    $team = fn (): array => ['organization' => 'acme', 'team' => 'ops'];
+
+    return collect(RosterServer::TOOLS)
+        ->reject(fn (string $tool): bool => in_array($tool, [AcceptInvitationTool::class, DeclineInvitationTool::class], true))
+        ->mapWithKeys(fn (string $tool): array => [$tool => match (class_basename($tool)) {
+            'ShowUserTool', 'UpdateUserTool', 'DeleteUserTool', 'UpdateProfileTool', 'SuspendUserTool', 'DeactivateUserTool',
+            'ReactivateUserTool', 'SwitchContextTool', 'JoinByDomainTool', 'ListRoleAssignmentsTool', 'AssignRoleTool',
+            'ListUserPermissionsTool' => $user,
+            'RevokeRoleTool' => fn (array $w): array => $user($w) + ['assignment' => $w['assignment']->id],
+            'ShowOrganizationTool', 'UpdateOrganizationTool', 'DeleteOrganizationTool', 'TransferOwnershipTool', 'ListMembersTool',
+            'AddMemberTool', 'ListTeamsTool', 'CreateTeamTool', 'ListInvitationsTool', 'CreateInvitationTool' => $org,
+            'RemoveMemberTool' => fn (array $w): array => $org() + $user($w),
+            'RevokeInvitationTool' => fn (array $w): array => $org() + ['invitation' => $w['invitation']->id],
+            'ShowTeamTool', 'UpdateTeamTool', 'DeleteTeamTool', 'AddTeamMemberTool' => $team,
+            'RemoveTeamMemberTool' => fn (array $w): array => $team() + $user($w),
+            'ShowRoleTool', 'UpdateRoleTool', 'DeleteRoleTool' => fn (array $w): array => ['role' => $w['role']->id],
+            'UpdatePermissionTool', 'DeletePermissionTool' => fn (): array => ['name' => 'invoices.edit'],
+            'ShowAuditEntryTool' => fn (array $w): array => ['entry' => $w['entry']->id],
+            'ListSsoConnectionsTool', 'CreateSsoConnectionTool', 'ListScimTokensTool', 'CreateScimTokenTool' => $org,
+            'RevokeScimTokenTool' => fn (array $w): array => ['token' => $w['scimToken']->id],
+            'ShowSsoConnectionTool', 'UpdateSsoConnectionTool', 'DeleteSsoConnectionTool' => fn (): array => ['connection' => 'acme-okta'],
+            'ListSsoIdentitiesTool' => $user,
+            'UnlinkSsoIdentityTool' => fn (array $w): array => ['identity' => $w['identity']->id],
+            'StopImpersonationTool' => fn (array $w): array => ['impersonation' => $w['impersonation']->id],
+            'StartImpersonationTool' => fn (array $w): array => $user($w) + ['reason' => 'Ticket 1'],
+            'RecordAuditEventTool' => fn (): array => ['action' => 'invoice.paid'],
+            'StartImportTool' => fn (): array => ['type' => 'import_members', 'organization' => 'acme', 'content' => "email\nx@example.com"],
+            'StartExportTool' => fn (): array => ['type' => 'export_members', 'organization' => 'acme'],
+            'ListTransfersTool' => $org,
+            'ConfirmImportTool', 'ShowTransferTool', 'CancelTransferTool' => fn (array $w): array => ['transfer' => $w['transfer']->id],
+            default => fn (): array => [],
+        }])
+        ->all();
+}
+
+it('refuses every tool to guests and to users without the permission', function (string $tool): void {
+    $world = authorizationWorld();
+    $arguments = toolArguments()[$tool]($world);
+
+    mcpTool($tool, $arguments)->assertHasErrors(['Unauthorized.']);
+
+    $this->actingAs(user());
+
+    mcpTool($tool, $arguments)->assertHasErrors(['Unauthorized.']);
+})->with(fn (): array => array_keys(toolArguments()));
+
+it('lets a super-admin past authorization on every tool', function (string $tool): void {
+    $world = authorizationWorld();
+    $admin = user();
+    grant($admin, 'super-admin');
+    $this->actingAs($admin);
+
+    mcpTool($tool, toolArguments()[$tool]($world))->assertDontSee('Unauthorized.');
+})->with(fn (): array => array_keys(toolArguments()));
+
+it('needs a signed-in invitee to answer invitations', function (): void {
+    mcpTool(AcceptInvitationTool::class, ['token' => 'x'])->assertHasErrors(['Unauthorized.']);
+    mcpTool(DeclineInvitationTool::class, ['token' => 'x'])->assertHasErrors(['Unauthorized.']);
+});

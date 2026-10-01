@@ -1,0 +1,53 @@
+<?php
+
+declare(strict_types=1);
+
+namespace JayI\Roster\Actions;
+
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use JayI\Roster\Actions\Concerns\ResolvesScopes;
+use JayI\Roster\Events\Action\SsoConnectionsListedActionEvent;
+use JayI\Roster\Events\Action\SsoConnectionsListingActionEvent;
+use JayI\Roster\Models\SsoConnection;
+
+final class ListSsoConnectionsAction
+{
+    use ResolvesScopes;
+
+    /**
+     * @return array<string, array<int, mixed>>
+     */
+    public static function rules(): array
+    {
+        return [
+            'organization' => ['sometimes', 'nullable', 'string'],
+            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+            'page' => ['sometimes', 'integer', 'min:1'],
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return LengthAwarePaginator<int, SsoConnection>
+     */
+    public function execute(array $filters = []): LengthAwarePaginator
+    {
+        SsoConnectionsListingActionEvent::dispatch($filters);
+
+        $query = SsoConnection::query()->with('organization')->withCount('identities');
+        $organization = $this->organizationFrom($filters['organization'] ?? null);
+
+        if ($organization !== null) {
+            $query->where('organization_id', $organization->getKey());
+        }
+
+        $perPage = is_numeric($filters['per_page'] ?? null) ? (int) $filters['per_page'] : 25;
+        $page = is_numeric($filters['page'] ?? null) ? (int) $filters['page'] : null;
+
+        $connections = $query->orderBy('name')->orderBy('id')->paginate($perPage, ['*'], 'page', $page);
+
+        SsoConnectionsListedActionEvent::dispatch($filters);
+
+        return $connections;
+    }
+}

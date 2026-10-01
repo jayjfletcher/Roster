@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+namespace JayI\Roster\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use JayI\Roster\Models\Invitation;
+use JayI\Roster\Models\Team;
+
+/**
+ * The token is never serialized: it exists only in the invitation email.
+ *
+ * @mixin Invitation
+ */
+final class InvitationResource extends JsonResource
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'email' => $this->email,
+            'organization' => $this->organization?->slug,
+            'teams' => Team::query()->whereIn('id', (array) $this->teams)->orderBy('slug')->pluck('slug')->all(),
+            'status' => $this->status()->value,
+            'expires_at' => $this->expires_at->toIso8601String(),
+            'accepted_at' => $this->accepted_at?->toIso8601String(),
+            'declined_at' => $this->declined_at?->toIso8601String(),
+            'revoked_at' => $this->revoked_at?->toIso8601String(),
+            'created_at' => $this->created_at?->toIso8601String(),
+        ];
+    }
+}

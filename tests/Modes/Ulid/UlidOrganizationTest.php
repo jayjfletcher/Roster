@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+use JayI\Roster\Actions\AddMemberAction;
+use JayI\Roster\Actions\CreateOrganizationAction;
+use JayI\Roster\Actions\CreateUserAction;
+use JayI\Roster\Roster;
+
+beforeEach(function (): void {
+    config()->set('roster.users.columns', ['name' => 'full_name', 'email' => 'email_address', 'password' => 'secret']);
+});
+
+it('runs organizations on ulid user keys', function (): void {
+    $owner = app(CreateUserAction::class)->execute(['name' => 'Ada', 'email' => 'ada@example.com']);
+    $member = app(CreateUserAction::class)->execute(['name' => 'Grace', 'email' => 'grace@example.com']);
+
+    $organization = app(CreateOrganizationAction::class)->execute(['name' => 'Acme', 'owner' => $owner->getRouteKey()]);
+    app(AddMemberAction::class)->execute($organization, ['user' => $member->getRouteKey()]);
+
+    expect($organization->isOwnedBy($owner))->toBeTrue()
+        ->and($organization->members()->count())->toBe(2)
+        ->and(app(Roster::class)->organization($member)?->is($organization))->toBeTrue();
+
+    $this->getJson(route('roster.organizations.members.index', 'acme'))
+        ->assertOk()
+        ->assertJsonPath('data.1.user.email', 'grace@example.com');
+});

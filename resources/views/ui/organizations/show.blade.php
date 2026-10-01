@@ -1,0 +1,334 @@
+<x-atrium::layout :title="$organization->name">
+    @include('roster::ui.partials.styles')
+
+    <x-atrium::page-header :title="$organization->name" :description="$organization->slug">
+        <x-slot:actions>
+            <x-atrium::button variant="ghost" :href="route('atrium.roster.transfers.index', ['organization' => $organization->slug])" data-testid="organization-transfers">{{ __('roster::roster.import_export') }}</x-atrium::button>
+        </x-slot:actions>
+    </x-atrium::page-header>
+
+    <div class="mt-5 flex flex-col gap-4">
+        @include('roster::ui.partials.status')
+
+        <nav class="flex flex-wrap gap-2" aria-label="{{ $organization->name }}">
+            @foreach ($tabs as $name)
+                <x-atrium::button
+                    :variant="$tab === $name ? 'primary' : 'ghost'"
+                    :href="route('atrium.roster.organizations.show', [$organization, 'tab' => $name])"
+                    data-testid="tab-{{ $name }}">{{ __('roster::roster.'.$name) }}</x-atrium::button>
+            @endforeach
+        </nav>
+
+        @if ($tab === 'members')
+            <x-atrium::card :title="__('roster::roster.add_member')">
+                <form method="POST" action="{{ route('atrium.roster.organizations.members.store', $organization) }}" class="flex items-start gap-2">
+                    @csrf
+                    <x-atrium::form.input name="user" :label="__('roster::roster.user')" :hint="__('roster::roster.user_key_hint')" wrapper="w-64" required />
+                    <div class="roster-actions">
+                        <x-atrium::button type="submit" data-testid="add-member">{{ __('roster::roster.add_member') }}</x-atrium::button>
+                    </div>
+                </form>
+            </x-atrium::card>
+
+            @if ($members->isEmpty())
+                <x-atrium::empty-state :title="__('roster::roster.no_members')" />
+            @else
+                <x-atrium::table striped>
+                    <x-slot:head>
+                        <x-atrium::table.row>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.member') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.teams') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.source') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell heading></x-atrium::table.cell>
+                        </x-atrium::table.row>
+                    </x-slot:head>
+
+                    @foreach ($members as $membership)
+                        @php($member = $membership->user)
+                        <x-atrium::table.row>
+                            <x-atrium::table.cell>
+                                @if ($member)
+                                    <a class="font-medium underline-offset-2 hover:underline" href="{{ route('atrium.roster.users.show', $member->getRouteKey()) }}">{{ $directory->name($member) ?? $directory->email($member) }}</a>
+                                    @if ($organization->isOwnedBy($member))
+                                        <x-atrium::badge variant="primary">{{ __('roster::roster.owner') }}</x-atrium::badge>
+                                    @endif
+                                @endif
+                            </x-atrium::table.cell>
+                            <x-atrium::table.cell>{{ $membership->teams->pluck('name')->join(', ') ?: __('roster::roster.none') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell>{{ $membership->source->value }}</x-atrium::table.cell>
+                            <x-atrium::table.cell>
+                                @if ($member && ! $organization->isOwnedBy($member))
+                                    <div class="flex justify-end gap-2">
+                                        @unless ($organization->personal)
+                                            <form method="POST" action="{{ route('atrium.roster.organizations.transfer', $organization) }}">
+                                                @csrf
+                                                <input type="hidden" name="user" value="{{ $member->getRouteKey() }}">
+                                                <x-atrium::button type="submit" size="sm" variant="ghost">{{ __('roster::roster.make_owner') }}</x-atrium::button>
+                                            </form>
+                                        @endunless
+                                        <form method="POST" action="{{ route('atrium.roster.organizations.members.destroy', [$organization, $member->getRouteKey()]) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <x-atrium::button type="submit" size="sm" variant="danger">{{ __('roster::roster.remove') }}</x-atrium::button>
+                                        </form>
+                                    </div>
+                                @endif
+                            </x-atrium::table.cell>
+                        </x-atrium::table.row>
+                    @endforeach
+                </x-atrium::table>
+            @endif
+        @elseif ($tab === 'teams')
+            <x-atrium::card :title="__('roster::roster.new_team')">
+                <form method="POST" action="{{ route('atrium.roster.teams.store', $organization) }}" class="flex flex-wrap items-start gap-2">
+                    @csrf
+                    <x-atrium::form.input name="name" :label="__('roster::roster.name')" wrapper="w-64" required />
+                    <x-atrium::form.input name="slug" :label="__('roster::roster.slug')" :hint="__('roster::roster.slug_hint')" wrapper="w-64" />
+                    <div class="roster-actions">
+                        <x-atrium::button type="submit" data-testid="create-team">{{ __('roster::roster.create') }}</x-atrium::button>
+                    </div>
+                </form>
+            </x-atrium::card>
+
+            @if ($teams->isEmpty())
+                <x-atrium::empty-state :title="__('roster::roster.no_teams')" />
+            @else
+                <x-atrium::table striped>
+                    <x-slot:head>
+                        <x-atrium::table.row>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.team') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.members') }}</x-atrium::table.cell>
+                        </x-atrium::table.row>
+                    </x-slot:head>
+
+                    @foreach ($teams as $team)
+                        <x-atrium::table.row>
+                            <x-atrium::table.cell>
+                                <a class="font-medium underline-offset-2 hover:underline" href="{{ route('atrium.roster.teams.show', [$organization, $team->slug]) }}">{{ $team->name }}</a>
+                            </x-atrium::table.cell>
+                            <x-atrium::table.cell>{{ $team->seats_count }}</x-atrium::table.cell>
+                        </x-atrium::table.row>
+                    @endforeach
+                </x-atrium::table>
+            @endif
+        @elseif ($tab === 'invitations')
+            <x-atrium::card :title="__('roster::roster.invite')">
+                <form method="POST" action="{{ route('atrium.roster.invitations.store', $organization) }}" class="flex max-w-2xl flex-col gap-3">
+                    @csrf
+                    <x-atrium::form.input name="email" type="email" :label="__('roster::roster.email')" wrapper="w-80" required />
+
+                    @if ($teams->isNotEmpty())
+                        <fieldset class="flex flex-wrap gap-4">
+                            <legend class="mb-1 text-sm font-medium">{{ __('roster::roster.teams') }}</legend>
+                            @foreach ($teams as $team)
+                                <x-atrium::form.checkbox name="teams[]" :value="$team->slug" :id="'invite-team-'.$team->slug" :label="$team->name" />
+                            @endforeach
+                        </fieldset>
+                    @endif
+
+                    <div>
+                        <x-atrium::button type="submit" data-testid="send-invitation">{{ __('roster::roster.invite') }}</x-atrium::button>
+                    </div>
+                </form>
+            </x-atrium::card>
+
+            @if ($invitations->isEmpty())
+                <x-atrium::empty-state :title="__('roster::roster.no_invitations')" />
+            @else
+                <x-atrium::table striped>
+                    <x-slot:head>
+                        <x-atrium::table.row>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.email') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.status') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.expires') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell heading></x-atrium::table.cell>
+                        </x-atrium::table.row>
+                    </x-slot:head>
+
+                    @foreach ($invitations as $invitation)
+                        <x-atrium::table.row>
+                            <x-atrium::table.cell>{{ $invitation->email }}</x-atrium::table.cell>
+                            <x-atrium::table.cell><x-atrium::badge>{{ $invitation->status()->label() }}</x-atrium::badge></x-atrium::table.cell>
+                            <x-atrium::table.cell>{{ $invitation->expires_at->diffForHumans() }}</x-atrium::table.cell>
+                            <x-atrium::table.cell>
+                                @if ($invitation->status() === $pending)
+                                    <form method="POST" action="{{ route('atrium.roster.invitations.revoke', [$organization, $invitation->id]) }}" class="flex justify-end">
+                                        @csrf
+                                        @method('DELETE')
+                                        <x-atrium::button type="submit" size="sm" variant="ghost">{{ __('roster::roster.revoke') }}</x-atrium::button>
+                                    </form>
+                                @endif
+                            </x-atrium::table.cell>
+                        </x-atrium::table.row>
+                    @endforeach
+                </x-atrium::table>
+            @endif
+        @elseif ($tab === 'sso')
+            @if ($ssoConnections->isEmpty())
+                <x-atrium::empty-state :title="__('roster::roster.no_sso_connections')" />
+            @else
+                <x-atrium::table striped>
+                    <x-slot:head>
+                        <x-atrium::table.row>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.name') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.protocol') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.sso_identities') }}</x-atrium::table.cell>
+                        </x-atrium::table.row>
+                    </x-slot:head>
+                    @foreach ($ssoConnections as $connection)
+                        <x-atrium::table.row>
+                            <x-atrium::table.cell>
+                                <a class="font-medium underline-offset-2 hover:underline" href="{{ route('atrium.roster.sso.show', $connection->slug) }}">{{ $connection->name }}</a>
+                                @if ($connection->enforced)
+                                    <x-atrium::badge variant="warning">{{ __('roster::roster.enforced') }}</x-atrium::badge>
+                                @endif
+                                @unless ($connection->enabled)
+                                    <x-atrium::badge>{{ __('roster::roster.none') }}</x-atrium::badge>
+                                @endunless
+                            </x-atrium::table.cell>
+                            <x-atrium::table.cell>{{ __('roster::roster.protocol_'.$connection->protocol) }}</x-atrium::table.cell>
+                            <x-atrium::table.cell>{{ $connection->identities_count }}</x-atrium::table.cell>
+                        </x-atrium::table.row>
+                    @endforeach
+                </x-atrium::table>
+            @endif
+
+            <x-atrium::card :title="__('roster::roster.new_sso_connection')">
+                <form method="POST" action="{{ route('atrium.roster.sso.store', $organization) }}" class="flex max-w-3xl flex-col gap-4">
+                    @csrf
+                    <div class="flex flex-wrap gap-3">
+                        <x-atrium::form.input name="name" :label="__('roster::roster.name')" wrapper="w-56" required />
+                        <x-atrium::form.select
+                            name="protocol"
+                            :label="__('roster::roster.protocol')"
+                            :options="['oidc' => __('roster::roster.protocol_oidc'), 'azure' => __('roster::roster.protocol_azure'), 'saml' => __('roster::roster.protocol_saml')]"
+                            wrapper="w-56" />
+                    </div>
+                    @include('roster::ui.sso.partials.fields', ['settings' => [], 'editing' => false])
+                    <div>
+                        <x-atrium::button type="submit" data-testid="create-sso">{{ __('roster::roster.create') }}</x-atrium::button>
+                    </div>
+                </form>
+            </x-atrium::card>
+        @elseif ($tab === 'scim')
+            @if (session('roster_scim_token'))
+                <x-atrium::alert variant="warning" :title="__('roster::roster.scim_token_created')">
+                    <code class="break-all font-mono text-sm" data-testid="scim-token">{{ session('roster_scim_token') }}</code>
+                </x-atrium::alert>
+            @endif
+
+            <x-atrium::card :title="__('roster::roster.scim_base_url')">
+                <code class="break-all font-mono text-sm" data-testid="scim-base-url">{{ url(trim((string) config('roster.scim.prefix', 'scim/v2'), '/').'/'.$organization->slug) }}</code>
+            </x-atrium::card>
+
+            @if ($scimTokens->isEmpty())
+                <x-atrium::empty-state :title="__('roster::roster.no_scim_tokens')" />
+            @else
+                <x-atrium::table striped>
+                    <x-slot:head>
+                        <x-atrium::table.row>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.name') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.last_login') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.expires') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell heading></x-atrium::table.cell>
+                        </x-atrium::table.row>
+                    </x-slot:head>
+                    @foreach ($scimTokens as $token)
+                        <x-atrium::table.row>
+                            <x-atrium::table.cell>
+                                {{ $token->name }}
+                                @if ($token->revoked_at)
+                                    <x-atrium::badge>{{ __('roster::roster.revoked') }}</x-atrium::badge>
+                                @endif
+                            </x-atrium::table.cell>
+                            <x-atrium::table.cell>{{ $token->last_used_at?->diffForHumans() ?? __('roster::roster.never') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell>{{ $token->expires_at?->toFormattedDateString() ?? __('roster::roster.never') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell>
+                                @unless ($token->revoked_at)
+                                    <form method="POST" action="{{ route('atrium.roster.scim-tokens.revoke', $token->id) }}" class="flex justify-end">
+                                        @csrf
+                                        @method('DELETE')
+                                        <x-atrium::button type="submit" size="sm" variant="danger">{{ __('roster::roster.revoke') }}</x-atrium::button>
+                                    </form>
+                                @endunless
+                            </x-atrium::table.cell>
+                        </x-atrium::table.row>
+                    @endforeach
+                </x-atrium::table>
+            @endif
+
+            <x-atrium::card :title="__('roster::roster.new_scim_token')">
+                <form method="POST" action="{{ route('atrium.roster.scim-tokens.store', $organization) }}" class="flex flex-wrap items-start gap-3">
+                    @csrf
+                    <x-atrium::form.input name="name" id="scim-token-name" :label="__('roster::roster.name')" wrapper="w-64" required />
+                    <x-atrium::form.input name="expires_in_days" type="number" :label="__('roster::roster.expires_in_days')" wrapper="w-40" />
+                    <x-atrium::form.select
+                        name="sso_connection"
+                        :label="__('roster::roster.link_sso')"
+                        :placeholder="__('roster::roster.none')"
+                        :options="$ssoConnections->mapWithKeys(fn ($c) => [$c->slug => $c->name])"
+                        wrapper="w-56" />
+                    <div class="roster-actions">
+                        <x-atrium::button type="submit" data-testid="create-scim-token">{{ __('roster::roster.create') }}</x-atrium::button>
+                    </div>
+                </form>
+            </x-atrium::card>
+        @elseif ($tab === 'activity')
+            @include('roster::ui.audit.partials.entries', ['entries' => $activity])
+            <x-atrium::button variant="ghost" :href="route('atrium.roster.audit.index', ['organization' => $organization->slug])">{{ __('roster::roster.view_all') }}</x-atrium::button>
+        @elseif ($tab === 'roles')
+            <x-atrium::card :title="__('roster::roster.assignments')">
+                @if ($assignments->isEmpty())
+                    <p class="text-sm">{{ __('roster::roster.no_roles') }}</p>
+                @else
+                    <ul class="flex flex-col gap-1 text-sm">
+                        @foreach ($assignments as $assignment)
+                            <li>
+                                @if ($assignment->user)
+                                    <a class="font-medium underline-offset-2 hover:underline" href="{{ route('atrium.roster.users.show', $assignment->user->getRouteKey()) }}">{{ $directory->name($assignment->user) ?? $directory->email($assignment->user) }}</a>
+                                @endif
+                                — {{ $assignment->role?->name }}@if ($assignment->team) ({{ $assignment->team->name }})@endif
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </x-atrium::card>
+
+            <x-atrium::card :title="__('roster::roster.roles')">
+                <ul class="flex flex-col gap-1 text-sm">
+                    @foreach ($roles as $role)
+                        <li>
+                            <a class="font-medium underline-offset-2 hover:underline" href="{{ route('atrium.roster.roles.show', $role->id) }}">{{ $role->name }}</a>
+                            <span class="opacity-70">— {{ $role->scope->label() }}, {{ $role->organization ? __('roster::roster.own_role') : __('roster::roster.shared') }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+                <x-atrium::button class="mt-3" variant="ghost" :href="route('atrium.roster.roles.index', ['organization' => $organization->slug])">{{ __('roster::roster.manage_roles') }}</x-atrium::button>
+            </x-atrium::card>
+        @else
+            <x-atrium::card :title="__('roster::roster.settings')">
+                <form method="POST" action="{{ route('atrium.roster.organizations.update', $organization) }}" class="flex max-w-2xl flex-col gap-4">
+                    @csrf
+                    @method('PATCH')
+
+                    <x-atrium::form.input name="name" :label="__('roster::roster.name')" :value="old('name', $organization->name)" required />
+                    <x-atrium::form.input name="slug" :label="__('roster::roster.slug')" :value="old('slug', $organization->slug)" required />
+                    <x-atrium::form.textarea name="domains" :label="__('roster::roster.domains')" :value="old('domains', $organization->domains->pluck('domain')->join(PHP_EOL))" :hint="__('roster::roster.domains_hint')" rows="3" />
+                    <x-atrium::form.checkbox name="auto_join" value="1" :checked="$organization->auto_join" :label="__('roster::roster.auto_join')" :hint="__('roster::roster.auto_join_hint')" />
+
+                    <div>
+                        <x-atrium::button type="submit" data-testid="save-organization">{{ __('roster::roster.save') }}</x-atrium::button>
+                    </div>
+                </form>
+            </x-atrium::card>
+
+            @unless ($organization->personal)
+                <form method="POST" action="{{ route('atrium.roster.organizations.destroy', $organization) }}">
+                    @csrf
+                    @method('DELETE')
+                    <x-atrium::button type="submit" variant="danger" data-testid="delete-organization">{{ __('roster::roster.delete') }}</x-atrium::button>
+                </form>
+            @endunless
+        @endif
+    </div>
+</x-atrium::layout>

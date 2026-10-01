@@ -1,0 +1,66 @@
+<?php
+
+declare(strict_types=1);
+
+namespace JayI\Roster\Actions;
+
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rule;
+use JayI\Roster\Actions\Concerns\ResolvesScopes;
+use JayI\Roster\Enums\RoleScope;
+use JayI\Roster\Events\Action\RolesListedActionEvent;
+use JayI\Roster\Events\Action\RolesListingActionEvent;
+use JayI\Roster\Models\Role;
+
+final class ListRolesAction
+{
+    use ResolvesScopes;
+
+    /**
+     * @return array<string, array<int, mixed>>
+     */
+    public static function rules(): array
+    {
+        return [
+            'scope' => ['sometimes', 'nullable', Rule::enum(RoleScope::class)],
+            'organization' => ['sometimes', 'nullable', 'string'],
+            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+            'page' => ['sometimes', 'integer', 'min:1'],
+        ];
+    }
+
+    /**
+     * Roles by scope and name. With `organization`, the roles usable in that
+     * organization: the shared ones plus its own. Without, the shared ones.
+     *
+     * @param  array<string, mixed>  $filters
+     * @return LengthAwarePaginator<int, Role>
+     */
+    public function execute(array $filters = []): LengthAwarePaginator
+    {
+        RolesListingActionEvent::dispatch($filters);
+
+        $organization = $this->organizationFrom($filters['organization'] ?? null);
+        $scope = isset($filters['scope']) ? RoleScope::tryFrom((string) $filters['scope']) : null;
+
+        $query = Role::query()
+            ->with(['permissions', 'organization'])
+            ->where(fn (Builder $builder): Builder => $organization === null
+                ? $builder->whereNull('organization_id')
+                : $builder->whereNull('organization_id')->orWhere('organization_id', $organization->getKey()));
+
+        if ($scope !== null) {
+            $query->where('scope', $scope);
+        }
+
+        $perPage = is_numeric($filters['per_page'] ?? null) ? (int) $filters['per_page'] : 50;
+        $page = is_numeric($filters['page'] ?? null) ? (int) $filters['page'] : null;
+
+        $roles = $query->orderBy('scope')->orderBy('name')->orderBy('id')->paginate($perPage, ['*'], 'page', $page);
+
+        RolesListedActionEvent::dispatch($filters);
+
+        return $roles;
+    }
+}

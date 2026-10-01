@@ -1,0 +1,46 @@
+laravel: '@testbench'
+
+env:
+  # Impex runs drive inline, so imports and exports finish without a worker.
+  - QUEUE_CONNECTION=sync
+
+providers:
+  - Laravel\Mcp\Server\McpServiceProvider
+  - JayI\Atrium\AtriumServiceProvider
+  - JayI\Roster\RosterServiceProvider
+  - Workbench\App\Providers\WorkbenchServiceProvider
+
+migrations:
+  - workbench/database/migrations
+  - database/migrations
+  # jayi/cortex is a dev dependency and auto-discovered, so the demo runs with it.
+  - vendor/jayi/cortex/database/migrations
+  # jayi/impex (dev dependency, auto-discovered) runs CSV imports and exports.
+  - vendor/jayi/impex/database/migrations
+
+seeders:
+  - Workbench\Database\Seeders\DatabaseSeeder
+
+workbench:
+  start: '/atrium'
+  user: admin@example.com
+  install: true
+  health: false
+  discovers:
+    web: true
+    api: true
+    commands: true
+    components: false
+    factories: true
+    views: false
+  build:
+    - asset-publish
+    - create-sqlite-db
+    - db-wipe
+    - migrate-fresh
+  assets:
+    - laravel-assets
+  sync:
+    - from: storage
+      to: workbench/storage
+      reverse: true

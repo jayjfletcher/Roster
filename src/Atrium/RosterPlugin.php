@@ -1,0 +1,278 @@
+<?php
+
+declare(strict_types=1);
+
+namespace JayI\Roster\Atrium;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use JayI\Atrium\Navigation\NavItem;
+use JayI\Atrium\Plugins\Plugin;
+use JayI\Atrium\Search\SearchResult;
+use JayI\Atrium\Search\SearchSource;
+use JayI\Atrium\Widgets\WidgetDefinition;
+use JayI\Roster\Access\Authorizer;
+use JayI\Roster\Enums\TransferType;
+use JayI\Roster\Enums\UserStatus;
+use JayI\Roster\Http\Ui\AuditUiController;
+use JayI\Roster\Http\Ui\ImpersonationUiController;
+use JayI\Roster\Http\Ui\InvitationUiController;
+use JayI\Roster\Http\Ui\OrganizationUiController;
+use JayI\Roster\Http\Ui\PermissionUiController;
+use JayI\Roster\Http\Ui\RoleUiController;
+use JayI\Roster\Http\Ui\ScimUiController;
+use JayI\Roster\Http\Ui\SsoUiController;
+use JayI\Roster\Http\Ui\TeamUiController;
+use JayI\Roster\Http\Ui\TransferUiController;
+use JayI\Roster\Http\Ui\UserUiController;
+use JayI\Roster\Models\Invitation;
+use JayI\Roster\Models\Organization;
+use JayI\Roster\Models\Profile;
+use JayI\Roster\Models\Team;
+use JayI\Roster\Support\Users;
+
+/**
+ * Registers Roster inside the Atrium dashboard.
+ *
+ * Access follows Atrium's own `viewAtrium` gate. Widgets declared here are
+ * offered in Atrium's picker and never placed automatically.
+ */
+class RosterPlugin extends Plugin
+{
+    public function key(): string
+    {
+        return 'roster';
+    }
+
+    public function label(): string
+    {
+        return __('roster::roster.label');
+    }
+
+    public function navigation(): array
+    {
+        return [
+            NavItem::make(__('roster::roster.users'))
+                ->route('atrium.roster.users.index')
+                ->group(__('roster::roster.label'))
+                ->sort(10)
+                ->authorize(fn (Request $request): bool => $this->may($request, 'roster.users.view')),
+
+            NavItem::make(__('roster::roster.organizations'))
+                ->route('atrium.roster.organizations.index')
+                ->group(__('roster::roster.label'))
+                ->sort(20)
+                ->authorize(fn (Request $request): bool => $this->may($request, 'roster.organizations.view')),
+
+            NavItem::make(__('roster::roster.roles'))
+                ->route('atrium.roster.roles.index')
+                ->group(__('roster::roster.label'))
+                ->sort(30)
+                ->authorize(fn (Request $request): bool => $this->may($request, 'roster.roles.view')),
+
+            NavItem::make(__('roster::roster.permissions'))
+                ->route('atrium.roster.permissions.index')
+                ->group(__('roster::roster.label'))
+                ->sort(40)
+                ->authorize(fn (Request $request): bool => $this->may($request, 'roster.roles.view')),
+
+            NavItem::make(__('roster::roster.impersonations'))
+                ->route('atrium.roster.impersonations.index')
+                ->group(__('roster::roster.label'))
+                ->sort(45)
+                ->authorize(fn (Request $request): bool => $this->may($request, 'roster.users.impersonate')),
+
+            // Organization admins reach their organization's imports and
+            // exports from its page.
+            NavItem::make(__('roster::roster.transfers'))
+                ->route('atrium.roster.transfers.index')
+                ->group(__('roster::roster.label'))
+                ->sort(48)
+                ->authorize(fn (Request $request): bool => collect(TransferType::cases())->contains(fn (TransferType $type): bool => $this->may($request, $type->permission()))),
+
+            NavItem::make(__('roster::roster.audit_log'))
+                ->route('atrium.roster.audit.index')
+                ->group(__('roster::roster.label'))
+                ->sort(50)
+                ->authorize(fn (Request $request): bool => $this->may($request, 'roster.audit.view')),
+        ];
+    }
+
+    public function routes(): void
+    {
+        Route::name('roster.')->group(function (): void {
+            Route::get('roster/users', [UserUiController::class, 'index'])->name('users.index');
+            Route::get('roster/users/create', [UserUiController::class, 'create'])->name('users.create');
+            Route::post('roster/users', [UserUiController::class, 'store'])->name('users.store');
+            Route::get('roster/users/{user}', [UserUiController::class, 'show'])->name('users.show');
+            Route::patch('roster/users/{user}', [UserUiController::class, 'update'])->name('users.update');
+            Route::delete('roster/users/{user}', [UserUiController::class, 'destroy'])->name('users.destroy');
+            Route::patch('roster/users/{user}/profile', [UserUiController::class, 'profile'])->name('users.profile');
+            Route::post('roster/users/{user}/suspend', [UserUiController::class, 'suspend'])->name('users.suspend');
+            Route::post('roster/users/{user}/deactivate', [UserUiController::class, 'deactivate'])->name('users.deactivate');
+            Route::post('roster/users/{user}/reactivate', [UserUiController::class, 'reactivate'])->name('users.reactivate');
+            Route::put('roster/users/{user}/context', [UserUiController::class, 'switchContext'])->name('users.context');
+            Route::post('roster/users/{user}/domain-join', [UserUiController::class, 'domainJoin'])->name('users.domain-join');
+
+            Route::get('roster/organizations', [OrganizationUiController::class, 'index'])->name('organizations.index');
+            Route::get('roster/organizations/create', [OrganizationUiController::class, 'create'])->name('organizations.create');
+            Route::post('roster/organizations', [OrganizationUiController::class, 'store'])->name('organizations.store');
+            Route::get('roster/organizations/{organization}', [OrganizationUiController::class, 'show'])->name('organizations.show');
+            Route::patch('roster/organizations/{organization}', [OrganizationUiController::class, 'update'])->name('organizations.update');
+            Route::delete('roster/organizations/{organization}', [OrganizationUiController::class, 'destroy'])->name('organizations.destroy');
+            Route::post('roster/organizations/{organization}/transfer', [OrganizationUiController::class, 'transfer'])->name('organizations.transfer');
+            Route::post('roster/organizations/{organization}/members', [OrganizationUiController::class, 'addMember'])->name('organizations.members.store');
+            Route::delete('roster/organizations/{organization}/members/{user}', [OrganizationUiController::class, 'removeMember'])->name('organizations.members.destroy');
+
+            Route::post('roster/organizations/{organization}/teams', [TeamUiController::class, 'store'])->name('teams.store');
+            Route::get('roster/organizations/{organization}/teams/{team}', [TeamUiController::class, 'show'])->name('teams.show');
+            Route::patch('roster/organizations/{organization}/teams/{team}', [TeamUiController::class, 'update'])->name('teams.update');
+            Route::delete('roster/organizations/{organization}/teams/{team}', [TeamUiController::class, 'destroy'])->name('teams.destroy');
+            Route::post('roster/organizations/{organization}/teams/{team}/members', [TeamUiController::class, 'addMember'])->name('teams.members.store');
+            Route::delete('roster/organizations/{organization}/teams/{team}/members/{user}', [TeamUiController::class, 'removeMember'])->name('teams.members.destroy');
+
+            Route::post('roster/organizations/{organization}/invitations', [InvitationUiController::class, 'store'])->name('invitations.store');
+            Route::delete('roster/organizations/{organization}/invitations/{invitation}', [InvitationUiController::class, 'revoke'])->name('invitations.revoke');
+
+            Route::get('roster/roles', [RoleUiController::class, 'index'])->name('roles.index');
+            Route::post('roster/roles', [RoleUiController::class, 'store'])->name('roles.store');
+            Route::get('roster/roles/{role}', [RoleUiController::class, 'show'])->name('roles.show');
+            Route::patch('roster/roles/{role}', [RoleUiController::class, 'update'])->name('roles.update');
+            Route::delete('roster/roles/{role}', [RoleUiController::class, 'destroy'])->name('roles.destroy');
+            Route::post('roster/users/{user}/roles', [RoleUiController::class, 'assign'])->name('users.roles.store');
+            Route::delete('roster/users/{user}/roles/{assignment}', [RoleUiController::class, 'revoke'])->name('users.roles.destroy');
+
+            Route::get('roster/permissions', [PermissionUiController::class, 'index'])->name('permissions.index');
+            Route::post('roster/permissions', [PermissionUiController::class, 'store'])->name('permissions.store');
+            Route::patch('roster/permissions/{permission}', [PermissionUiController::class, 'update'])->name('permissions.update');
+            Route::delete('roster/permissions/{permission}', [PermissionUiController::class, 'destroy'])->name('permissions.destroy');
+
+            Route::post('roster/organizations/{organization}/sso', [SsoUiController::class, 'store'])->name('sso.store');
+            Route::get('roster/sso/{connection}', [SsoUiController::class, 'show'])->name('sso.show');
+            Route::patch('roster/sso/{connection}', [SsoUiController::class, 'update'])->name('sso.update');
+            Route::delete('roster/sso/{connection}', [SsoUiController::class, 'destroy'])->name('sso.destroy');
+            Route::delete('roster/sso-identities/{identity}', [SsoUiController::class, 'unlink'])->name('sso-identities.destroy');
+
+            Route::post('roster/organizations/{organization}/scim-tokens', [ScimUiController::class, 'store'])->name('scim-tokens.store');
+            Route::delete('roster/scim-tokens/{token}', [ScimUiController::class, 'revoke'])->name('scim-tokens.revoke');
+
+            Route::post('roster/users/{user}/impersonate', [ImpersonationUiController::class, 'start'])->name('users.impersonate');
+            Route::get('roster/impersonations', [ImpersonationUiController::class, 'index'])->name('impersonations.index');
+            Route::delete('roster/impersonations/{impersonation}', [ImpersonationUiController::class, 'stop'])->name('impersonations.stop');
+
+            Route::get('roster/transfers', [TransferUiController::class, 'index'])->name('transfers.index');
+            Route::post('roster/imports', [TransferUiController::class, 'import'])->name('transfers.import');
+            Route::post('roster/exports', [TransferUiController::class, 'export'])->name('transfers.export');
+            Route::get('roster/transfers/{transfer}', [TransferUiController::class, 'show'])->name('transfers.show');
+            Route::post('roster/transfers/{transfer}/confirm', [TransferUiController::class, 'confirm'])->name('transfers.confirm');
+            Route::delete('roster/transfers/{transfer}', [TransferUiController::class, 'cancel'])->name('transfers.cancel');
+            Route::get('roster/transfers/{transfer}/download', [TransferUiController::class, 'download'])->name('transfers.download');
+
+            Route::get('roster/audit', [AuditUiController::class, 'index'])->name('audit.index');
+            Route::post('roster/audit', [AuditUiController::class, 'store'])->name('audit.store');
+            Route::get('roster/audit/{entry}', [AuditUiController::class, 'show'])->whereNumber('entry')->name('audit.show');
+        });
+    }
+
+    public function widgets(): array
+    {
+        return [
+            WidgetDefinition::make('roster.user-status')
+                ->label(__('roster::roster.widget_user_status'))
+                ->description(__('roster::roster.widget_user_status_description'))
+                ->defaultSize(6, 2)
+                ->view('roster::ui.widgets.user-status')
+                ->authorize(fn (Request $request): bool => $this->may($request, 'roster.users.view'))
+                ->resolve(fn (): array => ['counts' => $this->statusCounts()]),
+
+            WidgetDefinition::make('roster.organizations')
+                ->label(__('roster::roster.widget_organizations'))
+                ->description(__('roster::roster.widget_organizations_description'))
+                ->defaultSize(6, 1)
+                ->view('roster::ui.widgets.organizations')
+                ->authorize(fn (Request $request): bool => $this->may($request, 'roster.organizations.view'))
+                ->resolve(fn (): array => [
+                    'organizations' => Organization::query()->count(),
+                    'teams' => Team::query()->count(),
+                    'pending' => Invitation::query()->pending()->count(),
+                ]),
+        ];
+    }
+
+    public function search(): ?SearchSource
+    {
+        return SearchSource::make('roster')
+            ->label(__('roster::roster.users'))
+            ->authorize(fn (Request $request): bool => $this->may($request, 'roster.users.view') || $this->may($request, 'roster.organizations.view'))
+            ->using(function (string $query): array {
+                $users = app(Users::class);
+                $columns = array_filter([$users->column('name'), $users->column('email')]);
+
+                $people = $users->query()
+                    ->where(function (Builder $builder) use ($columns, $query): void {
+                        foreach ($columns as $column) {
+                            $builder->orWhere($column, 'like', '%'.$query.'%');
+                        }
+                    })
+                    ->limit(5)
+                    ->get()
+                    ->map(fn (Model $user): SearchResult => SearchResult::make(
+                        $users->name($user) ?? $users->email($user) ?? (string) $user->getRouteKey(),
+                        route('atrium.roster.users.show', $user->getRouteKey()),
+                    )->subtitle((string) $users->email($user))->group(__('roster::roster.users')));
+
+                $organizations = Organization::query()
+                    ->where(fn (Builder $builder): Builder => $builder
+                        ->where('name', 'like', '%'.$query.'%')
+                        ->orWhere('slug', 'like', '%'.$query.'%'))
+                    ->orderBy('name')
+                    ->limit(5)
+                    ->get()
+                    ->map(fn (Organization $organization): SearchResult => SearchResult::make(
+                        $organization->name,
+                        route('atrium.roster.organizations.show', $organization),
+                    )->subtitle($organization->slug)->group(__('roster::roster.organizations')));
+
+                return $people->concat($organizations)->all();
+            });
+    }
+
+    /**
+     * Whether the signed-in user holds a global Roster permission.
+     */
+    private function may(Request $request, string $permission): bool
+    {
+        $user = $request->user();
+
+        return app(Authorizer::class)->check($user instanceof Model ? $user : null, $permission);
+    }
+
+    /**
+     * Users per status. Users without a profile row count as active.
+     *
+     * @return array<string, int>
+     */
+    private function statusCounts(): array
+    {
+        $total = app(Users::class)->query()->count();
+
+        $counts = Profile::query()
+            ->where('status', '!=', UserStatus::Active)
+            ->selectRaw('status, count(*) as aggregate')
+            ->groupBy('status')
+            ->pluck('aggregate', 'status')
+            ->map(fn (mixed $count): int => is_numeric($count) ? (int) $count : 0)
+            ->all();
+
+        $suspended = $counts[UserStatus::Suspended->value] ?? 0;
+        $deactivated = $counts[UserStatus::Deactivated->value] ?? 0;
+
+        return [
+            UserStatus::Active->value => max(0, $total - $suspended - $deactivated),
+            UserStatus::Suspended->value => $suspended,
+            UserStatus::Deactivated->value => $deactivated,
+        ];
+    }
+}

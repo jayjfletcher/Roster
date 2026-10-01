@@ -1,0 +1,358 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Users
+    |--------------------------------------------------------------------------
+    |
+    | Roster manages the host application's users rather than owning them.
+    |
+    | model:    The Eloquent user model. Three modes are supported:
+    |           - your own model using the JayI\Roster\Concerns\HasRoster trait
+    |           - your own model without the trait (Roster registers the
+    |             `rosterProfile` relation on it dynamically)
+    |           - JayI\Roster\Models\User, for apps without a users table of
+    |             their own; publish its migration with the
+    |             `roster-users-migration` tag
+    | key_type: The user model's primary key type - `int`, `ulid` or `uuid`.
+    |           It decides the `user_id` column on roster_profiles, so set it
+    |           before running the migrations.
+    | columns:  Where the user's name, email and password live on the model,
+    |           for schemas that use different column names. Set `name` to
+    |           null if the users table has no name column.
+    |
+    */
+
+    'users' => [
+        'model' => 'App\\Models\\User',
+        'key_type' => 'int',
+        'columns' => [
+            'name' => 'name',
+            'email' => 'email',
+            'password' => 'password',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Authorization
+    |--------------------------------------------------------------------------
+    |
+    | authorization: When true (the default), every Roster API route, MCP
+    |                tool and Atrium screen requires a signed-in user holding
+    |                the Action's permission. SECURITY: setting it to false
+    |                makes the route middleware the only check - anyone who
+    |                can reach the API could then manage every user.
+    | super_admins:  Emails always treated as super-admins (every permission
+    |                passes). Honoured only once the email is verified, and
+    |                only on user models implementing MustVerifyEmail; prefer
+    |                `php artisan roster:grant-super-admin {email}`.
+    | roles.default_member:
+    |                Slug of the organization role every new member gets.
+    |                Null to give new members no role.
+    |
+    */
+
+    'authorization' => true,
+
+    'super_admins' => [],
+
+    'roles' => [
+        'default_member' => 'member',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit Log
+    |--------------------------------------------------------------------------
+    |
+    | enabled:        Record every Roster change - who did what, to whom, in
+    |                 which organization, through which surface, with the
+    |                 before and after values.
+    | retention_days: `php artisan roster:prune-audit` deletes older entries;
+    |                 schedule it. Null keeps entries forever.
+    | redact:         Extra field names never written to the log. Passwords,
+    |                 remember tokens and invitation tokens are always
+    |                 redacted.
+    |
+    | The log is append-only and hash-chained: `php artisan roster:verify-audit`
+    | reports the first entry that was altered after it was written.
+    |
+    */
+
+    'audit' => [
+        'enabled' => true,
+        'retention_days' => 365,
+        'redact' => [],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Impersonation
+    |--------------------------------------------------------------------------
+    |
+    | Holders of `roster.users.impersonate` can act as another user. Starting
+    | issues a one-time link that only works in a browser already signed in
+    | as the impersonator; it swaps the web session to the target user.
+    |
+    | ttl_minutes:      Impersonation ends on its own after this long.
+    | link_minutes:     How long the one-time link stays valid.
+    | blocked:          Permissions (and app abilities) refused while
+    |                   impersonating, even to super-admins. `*` matches any
+    |                   suffix, e.g. 'billing.*'. SECURITY: keep account- and
+    |                   access-changing abilities here.
+    | redirect:         Where entering impersonation lands.
+    | return_to:        Where "return to my account" lands; null for the
+    |                   user's Atrium page.
+    | middleware_group: The route middleware group Roster adds its
+    |                   `roster.impersonation` middleware to (which ends
+    |                   expired or revoked sessions). Null to add it yourself.
+    |
+    */
+
+    'impersonation' => [
+        'ttl_minutes' => 30,
+        'link_minutes' => 5,
+        'blocked' => [
+            'roster.users.impersonate',
+            'roster.users.delete',
+            'roster.roles.manage',
+            'roster.roles.assign',
+            'roster.audit.record',
+        ],
+        'redirect' => '/',
+        'return_to' => null,
+        'middleware_group' => 'web',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Single Sign-On
+    |--------------------------------------------------------------------------
+    |
+    | Organizations can sign their people in through their own identity
+    | provider (OIDC, SAML or Microsoft Entra ID), configured per
+    | organization in Atrium or via the API. Requires the optional package
+    | laravel/socialite plus, per protocol, firebase/php-jwt (OIDC),
+    | socialiteproviders/saml2 (SAML) or socialiteproviders/microsoft-azure
+    | (Entra ID).
+    |
+    | redirect:                Where a successful sign-in lands.
+    | discovery_cache_seconds: How long OIDC discovery documents and signing
+    |                          keys are cached.
+    | prefix / middleware:     Where the sign-in routes live.
+    |
+    | SECURITY: serve the callback over HTTPS. An identity provider is only
+    | trusted for its organization's own domains: new accounts and automatic
+    | linking happen only for those emails.
+    |
+    */
+
+    'sso' => [
+        'redirect' => '/',
+        'discovery_cache_seconds' => 3600,
+        'prefix' => 'roster/sso',
+        'middleware' => ['web'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | SCIM Provisioning
+    |--------------------------------------------------------------------------
+    |
+    | A SCIM 2.0 server per organization at /{prefix}/{organization}, so
+    | identity providers (Okta, Microsoft Entra ID, ...) can create, update
+    | and deprovision its members (Users) and teams (Groups).
+    |
+    | Each request needs one of the organization's SCIM tokens (issued in
+    | Atrium or via the API, shown once, revocable). SECURITY: a token can
+    | change the organization's membership; treat it like a password. It
+    | only ever reaches its own organization, and only claims existing
+    | accounts on the organization's own domains.
+    |
+    */
+
+    'scim' => [
+        'enabled' => true,
+        'prefix' => 'scim/v2',
+        'middleware' => ['api', 'throttle:roster'],
+        'default_count' => 100,
+        'max_count' => 500,
+        'bulk' => [
+            'max_operations' => 100,
+            'max_payload_bytes' => 1048576,
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | CSV Import and Export
+    |--------------------------------------------------------------------------
+    |
+    | Bulk imports (members, users, teams) and exports (members, users, audit
+    | log), run as Impex flows. Requires the optional package jayi/impex with
+    | its migrations published, a queue worker and the scheduler.
+    |
+    | disk:                 Where uploads and exports are kept. SECURITY: use
+    |                       a private disk; files hold personal data and are
+    |                       only ever served through Roster's authorized route.
+    | max_bytes / max_rows: Limits on an uploaded CSV.
+    | confirm_within_hours: An import not confirmed in time is cancelled.
+    | retention_days:       `php artisan roster:prune-transfers` deletes files
+    |                       older than this; schedule it.
+    | chunk:                Rows applied per batch chunk.
+    |
+    */
+
+    'transfers' => [
+        'disk' => 'local',
+        'max_bytes' => 5242880,
+        'max_rows' => 10000,
+        'confirm_within_hours' => 24,
+        'retention_days' => 7,
+        'chunk' => 200,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Organizations
+    |--------------------------------------------------------------------------
+    |
+    | personal: When true, every user created through Roster gets a personal
+    |           organization they own. It is deleted with them and cannot be
+    |           deleted on its own.
+    |
+    | Domain auto-join is configured per organization (its `auto_join` flag
+    | and domain list). It only ever fires for users with a verified email,
+    | so registering an address on someone else's domain is not enough.
+    |
+    */
+
+    'organizations' => [
+        'personal' => false,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Invitations
+    |--------------------------------------------------------------------------
+    |
+    | expires_after_days: How long an invitation link stays valid.
+    | redirect:           Where a user lands after accepting or declining.
+    | accept_url:         Override the link in the invitation email, e.g. to a
+    |                     page of your own. `{token}` is replaced with the
+    |                     invitation token; your page should call
+    |                     AcceptInvitationAction. Null uses Roster's own page.
+    | middleware:         Wraps Roster's invitation page. It must authenticate
+    |                     the user (only a signed-in user whose email matches
+    |                     the invitation can accept it), so keep `auth` - or
+    |                     your guard's equivalent - in the list.
+    |
+    */
+
+    'invitations' => [
+        'expires_after_days' => 7,
+        'redirect' => '/',
+        'accept_url' => null,
+        'middleware' => ['web', 'auth'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | HTTP API Routes
+    |--------------------------------------------------------------------------
+    |
+    | The JSON API for every Roster Action. Disabled by default.
+    |
+    | SECURITY: each route checks the caller's Roster permissions (see
+    | Authorization above), but it needs an authenticated user to check: add
+    | authentication middleware (e.g. `auth:sanctum`) before enabling it.
+    |
+    */
+
+    'routes' => [
+        'enabled' => false,
+        'prefix' => 'roster',
+        'middleware' => ['api', 'throttle:roster'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Rate Limiting
+    |--------------------------------------------------------------------------
+    |
+    | The `throttle:roster` limiter in the default API and MCP middleware:
+    | requests per minute, per signed-in user (or per IP for guests). Null
+    | turns the limiter off; you can also drop it from the middleware lists.
+    |
+    */
+
+    'rate_limit' => [
+        'per_minute' => 120,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | MCP Server
+    |--------------------------------------------------------------------------
+    |
+    | Exposes every Roster Action as an MCP tool. Both transports are
+    | disabled by default.
+    |
+    | web:   An HTTP MCP endpoint at `route`, wrapped in `middleware`.
+    |        SECURITY: tools check the caller's Roster permissions, so add
+    |        authentication middleware (e.g. `auth:sanctum`) before enabling.
+    | local: A stdio server started with `php artisan mcp:start <handle>`.
+    |
+    */
+
+    'mcp' => [
+        'web' => [
+            'enabled' => false,
+            'route' => 'mcp/roster',
+            'middleware' => ['api', 'throttle:roster'],
+        ],
+        'local' => [
+            'enabled' => false,
+            'handle' => 'roster',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cortex
+    |--------------------------------------------------------------------------
+    |
+    | When jayi/cortex is installed, the MCP server is registered with it, so
+    | its instructions can be overridden, and the tools join its registry,
+    | so Cortex agents can manage users, organizations and roles. Agents act
+    | as the signed-in user: Roster's permission checks apply, and a run
+    | with no signed-in user is refused. Set `tools` to a list of tool
+    | names, such as ['list-users-tool', 'show-user-tool'], to offer only
+    | some of them.
+    |
+    */
+
+    'cortex' => [
+        'enabled' => true,
+        'server' => 'roster',
+        'tools' => null,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Middleware
+    |--------------------------------------------------------------------------
+    |
+    | Roster registers two middleware aliases:
+    |
+    | roster.active:       suspended and deactivated users get a 403.
+    | roster.organization: users who belong to no organization get a 403.
+    |
+    */
+
+];
