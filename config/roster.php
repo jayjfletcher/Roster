@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use JayI\Roster\Features\RosterSupportFeature;
 
 return [
 
@@ -384,6 +385,33 @@ return [
         'enabled' => true,
         'server' => 'roster',
         'tools' => null,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Atrium
+    |--------------------------------------------------------------------------
+    |
+    | features: Features that must all be on for Roster to appear in
+    |           Atrium at all - its navigation, widgets, search, and pages
+    |           (which answer 404 otherwise). Atrium asks its feature
+    |           resolver, so Pennant (through jayi/pennantplus) or any other
+    |           flag system decides.
+    |
+    |           RosterSupportFeature is on until its global value is set, and
+    |           only its global value counts. Swap in a subclass to change
+    |           that, or your own feature names. Feature classes that do not
+    |           exist (without jayi/pennantplus) are skipped, so nothing is
+    |           checked until Pennant is installed. Empty always shows Roster.
+    |
+    | Individual pages are still shown per Roster permission.
+    |
+    */
+
+    'atrium' => [
+        'features' => [
+            RosterSupportFeature::class,
+        ],
     ],
 
     /*

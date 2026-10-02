@@ -635,7 +635,30 @@ Roster registers itself with Atrium automatically. It adds:
 - **Imports & exports**: upload a CSV, review the preview, confirm or cancel, follow progress, and download exports, also reached from each organization and from Users
 - "Users by status" and "Organizations" widgets
 - navigation, widgets and search hidden from users without the matching permission
-- search over users and organizations Access follows Atrium's `viewAtrium` gate. To hide it, add `'roster'` to `atrium.disabled`.
+- search over users and organizations
+
+Access follows Atrium's `viewAtrium` gate. To hide it, add `'roster'` to `atrium.disabled`. Roster can also be switched by feature flag. `roster.atrium.features` lists the features that must all be on: while any is off, Roster's navigation, widgets and search disappear and its pages answer 404. Atrium asks its feature resolver, so Pennant (through `jayi/pennantplus`) or any other flag system decides.
+
+By default it lists `JayI\Roster\Features\RosterSupportFeature`, a PennantPlus feature that is on until its global value is set. Its `SupportFeature` suffix matches PennantPlus's `gate.global_only` pattern, so only the global value counts and who sees which page stays with Roster's permissions. Turn Roster off for everyone with `Feature::for(null)->deactivate(RosterSupportFeature::class)` or from the Feature flags page. Without `jayi/pennantplus` the class is skipped and nothing is checked.
+
+To change the default, point the config at a subclass:
+
+```php
+use JayI\Roster\Features\RosterSupportFeature;
+
+class RosterFeature extends RosterSupportFeature
+{
+    protected function default(): bool
+    {
+        return false; // off until switched on
+    }
+}
+
+// config/roster.php
+'atrium' => ['features' => [App\Features\RosterFeature::class]],
+```
+
+A class name that no longer ends in `SupportFeature` also follows per-user values.
 
 ## Trying it locally
 

@@ -4,6 +4,8 @@
 
 ### Added
 
+- `roster.atrium.features`: feature flags that switch Roster in Atrium on and off as a whole, through Atrium's feature resolver. Defaults to `RosterSupportFeature`, an overridable PennantPlus feature that is on until its global value is set; skipped without jayi/pennantplus.
+
 - Users + profiles: user CRUD on the host's own user model (trait, trait-less, or the bundled `JayI\Roster\Models\User`), with configurable key type and column mapping.
 - `roster_profiles` table with display name, avatar, timezone, locale, bio and meta.
 - Active / suspended / deactivated status with Suspend, Deactivate and Reactivate Actions, plus the `roster.active` middleware.

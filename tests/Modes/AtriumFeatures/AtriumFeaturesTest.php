@@ -1,0 +1,49 @@
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Http\Request;
+use JayI\Atrium\Facades\Atrium;
+use JayI\Atrium\Navigation\NavigationRegistry;
+use JayI\Atrium\Navigation\NavItem;
+use JayI\Atrium\Plugins\PluginRegistry;
+use JayI\Roster\Atrium\RosterPlugin;
+
+/**
+ * @return array<int, string>
+ */
+function rosterNavigation(): array
+{
+    return array_map(
+        fn (NavItem $item): string => $item->label,
+        app(NavigationRegistry::class)->items(Request::create('/atrium')),
+    );
+}
+
+it('names the configured features', function (): void {
+    expect(app(RosterPlugin::class)->features())->toBe(['roster']);
+});
+
+it('shows roster while its feature is on', function (): void {
+    Atrium::resolveFeaturesUsing(fn (string $feature): bool => true);
+
+    expect(app(PluginRegistry::class)->authorized(Request::create('/atrium')))->toHaveKey('roster')
+        ->and(rosterNavigation())->toContain('Users');
+
+    $this->actingAs(user())->get(route('atrium.roster.users.index'))->assertOk();
+});
+
+it('hides roster and its pages while its feature is off', function (): void {
+    Atrium::resolveFeaturesUsing(fn (string $feature): bool => $feature !== 'roster');
+
+    expect(app(PluginRegistry::class)->authorized(Request::create('/atrium')))->not->toHaveKey('roster')
+        ->and(rosterNavigation())->not->toContain('Users');
+
+    $this->actingAs(user())->get(route('atrium.roster.users.index'))->assertNotFound();
+});
+
+it('skips feature classes that are not installed', function (): void {
+    config()->set('roster.atrium.features', ['App\Features\Missing', 'roster']);
+
+    expect(app(RosterPlugin::class)->features())->toBe(['roster']);
+});

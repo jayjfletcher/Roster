@@ -26,6 +26,7 @@
         "firebase/php-jwt": "^7.2",
         "jayi/cortex": "dev-main",
         "jayi/impex": "dev-main",
+        "jayi/pennantplus": "dev-main",
         "larastan/larastan": "^3.12",
         "laravel/pao": "^1.0",
         "laravel/pint": "^1.29",
@@ -45,7 +46,8 @@
         "socialiteproviders/saml2": "Required for SAML SSO connections (^4.10).",
         "firebase/php-jwt": "Required for OIDC SSO connections, to verify id_tokens (^7.2).",
         "socialiteproviders/microsoft-azure": "Required for Microsoft Entra ID (Azure) SSO connections (^5.2).",
-        "jayi/impex": "Required for CSV import and export (dev-main)."
+        "jayi/impex": "Required for CSV import and export (dev-main).",
+        "jayi/pennantplus": "Switch Roster in Atrium on and off with the RosterSupportFeature Pennant feature (dev-main)."
     },
     "autoload": {
         "psr-4": {
@@ -141,6 +143,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/jayjfletcher/Impex.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/jayjfletcher/PennantPlus.git"
         }
     ]
 }

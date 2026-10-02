@@ -52,6 +52,23 @@ class RosterPlugin extends Plugin
         return __('roster::roster.label');
     }
 
+    /**
+     * Features from `roster.atrium.features` that switch Roster in Atrium on
+     * and off as a whole. A feature class that is not installed, such as
+     * RosterSupportFeature without jayi/pennantplus, is skipped.
+     *
+     * @return array<int, string>
+     */
+    public function features(): array
+    {
+        $features = config('roster.atrium.features', []);
+
+        return array_values(array_filter(
+            is_array($features) ? $features : [],
+            fn (mixed $feature): bool => is_string($feature) && (! str_contains($feature, '\\') || class_exists($feature)),
+        ));
+    }
+
     public function navigation(): array
     {
         return [
