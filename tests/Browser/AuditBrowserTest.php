@@ -10,8 +10,9 @@ it('shows a suspension in the audit log', function (): void {
     $ada = user(['name' => 'Ada Lovelace']);
 
     visit('/atrium/roster/users/'.$ada->getRouteKey())
-        ->type('#suspend-reason', 'Testing')
-        ->click('@suspend-user')
+        ->select('#new-status', 'suspended')
+        ->type('#status-reason', 'Testing')
+        ->click('@change-status')
         ->assertSee('User suspended.')
         ->navigate('/atrium/roster/audit')
         ->assertSee('user.suspended')

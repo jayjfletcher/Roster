@@ -132,6 +132,7 @@ abstract class TestCase extends Orchestra
     {
         return [
             default_migration_path(),
+            dirname(__DIR__).'/workbench/database/migrations',
             dirname(__DIR__).'/database/migrations',
             // Impex's migrations are publish-only; jayi/impex is a dev dependency.
             dirname(__DIR__).'/vendor/jayi/impex/database/migrations',

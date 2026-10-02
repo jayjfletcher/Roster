@@ -7,6 +7,8 @@ use JayI\Roster\Actions\AddMemberAction;
 use JayI\Roster\Actions\CreateOrganizationAction;
 use JayI\Roster\Actions\DeleteOrganizationAction;
 use JayI\Roster\Actions\ListOrganizationsAction;
+use JayI\Roster\Actions\PurgeOrganizationAction;
+use JayI\Roster\Actions\RestoreOrganizationAction;
 use JayI\Roster\Actions\ShowOrganizationAction;
 use JayI\Roster\Actions\TransferOwnershipAction;
 use JayI\Roster\Actions\UpdateOrganizationAction;
@@ -91,12 +93,20 @@ it('transfers ownership to a member only', function (): void {
     expect(app(TransferOwnershipAction::class)->execute($organization, ['user' => $member->getRouteKey()])->isOwnedBy($member))->toBeTrue();
 });
 
-it('deletes an organization with its memberships', function (): void {
+it('soft-deletes an organization, keeping everything until it is purged', function (): void {
     $organization = organization();
 
     app(DeleteOrganizationAction::class)->execute($organization);
 
-    expect(Organization::query()->count())->toBe(0)->and(Membership::query()->count())->toBe(0);
+    expect(Organization::query()->count())->toBe(0)->and(Membership::query()->count())->toBe(1);
+
+    app(RestoreOrganizationAction::class)->execute(Organization::withTrashed()->sole());
+    expect(Organization::query()->count())->toBe(1);
+
+    app(DeleteOrganizationAction::class)->execute(Organization::query()->sole());
+    app(PurgeOrganizationAction::class)->execute(Organization::withTrashed()->sole());
+
+    expect(Organization::withTrashed()->count())->toBe(0)->and(Membership::query()->count())->toBe(0);
 });
 
 it('refuses to delete or transfer a personal organization', function (string $action): void {

@@ -65,7 +65,8 @@ class Roster
         $profile = $this->users->profileIfExists($user);
         $stored = $profile?->current_organization_id;
 
-        $memberships = Membership::query()->where('user_id', $user->getKey());
+        // Memberships of deleted organizations don't count.
+        $memberships = Membership::query()->where('user_id', $user->getKey())->whereHas('organization');
 
         if ($stored !== null && (clone $memberships)->where('organization_id', $stored)->exists()) {
             return Organization::query()->find($stored);
@@ -159,6 +160,7 @@ class Roster
 
         $memberships = Membership::query()
             ->with('organization')
+            ->whereHas('organization')
             ->whereIn('user_id', $users->map(fn (Model $user): mixed => $user->getKey())->all())
             ->oldest()
             ->oldest('id')

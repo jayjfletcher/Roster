@@ -23,7 +23,8 @@ final class ListUsersTool extends Tool
     {
         return [
             'search' => $schema->string()->description('Matches name, email or display name.'),
-            'status' => $schema->string()->description('active, suspended or deactivated.'),
+            'status' => $schema->string()->description('active, pending, suspended or deactivated.'),
+            'trashed' => $schema->string()->description('only: deleted users only; with: deleted ones too. Needs a soft-deleting user model.'),
             'per_page' => $schema->integer()->description('Results per page, 1-100. Defaults to 15.')->min(1)->max(100),
             'page' => $schema->integer()->description('Page number, from 1.')->min(1),
         ];

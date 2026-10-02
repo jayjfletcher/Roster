@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JayI\Roster;
 
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\Access\Gate;
@@ -32,6 +33,7 @@ use JayI\Roster\Audit\Surface;
 use JayI\Roster\Console\Commands\GrantSuperAdminCommand;
 use JayI\Roster\Console\Commands\PruneAuditCommand;
 use JayI\Roster\Console\Commands\PruneTransfersCommand;
+use JayI\Roster\Console\Commands\PurgeDeletedCommand;
 use JayI\Roster\Console\Commands\SyncPermissionsCommand;
 use JayI\Roster\Console\Commands\VerifyAuditCommand;
 use JayI\Roster\Contracts\ActionFinishedEvent;
@@ -43,6 +45,7 @@ use JayI\Roster\Http\Middleware\EnsureUserIsActive;
 use JayI\Roster\Http\Middleware\SyncImpersonation;
 use JayI\Roster\Impersonation\ImpersonationContext;
 use JayI\Roster\Impersonation\Impersonator;
+use JayI\Roster\Listeners\ApplyRegistrationStatus;
 use JayI\Roster\Listeners\JoinOrganizationsOnVerified;
 use JayI\Roster\Mcp\RosterServer;
 use JayI\Roster\Models\Membership;
@@ -117,6 +120,7 @@ class RosterServiceProvider extends ServiceProvider
         }
 
         $this->app->make(Dispatcher::class)->listen(Verified::class, JoinOrganizationsOnVerified::class);
+        $this->app->make(Dispatcher::class)->listen(Registered::class, ApplyRegistrationStatus::class);
 
         $this->registerGate();
         $this->registerAuditLog();
@@ -172,6 +176,7 @@ class RosterServiceProvider extends ServiceProvider
             GrantSuperAdminCommand::class,
             PruneAuditCommand::class,
             PruneTransfersCommand::class,
+            PurgeDeletedCommand::class,
             SyncPermissionsCommand::class,
             VerifyAuditCommand::class,
         ]);

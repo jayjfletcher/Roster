@@ -8,6 +8,7 @@ use JayI\Roster\Cortex\CortexIntegration;
 use JayI\Roster\Mcp\Tools\AcceptInvitationTool;
 use JayI\Roster\Mcp\Tools\AddMemberTool;
 use JayI\Roster\Mcp\Tools\AddTeamMemberTool;
+use JayI\Roster\Mcp\Tools\ApproveUserTool;
 use JayI\Roster\Mcp\Tools\AssignRoleTool;
 use JayI\Roster\Mcp\Tools\CancelTransferTool;
 use JayI\Roster\Mcp\Tools\ConfirmImportTool;
@@ -44,10 +45,15 @@ use JayI\Roster\Mcp\Tools\ListTeamsTool;
 use JayI\Roster\Mcp\Tools\ListTransfersTool;
 use JayI\Roster\Mcp\Tools\ListUserPermissionsTool;
 use JayI\Roster\Mcp\Tools\ListUsersTool;
+use JayI\Roster\Mcp\Tools\PurgeOrganizationTool;
+use JayI\Roster\Mcp\Tools\PurgeUserTool;
 use JayI\Roster\Mcp\Tools\ReactivateUserTool;
 use JayI\Roster\Mcp\Tools\RecordAuditEventTool;
+use JayI\Roster\Mcp\Tools\RejectUserTool;
 use JayI\Roster\Mcp\Tools\RemoveMemberTool;
 use JayI\Roster\Mcp\Tools\RemoveTeamMemberTool;
+use JayI\Roster\Mcp\Tools\RestoreOrganizationTool;
+use JayI\Roster\Mcp\Tools\RestoreUserTool;
 use JayI\Roster\Mcp\Tools\RevokeInvitationTool;
 use JayI\Roster\Mcp\Tools\RevokeRoleTool;
 use JayI\Roster\Mcp\Tools\RevokeScimTokenTool;
@@ -122,6 +128,8 @@ final class RosterServer extends Server
         CreateUserTool::class,
         UpdateUserTool::class,
         DeleteUserTool::class,
+        RestoreUserTool::class,
+        PurgeUserTool::class,
 
         // Profile
         UpdateProfileTool::class,
@@ -130,6 +138,8 @@ final class RosterServer extends Server
         SuspendUserTool::class,
         DeactivateUserTool::class,
         ReactivateUserTool::class,
+        ApproveUserTool::class,
+        RejectUserTool::class,
 
         // Context
         SwitchContextTool::class,
@@ -141,6 +151,8 @@ final class RosterServer extends Server
         CreateOrganizationTool::class,
         UpdateOrganizationTool::class,
         DeleteOrganizationTool::class,
+        RestoreOrganizationTool::class,
+        PurgeOrganizationTool::class,
         TransferOwnershipTool::class,
         SyncOrganizationTool::class,
         SyncOrganizationsTool::class,

@@ -11,6 +11,7 @@ use Illuminate\Validation\ValidationException;
 use JayI\Roster\Actions\Concerns\ManagesMemberships;
 use JayI\Roster\Actions\Concerns\OrganizationRules;
 use JayI\Roster\Enums\MembershipSource;
+use JayI\Roster\Enums\UserStatus;
 use JayI\Roster\Events\Action\OrganizationCreatedActionEvent;
 use JayI\Roster\Events\Action\OrganizationCreatingActionEvent;
 use JayI\Roster\Models\Organization;
@@ -73,6 +74,7 @@ final class CreateOrganizationAction
                 'owner_id' => $owner?->getKey(),
                 'personal' => $personal,
                 'auto_join' => (bool) ($data['auto_join'] ?? false),
+                'provisioned_status' => (string) ($data['provisioned_status'] ?? UserStatus::Active->value),
             ]);
 
             $this->syncDomains($organization, (array) ($data['domains'] ?? []));

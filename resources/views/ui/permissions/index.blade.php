@@ -22,7 +22,7 @@
                 <x-atrium::table.row>
                     <x-atrium::table.cell heading>{{ __('roster::roster.name') }}</x-atrium::table.cell>
                     <x-atrium::table.cell heading>{{ __('roster::roster.description') }}</x-atrium::table.cell>
-                    <x-atrium::table.cell heading></x-atrium::table.cell>
+                    <x-atrium::table.cell heading class="text-right">{{ __('roster::roster.actions') }}</x-atrium::table.cell>
                 </x-atrium::table.row>
             </x-slot:head>
 
@@ -35,21 +35,24 @@
                         @endif
                     </x-atrium::table.cell>
                     <x-atrium::table.cell>
-                        <form method="POST" action="{{ route('atrium.roster.permissions.update', $permission->name) }}" class="flex items-end gap-2">
-                            @csrf
-                            @method('PATCH')
-                            <x-atrium::form.input name="description" :id="'description-'.$permission->name" :value="$permission->description" wrapper="w-80" />
-                            <x-atrium::button type="submit" size="sm" variant="ghost">{{ __('roster::roster.save') }}</x-atrium::button>
-                        </form>
+                        {{-- Belongs to the Save form in the Actions column. --}}
+                        <x-atrium::form.input name="description" :id="'description-'.$permission->name" :form="'update-'.$permission->id" :value="$permission->description" wrapper="w-80" />
                     </x-atrium::table.cell>
                     <x-atrium::table.cell>
-                        @unless ($permission->system)
-                            <form method="POST" action="{{ route('atrium.roster.permissions.destroy', $permission->name) }}" class="flex justify-end">
+                        <div class="flex justify-end gap-2">
+                            <form method="POST" action="{{ route('atrium.roster.permissions.update', $permission->name) }}" id="update-{{ $permission->id }}">
                                 @csrf
-                                @method('DELETE')
-                                <x-atrium::button type="submit" size="sm" variant="danger">{{ __('roster::roster.delete') }}</x-atrium::button>
+                                @method('PATCH')
+                                <x-atrium::button type="submit" size="sm" variant="ghost">{{ __('roster::roster.save') }}</x-atrium::button>
                             </form>
-                        @endunless
+                            @unless ($permission->system)
+                                <form method="POST" action="{{ route('atrium.roster.permissions.destroy', $permission->name) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <x-atrium::button type="submit" size="sm" variant="danger">{{ __('roster::roster.delete') }}</x-atrium::button>
+                                </form>
+                            @endunless
+                        </div>
                     </x-atrium::table.cell>
                 </x-atrium::table.row>
             @endforeach

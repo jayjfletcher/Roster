@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -98,6 +99,15 @@ final class SsoConnection extends Model
 
         return str_contains($email, '@')
             && $this->organization()->first()?->domains()->where('domain', $domain)->exists() === true;
+    }
+
+    /**
+     * A deleted organization's connections can't be used or managed until
+     * it's restored.
+     */
+    protected static function booted(): void
+    {
+        self::addGlobalScope('live_organization', fn (Builder $query): Builder => $query->whereHas('organization'));
     }
 
     protected static function newFactory(): SsoConnectionFactory

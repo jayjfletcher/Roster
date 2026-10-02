@@ -8,6 +8,8 @@ use Illuminate\Validation\ValidationException;
 use JayI\Roster\Actions\CreateUserAction;
 use JayI\Roster\Actions\DeleteUserAction;
 use JayI\Roster\Actions\ListUsersAction;
+use JayI\Roster\Actions\PurgeUserAction;
+use JayI\Roster\Actions\RestoreUserAction;
 use JayI\Roster\Actions\ShowUserAction;
 use JayI\Roster\Actions\UpdateUserAction;
 use JayI\Roster\Contracts\ActionFinishedEvent;
@@ -81,13 +83,28 @@ it('shows a user with their profile loaded', function (): void {
     expect(app(ShowUserAction::class)->execute($user)->relationLoaded('rosterProfile'))->toBeTrue();
 });
 
-it('deletes a user and their profile', function (): void {
+it('soft-deletes a user, keeping their profile for a restore', function (): void {
     $user = user();
     $user->roster();
 
     app(DeleteUserAction::class)->execute($user);
 
     expect(User::query()->count())->toBe(0)
+        ->and(User::withTrashed()->count())->toBe(1)
+        ->and(Profile::query()->count())->toBe(1);
+
+    app(RestoreUserAction::class)->execute(User::withTrashed()->sole());
+    expect(User::query()->count())->toBe(1);
+});
+
+it('purges a deleted user and their profile', function (): void {
+    $user = user();
+    $user->roster();
+    app(DeleteUserAction::class)->execute($user);
+
+    app(PurgeUserAction::class)->execute(User::withTrashed()->sole());
+
+    expect(User::withTrashed()->count())->toBe(0)
         ->and(Profile::query()->count())->toBe(0);
 });
 

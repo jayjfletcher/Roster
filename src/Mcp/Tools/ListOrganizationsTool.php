@@ -23,6 +23,7 @@ final class ListOrganizationsTool extends Tool
     {
         return [
             'search' => $schema->string()->description('Matches name or slug.'),
+            'trashed' => $schema->string()->description('only: deleted organizations only; with: deleted ones too.'),
             'user' => $schema->string()->description('Only organizations this user id belongs to.'),
             'source' => $schema->string()->description('Only organizations linked to this external system.'),
             'external_id' => $schema->string()->description('Only organizations with this id in an external system.'),

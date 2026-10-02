@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            // Deleted users can be restored; see roster:purge-deleted.
+            $table->softDeletes();
         });
     }
 

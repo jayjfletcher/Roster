@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use JayI\Roster\Actions\Concerns\ProfileRules;
+use JayI\Roster\Enums\UserStatus;
 use JayI\Roster\Events\Action\UserCreatedActionEvent;
 use JayI\Roster\Events\Action\UserCreatingActionEvent;
 use JayI\Roster\Models\Profile;
+use JayI\Roster\Support\Approvals;
 use JayI\Roster\Support\Users;
 
 final class CreateUserAction
@@ -31,6 +33,8 @@ final class CreateUserAction
         $rules = [
             'email' => ['required', 'email', 'max:255', Rule::unique($users->table(), $email)],
             'password' => ['sometimes', 'nullable', 'string', 'min:8', 'max:255'],
+            // `pending` makes the account wait for an approver.
+            'status' => ['sometimes', Rule::in([UserStatus::Active->value, UserStatus::Pending->value])],
         ];
 
         if ($users->column('name') !== null) {
@@ -73,7 +77,8 @@ final class CreateUserAction
 
             $user->save();
 
-            $profile = Profile::query()->create(['user_id' => $user->getKey()] + self::profileAttributes($data));
+            $pending = ($data['status'] ?? null) === UserStatus::Pending->value;
+            $profile = Profile::query()->create(['user_id' => $user->getKey()] + self::profileAttributes($data) + ($pending ? ['status' => UserStatus::Pending, 'status_changed_at' => now()] : []));
 
             if (config('roster.organizations.personal') === true) {
                 $name = $this->users->name($user) ?? $this->users->email($user) ?? 'Personal';
@@ -87,6 +92,10 @@ final class CreateUserAction
         });
 
         UserCreatedActionEvent::dispatch($user);
+
+        if ($this->users->status($user) === UserStatus::Pending) {
+            app(Approvals::class)->pending($user);
+        }
 
         return $user;
     }

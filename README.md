@@ -99,6 +99,7 @@ app(SuspendUserAction::class)->execute($user, ['reason' => 'Chargeback'], actor:
 | `DeleteUserAction` | Deletes the user; the profile too, unless the model soft-deletes |
 | `UpdateProfileAction` | Profile fields; creates the profile if missing |
 | `SuspendUserAction` / `DeactivateUserAction` | Optional `reason` |
+| `ApproveUserAction` / `RejectUserAction` | Accept or turn down an account awaiting approval (see below) |
 | `ReactivateUserAction` | Back to active |
 
 Business-rule failures, such as suspending yourself or suspending a user who is already suspended, throw a field-keyed `ValidationException`. Each Action dispatches an event before and after it runs (`JayI\Roster\Events\Action\*`). They implement `ActionStartingEvent` / `ActionFinishedEvent`, so you can listen to every action at once.
@@ -468,13 +469,59 @@ $export = app(StartExportAction::class)->execute(['type' => 'export_members', 'o
 
 **Audit.** Every row is recorded as the person who confirmed, with surface `import` and `context.transfer` naming the import. Starting, confirming, cancelling and finishing each have their own entry.
 
+## Deleting and restoring
+
+Deleting a user or an organization is recoverable. It goes to **Deleted** (Atrium's lists have a Show: Current / Deleted filter), and can be restored with everything it had until it's deleted permanently.
+
+- **Users** need Laravel's `SoftDeletes` on the user model. Roster's bundled `JayI\Roster\Models\User` has it; add it to your own model and a `deleted_at` column (`$table->softDeletes()`):
+
+  ```php
+  use Illuminate\Database\Eloquent\SoftDeletes;
+
+  class User extends Authenticatable
+  {
+      use HasRoster, SoftDeletes;
+  }
+  ```
+
+  Laravel then hides deleted users everywhere, sign-in included. Their profile, memberships, team seats, roles and personal organization are kept for a restore. A model without the trait is deleted permanently, as before, and the warning says so.
+- **Organizations** always soft-delete. A deleted organization is switched off: its pages and API 404, its members lose access, and its SSO, SCIM and domain auto-join stop. **Its slug and domains stay reserved**, so a restore always works.
+- **Restore** with `RestoreUserAction` / `RestoreOrganizationAction`, `POST /roster/users/{user}/restore` / `POST /roster/organizations/{organization}/restore`, the MCP restore tools, or the Restore buttons in Atrium. It needs the same permission as deleting.
+- **Delete permanently** with `PurgeUserAction` / `PurgeOrganizationAction`, `DELETE …/purge`, the MCP purge tools, or the deleted record's Danger zone in Atrium. Only deleted records can be purged, and it needs `roster.users.purge` / `roster.organizations.purge`.
+- **Automatically:** schedule `php artisan roster:purge-deleted` to permanently delete records deleted more than `roster.deletes.retention_days` days ago. The default, `null`, keeps deleted records forever; `--days=N` overrides it for one run.
+
+## Approving new users
+
+New accounts can wait for an approver instead of becoming active straight away. They then have the status `pending` ("Awaiting approval"). Who starts pending depends on how the account was made:
+
+| Created by | Starting status |
+|---|---|
+| The app's own registration (Laravel's `Registered` event, which Breeze, Fortify and Jetstream fire) | `roster.users.registration_status`: `active` (default) or `pending` |
+| An admin: `CreateUserAction`, Atrium's create form, the API or MCP | Their choice, through the `status` input (`active` by default) |
+| An organization's SSO (just-in-time accounts) or SCIM | That organization's `provisioned_status` setting (`active` by default), on its Settings tab |
+
+CSV imports create active users.
+
+- **Approving and rejecting:**
+  - `ApproveUserAction` makes a pending account active.
+  - `RejectUserAction` deactivates it with an optional `reason`. The account is kept and can be reactivated later, and the email stays taken.
+  - Both need the global `roster.users.approve` permission. Organization admins don't get it, because accepting an account is a site decision.
+  - In Atrium, a pending user's page shows Approve and Reject buttons, and the Users list filters by "Awaiting approval".
+- **While pending:**
+  - `roster.active` answers 403 with "Your account is awaiting approval".
+  - SSO sign-in is refused with the same message. The account, its membership and its SSO link are still kept, so it's ready once approved.
+  - Reactivating a pending account is refused; approve it instead.
+- **Emails,** each switchable in `roster.users.approvals`:
+  - `notify_approvers` tells everyone with `roster.users.approve` (super-admins included) when someone is waiting.
+  - `notify_user` tells people when they're approved or rejected.
+
 ## Blocking inactive users
 
 ```php
 Route::middleware(['auth', 'roster.active'])->group(...);
 ```
 
-Suspended and deactivated users get a 403. A user with no profile row is active.
+Suspended and deactivated users get a 403, and so do users awaiting approval (with their own message). A user with no profile row is active.
 
 ## HTTP API and MCP
 
@@ -496,11 +543,17 @@ Suspended and deactivated users get a 403. A user with no profile row is active.
 | POST | `/roster/users/{user}/suspend` | `roster.users.suspend` |
 | POST | `/roster/users/{user}/deactivate` | `roster.users.deactivate` |
 | POST | `/roster/users/{user}/reactivate` | `roster.users.reactivate` |
+| POST | `/roster/users/{user}/approve` | `roster.users.approve` |
+| POST | `/roster/users/{user}/restore` | `roster.users.restore` |
+| DELETE | `/roster/users/{user}/purge` | `roster.users.purge` (deleted users only) |
+| POST | `/roster/users/{user}/reject` | `roster.users.reject` |
 | PUT | `/roster/users/{user}/context` | `roster.users.context.update` |
 | POST | `/roster/users/{user}/domain-join` | `roster.users.domain-join` |
 | GET, POST | `/roster/organizations` | `roster.organizations.index`, `.store` |
 | GET, PATCH, DELETE | `/roster/organizations/{organization}` | `roster.organizations.show`, `.update`, `.destroy` |
 | POST | `/roster/organizations/{organization}/transfer` | `roster.organizations.transfer` |
+| POST | `/roster/organizations/{organization}/restore` | `roster.organizations.restore` |
+| DELETE | `/roster/organizations/{organization}/purge` | `roster.organizations.purge` (deleted organizations only) |
 | PUT | `/roster/organizations/external/{source}/{externalId}` | `roster.organizations.sync` (upsert; 201 when created) |
 | POST | `/roster/organizations/sync` | `roster.organizations.sync-many` (`{records: [...]}`) |
 | PUT, DELETE | `/roster/organizations/{organization}/links/{source}` | `roster.organizations.links.update`, `.destroy` |
@@ -547,8 +600,8 @@ MCP tools (all behind Laravel MCP's tool search):
 
 | Area | Tools |
 |---|---|
-| Users | `list-users-tool`, `show-user-tool`, `create-user-tool`, `update-user-tool`, `delete-user-tool`, `update-profile-tool`, `suspend-user-tool`, `deactivate-user-tool`, `reactivate-user-tool`, `switch-context-tool`, `join-by-domain-tool` |
-| Organizations | `list-organizations-tool`, `show-organization-tool`, `create-organization-tool`, `update-organization-tool`, `delete-organization-tool`, `transfer-ownership-tool`, `list-members-tool`, `add-member-tool`, `remove-member-tool`, `sync-organization-tool`, `sync-organizations-tool`, `link-organization-tool`, `unlink-organization-tool` |
+| Users | `list-users-tool`, `show-user-tool`, `create-user-tool`, `update-user-tool`, `delete-user-tool`, `update-profile-tool`, `suspend-user-tool`, `deactivate-user-tool`, `reactivate-user-tool`, `approve-user-tool`, `reject-user-tool`, `restore-user-tool`, `purge-user-tool`, `switch-context-tool`, `join-by-domain-tool` |
+| Organizations | `list-organizations-tool`, `show-organization-tool`, `create-organization-tool`, `update-organization-tool`, `delete-organization-tool`, `restore-organization-tool`, `purge-organization-tool`, `transfer-ownership-tool`, `list-members-tool`, `add-member-tool`, `remove-member-tool`, `sync-organization-tool`, `sync-organizations-tool`, `link-organization-tool`, `unlink-organization-tool` |
 | Teams | `list-teams-tool`, `show-team-tool`, `create-team-tool`, `update-team-tool`, `delete-team-tool`, `add-team-member-tool`, `remove-team-member-tool` |
 | Invitations | `list-invitations-tool`, `create-invitation-tool`, `revoke-invitation-tool`, `accept-invitation-tool`, `decline-invitation-tool` |
 | Single sign-on | `list-sso-connections-tool`, `show-sso-connection-tool`, `create-sso-connection-tool`, `update-sso-connection-tool`, `delete-sso-connection-tool`, `list-sso-identities-tool`, `unlink-sso-identity-tool` |

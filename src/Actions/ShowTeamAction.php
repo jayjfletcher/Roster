@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Actions;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use JayI\Roster\Events\Action\TeamShowingActionEvent;
 use JayI\Roster\Events\Action\TeamShownActionEvent;
 use JayI\Roster\Models\Team;
@@ -22,7 +23,8 @@ final class ShowTeamAction
     {
         TeamShowingActionEvent::dispatch($team);
 
-        $team->load(['organization', 'memberships.user'])->loadCount('seats');
+        // Deleted users keep their seats for a restore, but aren't shown.
+        $team->load(['organization', 'memberships' => fn (BelongsToMany $query): BelongsToMany => $query->whereHas('user')->with('user')])->loadCount('seats');
 
         TeamShownActionEvent::dispatch($team);
 

@@ -49,9 +49,10 @@
                     <x-slot:head>
                         <x-atrium::table.row>
                             <x-atrium::table.cell heading>{{ __('roster::roster.member') }}</x-atrium::table.cell>
+                            <x-atrium::table.cell heading>{{ __('roster::roster.status') }}</x-atrium::table.cell>
                             <x-atrium::table.cell heading>{{ __('roster::roster.teams') }}</x-atrium::table.cell>
                             <x-atrium::table.cell heading>{{ __('roster::roster.source') }}</x-atrium::table.cell>
-                            <x-atrium::table.cell heading></x-atrium::table.cell>
+                            <x-atrium::table.cell heading class="text-right">{{ __('roster::roster.actions') }}</x-atrium::table.cell>
                         </x-atrium::table.row>
                     </x-slot:head>
 
@@ -66,11 +67,19 @@
                                     @endif
                                 @endif
                             </x-atrium::table.cell>
+                            <x-atrium::table.cell>
+                                @if ($member)
+                                    @include('roster::ui.users.partials.status-cell', ['user' => $member, 'status' => $directory->status($member)])
+                                @endif
+                            </x-atrium::table.cell>
                             <x-atrium::table.cell>{{ $membership->teams->pluck('name')->join(', ') ?: __('roster::roster.none') }}</x-atrium::table.cell>
                             <x-atrium::table.cell>{{ $membership->source->value }}</x-atrium::table.cell>
                             <x-atrium::table.cell>
-                                @if ($member && ! $organization->isOwnedBy($member))
-                                    <div class="flex justify-end gap-2">
+                                <div class="flex justify-end gap-2">
+                                    @if ($member)
+                                        @include('roster::ui.users.partials.activate', ['user' => $member, 'status' => $directory->status($member)])
+                                    @endif
+                                    @if ($member && ! $organization->isOwnedBy($member))
                                         @unless ($organization->personal)
                                             <form method="POST" action="{{ route('atrium.roster.organizations.transfer', $organization) }}">
                                                 @csrf
@@ -83,8 +92,8 @@
                                             @method('DELETE')
                                             <x-atrium::button type="submit" size="sm" variant="danger">{{ __('roster::roster.remove') }}</x-atrium::button>
                                         </form>
-                                    </div>
-                                @endif
+                                    @endif
+                                </div>
                             </x-atrium::table.cell>
                         </x-atrium::table.row>
                     @endforeach
@@ -155,7 +164,7 @@
                             <x-atrium::table.cell heading>{{ __('roster::roster.email') }}</x-atrium::table.cell>
                             <x-atrium::table.cell heading>{{ __('roster::roster.status') }}</x-atrium::table.cell>
                             <x-atrium::table.cell heading>{{ __('roster::roster.expires') }}</x-atrium::table.cell>
-                            <x-atrium::table.cell heading></x-atrium::table.cell>
+                            <x-atrium::table.cell heading class="text-right">{{ __('roster::roster.actions') }}</x-atrium::table.cell>
                         </x-atrium::table.row>
                     </x-slot:head>
 
@@ -248,7 +257,7 @@
                             <x-atrium::table.cell heading>{{ __('roster::roster.name') }}</x-atrium::table.cell>
                             <x-atrium::table.cell heading>{{ __('roster::roster.last_login') }}</x-atrium::table.cell>
                             <x-atrium::table.cell heading>{{ __('roster::roster.expires') }}</x-atrium::table.cell>
-                            <x-atrium::table.cell heading></x-atrium::table.cell>
+                            <x-atrium::table.cell heading class="text-right">{{ __('roster::roster.actions') }}</x-atrium::table.cell>
                         </x-atrium::table.row>
                     </x-slot:head>
                     @foreach ($scimTokens as $token)
@@ -336,6 +345,13 @@
                     <x-atrium::form.input name="slug" :label="__('roster::roster.slug')" :value="old('slug', $organization->slug)" required />
                     <x-atrium::form.textarea name="domains" :label="__('roster::roster.domains')" :value="old('domains', $organization->domains->pluck('domain')->join(PHP_EOL))" :hint="__('roster::roster.domains_hint')" rows="3" />
                     <x-atrium::form.checkbox name="auto_join" value="1" :checked="$organization->auto_join" :label="__('roster::roster.auto_join')" :hint="__('roster::roster.auto_join_hint')" />
+                    <x-atrium::form.select
+                        name="provisioned_status"
+                        :label="__('roster::roster.provisioned_status')"
+                        :hint="__('roster::roster.provisioned_status_hint')"
+                        :options="[\JayI\Roster\Enums\UserStatus::Active->value => \JayI\Roster\Enums\UserStatus::Active->label(), \JayI\Roster\Enums\UserStatus::Pending->value => \JayI\Roster\Enums\UserStatus::Pending->label()]"
+                        :selected="old('provisioned_status', $organization->provisioned_status)"
+                        wrapper="w-72" />
 
                     <div>
                         <x-atrium::button type="submit" data-testid="save-organization">{{ __('roster::roster.save') }}</x-atrium::button>
@@ -354,7 +370,7 @@
                                 <x-atrium::table.cell heading>{{ __('roster::roster.external_id') }}</x-atrium::table.cell>
                                 <x-atrium::table.cell heading>{{ __('roster::roster.account_number') }}</x-atrium::table.cell>
                                 <x-atrium::table.cell heading>{{ __('roster::roster.synced') }}</x-atrium::table.cell>
-                                <x-atrium::table.cell heading></x-atrium::table.cell>
+                                <x-atrium::table.cell heading class="text-right">{{ __('roster::roster.actions') }}</x-atrium::table.cell>
                             </x-atrium::table.row>
                         </x-slot:head>
                         @foreach ($organization->links->sortBy('source') as $link)
@@ -387,11 +403,18 @@
             </x-atrium::card>
 
             @unless ($organization->personal)
-                <form method="POST" action="{{ route('atrium.roster.organizations.destroy', $organization) }}">
-                    @csrf
-                    @method('DELETE')
-                    <x-atrium::button type="submit" variant="danger" data-testid="delete-organization">{{ __('roster::roster.delete') }}</x-atrium::button>
-                </form>
+                <x-atrium::card :title="__('roster::roster.danger_zone')" data-testid="danger-zone">
+                    <x-atrium::alert variant="warning" :title="__('roster::roster.delete_organization_soft_title')">
+                        {{ __('roster::roster.delete_organization_soft_warning') }}
+                    </x-atrium::alert>
+
+                    <form method="POST" action="{{ route('atrium.roster.organizations.destroy', $organization) }}" class="mt-4 flex flex-wrap items-center gap-4">
+                        @csrf
+                        @method('DELETE')
+                        <x-atrium::form.checkbox name="confirm" value="1" id="confirm-delete-organization" :label="__('roster::roster.delete_organization_soft_confirm')" required />
+                        <x-atrium::button type="submit" variant="danger" data-testid="delete-organization">{{ __('roster::roster.delete_organization') }}</x-atrium::button>
+                    </form>
+                </x-atrium::card>
             @endunless
         @endif
     </div>

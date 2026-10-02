@@ -23,10 +23,10 @@ function toolArguments(): array
         ->reject(fn (string $tool): bool => in_array($tool, [AcceptInvitationTool::class, DeclineInvitationTool::class], true))
         ->mapWithKeys(fn (string $tool): array => [$tool => match (class_basename($tool)) {
             'ShowUserTool', 'UpdateUserTool', 'DeleteUserTool', 'UpdateProfileTool', 'SuspendUserTool', 'DeactivateUserTool',
-            'ReactivateUserTool', 'SwitchContextTool', 'JoinByDomainTool', 'ListRoleAssignmentsTool', 'AssignRoleTool',
+            'ReactivateUserTool', 'ApproveUserTool', 'RejectUserTool', 'RestoreUserTool', 'PurgeUserTool', 'SwitchContextTool', 'JoinByDomainTool', 'ListRoleAssignmentsTool', 'AssignRoleTool',
             'ListUserPermissionsTool' => $user,
             'RevokeRoleTool' => fn (array $w): array => $user($w) + ['assignment' => $w['assignment']->id],
-            'ShowOrganizationTool', 'UpdateOrganizationTool', 'DeleteOrganizationTool', 'TransferOwnershipTool', 'ListMembersTool',
+            'ShowOrganizationTool', 'UpdateOrganizationTool', 'DeleteOrganizationTool', 'RestoreOrganizationTool', 'PurgeOrganizationTool', 'TransferOwnershipTool', 'ListMembersTool',
             'AddMemberTool', 'ListTeamsTool', 'CreateTeamTool', 'ListInvitationsTool', 'CreateInvitationTool' => $org,
             'RemoveMemberTool' => fn (array $w): array => $org() + $user($w),
             'SyncOrganizationTool' => fn (): array => ['source' => 'erp', 'external_id' => 'C-2', 'name' => 'Initech'],

@@ -6,6 +6,7 @@ namespace JayI\Roster\Actions;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rule;
 use JayI\Roster\Events\Action\OrganizationsListedActionEvent;
 use JayI\Roster\Events\Action\OrganizationsListingActionEvent;
 use JayI\Roster\Models\Membership;
@@ -23,6 +24,8 @@ final class ListOrganizationsAction
     {
         return [
             'search' => ['sometimes', 'nullable', 'string', 'max:255'],
+            // `only`: deleted organizations only; `with`: all of them.
+            'trashed' => ['sometimes', 'nullable', Rule::in(['only', 'with'])],
             'user' => ['sometimes', 'nullable'],
             'source' => ['sometimes', 'nullable', 'string', 'max:64'],
             'external_id' => ['sometimes', 'nullable', 'string', 'max:191'],
@@ -40,7 +43,12 @@ final class ListOrganizationsAction
     {
         OrganizationsListingActionEvent::dispatch($filters);
 
-        $query = Organization::query()->with(['domains', 'links', 'owner'])->withCount(['memberships', 'teams']);
+        $query = match ($filters['trashed'] ?? null) {
+            'only' => Organization::onlyTrashed(),
+            'with' => Organization::withTrashed(),
+            default => Organization::query(),
+        };
+        $query->with(['domains', 'links', 'owner'])->withCount(['memberships', 'teams']);
 
         $search = $filters['search'] ?? null;
 

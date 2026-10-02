@@ -47,45 +47,53 @@
             </form>
         </x-atrium::card>
 
+        @if ($status === UserStatus::Pending)
+            <x-atrium::card :title="__('roster::roster.awaiting_approval')" class="lg:col-span-2" data-testid="approval-card">
+                <p class="mb-4 text-sm">{{ __('roster::roster.awaiting_approval_hint') }}</p>
+
+                <div class="flex flex-wrap items-start gap-3">
+                    <form method="POST" action="{{ route('atrium.roster.users.approve', $user->getRouteKey()) }}">
+                        @csrf
+                        <div class="roster-actions">
+                            <x-atrium::button type="submit" data-testid="approve-user">{{ __('roster::roster.approve') }}</x-atrium::button>
+                        </div>
+                    </form>
+
+                    <form method="POST" action="{{ route('atrium.roster.users.reject', $user->getRouteKey()) }}" class="flex items-start gap-2">
+                        @csrf
+                        <x-atrium::form.input name="reason" id="reject-reason" :label="__('roster::roster.reason')" wrapper="w-64" />
+                        <div class="roster-actions">
+                            <x-atrium::button type="submit" variant="danger" data-testid="reject-user">{{ __('roster::roster.reject') }}</x-atrium::button>
+                        </div>
+                    </form>
+                </div>
+            </x-atrium::card>
+        @endif
+
         <x-atrium::card :title="__('roster::roster.status')" class="lg:col-span-2">
             @if ($profile?->status_reason)
                 <p class="mb-4 text-sm">{{ __('roster::roster.reason') }}: {{ $profile->status_reason }}</p>
             @endif
 
-            <div class="flex flex-wrap items-end gap-3">
-                @if ($status !== UserStatus::Active)
-                    <form method="POST" action="{{ route('atrium.roster.users.reactivate', $user->getRouteKey()) }}">
-                        @csrf
-                        <x-atrium::button type="submit" data-testid="reactivate-user">{{ __('roster::roster.reactivate') }}</x-atrium::button>
-                    </form>
-                @endif
+            @php($choices = collect([UserStatus::Active, UserStatus::Suspended, UserStatus::Deactivated])
+                ->reject(fn ($choice) => $choice === $status || ($status === UserStatus::Pending && $choice === UserStatus::Active))
+                ->mapWithKeys(fn ($choice) => [$choice->value => $choice->label()]))
 
-                @if ($status !== UserStatus::Suspended)
-                    <form method="POST" action="{{ route('atrium.roster.users.suspend', $user->getRouteKey()) }}" class="flex items-start gap-2">
-                        @csrf
-                        <x-atrium::form.input name="reason" id="suspend-reason" :label="__('roster::roster.reason')" wrapper="w-64" />
-                        <div class="roster-actions">
-                            <x-atrium::button type="submit" variant="secondary" data-testid="suspend-user">{{ __('roster::roster.suspend') }}</x-atrium::button>
-                        </div>
-                    </form>
-                @endif
-
-                @if ($status !== UserStatus::Deactivated)
-                    <form method="POST" action="{{ route('atrium.roster.users.deactivate', $user->getRouteKey()) }}" class="flex items-start gap-2">
-                        @csrf
-                        <x-atrium::form.input name="reason" id="deactivate-reason" :label="__('roster::roster.reason')" wrapper="w-64" />
-                        <div class="roster-actions">
-                            <x-atrium::button type="submit" variant="secondary" data-testid="deactivate-user">{{ __('roster::roster.deactivate') }}</x-atrium::button>
-                        </div>
-                    </form>
-                @endif
-
-                <form method="POST" action="{{ route('atrium.roster.users.destroy', $user->getRouteKey()) }}" class="ms-auto">
-                    @csrf
-                    @method('DELETE')
-                    <x-atrium::button type="submit" variant="danger" data-testid="delete-user">{{ __('roster::roster.delete') }}</x-atrium::button>
-                </form>
-            </div>
+            {{-- One form: pick the new status, give a reason. Pending accounts are activated from the approval card. --}}
+            <form method="POST" action="{{ route('atrium.roster.users.status', $user->getRouteKey()) }}" class="flex flex-wrap items-start gap-3" data-testid="status-form">
+                @csrf
+                <x-atrium::form.select
+                    name="status"
+                    id="new-status"
+                    :label="__('roster::roster.change_status_to')"
+                    :options="$choices"
+                    wrapper="w-56"
+                    required />
+                <x-atrium::form.input name="reason" id="status-reason" :label="__('roster::roster.reason')" :hint="__('roster::roster.status_reason_hint')" wrapper="w-80" />
+                <div class="roster-actions">
+                    <x-atrium::button type="submit" variant="secondary" data-testid="change-status">{{ __('roster::roster.update_status') }}</x-atrium::button>
+                </div>
+            </form>
         </x-atrium::card>
 
         <x-atrium::card :title="__('roster::roster.memberships')" class="lg:col-span-2">
@@ -222,5 +230,24 @@
                 </ul>
             </x-atrium::card>
         @endif
+
+        <x-atrium::card :title="__('roster::roster.danger_zone')" class="lg:col-span-2" data-testid="danger-zone">
+            @if ($directory->softDeletes())
+                <x-atrium::alert variant="warning" :title="__('roster::roster.delete_user_soft_title')">
+                    {{ __('roster::roster.delete_user_soft_warning') }}
+                </x-atrium::alert>
+            @else
+                <x-atrium::alert variant="danger" :title="__('roster::roster.delete_user_warning_title')">
+                    {{ __('roster::roster.delete_user_warning') }}
+                </x-atrium::alert>
+            @endif
+
+            <form method="POST" action="{{ route('atrium.roster.users.destroy', $user->getRouteKey()) }}" class="mt-4 flex flex-wrap items-center gap-4">
+                @csrf
+                @method('DELETE')
+                <x-atrium::form.checkbox name="confirm" value="1" id="confirm-delete" :label="$directory->softDeletes() ? __('roster::roster.delete_user_soft_confirm') : __('roster::roster.delete_user_confirm')" required />
+                <x-atrium::button type="submit" variant="danger" data-testid="delete-user">{{ __('roster::roster.delete_user') }}</x-atrium::button>
+            </form>
+        </x-atrium::card>
     </div>
 </x-atrium::layout>

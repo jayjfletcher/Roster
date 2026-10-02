@@ -42,6 +42,16 @@
   - `import_organizations` CSV import type, and an `export_organizations` export in the same columns (optionally one source's records) that imports straight back.
   - New global `roster.organizations.sync` permission.
   - Available over HTTP, MCP and Atrium (Settings tab, list filters).
+- Soft deletes:
+  - deleted organizations, and users on models using `SoftDeletes` (the bundled model does), go to Deleted with everything kept;
+  - a deleted organization is switched off (pages, API, SSO, SCIM, auto-join), with its slug and domains reserved;
+  - restore and purge Actions, routes, MCP tools and Atrium screens, with new `roster.users.purge` / `roster.organizations.purge` permissions;
+  - `roster:purge-deleted` with `roster.deletes.retention_days` (null keeps forever).
+- User approval:
+  - a `pending` status with `ApproveUserAction` / `RejectUserAction` (`roster.users.approve`);
+  - the starting status is set by `roster.users.registration_status` for self-registration, by a `status` choice when admins create users, and by an organization's `provisioned_status` for its SSO and SCIM accounts;
+  - approval emails for approvers and users, each switchable;
+  - pending users are blocked by `roster.active` and SSO sign-in.
 - Performance:
   - Gate checks without a scope resolve the current organization/team once per request (20 checks: 125 → 9 queries).
   - API user lists and SCIM user pages cost a fixed number of queries whatever their length.

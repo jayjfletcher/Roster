@@ -63,6 +63,13 @@ final class SsoLoginAction
 
         try {
             [$user, $method] = $this->signIn($connection, $claims);
+
+            // After the transaction: an account waiting for approval (just
+            // created, or earlier) is kept, linked and a member - only the
+            // sign-in is refused.
+            if ($this->users->status($user) === UserStatus::Pending) {
+                $this->fail($connection, $claims, 'pending');
+            }
         } catch (SsoLoginRefused $refused) {
             // Recorded outside the transaction, so the rollback cannot erase it.
             SsoLoginFailedActionEvent::dispatch($connection, $claims->email, $refused->reason);
@@ -92,7 +99,7 @@ final class SsoLoginAction
                 [$user, $method] = $this->linkOrCreate($connection, $claims);
             }
 
-            if ($this->users->status($user) !== UserStatus::Active) {
+            if (! in_array($this->users->status($user), [UserStatus::Active, UserStatus::Pending], true)) {
                 $this->fail($connection, $claims, 'inactive');
             }
 
@@ -130,9 +137,14 @@ final class SsoLoginAction
             $this->fail($connection, $claims, 'no_account');
         }
 
+        /** @var Organization $organization */
+        $organization = $connection->organization;
+
         $user = app(CreateUserAction::class)->execute([
             'name' => $claims->name ?? Str::before($email, '@'),
             'email' => $email,
+            // The organization decides whether its new accounts need approval.
+            'status' => $organization->provisioned_status,
         ]);
 
         // The identity provider is authoritative for this domain, so the

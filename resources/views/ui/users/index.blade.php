@@ -26,6 +26,17 @@
                     :selected="$filters['status'] ?? null"
                     wrapper="w-48" />
 
+                @if ($softDeletes)
+                    <x-atrium::form.select
+                        name="trashed"
+                        :label="__('roster::roster.show')"
+                        :placeholder="__('roster::roster.show_current')"
+                        :options="['only' => __('roster::roster.show_deleted')]"
+                        :selected="$filters['trashed'] ?? null"
+                        wrapper="w-40"
+                        data-testid="show-filter" />
+                @endif
+
                 <div class="roster-actions">
                     <x-atrium::button type="submit" data-testid="filter-users">{{ __('roster::roster.filter') }}</x-atrium::button>
                     <x-atrium::button variant="ghost" :href="route('atrium.roster.users.index')">{{ __('roster::roster.clear') }}</x-atrium::button>
@@ -43,6 +54,7 @@
                         <x-atrium::table.cell heading>{{ __('roster::roster.email') }}</x-atrium::table.cell>
                         <x-atrium::table.cell heading>{{ __('roster::roster.status') }}</x-atrium::table.cell>
                         <x-atrium::table.cell heading>{{ __('roster::roster.created') }}</x-atrium::table.cell>
+                        <x-atrium::table.cell heading class="text-right">{{ __('roster::roster.actions') }}</x-atrium::table.cell>
                     </x-atrium::table.row>
                 </x-slot:head>
 
@@ -58,9 +70,25 @@
                         </x-atrium::table.cell>
                         <x-atrium::table.cell>{{ $directory->email($user) ?? __('roster::roster.none') }}</x-atrium::table.cell>
                         <x-atrium::table.cell>
-                            <x-atrium::badge :variant="Badges::forStatus($status)">{{ $status->label() }}</x-atrium::badge>
+                            @if ($directory->trashed($user))
+                                <x-atrium::badge>{{ __('roster::roster.deleted') }}</x-atrium::badge>
+                            @else
+                                @include('roster::ui.users.partials.status-cell', ['user' => $user, 'status' => $status])
+                            @endif
                         </x-atrium::table.cell>
                         <x-atrium::table.cell>{{ $user->created_at?->diffForHumans() ?? __('roster::roster.none') }}</x-atrium::table.cell>
+                        <x-atrium::table.cell>
+                            <div class="flex justify-end gap-2">
+                                @if ($directory->trashed($user))
+                                    <form method="POST" action="{{ route('atrium.roster.users.restore', $user->getRouteKey()) }}">
+                                        @csrf
+                                        <x-atrium::button type="submit" size="sm" data-testid="restore-user">{{ __('roster::roster.restore') }}</x-atrium::button>
+                                    </form>
+                                @else
+                                    @include('roster::ui.users.partials.activate', ['user' => $user, 'status' => $status])
+                                @endif
+                            </div>
+                        </x-atrium::table.cell>
                     </x-atrium::table.row>
                 @endforeach
             </x-atrium::table>

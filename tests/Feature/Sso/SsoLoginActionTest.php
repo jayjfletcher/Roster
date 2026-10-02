@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__.'/helpers.php';
 
 use Illuminate\Validation\ValidationException;
+use JayI\Roster\Actions\ApproveUserAction;
 use JayI\Roster\Actions\SsoLoginAction;
 use JayI\Roster\Actions\SuspendUserAction;
 use JayI\Roster\Models\AuditEntry;
@@ -92,4 +93,25 @@ it('creates no duplicate users across logins', function (): void {
     app(SsoLoginAction::class)->execute($connection, claims());
 
     expect(User::query()->where('email', 'ada@acme.test')->count())->toBe(1);
+});
+
+it('keeps a just-in-time account the organization wants approved, and refuses its sign-in until then', function (): void {
+    $connection = acmeWithSso();
+    $connection->organization->update(['provisioned_status' => 'pending']);
+
+    expect(fn () => app(SsoLoginAction::class)->execute($connection, claims()))
+        ->toThrow(ValidationException::class, 'awaiting approval');
+
+    $ada = User::query()->where('email', 'ada@acme.test')->sole();
+
+    expect($ada->rosterStatus()->value)->toBe('pending')
+        ->and($connection->organization->membershipFor($ada))->not->toBeNull()
+        ->and(SsoIdentity::query()->sole()->user_id)->toBe($ada->id)
+        ->and(AuditEntry::query()->where('action', 'sso_login.failed')->sole()->context['reason'])->toBe('pending');
+
+    app(ApproveUserAction::class)->execute($ada);
+
+    [$user, $method] = app(SsoLoginAction::class)->execute($connection, claims());
+
+    expect($method)->toBe('identity')->and($user->is($ada))->toBeTrue();
 });

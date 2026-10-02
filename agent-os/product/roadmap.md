@@ -16,6 +16,8 @@
 
 ## Phase 3: Integrations
 
+- **Soft deletes** — recoverable user and organization deletes, restore, delete permanently, optional purge after N days.
+- **User approval** — configurable starting status (self-registration, admin create, per-organization SSO/SCIM) with a pending status, approve/reject and notifications.
 - **Organization sync** — create and update organizations from external systems (ERP, CRM) with per-source external IDs and account numbers; upsert, bulk, and CSV.
 
 Specs and decision logs: `agent-os/specs/`.

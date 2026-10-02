@@ -8,6 +8,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use JayI\Roster\Actions\ApproveUserAction;
 use JayI\Roster\Actions\CreateUserAction;
 use JayI\Roster\Actions\DeactivateUserAction;
 use JayI\Roster\Actions\DeleteUserAction;
@@ -17,7 +19,10 @@ use JayI\Roster\Actions\ListRoleAssignmentsAction;
 use JayI\Roster\Actions\ListSsoIdentitiesAction;
 use JayI\Roster\Actions\ListUserPermissionsAction;
 use JayI\Roster\Actions\ListUsersAction;
+use JayI\Roster\Actions\PurgeUserAction;
 use JayI\Roster\Actions\ReactivateUserAction;
+use JayI\Roster\Actions\RejectUserAction;
+use JayI\Roster\Actions\RestoreUserAction;
 use JayI\Roster\Actions\ShowUserAction;
 use JayI\Roster\Actions\SuspendUserAction;
 use JayI\Roster\Actions\SwitchContextAction;
@@ -53,6 +58,7 @@ final class UserUiController
         return view($view, [
             'users' => app(ListUsersAction::class)->execute($filters)->withQueryString(),
             'filters' => $filters,
+            'softDeletes' => $this->users->softDeletes(),
             'statuses' => UserStatus::cases(),
             'directory' => $this->users,
         ]);
@@ -83,8 +89,15 @@ final class UserUiController
 
     public function show(string $user): View
     {
-        $target = $this->users->findOrFail($user);
+        $target = $this->users->findWithTrashedOrFail($user);
         $this->authorizeScreen('roster.users.view', null, $target);
+
+        if ($this->users->trashed($target)) {
+            /** @var view-string $deleted */
+            $deleted = 'roster::ui.users.deleted';
+
+            return view($deleted, ['user' => $target, 'directory' => $this->users]);
+        }
 
         $model = app(ShowUserAction::class)->execute($target);
 
@@ -96,7 +109,7 @@ final class UserUiController
             'profile' => $model->getRelation('rosterProfile'),
             'status' => $this->users->status($model),
             'directory' => $this->users,
-            'memberships' => Membership::query()->where('user_id', $model->getKey())->with(['organization', 'teams'])->get(),
+            'memberships' => Membership::query()->where('user_id', $model->getKey())->whereHas('organization')->with(['organization', 'teams'])->get(),
             'currentOrganization' => app(Roster::class)->organization($model),
             'currentTeam' => app(Roster::class)->team($model),
             'assignments' => app(ListRoleAssignmentsAction::class)->execute(['user' => $model, 'per_page' => 100]),
@@ -127,6 +140,45 @@ final class UserUiController
         app(UpdateProfileAction::class)->execute($model, $request->validate(UpdateProfileAction::rules()));
 
         return $this->backTo($model, 'roster::roster.profile_updated');
+    }
+
+    /**
+     * The user page's single status form: the new status picks the Action.
+     */
+    public function status(Request $request, string $user): RedirectResponse
+    {
+        $this->authorizeScreen('roster.users.manage-status');
+
+        $target = $request->validate(['status' => ['required', Rule::in([UserStatus::Active->value, UserStatus::Suspended->value, UserStatus::Deactivated->value])]])['status'];
+
+        return match (UserStatus::from($target)) {
+            UserStatus::Suspended => $this->suspend($request, $user),
+            UserStatus::Deactivated => $this->deactivate($request, $user),
+            default => $this->reactivate($request, $user),
+        };
+    }
+
+    public function approve(Request $request, string $user): RedirectResponse
+    {
+        $model = $this->users->findOrFail($user);
+        $this->authorizeScreen('roster.users.approve');
+
+        app(ApproveUserAction::class)->execute($model, $request->validate(ApproveUserAction::rules()), $this->actor($request));
+
+        // Back to wherever it was clicked: the user's page, the Users list
+        // or an organization's members.
+        return redirect()->back(fallback: route('atrium.roster.users.show', $model->getRouteKey()))
+            ->with('status', __('roster::roster.user_approved'));
+    }
+
+    public function reject(Request $request, string $user): RedirectResponse
+    {
+        $model = $this->users->findOrFail($user);
+        $this->authorizeScreen('roster.users.approve');
+
+        app(RejectUserAction::class)->execute($model, $request->validate(RejectUserAction::rules()), $this->actor($request));
+
+        return $this->backTo($model, 'roster::roster.user_rejected');
     }
 
     public function suspend(Request $request, string $user): RedirectResponse
@@ -181,14 +233,37 @@ final class UserUiController
             ->with('status', __('roster::roster.domain_joined', ['count' => $joined->count()]));
     }
 
+    public function restore(string $user): RedirectResponse
+    {
+        $this->authorizeScreen('roster.users.delete');
+
+        $model = app(RestoreUserAction::class)->execute($this->users->findWithTrashedOrFail($user));
+
+        return $this->backTo($model, 'roster::roster.user_restored');
+    }
+
+    public function purge(Request $request, string $user): RedirectResponse
+    {
+        $this->authorizeScreen('roster.users.purge');
+        $request->validate(['confirm' => ['accepted']]);
+
+        app(PurgeUserAction::class)->execute($this->users->findWithTrashedOrFail($user), $this->actor($request));
+
+        return redirect()
+            ->route('atrium.roster.users.index', ['trashed' => 'only'])
+            ->with('status', __('roster::roster.deleted_permanently'));
+    }
+
     public function destroy(Request $request, string $user): RedirectResponse
     {
         $this->authorizeScreen('roster.users.delete');
+        // The page asks for a ticked "I understand" before deleting.
+        $request->validate(['confirm' => ['accepted']]);
 
         app(DeleteUserAction::class)->execute($this->users->findOrFail($user), $this->actor($request));
 
         return redirect()
-            ->route('atrium.roster.users.index')
+            ->route('atrium.roster.users.index', $this->users->softDeletes() ? ['trashed' => 'only'] : [])
             ->with('status', __('roster::roster.user_deleted'));
     }
 

@@ -115,7 +115,16 @@ php artisan migrate
 ## Rules, References, and Templates
 
 - Config: `config/roster.php` (users, authorization, super_admins, roles, audit, impersonation, sso, scim, transfers, organizations, invitations, routes, mcp).
-- Statuses: `JayI\Roster\Enums\UserStatus` (`Active`, `Suspended`, `Deactivated`). A user with no profile row is `Active`.
+- Statuses: `JayI\Roster\Enums\UserStatus` (`Active`, `Pending`, `Suspended`, `Deactivated`). A user with no profile row is `Active`.
+- Deletes are soft:
+  - Add `SoftDeletes` (and a `deleted_at` column) to the user model so deleted users can be restored; without it, users are deleted permanently.
+  - Restore with `RestoreUserAction` / `RestoreOrganizationAction`.
+  - Delete for good with `PurgeUserAction` / `PurgeOrganizationAction`, or schedule `roster:purge-deleted` (`roster.deletes.retention_days`, null keeps them forever).
+- Manual acceptance:
+  - Set `roster.users.registration_status` to `pending` for self-registration.
+  - Pass `'status' => 'pending'` to `CreateUserAction`.
+  - Set an organization's `provisioned_status` for its SSO and SCIM accounts.
+  - Accept with `ApproveUserAction`, or turn down with `RejectUserAction` (which deactivates).
 - Events: `JayI\Roster\Events\Action\*ActionEvent`; listen to `JayI\Roster\Contracts\ActionStartingEvent` / `ActionFinishedEvent` to see every action.
 - HTTP routes are named `roster.users.*`, `roster.organizations.*`, `roster.invitations.*`; `{user}` is the user model's route key, organizations and teams use slugs.
 - Atrium: Users at `atrium.roster.users.index`, Organizations at `atrium.roster.organizations.index`. Access uses Atrium's `viewAtrium` gate. Hide it with `atrium.disabled => ['roster']`.

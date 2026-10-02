@@ -11,10 +11,14 @@ use JayI\Roster\Actions\CreateTeamAction;
 use JayI\Roster\Actions\CreateUserAction;
 use JayI\Roster\Actions\DeleteUserAction;
 use JayI\Roster\Actions\JoinOrganizationsByDomainAction;
+use JayI\Roster\Actions\ListMembersAction;
+use JayI\Roster\Actions\PurgeUserAction;
+use JayI\Roster\Actions\RestoreUserAction;
 use JayI\Roster\Actions\SwitchContextAction;
 use JayI\Roster\Enums\MembershipSource;
 use JayI\Roster\Models\Organization;
 use JayI\Roster\Roster;
+use Workbench\App\Models\User;
 
 it('falls back to the first organization joined', function (): void {
     $ada = user();
@@ -83,9 +87,15 @@ it('creates a personal organization when configured', function (): void {
         ->and($personal->isOwnedBy($ada))->toBeTrue()
         ->and($personal->membershipFor($ada)?->source)->toBe(MembershipSource::Personal);
 
+    // Deleting the user moves their personal organization to Deleted too;
+    // restoring brings both back.
     app(DeleteUserAction::class)->execute($ada);
 
-    expect(Organization::query()->count())->toBe(0);
+    expect(Organization::query()->count())->toBe(0)->and(Organization::onlyTrashed()->count())->toBe(1);
+
+    app(RestoreUserAction::class)->execute(User::withTrashed()->sole());
+
+    expect(Organization::query()->count())->toBe(1);
 });
 
 it('refuses to delete a user who owns a shared organization', function (): void {
@@ -95,12 +105,17 @@ it('refuses to delete a user who owns a shared organization', function (): void 
     app(DeleteUserAction::class)->execute($ada);
 })->throws(ValidationException::class);
 
-it('removes memberships when a user is deleted', function (): void {
+it('keeps a deleted user\'s memberships hidden, and removes them when purged', function (): void {
     $organization = organization();
     $ada = user();
     app(AddMemberAction::class)->execute($organization, ['user' => $ada->getRouteKey()]);
 
     app(DeleteUserAction::class)->execute($ada);
+
+    expect($organization->memberships()->count())->toBe(2)
+        ->and(app(ListMembersAction::class)->execute($organization)->total())->toBe(1);
+
+    app(PurgeUserAction::class)->execute(User::withTrashed()->whereKey($ada->getKey())->sole());
 
     expect($organization->memberships()->count())->toBe(1);
 });

@@ -40,7 +40,7 @@ final class ListRoleAssignmentsAction
     {
         RoleAssignmentsListingActionEvent::dispatch($filters);
 
-        $query = RoleAssignment::query()->with(['role', 'user', 'organization', 'team']);
+        $query = RoleAssignment::query()->with(['role', 'user', 'organization', 'team'])->whereHas('user');
 
         if (($filters['user'] ?? null) !== null) {
             $query->where('user_id', $this->users->resolve($filters['user'])->getKey());

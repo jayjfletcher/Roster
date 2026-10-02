@@ -95,6 +95,11 @@ it('deletes a user', function (): void {
     $user->roster();
 
     $this->deleteJson(route('roster.users.destroy', $user->getRouteKey()))->assertNoContent();
+    $this->getJson(route('roster.users.show', $user->getRouteKey()))->assertNotFound();
+
+    $this->postJson(route('roster.users.restore', $user->getRouteKey()))->assertOk();
+    $this->deleteJson(route('roster.users.destroy', $user->getRouteKey()))->assertNoContent();
+    $this->deleteJson(route('roster.users.purge', $user->getRouteKey()))->assertNoContent();
 
     expect(Profile::query()->count())->toBe(0);
 });

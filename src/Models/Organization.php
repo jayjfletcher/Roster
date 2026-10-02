@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use JayI\Roster\Database\Factories\OrganizationFactory;
 use JayI\Roster\Support\Users;
@@ -23,6 +24,8 @@ use JayI\Roster\Support\Users;
  * @property int|string|null $owner_id
  * @property bool $personal
  * @property bool $auto_join
+ * @property string $provisioned_status
+ * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -32,10 +35,11 @@ final class Organization extends Model
     use HasFactory;
 
     use HasUlids;
+    use SoftDeletes;
 
     protected $table = 'roster_organizations';
 
-    protected $fillable = ['name', 'slug', 'owner_id', 'personal', 'auto_join'];
+    protected $fillable = ['name', 'slug', 'owner_id', 'personal', 'auto_join', 'provisioned_status'];
 
     protected $attributes = [
         'personal' => false,

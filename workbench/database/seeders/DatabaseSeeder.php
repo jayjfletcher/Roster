@@ -13,6 +13,7 @@ use JayI\Roster\Actions\CreateOrganizationAction;
 use JayI\Roster\Actions\CreatePermissionAction;
 use JayI\Roster\Actions\CreateRoleAction;
 use JayI\Roster\Actions\CreateTeamAction;
+use JayI\Roster\Actions\CreateUserAction;
 use JayI\Roster\Actions\SuspendUserAction;
 use JayI\Roster\Models\Role;
 use Workbench\Database\Factories\UserFactory;
@@ -66,5 +67,9 @@ class DatabaseSeeder extends Seeder
         app(AssignRoleAction::class)->execute($grace, ['role' => $billing->id, 'organization' => $acme->slug]);
 
         app(SuspendUserAction::class)->execute($eve, ['reason' => 'Demo: a suspended account.']);
+
+        // Demo: an account awaiting approval, also on Acme's Members tab.
+        $pat = app(CreateUserAction::class)->execute(['name' => 'Pat Pending', 'email' => 'pat@acme.test', 'status' => 'pending']);
+        app(AddMemberAction::class)->execute($acme, ['user' => $pat->getRouteKey()]);
     }
 }

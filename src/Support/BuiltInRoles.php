@@ -25,13 +25,16 @@ final class BuiltInRoles
         'roster.users.view' => 'View users.',
         'roster.users.create' => 'Create users.',
         'roster.users.update' => 'Edit users, their profiles and context.',
-        'roster.users.delete' => 'Delete users.',
+        'roster.users.delete' => 'Delete and restore users.',
+        'roster.users.purge' => 'Permanently delete deleted users.',
         'roster.users.manage-status' => 'Suspend, deactivate and reactivate users.',
+        'roster.users.approve' => 'Approve or reject accounts awaiting approval.',
         'roster.users.impersonate' => 'Act as another user, temporarily and on the record.',
         'roster.organizations.view' => 'View organizations.',
         'roster.organizations.create' => 'Create organizations.',
         'roster.organizations.update' => "Edit an organization's settings.",
-        'roster.organizations.delete' => 'Delete organizations.',
+        'roster.organizations.delete' => 'Delete and restore organizations.',
+        'roster.organizations.purge' => 'Permanently delete deleted organizations.',
         'roster.organizations.transfer' => 'Transfer organization ownership.',
         'roster.organizations.sync' => 'Create and update organizations from external systems.',
         'roster.members.view' => 'View organization members.',
@@ -62,7 +65,7 @@ final class BuiltInRoles
             array_keys(self::PERMISSIONS),
             fn (string $permission): bool => str_starts_with($permission, 'roster.')
                 && ! str_starts_with($permission, 'roster.users.')
-                && ! in_array($permission, ['roster.organizations.create', 'roster.organizations.sync'], true),
+                && ! in_array($permission, ['roster.organizations.create', 'roster.organizations.sync', 'roster.organizations.purge'], true),
         ));
 
         return [

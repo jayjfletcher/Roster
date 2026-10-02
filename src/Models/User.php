@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -29,6 +30,7 @@ class User extends Authenticatable
 {
     use HasRoster;
     use Notifiable;
+    use SoftDeletes;
 
     protected $table = 'users';
 

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use JayI\Roster\Models\Membership;
 use JayI\Roster\Models\Team;
+use JayI\Roster\Support\Users;
 
 /**
  * @mixin Membership
@@ -26,6 +27,7 @@ final class MemberResource extends JsonResource
         return [
             'user' => $user instanceof Model ? (new UserSummaryResource($user))->resolve($request) : null,
             'owner' => $user instanceof Model && $organization !== null && $organization->isOwnedBy($user),
+            'status' => $user instanceof Model ? app(Users::class)->status($user)->value : null,
             'source' => $this->source->value,
             'teams' => $this->whenLoaded('teams', fn (): array => $this->teams
                 ->map(fn (Team $team): string => $team->slug)

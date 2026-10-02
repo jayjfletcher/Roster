@@ -16,6 +16,7 @@ use JayI\Roster\Http\Controllers\SsoController;
 use JayI\Roster\Http\Controllers\TeamController;
 use JayI\Roster\Http\Controllers\TeamMemberController;
 use JayI\Roster\Http\Controllers\TransferController;
+use JayI\Roster\Http\Controllers\TrashController;
 use JayI\Roster\Http\Controllers\UserContextController;
 use JayI\Roster\Http\Controllers\UserController;
 use JayI\Roster\Http\Controllers\UserProfileController;
@@ -40,12 +41,16 @@ Route::prefix((string) config('roster.routes.prefix', 'roster'))
         Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
         Route::patch('users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::post('users/{user}/restore', [TrashController::class, 'restoreUser'])->name('users.restore');
+        Route::delete('users/{user}/purge', [TrashController::class, 'purgeUser'])->name('users.purge');
 
         Route::patch('users/{user}/profile', [UserProfileController::class, 'update'])->name('users.profile.update');
 
         Route::post('users/{user}/suspend', [UserStatusController::class, 'suspend'])->name('users.suspend');
         Route::post('users/{user}/deactivate', [UserStatusController::class, 'deactivate'])->name('users.deactivate');
         Route::post('users/{user}/reactivate', [UserStatusController::class, 'reactivate'])->name('users.reactivate');
+        Route::post('users/{user}/approve', [UserStatusController::class, 'approve'])->name('users.approve');
+        Route::post('users/{user}/reject', [UserStatusController::class, 'reject'])->name('users.reject');
         Route::put('users/{user}/context', [UserContextController::class, 'update'])->name('users.context.update');
         Route::post('users/{user}/domain-join', [UserContextController::class, 'domainJoin'])->name('users.domain-join');
 
@@ -60,6 +65,8 @@ Route::prefix((string) config('roster.routes.prefix', 'roster'))
         Route::get('organizations/{organization}', [OrganizationController::class, 'show'])->name('organizations.show');
         Route::patch('organizations/{organization}', [OrganizationController::class, 'update'])->name('organizations.update');
         Route::delete('organizations/{organization}', [OrganizationController::class, 'destroy'])->name('organizations.destroy');
+        Route::post('organizations/{organization}/restore', [TrashController::class, 'restoreOrganization'])->name('organizations.restore');
+        Route::delete('organizations/{organization}/purge', [TrashController::class, 'purgeOrganization'])->name('organizations.purge');
         Route::post('organizations/{organization}/transfer', [OrganizationController::class, 'transfer'])->name('organizations.transfer');
 
         Route::get('organizations/{organization}/members', [MemberController::class, 'index'])->name('organizations.members.index');

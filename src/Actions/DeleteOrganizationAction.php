@@ -9,7 +9,6 @@ use Illuminate\Validation\ValidationException;
 use JayI\Roster\Events\Action\OrganizationDeletedActionEvent;
 use JayI\Roster\Events\Action\OrganizationDeletingActionEvent;
 use JayI\Roster\Models\Organization;
-use JayI\Roster\Models\Profile;
 
 final class DeleteOrganizationAction
 {
@@ -22,8 +21,10 @@ final class DeleteOrganizationAction
     }
 
     /**
-     * Delete an organization with its teams, memberships and invitations.
-     * A personal organization goes only with its owner.
+     * Delete an organization. It's a soft delete: everything it has is kept,
+     * its slug and domains stay reserved, and it can be restored until it's
+     * purged (PurgeOrganizationAction / roster:purge-deleted). A personal
+     * organization goes only with its owner.
      */
     public function execute(Organization $organization, bool $force = false): void
     {
@@ -35,15 +36,7 @@ final class DeleteOrganizationAction
 
         OrganizationDeletingActionEvent::dispatch($organization);
 
-        DB::transaction(function () use ($organization): void {
-            // Not every host database enforces the nullOnDelete foreign keys
-            // (SQLite without foreign_keys), so clear context explicitly.
-            Profile::query()
-                ->where('current_organization_id', $organization->getKey())
-                ->update(['current_organization_id' => null, 'current_team_id' => null]);
-
-            $organization->delete();
-        });
+        DB::transaction(fn () => $organization->delete());
 
         OrganizationDeletedActionEvent::dispatch($organization);
     }

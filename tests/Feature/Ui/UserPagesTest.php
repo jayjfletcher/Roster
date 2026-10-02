@@ -79,13 +79,41 @@ it('shows domain guards as form errors', function (): void {
         ->assertSessionHasErrors('user');
 });
 
-it('deletes a user from the dashboard', function (): void {
+it('deletes a user from the dashboard only once confirmed', function (): void {
     $user = user();
 
-    $this->delete(route('atrium.roster.users.destroy', $user->getRouteKey()))
-        ->assertRedirect(route('atrium.roster.users.index'));
+    $this->get(route('atrium.roster.users.show', $user->getRouteKey()))->assertOk()->assertSee('data-testid="danger-zone"', false)->assertSee('Moves the user to Deleted');
+
+    $this->delete(route('atrium.roster.users.destroy', $user->getRouteKey()))->assertSessionHasErrors('confirm');
+    expect(User::query()->whereKey($user->getKey())->exists())->toBeTrue();
+
+    $this->delete(route('atrium.roster.users.destroy', $user->getRouteKey()), ['confirm' => '1'])
+        ->assertRedirect(route('atrium.roster.users.index', ['trashed' => 'only']));
 
     expect(User::query()->whereKey($user->getKey())->exists())->toBeFalse();
+});
+
+it('changes status from one form, offering only the moves that apply', function (): void {
+    $user = user();
+    $key = $user->getRouteKey();
+
+    $this->get(route('atrium.roster.users.show', $key))
+        ->assertOk()
+        ->assertSee('Change status to')
+        ->assertSee('<option value="suspended"', false)
+        ->assertDontSee('<option value="active"', false);
+
+    $this->post(route('atrium.roster.users.status', $key), ['status' => 'suspended', 'reason' => 'Chargeback'])->assertRedirect();
+    expect($user->fresh()->rosterStatus())->toBe(UserStatus::Suspended)
+        ->and($user->fresh()->rosterProfile->status_reason)->toBe('Chargeback');
+
+    $this->post(route('atrium.roster.users.status', $key), ['status' => 'deactivated'])->assertRedirect();
+    expect($user->fresh()->rosterStatus())->toBe(UserStatus::Deactivated);
+
+    $this->post(route('atrium.roster.users.status', $key), ['status' => 'active'])->assertRedirect();
+    expect($user->fresh()->rosterStatus())->toBe(UserStatus::Active);
+
+    $this->post(route('atrium.roster.users.status', $key), ['status' => 'pending'])->assertSessionHasErrors('status');
 });
 
 it('renders the status widget', function (): void {

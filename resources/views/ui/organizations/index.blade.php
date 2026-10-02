@@ -18,6 +18,15 @@
                 <x-atrium::form.input name="source" :label="__('roster::roster.external_source')" :value="$filters['source'] ?? null" wrapper="w-40" />
                 <x-atrium::form.input name="external_id" :label="__('roster::roster.external_id')" :value="$filters['external_id'] ?? null" wrapper="w-48" />
                 <x-atrium::form.input name="account_number" :label="__('roster::roster.account_number')" :value="$filters['account_number'] ?? null" wrapper="w-48" />
+                <x-atrium::form.select
+                    name="trashed"
+                    :label="__('roster::roster.show')"
+                    :placeholder="__('roster::roster.show_current')"
+                    :options="['only' => __('roster::roster.show_deleted')]"
+                    :selected="$filters['trashed'] ?? null"
+                    wrapper="w-40"
+                    data-testid="show-filter" />
+
                 <div class="roster-actions">
                     <x-atrium::button type="submit">{{ __('roster::roster.filter') }}</x-atrium::button>
                     <x-atrium::button variant="ghost" :href="route('atrium.roster.organizations.index')">{{ __('roster::roster.clear') }}</x-atrium::button>
@@ -36,6 +45,7 @@
                         <x-atrium::table.cell heading>{{ __('roster::roster.members') }}</x-atrium::table.cell>
                         <x-atrium::table.cell heading>{{ __('roster::roster.teams') }}</x-atrium::table.cell>
                         <x-atrium::table.cell heading>{{ __('roster::roster.external') }}</x-atrium::table.cell>
+                        <x-atrium::table.cell heading class="text-right">{{ __('roster::roster.actions') }}</x-atrium::table.cell>
                     </x-atrium::table.row>
                 </x-slot:head>
 
@@ -46,6 +56,9 @@
                             @if ($organization->personal)
                                 <x-atrium::badge>{{ __('roster::roster.personal') }}</x-atrium::badge>
                             @endif
+                            @if ($organization->trashed())
+                                <x-atrium::badge>{{ __('roster::roster.deleted') }}</x-atrium::badge>
+                            @endif
                         </x-atrium::table.cell>
                         <x-atrium::table.cell>{{ $organization->slug }}</x-atrium::table.cell>
                         <x-atrium::table.cell>{{ $organization->memberships_count }}</x-atrium::table.cell>
@@ -54,6 +67,16 @@
                             @foreach ($organization->links->sortBy('source') as $link)
                                 <div><code>{{ $link->source }}</code> {{ $link->external_id }}@if ($link->account_number) · {{ $link->account_number }}@endif</div>
                             @endforeach
+                        </x-atrium::table.cell>
+                        <x-atrium::table.cell>
+                            <div class="flex justify-end gap-2">
+                                @if ($organization->trashed())
+                                    <form method="POST" action="{{ route('atrium.roster.organizations.restore', $organization) }}">
+                                        @csrf
+                                        <x-atrium::button type="submit" size="sm" data-testid="restore-organization">{{ __('roster::roster.restore') }}</x-atrium::button>
+                                    </form>
+                                @endif
+                            </div>
                         </x-atrium::table.cell>
                     </x-atrium::table.row>
                 @endforeach

@@ -15,7 +15,7 @@ final class Badges
     {
         return match ($status) {
             UserStatus::Active => 'success',
-            UserStatus::Suspended => 'warning',
+            UserStatus::Suspended, UserStatus::Pending => 'warning',
             UserStatus::Deactivated => 'neutral',
         };
     }

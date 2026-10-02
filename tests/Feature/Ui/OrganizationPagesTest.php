@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Notification;
 use JayI\Roster\Actions\AddMemberAction;
 use JayI\Roster\Actions\CreateTeamAction;
+use JayI\Roster\Actions\CreateUserAction;
 use JayI\Roster\Atrium\RosterPlugin;
 use JayI\Roster\Models\Invitation;
 use JayI\Roster\Models\Organization;
@@ -48,7 +49,15 @@ it('edits settings and deletes', function (): void {
 
     expect($organization->name)->toBe('Renamed')->and($organization->auto_join)->toBeTrue();
 
-    $this->delete(route('atrium.roster.organizations.destroy', $organization))->assertRedirect(route('atrium.roster.organizations.index'));
+    $this->get(route('atrium.roster.organizations.show', [$organization, 'tab' => 'settings']))
+        ->assertSee('data-testid="danger-zone"', false)
+        ->assertSee('Moves the organization to Deleted');
+
+    // Refused until "I understand" is ticked.
+    $this->delete(route('atrium.roster.organizations.destroy', $organization))->assertSessionHasErrors('confirm');
+    expect(Organization::query()->count())->toBe(1);
+
+    $this->delete(route('atrium.roster.organizations.destroy', $organization), ['confirm' => '1'])->assertRedirect(route('atrium.roster.organizations.index', ['trashed' => 'only']));
 
     expect(Organization::query()->count())->toBe(0);
 });
@@ -122,4 +131,18 @@ it('renders the organizations widget', function (): void {
         ->firstOrFail(fn ($definition): bool => $definition->key === 'roster.organizations');
 
     expect(view('roster::ui.widgets.organizations', $widget->resolveData())->render())->toContain('Organizations');
+});
+
+it('shows each member\'s status on the members tab', function (): void {
+    $this->actingAs(user());
+    $acme = organization(attributes: ['name' => 'Acme']);
+    $pending = app(CreateUserAction::class)->execute(['name' => 'Pat', 'email' => 'pat@example.com', 'status' => 'pending']);
+    app(AddMemberAction::class)->execute($acme, ['user' => $pending->getRouteKey()]);
+
+    $this->get(route('atrium.roster.organizations.show', 'acme'))
+        ->assertOk()
+        ->assertSee('Awaiting approval')
+        ->assertSee('data-testid="member-status"', false);
+
+    $this->getJson(route('roster.organizations.members.index', 'acme'))->assertOk()->assertJsonFragment(['status' => 'pending']);
 });

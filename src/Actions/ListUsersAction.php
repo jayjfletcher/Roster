@@ -27,6 +27,8 @@ final class ListUsersAction
         return [
             'search' => ['sometimes', 'nullable', 'string', 'max:255'],
             'status' => ['sometimes', 'nullable', Rule::enum(UserStatus::class)],
+            // `only`: deleted users only; `with`: everyone. Needs a soft-deleting user model.
+            'trashed' => ['sometimes', 'nullable', Rule::in(['only', 'with'])],
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
             'page' => ['sometimes', 'integer', 'min:1'],
         ];
@@ -40,7 +42,12 @@ final class ListUsersAction
     {
         UsersListingActionEvent::dispatch($filters);
 
-        $query = $this->users->query()->with('rosterProfile');
+        $query = match ($filters['trashed'] ?? null) {
+            'only' => $this->users->onlyTrashed(),
+            'with' => $this->users->withTrashed(),
+            default => $this->users->query(),
+        };
+        $query->with('rosterProfile');
         $key = $this->users->newModel()->getQualifiedKeyName();
 
         $search = $filters['search'] ?? null;

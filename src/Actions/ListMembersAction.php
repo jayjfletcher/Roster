@@ -35,7 +35,9 @@ final class ListMembersAction
         $page = is_numeric($filters['page'] ?? null) ? (int) $filters['page'] : null;
 
         $members = $organization->memberships()
-            ->with(['user', 'teams', 'organization'])
+            ->with(['user.rosterProfile', 'teams', 'organization'])
+            // Deleted users stay members (so a restore is complete) but aren't listed.
+            ->whereHas('user')
             ->oldest()
             ->oldest('id')
             ->paginate($perPage, ['*'], 'page', $page);

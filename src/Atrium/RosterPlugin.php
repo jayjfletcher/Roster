@@ -110,10 +110,15 @@ class RosterPlugin extends Plugin
             Route::get('roster/users/{user}', [UserUiController::class, 'show'])->name('users.show');
             Route::patch('roster/users/{user}', [UserUiController::class, 'update'])->name('users.update');
             Route::delete('roster/users/{user}', [UserUiController::class, 'destroy'])->name('users.destroy');
+            Route::post('roster/users/{user}/restore', [UserUiController::class, 'restore'])->name('users.restore');
+            Route::delete('roster/users/{user}/purge', [UserUiController::class, 'purge'])->name('users.purge');
             Route::patch('roster/users/{user}/profile', [UserUiController::class, 'profile'])->name('users.profile');
             Route::post('roster/users/{user}/suspend', [UserUiController::class, 'suspend'])->name('users.suspend');
             Route::post('roster/users/{user}/deactivate', [UserUiController::class, 'deactivate'])->name('users.deactivate');
             Route::post('roster/users/{user}/reactivate', [UserUiController::class, 'reactivate'])->name('users.reactivate');
+            Route::post('roster/users/{user}/status', [UserUiController::class, 'status'])->name('users.status');
+            Route::post('roster/users/{user}/approve', [UserUiController::class, 'approve'])->name('users.approve');
+            Route::post('roster/users/{user}/reject', [UserUiController::class, 'reject'])->name('users.reject');
             Route::put('roster/users/{user}/context', [UserUiController::class, 'switchContext'])->name('users.context');
             Route::post('roster/users/{user}/domain-join', [UserUiController::class, 'domainJoin'])->name('users.domain-join');
 
@@ -123,6 +128,8 @@ class RosterPlugin extends Plugin
             Route::get('roster/organizations/{organization}', [OrganizationUiController::class, 'show'])->name('organizations.show');
             Route::patch('roster/organizations/{organization}', [OrganizationUiController::class, 'update'])->name('organizations.update');
             Route::delete('roster/organizations/{organization}', [OrganizationUiController::class, 'destroy'])->name('organizations.destroy');
+            Route::post('roster/organizations/{organization}/restore', [OrganizationUiController::class, 'restore'])->name('organizations.restore');
+            Route::delete('roster/organizations/{organization}/purge', [OrganizationUiController::class, 'purge'])->name('organizations.purge');
             Route::post('roster/organizations/{organization}/transfer', [OrganizationUiController::class, 'transfer'])->name('organizations.transfer');
             Route::post('roster/organizations/{organization}/members', [OrganizationUiController::class, 'addMember'])->name('organizations.members.store');
             Route::post('roster/organizations/{organization}/links', [OrganizationUiController::class, 'link'])->name('organizations.links.store');
@@ -304,13 +311,16 @@ class RosterPlugin extends Plugin
             ->map(fn (mixed $count): int => is_numeric($count) ? (int) $count : 0)
             ->all();
 
-        $suspended = $counts[UserStatus::Suspended->value] ?? 0;
-        $deactivated = $counts[UserStatus::Deactivated->value] ?? 0;
+        $others = array_sum($counts);
 
-        return [
-            UserStatus::Active->value => max(0, $total - $suspended - $deactivated),
-            UserStatus::Suspended->value => $suspended,
-            UserStatus::Deactivated->value => $deactivated,
-        ];
+        $result = [UserStatus::Active->value => max(0, $total - $others)];
+
+        foreach (UserStatus::cases() as $status) {
+            if ($status !== UserStatus::Active) {
+                $result[$status->value] = $counts[$status->value] ?? 0;
+            }
+        }
+
+        return $result;
     }
 }

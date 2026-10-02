@@ -104,7 +104,8 @@ final class ScimUsers
             }
 
             if ($user === null) {
-                $user = app(CreateUserAction::class)->execute(['name' => $this->name($data, $email), 'email' => $email]);
+                // The organization decides whether its new accounts need approval.
+                $user = app(CreateUserAction::class)->execute(['name' => $this->name($data, $email), 'email' => $email, 'status' => $organization->provisioned_status]);
                 $created = true;
             }
 

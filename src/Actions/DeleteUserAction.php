@@ -51,10 +51,15 @@ final class DeleteUserAction
 
         DB::transaction(function () use ($user, $owned): void {
             if (! in_array(SoftDeletes::class, class_uses_recursive($user), true)) {
-                $owned->get()->each(fn (Organization $organization) => app(DeleteOrganizationAction::class)->execute($organization, force: true));
+                $owned->get()->each(fn (Organization $organization) => app(PurgeOrganizationAction::class)->execute($organization, personal: true));
                 Membership::query()->where('user_id', $user->getKey())->delete();
                 RoleAssignment::query()->where('user_id', $user->getKey())->delete();
                 Profile::query()->where('user_id', $user->getKey())->delete();
+            }
+
+            if (in_array(SoftDeletes::class, class_uses_recursive($user), true)) {
+                // Their personal organization goes to Deleted with them.
+                $owned->where('personal', true)->get()->each(fn (Organization $organization): ?bool => $organization->delete());
             }
 
             $user->delete();

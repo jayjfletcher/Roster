@@ -29,6 +29,7 @@ final class OrganizationResource extends JsonResource
             'owner' => $owner instanceof Model ? $owner->getRouteKey() : null,
             'personal' => $this->personal,
             'auto_join' => $this->auto_join,
+            'provisioned_status' => $this->provisioned_status,
             'domains' => $this->whenLoaded('domains', fn (): array => $this->domains
                 ->map(fn (OrganizationDomain $domain): string => $domain->domain)
                 ->sort()

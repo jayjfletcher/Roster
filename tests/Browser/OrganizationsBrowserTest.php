@@ -48,3 +48,15 @@ it('links an organization to an external record and finds it by account number',
         ->assertSee('Acme')
         ->assertSee('C-100');
 });
+
+it('deletes an organization from the danger zone after confirming', function (): void {
+    organization(attributes: ['name' => 'Doomed Co']);
+
+    visit('/atrium/roster/organizations/doomed-co?tab=settings')
+        ->assertSee('Danger zone')
+        ->check('#confirm-delete-organization')
+        ->click('@delete-organization')
+        ->assertSee('Organization deleted.');
+
+    expect(Organization::query()->where('slug', 'doomed-co')->exists())->toBeFalse();
+});

@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace JayI\Roster\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use JayI\Roster\Http\Requests\ApproveUserRequest;
 use JayI\Roster\Http\Requests\DeactivateUserRequest;
 use JayI\Roster\Http\Requests\ReactivateUserRequest;
+use JayI\Roster\Http\Requests\RejectUserRequest;
 use JayI\Roster\Http\Requests\SuspendUserRequest;
 
 final class UserStatusController
@@ -17,6 +19,16 @@ final class UserStatusController
     }
 
     public function deactivate(DeactivateUserRequest $request): JsonResponse
+    {
+        return $request->persist();
+    }
+
+    public function approve(ApproveUserRequest $request): JsonResponse
+    {
+        return $request->persist();
+    }
+
+    public function reject(RejectUserRequest $request): JsonResponse
     {
         return $request->persist();
     }

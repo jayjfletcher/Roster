@@ -20,7 +20,9 @@ use JayI\Roster\Actions\ListRolesAction;
 use JayI\Roster\Actions\ListScimTokensAction;
 use JayI\Roster\Actions\ListSsoConnectionsAction;
 use JayI\Roster\Actions\ListTeamsAction;
+use JayI\Roster\Actions\PurgeOrganizationAction;
 use JayI\Roster\Actions\RemoveMemberAction;
+use JayI\Roster\Actions\RestoreOrganizationAction;
 use JayI\Roster\Actions\ShowOrganizationAction;
 use JayI\Roster\Actions\TransferOwnershipAction;
 use JayI\Roster\Actions\UnlinkOrganizationAction;
@@ -82,8 +84,15 @@ final class OrganizationUiController
 
     public function show(Request $request, string $organization): View
     {
-        $model = $this->find($organization);
+        $model = Organization::withTrashed()->where('slug', $organization)->firstOrFail();
         $this->authorizeScreen('roster.organizations.view', $model);
+
+        if ($model->trashed()) {
+            /** @var view-string $deleted */
+            $deleted = 'roster::ui.organizations.deleted';
+
+            return view($deleted, ['organization' => $model]);
+        }
 
         $model = app(ShowOrganizationAction::class)->execute($model);
         $tab = in_array($request->query('tab'), self::TABS, true) ? (string) $request->query('tab') : 'members';
@@ -136,15 +145,17 @@ final class OrganizationUiController
         return $this->backTo($model, 'settings', 'roster::roster.organization_updated');
     }
 
-    public function destroy(string $organization): RedirectResponse
+    public function destroy(Request $request, string $organization): RedirectResponse
     {
         $model = $this->find($organization);
         $this->authorizeScreen('roster.organizations.delete', $model);
+        // The page asks for a ticked "I understand" before deleting.
+        $request->validate(['confirm' => ['accepted']]);
 
         app(DeleteOrganizationAction::class)->execute($model);
 
         return redirect()
-            ->route('atrium.roster.organizations.index')
+            ->route('atrium.roster.organizations.index', ['trashed' => 'only'])
             ->with('status', __('roster::roster.organization_deleted'));
     }
 
@@ -196,6 +207,29 @@ final class OrganizationUiController
         app(UnlinkOrganizationAction::class)->execute($model, $source);
 
         return $this->backTo($model, 'settings', __('roster::roster.organization_unlinked'));
+    }
+
+    public function restore(string $organization): RedirectResponse
+    {
+        $model = Organization::withTrashed()->where('slug', $organization)->firstOrFail();
+        $this->authorizeScreen('roster.organizations.delete', $model);
+
+        app(RestoreOrganizationAction::class)->execute($model);
+
+        return $this->backTo($model, 'members', __('roster::roster.organization_restored'));
+    }
+
+    public function purge(Request $request, string $organization): RedirectResponse
+    {
+        $model = Organization::withTrashed()->where('slug', $organization)->firstOrFail();
+        $this->authorizeScreen('roster.organizations.purge', $model);
+        $request->validate(['confirm' => ['accepted']]);
+
+        app(PurgeOrganizationAction::class)->execute($model);
+
+        return redirect()
+            ->route('atrium.roster.organizations.index', ['trashed' => 'only'])
+            ->with('status', __('roster::roster.deleted_permanently'));
     }
 
     private function find(string $slug): Organization

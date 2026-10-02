@@ -25,6 +25,11 @@ trait ResolvesInvitations
             throw ValidationException::withMessages(['token' => __('roster::roster.invitation_invalid')]);
         }
 
+        // A deleted organization's invitations can't be answered.
+        if ($invitation->organization === null) {
+            throw ValidationException::withMessages(['token' => __('roster::roster.invitation_invalid')]);
+        }
+
         if ($invitation->status() !== InvitationStatus::Pending) {
             throw ValidationException::withMessages([
                 'token' => __('roster::roster.invitation_not_pending', ['status' => $invitation->status()->label()]),

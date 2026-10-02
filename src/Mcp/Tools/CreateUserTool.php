@@ -28,6 +28,7 @@ final class CreateUserTool extends Tool
             'name' => $schema->string()->description('Account name.')->required(),
             'email' => $schema->string()->description('Unique email address.')->required(),
             'password' => $schema->string()->description('At least 8 characters. Omit to set a random one.'),
+            'status' => $schema->string()->description('active (default) or pending, to make the account wait for approval.'),
         ];
     }
 }

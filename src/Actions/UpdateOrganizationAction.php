@@ -45,7 +45,7 @@ final class UpdateOrganizationAction
         OrganizationUpdatingActionEvent::dispatch($organization, $data);
 
         DB::transaction(function () use ($organization, $data): void {
-            $organization->update(array_intersect_key($data, array_flip(['name', 'slug', 'auto_join'])));
+            $organization->update(array_intersect_key($data, array_flip(['name', 'slug', 'auto_join', 'provisioned_status'])));
 
             if (array_key_exists('domains', $data)) {
                 $this->syncDomains($organization, (array) $data['domains']);

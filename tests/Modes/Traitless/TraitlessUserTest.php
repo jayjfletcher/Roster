@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use JayI\Roster\Actions\DeleteUserAction;
 use JayI\Roster\Actions\SuspendUserAction;
 use JayI\Roster\Actions\UpdateProfileAction;
 use JayI\Roster\Enums\UserStatus;
@@ -26,4 +27,16 @@ it('serves the HTTP API for a model without the trait', function (): void {
     PlainUser::query()->create(['name' => 'Ada', 'email' => 'ada@example.com', 'password' => 'x']);
 
     $this->getJson(route('roster.users.index'))->assertOk()->assertJsonPath('data.0.name', 'Ada');
+});
+
+it('deletes users permanently when the model has no SoftDeletes, and says so', function (): void {
+    $this->actingAs(PlainUser::query()->create(['name' => 'Admin', 'email' => 'admin@example.com', 'password' => 'secret123']));
+    $doomed = PlainUser::query()->create(['name' => 'Doomed', 'email' => 'doomed@example.com', 'password' => 'secret123']);
+
+    $this->get(route('atrium.roster.users.show', $doomed->getRouteKey()))->assertOk()->assertSee('This cannot be undone')->assertDontSee('Moves the user to Deleted');
+    $this->get(route('atrium.roster.users.index'))->assertDontSee('data-testid="show-filter"', false);
+
+    app(DeleteUserAction::class)->execute($doomed);
+
+    expect(PlainUser::query()->whereKey($doomed->getKey())->exists())->toBeFalse();
 });

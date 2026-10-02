@@ -58,3 +58,13 @@ it('assigns and revokes from the user page', function (): void {
 
     expect(RoleAssignment::query()->whereKey($assignment->id)->exists())->toBeFalse();
 });
+
+it('keeps each permission row\'s buttons in its actions column, with the description input tied to its save form', function (): void {
+    $this->actingAs(user());
+    $permission = Permission::query()->create(['name' => 'invoices.edit']);
+
+    $html = $this->get(route('atrium.roster.permissions.index'))->assertOk()->assertSee('Actions')->getContent();
+
+    expect($html)->toContain('id="update-'.$permission->id.'"')
+        ->and($html)->toMatch('/<input[^>]*name="description"[^>]*form="update-'.$permission->id.'"|<input[^>]*form="update-'.$permission->id.'"[^>]*name="description"/');
+});

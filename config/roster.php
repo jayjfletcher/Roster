@@ -25,6 +25,18 @@ return [
     |           for schemas that use different column names. Set `name` to
     |           null if the users table has no name column.
     |
+    | registration_status:
+    |           `active`, or `pending` to make people who sign up through the
+    |           app's own registration (Laravel's Registered event) wait for
+    |           an approver. Admins choose per user when they create one, and
+    |           each organization chooses for accounts its SSO or SCIM
+    |           creates (its `provisioned_status`).
+    | approvals.notify_approvers:
+    |           Email everyone holding `roster.users.approve` when someone is
+    |           waiting for approval.
+    | approvals.notify_user:
+    |           Email people when they're approved or rejected.
+    |
     */
 
     'users' => [
@@ -34,6 +46,11 @@ return [
             'name' => 'name',
             'email' => 'email',
             'password' => 'password',
+        ],
+        'registration_status' => 'active',
+        'approvals' => [
+            'notify_approvers' => true,
+            'notify_user' => true,
         ],
     ],
 
@@ -88,6 +105,24 @@ return [
         'enabled' => true,
         'retention_days' => 365,
         'redact' => [],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Deleting
+    |--------------------------------------------------------------------------
+    |
+    | Deleted organizations, and users when the user model uses Laravel's
+    | SoftDeletes, can be restored until they're deleted permanently.
+    |
+    | retention_days: `php artisan roster:purge-deleted` permanently deletes
+    |                 records deleted longer ago than this; schedule it. Null
+    |                 keeps deleted records forever.
+    |
+    */
+
+    'deletes' => [
+        'retention_days' => null,
     ],
 
     /*

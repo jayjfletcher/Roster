@@ -8,6 +8,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use InvalidArgumentException;
 use JayI\Roster\Enums\UserStatus;
 use JayI\Roster\Models\Profile;
@@ -79,6 +81,57 @@ final class Users
             ->whereLike($column, $email)
             ->get()
             ->first(fn (Model $user): bool => strcasecmp((string) $this->email($user), $email) === 0);
+    }
+
+    /**
+     * Whether the user model soft-deletes (Laravel's SoftDeletes), so deleted
+     * users can be restored.
+     */
+    public function softDeletes(): bool
+    {
+        return in_array(SoftDeletes::class, class_uses_recursive($this->model()), true);
+    }
+
+    /**
+     * Users including deleted ones, when the model soft-deletes.
+     *
+     * @return Builder<Model>
+     */
+    public function withTrashed(): Builder
+    {
+        $query = $this->query();
+
+        return $this->softDeletes() ? $query->withoutGlobalScope(SoftDeletingScope::class) : $query;
+    }
+
+    /**
+     * Only deleted users; none when the model can't soft-delete.
+     *
+     * @return Builder<Model>
+     */
+    public function onlyTrashed(): Builder
+    {
+        $query = $this->withTrashed();
+
+        return $this->softDeletes()
+            ? $query->whereNotNull($this->newModel()->qualifyColumn('deleted_at'))
+            : $query->whereRaw('1 = 0');
+    }
+
+    /**
+     * Find a user by route key, deleted ones included.
+     */
+    public function findWithTrashedOrFail(mixed $key): Model
+    {
+        return $this->withTrashed()->where($this->routeKeyName(), $key)->firstOrFail();
+    }
+
+    /**
+     * Whether a user is soft-deleted.
+     */
+    public function trashed(Model $user): bool
+    {
+        return $this->softDeletes() && $user->getAttribute('deleted_at') !== null;
     }
 
     /**

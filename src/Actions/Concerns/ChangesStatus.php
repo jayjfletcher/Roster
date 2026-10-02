@@ -23,6 +23,11 @@ trait ChangesStatus
             ]);
         }
 
+        // A pending account is accepted with ApproveUserAction, on the record.
+        if ($to === UserStatus::Active && app(Users::class)->status($user) === UserStatus::Pending) {
+            throw ValidationException::withMessages(['status' => __('roster::roster.approve_instead')]);
+        }
+
         if (app(Users::class)->status($user) === $to) {
             throw ValidationException::withMessages([
                 'status' => __('roster::roster.already_status', ['status' => $to->value]),

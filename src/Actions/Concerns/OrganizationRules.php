@@ -6,6 +6,7 @@ namespace JayI\Roster\Actions\Concerns;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Validation\Rule;
+use JayI\Roster\Enums\UserStatus;
 use JayI\Roster\Models\Organization;
 
 /**
@@ -26,6 +27,8 @@ trait OrganizationRules
 
         return [
             'auto_join' => ['sometimes', 'boolean'],
+            // Accounts created through its SSO or SCIM: active, or waiting for approval.
+            'provisioned_status' => ['sometimes', Rule::in([UserStatus::Active->value, UserStatus::Pending->value])],
             'domains' => ['sometimes', 'array', 'max:50'],
             'domains.*' => ['string', 'distinct', 'max:253', 'regex:/^(?!-)[a-z0-9-]+(\.[a-z0-9-]+)+$/i', $domain],
         ];

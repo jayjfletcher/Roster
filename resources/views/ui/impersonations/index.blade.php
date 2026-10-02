@@ -18,7 +18,7 @@
                         <x-atrium::table.cell heading>{{ __('roster::roster.user') }}</x-atrium::table.cell>
                         <x-atrium::table.cell heading>{{ __('roster::roster.reason') }}</x-atrium::table.cell>
                         <x-atrium::table.cell heading>{{ __('roster::roster.status') }}</x-atrium::table.cell>
-                        <x-atrium::table.cell heading></x-atrium::table.cell>
+                        <x-atrium::table.cell heading class="text-right">{{ __('roster::roster.actions') }}</x-atrium::table.cell>
                     </x-atrium::table.row>
                 </x-slot:head>
                 @foreach ($impersonations as $impersonation)
