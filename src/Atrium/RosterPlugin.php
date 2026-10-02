@@ -34,6 +34,7 @@ use JayI\Roster\Models\Organization;
 use JayI\Roster\Models\Profile;
 use JayI\Roster\Models\Team;
 use JayI\Roster\Support\Users;
+use Throwable;
 
 /**
  * Registers Roster inside the Atrium dashboard.
@@ -66,8 +67,22 @@ class RosterPlugin extends Plugin
 
         return array_values(array_filter(
             is_array($features) ? $features : [],
-            fn (mixed $feature): bool => is_string($feature) && (! str_contains($feature, '\\') || class_exists($feature)),
+            fn (mixed $feature): bool => is_string($feature) && (! str_contains($feature, '\\') || self::loadable($feature)),
         ));
+    }
+
+    /**
+     * Whether a feature class can be loaded. A class whose parent is missing -
+     * RosterSupportFeature without jayi/pennantplus - throws while loading
+     * rather than reporting that it doesn't exist.
+     */
+    private static function loadable(string $class): bool
+    {
+        try {
+            return class_exists($class);
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     public function navigation(): array

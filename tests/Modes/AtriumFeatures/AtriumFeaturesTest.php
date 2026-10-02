@@ -8,6 +8,7 @@ use JayI\Atrium\Navigation\NavigationRegistry;
 use JayI\Atrium\Navigation\NavItem;
 use JayI\Atrium\Plugins\PluginRegistry;
 use JayI\Roster\Atrium\RosterPlugin;
+use JayI\Roster\Tests\Fixtures\Features\OrphanFeature;
 
 /**
  * @return array<int, string>
@@ -44,6 +45,12 @@ it('hides roster and its pages while its feature is off', function (): void {
 
 it('skips feature classes that are not installed', function (): void {
     config()->set('roster.atrium.features', ['App\Features\Missing', 'roster']);
+
+    expect(app(RosterPlugin::class)->features())->toBe(['roster']);
+});
+
+it('skips a feature class whose parent is not installed', function (): void {
+    config()->set('roster.atrium.features', [OrphanFeature::class, 'roster']);
 
     expect(app(RosterPlugin::class)->features())->toBe(['roster']);
 });
