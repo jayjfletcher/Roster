@@ -206,7 +206,7 @@
             @endif
 
             <x-atrium::card :title="__('roster::roster.new_sso_connection')">
-                <form method="POST" action="{{ route('atrium.roster.sso.store', $organization) }}" class="flex max-w-3xl flex-col gap-4" x-data="{ protocol: @js(old('protocol', 'oidc')) }">
+                <form method="POST" action="{{ route('atrium.roster.sso.store', $organization) }}" class="flex max-w-3xl flex-col gap-4" x-data="{ protocol: @js(old('protocol', 'oidc')) }" x-init="protocol = $el.querySelector('select[name=protocol]').value">
                     @csrf
                     <div class="flex flex-wrap gap-3">
                         <x-atrium::form.input name="name" :label="__('roster::roster.name')" wrapper="w-56" required />

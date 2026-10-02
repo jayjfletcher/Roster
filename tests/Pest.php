@@ -28,6 +28,13 @@ use Laravel\Mcp\Transport\JsonRpcResponse;
 use Workbench\App\Models\User;
 use Workbench\Database\Factories\UserFactory;
 
+// pest-plugin-browser removes tests/Browser/Traces with @rmdir() when it
+// boots; on a missing directory that raises a (suppressed) warning, which
+// failOnWarning turns into a failed run. An empty directory removes cleanly.
+if (! is_dir(__DIR__.'/Browser/Traces')) {
+    @mkdir(__DIR__.'/Browser/Traces');
+}
+
 uses(TestCase::class)->in('Feature');
 uses(AuthorizationTestCase::class)->in('Authorization');
 uses(CortexTestCase::class)->in('Cortex');

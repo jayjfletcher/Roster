@@ -45,8 +45,8 @@
                 </x-atrium::card>
 
                 <x-atrium::card :title="__('roster::roster.new_export')">
-                    {{-- Alpine shows only the fields the picked export type uses. --}}
-                    <form method="POST" action="{{ route('atrium.roster.transfers.export') }}" class="flex flex-col gap-3" x-data="{ type: @js(old('type', array_values($exports)[0]->value)) }">
+                    {{-- Alpine shows only the fields the picked export type uses. It reads the select on start, in case it changed before Alpine loaded. --}}
+                    <form method="POST" action="{{ route('atrium.roster.transfers.export') }}" class="flex flex-col gap-3" x-data="{ type: @js(old('type', array_values($exports)[0]->value)) }" x-init="type = $el.querySelector('select[name=type]').value">
                         @csrf
                         <x-atrium::form.select
                             name="type"
