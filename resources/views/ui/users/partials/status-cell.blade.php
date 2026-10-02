@@ -1,2 +1,2 @@
-{{-- A user's status badge. --}}
-<x-atrium::badge :variant="\JayI\Roster\Atrium\Badges::forStatus($status)" data-testid="member-status">{{ $status->label() }}</x-atrium::badge>
+{{-- A user's status, as a dot. --}}
+<x-roster::status :status="$status" data-testid="member-status" />

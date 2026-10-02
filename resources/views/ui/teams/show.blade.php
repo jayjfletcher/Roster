@@ -3,7 +3,7 @@
 
     <x-atrium::page-header :title="$team->name" :description="$organization->name">
         <x-slot:actions>
-            <x-atrium::button variant="ghost" :href="route('atrium.roster.organizations.show', [$organization, 'tab' => 'teams'])">{{ $organization->name }}</x-atrium::button>
+            <x-roster::icon-button icon="arrow-left" :label="$organization->name" variant="ghost" :href="route('atrium.roster.organizations.show', [$organization, 'tab' => 'teams'])" />
         </x-slot:actions>
     </x-atrium::page-header>
 
@@ -25,7 +25,7 @@
                                 <form method="POST" action="{{ route('atrium.roster.teams.members.destroy', [$organization, $team->slug, $membership->user->getRouteKey()]) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <x-atrium::button type="submit" size="sm" variant="ghost" data-testid="remove-team-member">{{ __('roster::roster.remove') }}</x-atrium::button>
+                                    <x-roster::icon-button icon="user-minus" :label="__('roster::roster.remove')" type="submit" size="sm" variant="ghost" data-testid="remove-team-member" />
                                 </form>
                                 @endrosterCan
                             </li>
@@ -43,7 +43,7 @@
                     :options="collect($candidates->items())->filter(fn ($m) => $m->user)->mapWithKeys(fn ($m) => [$m->user->getRouteKey() => $directory->name($m->user) ?? $directory->email($m->user)])"
                     wrapper="w-64" />
                 <div class="roster-actions">
-                    <x-atrium::button type="submit" data-testid="add-team-member">{{ __('roster::roster.add_member') }}</x-atrium::button>
+                    <x-roster::icon-button icon="user-plus" :label="__('roster::roster.add_member')" variant="primary" type="submit" data-testid="add-team-member" />
                 </div>
             </form>
             @endrosterCan
@@ -57,7 +57,7 @@
                 <x-atrium::form.input name="name" :label="__('roster::roster.name')" :value="old('name', $team->name)" required />
                 <x-atrium::form.input name="slug" :label="__('roster::roster.slug')" :value="old('slug', $team->slug)" required />
                 <div>
-                    <x-atrium::button type="submit" data-testid="save-team">{{ __('roster::roster.save') }}</x-atrium::button>
+                    <x-roster::icon-button icon="check" :label="__('roster::roster.save')" variant="primary" type="submit" data-testid="save-team" />
                 </div>
             </form>
 
@@ -65,7 +65,7 @@
             <form method="POST" action="{{ route('atrium.roster.teams.destroy', [$organization, $team->slug]) }}" class="mt-4">
                 @csrf
                 @method('DELETE')
-                <x-atrium::button type="submit" variant="danger" data-testid="delete-team">{{ __('roster::roster.delete') }}</x-atrium::button>
+                <x-roster::icon-button icon="trash" :label="__('roster::roster.delete')" type="submit" variant="danger" data-testid="delete-team" />
             </form>
             @endrosterCan
         </x-atrium::card>

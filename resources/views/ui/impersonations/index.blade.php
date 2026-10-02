@@ -28,7 +28,7 @@
                         <x-atrium::table.cell>{{ $impersonation->reason }}</x-atrium::table.cell>
                         <x-atrium::table.cell>
                             @if ($impersonation->isActive())
-                                <x-atrium::badge variant="warning">{{ __('roster::roster.impersonation_active') }}</x-atrium::badge>
+                                <x-roster::status variant="warning" :label="__('roster::roster.impersonation_active')" />
                             @elseif ($impersonation->ended_at)
                                 {{ $impersonation->end_reason }} · {{ $impersonation->ended_at->diffForHumans() }}
                             @else
@@ -41,7 +41,7 @@
                                 <form method="POST" action="{{ route('atrium.roster.impersonations.stop', $impersonation->id) }}" class="flex justify-end">
                                     @csrf
                                     @method('DELETE')
-                                    <x-atrium::button type="submit" size="sm" variant="danger" data-testid="end-impersonation">{{ __('roster::roster.end') }}</x-atrium::button>
+                                    <x-roster::icon-button icon="stop" :label="__('roster::roster.end')" type="submit" size="sm" variant="danger" data-testid="end-impersonation" />
                                 </form>
                             @endif
                         </x-atrium::table.cell>

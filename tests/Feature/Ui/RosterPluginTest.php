@@ -9,6 +9,8 @@ use JayI\Atrium\Widgets\WidgetDefinition;
 use JayI\Atrium\Widgets\WidgetRegistry;
 use JayI\Roster\Atrium\Badges;
 use JayI\Roster\Atrium\RosterPlugin;
+use JayI\Roster\Enums\InvitationStatus;
+use JayI\Roster\Enums\TransferStatus;
 use JayI\Roster\Enums\UserStatus;
 
 it('registers itself with atrium', function (): void {
@@ -33,9 +35,15 @@ it('offers its widgets without placing them', function (): void {
         ->and(app(WidgetRegistry::class)->all())->toHaveKeys($keys);
 });
 
-it('maps every status to a badge variant', function (): void {
-    foreach (UserStatus::cases() as $status) {
-        expect(Badges::forStatus($status))->toBeIn(['success', 'warning', 'neutral']);
+it('maps every status to a colour, giving pending one of its own', function (): void {
+    $statuses = [...UserStatus::cases(), ...InvitationStatus::cases(), ...TransferStatus::cases()];
+    $pending = [UserStatus::Pending, InvitationStatus::Pending, TransferStatus::AwaitingConfirmation];
+
+    foreach ($statuses as $status) {
+        expect(Badges::forStatus($status))->toBeIn(['success', 'warning', 'danger', 'primary', 'info', 'neutral']);
+
+        // Only pending is info.
+        expect(Badges::forStatus($status) === 'info')->toBe(in_array($status, $pending, true));
     }
 });
 

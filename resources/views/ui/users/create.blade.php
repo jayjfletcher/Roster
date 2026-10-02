@@ -25,7 +25,7 @@
                 @include('roster::ui.users.partials.profile-fields', ['profile' => null])
 
                 <div>
-                    <x-atrium::button type="submit" data-testid="create-user">{{ __('roster::roster.create') }}</x-atrium::button>
+                    <x-roster::icon-button icon="plus" :label="__('roster::roster.create')" variant="primary" type="submit" data-testid="create-user" />
                 </div>
             </form>
         </x-atrium::card>

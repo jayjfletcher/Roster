@@ -7,9 +7,9 @@
     <x-atrium::page-header :title="$transfer->type->label()" :description="$transfer->organization?->name">
         <x-slot:actions>
             @if ($downloadable)
-                <x-atrium::button :href="route('atrium.roster.transfers.download', $transfer->id)" data-testid="download-transfer">{{ __('roster::roster.download_csv') }}</x-atrium::button>
+                <x-roster::icon-button icon="arrow-down-tray" :label="__('roster::roster.download_csv')" variant="primary" :href="route('atrium.roster.transfers.download', $transfer->id)" data-testid="download-transfer" />
             @endif
-            <x-atrium::button variant="ghost" :href="route('atrium.roster.transfers.index', array_filter(['organization' => $transfer->organization?->slug]))">{{ __('roster::roster.transfers') }}</x-atrium::button>
+            <x-roster::icon-button icon="arrow-left" :label="__('roster::roster.transfers')" variant="ghost" :href="route('atrium.roster.transfers.index', array_filter(['organization' => $transfer->organization?->slug]))" />
         </x-slot:actions>
     </x-atrium::page-header>
 
@@ -19,7 +19,7 @@
         <x-atrium::card>
             <dl class="grid grid-cols-3 gap-2 text-sm">
                 <dt class="opacity-70">{{ __('roster::roster.status') }}</dt>
-                <dd class="col-span-2"><x-atrium::badge data-testid="transfer-status">{{ $transfer->status->label() }}</x-atrium::badge></dd>
+                <dd class="col-span-2"><x-roster::status :status="$transfer->status" data-testid="transfer-status" /></dd>
                 <dt class="opacity-70">{{ __('roster::roster.requested_by') }}</dt>
                 <dd class="col-span-2">{{ $transfer->requester ? ($directory->name($transfer->requester) ?? $directory->email($transfer->requester)) : __('roster::roster.none') }}</dd>
                 <dt class="opacity-70">{{ __('roster::roster.rows') }}</dt>
@@ -55,13 +55,13 @@
                     @if ($transfer->status === TransferStatus::AwaitingConfirmation && $canConfirm)
                         <form method="POST" action="{{ route('atrium.roster.transfers.confirm', $transfer->id) }}">
                             @csrf
-                            <x-atrium::button type="submit" data-testid="confirm-import">{{ __('roster::roster.confirm_import') }}</x-atrium::button>
+                            <x-roster::icon-button icon="check" :label="__('roster::roster.confirm_import')" variant="primary" type="submit" data-testid="confirm-import" />
                         </form>
                     @endif
                     <form method="POST" action="{{ route('atrium.roster.transfers.cancel', $transfer->id) }}">
                         @csrf
                         @method('DELETE')
-                        <x-atrium::button type="submit" variant="danger" data-testid="cancel-transfer">{{ __('roster::roster.cancel') }}</x-atrium::button>
+                        <x-roster::icon-button icon="x-mark" :label="__('roster::roster.cancel')" type="submit" variant="danger" data-testid="cancel-transfer" />
                     </form>
                 </div>
             @endif

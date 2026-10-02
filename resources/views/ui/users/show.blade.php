@@ -1,4 +1,3 @@
-@use(JayI\Roster\Atrium\Badges)
 @use(JayI\Roster\Enums\UserStatus)
 @use(JayI\Roster\Http\Ui\ScreenAccess)
 
@@ -9,7 +8,7 @@
 
     <x-atrium::page-header :title="$title" :description="$directory->email($user)">
         <x-slot:actions>
-            <x-atrium::badge :variant="Badges::forStatus($status)" data-testid="user-status">{{ $status->label() }}</x-atrium::badge>
+            <x-roster::status :status="$status" data-testid="user-status" />
         </x-slot:actions>
     </x-atrium::page-header>
 
@@ -31,7 +30,7 @@
                 <x-atrium::form.input name="password" type="password" :label="__('roster::roster.password')" :hint="__('roster::roster.password_hint')" />
 
                 <div>
-                    <x-atrium::button type="submit" data-testid="save-account">{{ __('roster::roster.save') }}</x-atrium::button>
+                    <x-roster::icon-button icon="check" :label="__('roster::roster.save')" variant="primary" type="submit" data-testid="save-account" />
                 </div>
             </form>
         </x-atrium::card>
@@ -46,7 +45,7 @@
                 @include('roster::ui.users.partials.profile-fields', ['profile' => $profile])
 
                 <div>
-                    <x-atrium::button type="submit" data-testid="save-profile">{{ __('roster::roster.save') }}</x-atrium::button>
+                    <x-roster::icon-button icon="check" :label="__('roster::roster.save')" variant="primary" type="submit" data-testid="save-profile" />
                 </div>
             </form>
         </x-atrium::card>
@@ -60,7 +59,7 @@
                     <form method="POST" action="{{ route('atrium.roster.users.approve', $user->getRouteKey()) }}">
                         @csrf
                         <div class="roster-actions">
-                            <x-atrium::button type="submit" data-testid="approve-user">{{ __('roster::roster.approve') }}</x-atrium::button>
+                            <x-roster::icon-button icon="check" :label="__('roster::roster.approve')" variant="primary" type="submit" data-testid="approve-user" />
                         </div>
                     </form>
 
@@ -68,7 +67,7 @@
                         @csrf
                         <x-atrium::form.input name="reason" id="reject-reason" :label="__('roster::roster.reason')" wrapper="w-64" />
                         <div class="roster-actions">
-                            <x-atrium::button type="submit" variant="danger" data-testid="reject-user">{{ __('roster::roster.reject') }}</x-atrium::button>
+                            <x-roster::icon-button icon="x-mark" :label="__('roster::roster.reject')" type="submit" variant="danger" data-testid="reject-user" />
                         </div>
                     </form>
                 </div>
@@ -97,7 +96,7 @@
                     required />
                 <x-atrium::form.input name="reason" id="status-reason" :label="__('roster::roster.reason')" :hint="__('roster::roster.status_reason_hint')" wrapper="w-80" />
                 <div class="roster-actions">
-                    <x-atrium::button type="submit" variant="secondary" data-testid="change-status">{{ __('roster::roster.update_status') }}</x-atrium::button>
+                    <x-roster::icon-button icon="arrow-path" :label="__('roster::roster.update_status')" type="submit" variant="secondary" data-testid="change-status" />
                 </div>
             </form>
         </x-atrium::card>
@@ -139,7 +138,7 @@
                         :selected="$currentTeam?->slug"
                         wrapper="w-56" />
                     <div class="roster-actions">
-                        <x-atrium::button type="submit" data-testid="switch-context">{{ __('roster::roster.switch') }}</x-atrium::button>
+                        <x-roster::icon-button icon="arrows-right-left" :label="__('roster::roster.switch')" variant="primary" type="submit" data-testid="switch-context" />
                     </div>
                 </form>
                 @endrosterCan
@@ -148,7 +147,7 @@
             @rosterCan('roster.users.update')
             <form method="POST" action="{{ route('atrium.roster.users.domain-join', $user->getRouteKey()) }}" class="mt-4">
                 @csrf
-                <x-atrium::button type="submit" variant="ghost" data-testid="domain-join">{{ __('roster::roster.run_domain_join') }}</x-atrium::button>
+                <x-roster::icon-button icon="globe" :label="__('roster::roster.run_domain_join')" type="submit" variant="ghost" data-testid="domain-join" />
             </form>
             @endrosterCan
         </x-atrium::card>
@@ -173,7 +172,7 @@
                             <form method="POST" action="{{ route('atrium.roster.users.roles.destroy', [$user->getRouteKey(), $assignment->id]) }}">
                                 @csrf
                                 @method('DELETE')
-                                <x-atrium::button type="submit" size="sm" variant="ghost" data-testid="revoke-role">{{ __('roster::roster.revoke') }}</x-atrium::button>
+                                <x-roster::icon-button icon="no-symbol" :label="__('roster::roster.revoke')" type="submit" size="sm" variant="ghost" data-testid="revoke-role" />
                             </form>
                             @endrosterCan
                         </li>
@@ -206,7 +205,7 @@
                     :options="$assignIn->flatMap(fn ($m) => $m->teams->mapWithKeys(fn ($t) => [$t->slug => $m->organization?->name.' / '.$t->name]))"
                     wrapper="w-56" />
                 <div class="roster-actions">
-                    <x-atrium::button type="submit" data-testid="assign-role">{{ __('roster::roster.assign') }}</x-atrium::button>
+                    <x-roster::icon-button icon="shield-check" :label="__('roster::roster.assign')" variant="primary" type="submit" data-testid="assign-role" />
                 </div>
             </form>
             @endif
@@ -221,7 +220,7 @@
         @rosterCan('roster.audit.view', null, $user)
         <x-atrium::card :title="__('roster::roster.activity')" class="lg:col-span-2" data-testid="activity-card">
             @include('roster::ui.audit.partials.entries', ['entries' => $activity])
-            <x-atrium::button class="mt-3" variant="ghost" :href="route('atrium.roster.audit.index', ['user' => $user->getRouteKey()])">{{ __('roster::roster.view_all') }}</x-atrium::button>
+            <x-roster::icon-button icon="arrow-right" :label="__('roster::roster.view_all')" class="mt-3" variant="ghost" :href="route('atrium.roster.audit.index', ['user' => $user->getRouteKey()])" />
         </x-atrium::card>
         @endrosterCan
 
@@ -231,7 +230,7 @@
                     @csrf
                     <x-atrium::form.input name="reason" id="impersonation-reason" :label="__('roster::roster.reason')" :hint="__('roster::roster.impersonation_reason_hint')" wrapper="w-80" required />
                     <div class="roster-actions">
-                        <x-atrium::button type="submit" variant="warning" data-testid="impersonate-user">{{ __('roster::roster.impersonate') }}</x-atrium::button>
+                        <x-roster::icon-button icon="eye" :label="__('roster::roster.impersonate')" type="submit" variant="warning" data-testid="impersonate-user" />
                     </div>
                 </form>
             </x-atrium::card>
@@ -247,7 +246,7 @@
                             <form method="POST" action="{{ route('atrium.roster.sso-identities.destroy', $identity->id) }}">
                                 @csrf
                                 @method('DELETE')
-                                <x-atrium::button type="submit" size="sm" variant="ghost" data-testid="unlink-sso-identity">{{ __('roster::roster.unlink') }}</x-atrium::button>
+                                <x-roster::icon-button icon="link-slash" :label="__('roster::roster.unlink')" type="submit" size="sm" variant="ghost" data-testid="unlink-sso-identity" />
                             </form>
                             @endrosterCan
                         </li>
@@ -272,7 +271,7 @@
                 @csrf
                 @method('DELETE')
                 <x-atrium::form.checkbox name="confirm" value="1" id="confirm-delete" :label="$directory->softDeletes() ? __('roster::roster.delete_user_soft_confirm') : __('roster::roster.delete_user_confirm')" required />
-                <x-atrium::button type="submit" variant="danger" data-testid="delete-user">{{ __('roster::roster.delete_user') }}</x-atrium::button>
+                <x-roster::icon-button icon="trash" :label="__('roster::roster.delete_user')" type="submit" variant="danger" data-testid="delete-user" />
             </form>
         </x-atrium::card>
         @endrosterCan

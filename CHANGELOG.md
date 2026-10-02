@@ -8,6 +8,7 @@
 
 ### Added
 
+- Atrium screens use icon-only buttons and tabs (labelled, with a tooltip), status dots instead of status badges (pending - users, invitations, transfers awaiting confirmation - has its own colour), and icons on Roster's navigation items.
 - Organization admins can open the organizations, roles, impersonations, transfers and audit lists, in Atrium, over the API and MCP, limited to their own organizations, and see the matching Atrium navigation. Organization search is limited the same way.
 - Atrium pages show only the controls the viewer may use, checked exactly as the action behind each one is (permission, organization or team, and "about yourself"), through the new `@rosterCan` Blade conditional.
 - `roster.atrium.features`: feature flags that switch Roster in Atrium on and off as a whole, through Atrium's feature resolver. Defaults to `RosterSupportFeature`, an overridable PennantPlus feature that is on until its global value is set; skipped without jayi/pennantplus.

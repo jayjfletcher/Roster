@@ -17,7 +17,7 @@
                 <x-atrium::form.checkbox name="auto_join" value="1" :label="__('roster::roster.auto_join')" />
 
                 <div>
-                    <x-atrium::button type="submit" data-testid="create-organization">{{ __('roster::roster.create') }}</x-atrium::button>
+                    <x-roster::icon-button icon="plus" :label="__('roster::roster.create')" variant="primary" type="submit" data-testid="create-organization" />
                 </div>
             </form>
         </x-atrium::card>

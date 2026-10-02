@@ -5,7 +5,7 @@
         <x-slot:actions>
             {{-- Members and teams are what an organization imports and exports. --}}
             @if (in_array($tab, ['members', 'teams'], true) && \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.members.view', $organization))
-                <x-roster::icon-button icon="transfers" :label="__('roster::roster.import_export')" :href="route('atrium.roster.transfers.index', ['organization' => $organization->slug])" data-testid="organization-transfers" />
+                <x-roster::icon-button icon="arrows-up-down" :label="__('roster::roster.import_export')" :href="route('atrium.roster.transfers.index', ['organization' => $organization->slug])" data-testid="organization-transfers" />
             @endif
         </x-slot:actions>
     </x-atrium::page-header>
@@ -14,11 +14,15 @@
         @include('roster::ui.partials.status')
 
         <nav class="flex flex-wrap gap-2" aria-label="{{ $organization->name }}">
+            @php($tabIcons = ['members' => 'users', 'teams' => 'user-group', 'invitations' => 'envelope', 'roles' => 'shield-check', 'sso' => 'sign-in', 'scim' => 'server-stack', 'activity' => 'clipboard-document-list', 'settings' => 'cog'])
             @foreach ($tabs as $name)
-                <x-atrium::button
+                <x-roster::icon-button
+                    :icon="$tabIcons[$name]"
+                    :label="__('roster::roster.'.$name)"
                     :variant="$tab === $name ? 'primary' : 'ghost'"
                     :href="route('atrium.roster.organizations.show', [$organization, 'tab' => $name])"
-                    data-testid="tab-{{ $name }}">{{ __('roster::roster.'.$name) }}</x-atrium::button>
+                    :aria-current="$tab === $name ? 'page' : null"
+                    data-testid="tab-{{ $name }}" />
             @endforeach
         </nav>
 
@@ -33,7 +37,7 @@
                     @csrf
                     <x-atrium::form.input name="user" :label="__('roster::roster.user')" :hint="__('roster::roster.user_key_hint')" wrapper="w-64" required />
                     <div class="roster-actions">
-                        <x-atrium::button type="submit" data-testid="add-member">{{ __('roster::roster.add_member') }}</x-atrium::button>
+                        <x-roster::icon-button icon="user-plus" :label="__('roster::roster.add_member')" variant="primary" type="submit" data-testid="add-member" />
                     </div>
                 </form>
             </x-atrium::card>
@@ -81,14 +85,14 @@
                                             <form method="POST" action="{{ route('atrium.roster.organizations.transfer', $organization) }}">
                                                 @csrf
                                                 <input type="hidden" name="user" value="{{ $member->getRouteKey() }}">
-                                                <x-atrium::button type="submit" size="sm" variant="ghost" data-testid="make-owner">{{ __('roster::roster.make_owner') }}</x-atrium::button>
+                                                <x-roster::icon-button icon="key" :label="__('roster::roster.make_owner')" type="submit" size="sm" variant="ghost" data-testid="make-owner" />
                                             </form>
                                         @endif
                                         @rosterCan('roster.members.manage', $organization)
                                         <form method="POST" action="{{ route('atrium.roster.organizations.members.destroy', [$organization, $member->getRouteKey()]) }}">
                                             @csrf
                                             @method('DELETE')
-                                            <x-atrium::button type="submit" size="sm" variant="danger" data-testid="remove-member">{{ __('roster::roster.remove') }}</x-atrium::button>
+                                            <x-roster::icon-button icon="user-minus" :label="__('roster::roster.remove')" type="submit" size="sm" variant="danger" data-testid="remove-member" />
                                         </form>
                                         @endrosterCan
                                     @endif
@@ -107,7 +111,7 @@
                     <x-atrium::form.input name="name" :label="__('roster::roster.name')" wrapper="w-64" required />
                     <x-atrium::form.input name="slug" :label="__('roster::roster.slug')" :hint="__('roster::roster.slug_hint')" wrapper="w-64" />
                     <div class="roster-actions">
-                        <x-atrium::button type="submit" data-testid="create-team">{{ __('roster::roster.create') }}</x-atrium::button>
+                        <x-roster::icon-button icon="plus" :label="__('roster::roster.create')" variant="primary" type="submit" data-testid="create-team" />
                     </div>
                 </form>
             </x-atrium::card>
@@ -152,7 +156,7 @@
                     @endif
 
                     <div>
-                        <x-atrium::button type="submit" data-testid="send-invitation">{{ __('roster::roster.invite') }}</x-atrium::button>
+                        <x-roster::icon-button icon="paper-airplane" :label="__('roster::roster.invite')" variant="primary" type="submit" data-testid="send-invitation" />
                     </div>
                 </form>
             </x-atrium::card>
@@ -174,14 +178,14 @@
                     @foreach ($invitations as $invitation)
                         <x-atrium::table.row>
                             <x-atrium::table.cell>{{ $invitation->email }}</x-atrium::table.cell>
-                            <x-atrium::table.cell><x-atrium::badge>{{ $invitation->status()->label() }}</x-atrium::badge></x-atrium::table.cell>
+                            <x-atrium::table.cell><x-roster::status :status="$invitation->status()" data-testid="invitation-status" /></x-atrium::table.cell>
                             <x-atrium::table.cell>{{ $invitation->expires_at->diffForHumans() }}</x-atrium::table.cell>
                             <x-atrium::table.cell>
                                 @if ($invitation->status() === $pending && \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.invitations.manage', $organization))
                                     <form method="POST" action="{{ route('atrium.roster.invitations.revoke', [$organization, $invitation->id]) }}" class="flex justify-end">
                                         @csrf
                                         @method('DELETE')
-                                        <x-atrium::button type="submit" size="sm" variant="ghost" data-testid="revoke-invitation">{{ __('roster::roster.revoke') }}</x-atrium::button>
+                                        <x-roster::icon-button icon="no-symbol" :label="__('roster::roster.revoke')" type="submit" size="sm" variant="ghost" data-testid="revoke-invitation" />
                                     </form>
                                 @endif
                             </x-atrium::table.cell>
@@ -237,7 +241,7 @@
                     </div>
                     @include('roster::ui.sso.partials.fields', ['settings' => [], 'editing' => false])
                     <div>
-                        <x-atrium::button type="submit" data-testid="create-sso">{{ __('roster::roster.create') }}</x-atrium::button>
+                        <x-roster::icon-button icon="plus" :label="__('roster::roster.create')" variant="primary" type="submit" data-testid="create-sso" />
                     </div>
                 </form>
             </x-atrium::card>
@@ -280,7 +284,7 @@
                                     <form method="POST" action="{{ route('atrium.roster.scim-tokens.revoke', $token->id) }}" class="flex justify-end">
                                         @csrf
                                         @method('DELETE')
-                                        <x-atrium::button type="submit" size="sm" variant="danger">{{ __('roster::roster.revoke') }}</x-atrium::button>
+                                        <x-roster::icon-button icon="no-symbol" :label="__('roster::roster.revoke')" type="submit" size="sm" variant="danger" />
                                     </form>
                                 @endunless
                             </x-atrium::table.cell>
@@ -302,14 +306,14 @@
                         :options="$ssoConnections->mapWithKeys(fn ($c) => [$c->slug => $c->name])"
                         wrapper="w-56" />
                     <div class="roster-actions">
-                        <x-atrium::button type="submit" data-testid="create-scim-token">{{ __('roster::roster.create') }}</x-atrium::button>
+                        <x-roster::icon-button icon="plus" :label="__('roster::roster.create')" variant="primary" type="submit" data-testid="create-scim-token" />
                     </div>
                 </form>
             </x-atrium::card>
         @elseif ($tab === 'activity')
             @include('roster::ui.audit.partials.entries', ['entries' => $activity])
             <x-atrium::pagination :paginator="$activity" />
-            <x-atrium::button variant="ghost" :href="route('atrium.roster.audit.index', ['organization' => $organization->slug])">{{ __('roster::roster.view_all') }}</x-atrium::button>
+            <x-roster::icon-button icon="arrow-right" :label="__('roster::roster.view_all')" variant="ghost" :href="route('atrium.roster.audit.index', ['organization' => $organization->slug])" />
         @elseif ($tab === 'roles')
             <x-atrium::card :title="__('roster::roster.assignments')">
                 @if ($assignments->isEmpty())
@@ -339,7 +343,7 @@
                     @endforeach
                 </ul>
                 @rosterCan('roster.roles.manage', $organization)
-                    <x-atrium::button class="mt-3" variant="ghost" :href="route('atrium.roster.roles.index', ['organization' => $organization->slug])" data-testid="manage-roles">{{ __('roster::roster.manage_roles') }}</x-atrium::button>
+                    <x-roster::icon-button icon="arrow-right" :label="__('roster::roster.manage_roles')" class="mt-3" variant="ghost" :href="route('atrium.roster.roles.index', ['organization' => $organization->slug])" data-testid="manage-roles" />
                 @endrosterCan
             </x-atrium::card>
         @else
@@ -362,7 +366,7 @@
                         wrapper="w-72" />
 
                     <div>
-                        <x-atrium::button type="submit" data-testid="save-organization">{{ __('roster::roster.save') }}</x-atrium::button>
+                        <x-roster::icon-button icon="check" :label="__('roster::roster.save')" variant="primary" type="submit" data-testid="save-organization" />
                     </div>
                 </form>
             </x-atrium::card>
@@ -393,7 +397,7 @@
                                     <form method="POST" action="{{ route('atrium.roster.organizations.links.destroy', [$organization, $link->source]) }}" class="flex justify-end">
                                         @csrf
                                         @method('DELETE')
-                                        <x-atrium::button type="submit" size="sm" variant="ghost" data-testid="unlink-organization">{{ __('roster::roster.unlink') }}</x-atrium::button>
+                                        <x-roster::icon-button icon="link-slash" :label="__('roster::roster.unlink')" type="submit" size="sm" variant="ghost" data-testid="unlink-organization" />
                                     </form>
                                     @endrosterCan
                                 </x-atrium::table.cell>
@@ -409,7 +413,7 @@
                     <x-atrium::form.input name="external_id" id="link-external-id" :label="__('roster::roster.external_id')" wrapper="w-56" required />
                     <x-atrium::form.input name="account_number" id="link-account-number" :label="__('roster::roster.account_number')" wrapper="w-48" />
                     <div class="roster-actions">
-                        <x-atrium::button type="submit" data-testid="link-organization">{{ __('roster::roster.link') }}</x-atrium::button>
+                        <x-roster::icon-button icon="link" :label="__('roster::roster.link')" variant="primary" type="submit" data-testid="link-organization" />
                     </div>
                 </form>
                 @endrosterCan
@@ -425,7 +429,7 @@
                         @csrf
                         @method('DELETE')
                         <x-atrium::form.checkbox name="confirm" value="1" id="confirm-delete-organization" :label="__('roster::roster.delete_organization_soft_confirm')" required />
-                        <x-atrium::button type="submit" variant="danger" data-testid="delete-organization">{{ __('roster::roster.delete_organization') }}</x-atrium::button>
+                        <x-roster::icon-button icon="trash" :label="__('roster::roster.delete_organization')" type="submit" variant="danger" data-testid="delete-organization" />
                     </form>
                 </x-atrium::card>
             @endif

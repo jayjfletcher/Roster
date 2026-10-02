@@ -11,7 +11,7 @@
 @if ($canRestore ?? true)
 <form method="POST" action="{{ $restoreUrl }}">
     @csrf
-    <x-atrium::button type="submit" data-testid="restore">{{ __('roster::roster.restore') }}</x-atrium::button>
+    <x-roster::icon-button icon="arrow-uturn-left" :label="__('roster::roster.restore')" variant="primary" type="submit" data-testid="restore" />
 </form>
 @endif
 
@@ -25,7 +25,7 @@
         @csrf
         @method('DELETE')
         <x-atrium::form.checkbox name="confirm" value="1" id="confirm-purge" :label="$confirm" required />
-        <x-atrium::button type="submit" variant="danger" data-testid="purge">{{ __('roster::roster.delete_permanently') }}</x-atrium::button>
+        <x-roster::icon-button icon="trash" :label="__('roster::roster.delete_permanently')" type="submit" variant="danger" data-testid="purge" />
     </form>
 </x-atrium::card>
 @endif

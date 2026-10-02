@@ -5,7 +5,7 @@
 
     <x-atrium::page-header :title="$connection->name" :description="__('roster::roster.protocol_'.$connection->protocol).' · '.$connection->organization?->name">
         <x-slot:actions>
-            <x-atrium::button variant="ghost" :href="route('atrium.roster.organizations.show', [$connection->organization, 'tab' => 'sso'])">{{ $connection->organization?->name }}</x-atrium::button>
+            <x-roster::icon-button icon="arrow-left" :label="$connection->organization?->name" variant="ghost" :href="route('atrium.roster.organizations.show', [$connection->organization, 'tab' => 'sso'])" />
         </x-slot:actions>
     </x-atrium::page-header>
 
@@ -21,7 +21,7 @@
                 <dt class="opacity-70">{{ __('roster::roster.sso_identities') }}</dt><dd class="col-span-2">{{ $connection->identities_count }}</dd>
             </dl>
             @if ($resource['sign_in_url'])
-                <x-atrium::button class="mt-3" variant="ghost" :href="$resource['sign_in_url']">{{ __('roster::roster.test_sign_in') }}</x-atrium::button>
+                <x-roster::icon-button icon="arrow-top-right-on-square" :label="__('roster::roster.test_sign_in')" class="mt-3" variant="ghost" :href="$resource['sign_in_url']" />
             @endif
         </x-atrium::card>
 
@@ -33,7 +33,7 @@
                 <x-atrium::form.input name="name" :label="__('roster::roster.name')" :value="old('name', $connection->name)" required />
                 @include('roster::ui.sso.partials.fields', ['settings' => (array) $resource['settings'], 'editing' => true, 'protocol' => $connection->protocol, 'jit' => $connection->jit, 'enforced' => $connection->enforced, 'enabled' => $connection->enabled])
                 <div>
-                    <x-atrium::button type="submit" data-testid="save-sso">{{ __('roster::roster.save') }}</x-atrium::button>
+                    <x-roster::icon-button icon="check" :label="__('roster::roster.save')" variant="primary" type="submit" data-testid="save-sso" />
                 </div>
             </form>
         </x-atrium::card>
@@ -41,7 +41,7 @@
         <form method="POST" action="{{ route('atrium.roster.sso.destroy', $connection->slug) }}">
             @csrf
             @method('DELETE')
-            <x-atrium::button type="submit" variant="danger" data-testid="delete-sso">{{ __('roster::roster.delete') }}</x-atrium::button>
+            <x-roster::icon-button icon="trash" :label="__('roster::roster.delete')" type="submit" variant="danger" data-testid="delete-sso" />
         </form>
         @endrosterCan
     </div>

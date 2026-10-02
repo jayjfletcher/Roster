@@ -17,8 +17,8 @@
                     wrapper="w-48" />
                 <x-atrium::form.input name="organization" :label="__('roster::roster.organization')" :value="$filters['organization'] ?? null" :hint="__('roster::roster.organization_slug_hint')" wrapper="w-56" />
                 <div class="roster-actions">
-                    <x-atrium::button type="submit">{{ __('roster::roster.filter') }}</x-atrium::button>
-                    <x-atrium::button variant="ghost" :href="route('atrium.roster.roles.index')">{{ __('roster::roster.clear') }}</x-atrium::button>
+                    <x-roster::icon-button icon="funnel" :label="__('roster::roster.filter')" variant="primary" type="submit" />
+                    <x-roster::icon-button icon="x-mark" :label="__('roster::roster.clear')" variant="ghost" :href="route('atrium.roster.roles.index')" />
                 </div>
             </form>
         </x-atrium::card>
@@ -75,7 +75,7 @@
                     @endforeach
                 </fieldset>
                 <div>
-                    <x-atrium::button type="submit" data-testid="create-role">{{ __('roster::roster.create') }}</x-atrium::button>
+                    <x-roster::icon-button icon="plus" :label="__('roster::roster.create')" variant="primary" type="submit" data-testid="create-role" />
                 </div>
             </form>
         </x-atrium::card>

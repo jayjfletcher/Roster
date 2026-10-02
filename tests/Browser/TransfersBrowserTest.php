@@ -16,12 +16,12 @@ it('uploads a members csv, previews it and confirms', function (): void {
         ->select('#import-type', 'import_members')
         ->attach('#atrium-file', $csv)
         ->click('@start-import')
-        ->assertSee('Awaiting confirmation')
+        ->assertAttribute('@transfer-status', 'data-status', 'awaiting_confirmation')
         ->assertSee('Outside the organization\'s domains; an invitation is sent.')
         ->assertSee('Not a valid email address.')
         ->click('@confirm-import')
         ->assertSee('Import confirmed')
-        ->assertSee('Completed');
+        ->assertAttribute('@transfer-status', 'data-status', 'completed');
 });
 
 it('shows only the export fields the picked type uses', function (): void {
@@ -36,6 +36,6 @@ it('shows only the export fields the picked type uses', function (): void {
         ->assertMissing('[data-export-field="audit"]')
         ->assertVisible('[data-export-field="external_source"]')
         ->click('@start-export')
-        ->assertSee('Completed')
-        ->assertSee('Download CSV');
+        ->assertAttribute('@transfer-status', 'data-status', 'completed')
+        ->assertVisible('@download-transfer');
 });

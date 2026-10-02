@@ -5,7 +5,7 @@
 
     <x-atrium::page-header :title="$entry->action" :description="$entry->created_at->toDayDateTimeString()">
         <x-slot:actions>
-            <x-atrium::button variant="ghost" :href="route('atrium.roster.audit.index')">{{ __('roster::roster.audit_log') }}</x-atrium::button>
+            <x-roster::icon-button icon="arrow-left" :label="__('roster::roster.audit_log')" variant="ghost" :href="route('atrium.roster.audit.index')" />
         </x-slot:actions>
     </x-atrium::page-header>
 

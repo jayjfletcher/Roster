@@ -29,7 +29,7 @@
                             :options="$imports->mapWithKeys(fn ($type) => [$type->value => $type->label()])"
                             wrapper="w-56" />
                         <div class="roster-actions">
-                            <x-atrium::button type="submit" variant="secondary" data-testid="download-template">{{ __('roster::roster.download_template') }}</x-atrium::button>
+                            <x-roster::icon-button icon="arrow-down-tray" :label="__('roster::roster.download_template')" type="submit" variant="secondary" data-testid="download-template" />
                         </div>
                     </form>
 
@@ -45,7 +45,7 @@
                         <x-atrium::form.input name="organization" id="import-organization" :label="__('roster::roster.organization')" :value="old('organization', $organization?->slug)" :hint="__('roster::roster.import_organization_hint')" />
                         <x-atrium::form.file name="file" :label="__('roster::roster.csv_file')" :hint="__('roster::roster.import_columns_hint')" accept=".csv,text/csv" />
                         <div>
-                            <x-atrium::button type="submit" data-testid="start-import">{{ __('roster::roster.preview_import') }}</x-atrium::button>
+                            <x-roster::icon-button icon="arrow-up-tray" :label="__('roster::roster.preview_import')" variant="primary" type="submit" data-testid="start-import" />
                         </div>
                     </form>
                 </x-atrium::card>
@@ -77,7 +77,7 @@
                             <x-atrium::form.input name="filters[external_source]" id="export-external-source" :label="__('roster::roster.external_source')" :hint="__('roster::roster.external_source_filter_hint')" />
                         </div>
                         <div>
-                            <x-atrium::button type="submit" data-testid="start-export">{{ __('roster::roster.start_export') }}</x-atrium::button>
+                            <x-roster::icon-button icon="arrow-down-tray" :label="__('roster::roster.start_export')" variant="primary" type="submit" data-testid="start-export" />
                         </div>
                     </form>
                 </x-atrium::card>
@@ -106,7 +106,7 @@
                         </x-atrium::table.cell>
                         <x-atrium::table.cell>{{ $transfer->organization?->name ?? __('roster::roster.none') }}</x-atrium::table.cell>
                         <x-atrium::table.cell>{{ $transfer->requester ? ($directory->name($transfer->requester) ?? $directory->email($transfer->requester)) : __('roster::roster.none') }}</x-atrium::table.cell>
-                        <x-atrium::table.cell><x-atrium::badge>{{ $transfer->status->label() }}</x-atrium::badge></x-atrium::table.cell>
+                        <x-atrium::table.cell><x-roster::status :status="$transfer->status" /></x-atrium::table.cell>
                         <x-atrium::table.cell>{{ $transfer->row_count }}</x-atrium::table.cell>
                         <x-atrium::table.cell>{{ $transfer->created_at?->diffForHumans() }}</x-atrium::table.cell>
                     </x-atrium::table.row>

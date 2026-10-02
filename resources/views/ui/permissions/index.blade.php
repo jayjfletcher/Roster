@@ -15,7 +15,7 @@
                 <x-atrium::form.input name="name" :label="__('roster::roster.name')" :hint="__('roster::roster.permission_name_hint')" wrapper="w-64" required />
                 <x-atrium::form.input name="description" :label="__('roster::roster.description')" wrapper="w-80" />
                 <div class="roster-actions">
-                    <x-atrium::button type="submit" data-testid="create-permission">{{ __('roster::roster.create') }}</x-atrium::button>
+                    <x-roster::icon-button icon="plus" :label="__('roster::roster.create')" variant="primary" type="submit" data-testid="create-permission" />
                 </div>
             </form>
         </x-atrium::card>
@@ -54,13 +54,13 @@
                             <form method="POST" action="{{ route('atrium.roster.permissions.update', $permission->name) }}" id="update-{{ $permission->id }}">
                                 @csrf
                                 @method('PATCH')
-                                <x-atrium::button type="submit" size="sm" variant="ghost">{{ __('roster::roster.save') }}</x-atrium::button>
+                                <x-roster::icon-button icon="check" :label="__('roster::roster.save')" type="submit" size="sm" variant="ghost" />
                             </form>
                             @unless ($permission->system)
                                 <form method="POST" action="{{ route('atrium.roster.permissions.destroy', $permission->name) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <x-atrium::button type="submit" size="sm" variant="danger">{{ __('roster::roster.delete') }}</x-atrium::button>
+                                    <x-roster::icon-button icon="trash" :label="__('roster::roster.delete')" type="submit" size="sm" variant="danger" />
                                 </form>
                             @endunless
                         </div>

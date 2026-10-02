@@ -73,30 +73,35 @@ class RosterPlugin extends Plugin
     {
         return [
             NavItem::make(__('roster::roster.users'))
+                ->icon(Icons::svg('users'))
                 ->route('atrium.roster.users.index')
                 ->group(__('roster::roster.label'))
                 ->sort(10)
                 ->authorize(fn (Request $request): bool => $this->may($request, 'roster.users.view')),
 
             NavItem::make(__('roster::roster.organizations'))
+                ->icon(Icons::svg('building-office'))
                 ->route('atrium.roster.organizations.index')
                 ->group(__('roster::roster.label'))
                 ->sort(20)
                 ->authorize(fn (Request $request): bool => $this->mayAnywhere($request, 'roster.organizations.view')),
 
             NavItem::make(__('roster::roster.roles'))
+                ->icon(Icons::svg('shield-check'))
                 ->route('atrium.roster.roles.index')
                 ->group(__('roster::roster.label'))
                 ->sort(30)
                 ->authorize(fn (Request $request): bool => $this->mayAnywhere($request, 'roster.roles.view')),
 
             NavItem::make(__('roster::roster.permissions'))
+                ->icon(Icons::svg('key'))
                 ->route('atrium.roster.permissions.index')
                 ->group(__('roster::roster.label'))
                 ->sort(40)
                 ->authorize(fn (Request $request): bool => $this->may($request, 'roster.roles.view')),
 
             NavItem::make(__('roster::roster.impersonations'))
+                ->icon(Icons::svg('eye'))
                 ->route('atrium.roster.impersonations.index')
                 ->group(__('roster::roster.label'))
                 ->sort(45)
@@ -105,12 +110,14 @@ class RosterPlugin extends Plugin
             // Organization admins reach their organization's imports and
             // exports from its page.
             NavItem::make(__('roster::roster.transfers'))
+                ->icon(Icons::svg('arrows-up-down'))
                 ->route('atrium.roster.transfers.index')
                 ->group(__('roster::roster.label'))
                 ->sort(48)
                 ->authorize(fn (Request $request): bool => collect(TransferType::cases())->contains(fn (TransferType $type): bool => $this->mayAnywhere($request, $type->permission()))),
 
             NavItem::make(__('roster::roster.audit_log'))
+                ->icon(Icons::svg('clipboard-document-list'))
                 ->route('atrium.roster.audit.index')
                 ->group(__('roster::roster.label'))
                 ->sort(50)
