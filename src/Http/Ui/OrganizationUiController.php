@@ -58,7 +58,7 @@ final class OrganizationUiController
 
     public function index(Request $request): View
     {
-        $this->authorizeScreen('roster.organizations.view');
+        $within = $this->authorizeList('roster.organizations.view');
 
         $filters = $request->validate(ListOrganizationsAction::rules());
 
@@ -66,7 +66,7 @@ final class OrganizationUiController
         $view = 'roster::ui.organizations.index';
 
         return view($view, [
-            'organizations' => app(ListOrganizationsAction::class)->execute($filters)->withQueryString(),
+            'organizations' => app(ListOrganizationsAction::class)->execute($filters, $within)->withQueryString(),
             'filters' => $filters,
         ]);
     }

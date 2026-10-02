@@ -29,12 +29,12 @@ final class ImpersonationUiController
     public function index(Request $request): View
     {
         $filters = $request->validate(ListImpersonationsAction::rules());
-        $this->authorizeScreen('roster.users.impersonate', Scopes::fromInput($filters['organization'] ?? null));
+        $within = $this->authorizeList('roster.users.impersonate', Scopes::fromInput($filters['organization'] ?? null));
 
         /** @var view-string $view */
         $view = 'roster::ui.impersonations.index';
 
-        return view($view, ['impersonations' => app(ListImpersonationsAction::class)->execute($filters)->withQueryString()]);
+        return view($view, ['impersonations' => app(ListImpersonationsAction::class)->execute($filters, $within)->withQueryString()]);
     }
 
     public function start(Request $request, string $user): RedirectResponse

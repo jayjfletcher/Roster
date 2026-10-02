@@ -24,6 +24,11 @@ final class IndexRolesRequest extends Request
         return Scopes::fromInput($this->input('organization'), $this->input('team'));
     }
 
+    protected function acrossOrganizations(): bool
+    {
+        return true;
+    }
+
     public function rules(): array
     {
         return ListRolesAction::rules();
@@ -31,6 +36,6 @@ final class IndexRolesRequest extends Request
 
     public function persist(): JsonResponse
     {
-        return RoleResource::collection(app(ListRolesAction::class)->execute($this->validated()))->response();
+        return RoleResource::collection(app(ListRolesAction::class)->execute($this->validated(), $this->organizations()))->response();
     }
 }

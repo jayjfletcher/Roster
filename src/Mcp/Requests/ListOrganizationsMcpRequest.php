@@ -16,6 +16,11 @@ final class ListOrganizationsMcpRequest extends Request
         return 'roster.organizations.view';
     }
 
+    protected function acrossOrganizations(): bool
+    {
+        return true;
+    }
+
     protected function rules(): array
     {
         return ListOrganizationsAction::rules();
@@ -23,7 +28,7 @@ final class ListOrganizationsMcpRequest extends Request
 
     protected function handle(array $validated): ResponseFactory
     {
-        $organizations = app(ListOrganizationsAction::class)->execute($validated);
+        $organizations = app(ListOrganizationsAction::class)->execute($validated, $this->organizations());
 
         return $this->structuredCollection(OrganizationResource::collection($organizations->items())->resolve(), [
             'meta' => [

@@ -50,7 +50,7 @@ final class TransferUiController
 
         return view($view, [
             'available' => $this->transfers->available(),
-            'transfers' => app(ListTransfersAction::class)->execute($filters, $everyone ? null : $actor)->withQueryString(),
+            'transfers' => app(ListTransfersAction::class)->execute($filters, $everyone ? null : $actor, $everyone ? [] : (ScreenAccess::organizations('roster.members.view') ?? []))->withQueryString(),
             'filters' => $filters,
             'organization' => $organization,
             'imports' => array_filter(TransferType::cases(), fn (TransferType $type): bool => $type->isImport()),

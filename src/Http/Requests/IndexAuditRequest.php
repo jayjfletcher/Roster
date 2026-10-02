@@ -39,6 +39,11 @@ final class IndexAuditRequest extends Request
         return $user === null ? null : app(Users::class)->query()->where(app(Users::class)->routeKeyName(), $user)->first();
     }
 
+    protected function acrossOrganizations(): bool
+    {
+        return true;
+    }
+
     public function rules(): array
     {
         return ListAuditEntriesAction::rules();
@@ -46,6 +51,6 @@ final class IndexAuditRequest extends Request
 
     public function persist(): JsonResponse
     {
-        return AuditEntryResource::collection(app(ListAuditEntriesAction::class)->execute($this->validated()))->response();
+        return AuditEntryResource::collection(app(ListAuditEntriesAction::class)->execute($this->validated(), $this->organizations()))->response();
     }
 }

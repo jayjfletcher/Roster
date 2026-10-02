@@ -33,6 +33,11 @@ final class ListAuditEntriesMcpRequest extends Request
         return $user === null ? null : app(Users::class)->query()->where(app(Users::class)->routeKeyName(), $user)->first();
     }
 
+    protected function acrossOrganizations(): bool
+    {
+        return true;
+    }
+
     protected function rules(): array
     {
         return ListAuditEntriesAction::rules();
@@ -40,7 +45,7 @@ final class ListAuditEntriesMcpRequest extends Request
 
     protected function handle(array $validated): ResponseFactory
     {
-        $entries = app(ListAuditEntriesAction::class)->execute($validated);
+        $entries = app(ListAuditEntriesAction::class)->execute($validated, $this->organizations());
 
         return $this->structuredCollection(AuditEntryResource::collection($entries->items())->resolve(), [
             'meta' => [

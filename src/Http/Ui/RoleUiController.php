@@ -35,13 +35,13 @@ final class RoleUiController
     public function index(Request $request): View
     {
         $filters = $request->validate(ListRolesAction::rules());
-        $this->authorizeScreen('roster.roles.view', Scopes::fromInput($filters['organization'] ?? null));
+        $within = $this->authorizeList('roster.roles.view', Scopes::fromInput($filters['organization'] ?? null));
 
         /** @var view-string $view */
         $view = 'roster::ui.roles.index';
 
         return view($view, [
-            'roles' => app(ListRolesAction::class)->execute($filters)->withQueryString(),
+            'roles' => app(ListRolesAction::class)->execute($filters, $within)->withQueryString(),
             'filters' => $filters,
             'scopes' => RoleScope::cases(),
             'permissions' => app(ListPermissionsAction::class)->execute(['per_page' => 200])->items(),

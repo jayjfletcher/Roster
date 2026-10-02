@@ -45,6 +45,9 @@ final class IndexTransfersRequest extends Request
         $actor = $this->actor();
         $everyone = $this->scope() !== null || app(Authorizer::class)->check($actor, 'roster.users.view');
 
-        return TransferResource::collection(app(ListTransfersAction::class)->execute($this->validated(), $everyone ? null : $actor))->response();
+        // Not everyone's: their own, plus those of the organizations they may see transfers in.
+        $organizations = $everyone ? [] : (app(Authorizer::class)->organizationsWith($actor, 'roster.members.view') ?? []);
+
+        return TransferResource::collection(app(ListTransfersAction::class)->execute($this->validated(), $everyone ? null : $actor, $organizations))->response();
     }
 }

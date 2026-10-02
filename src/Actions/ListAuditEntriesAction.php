@@ -43,9 +43,10 @@ final class ListAuditEntriesAction
      * `action` matches exactly, or a prefix ending in `.` (e.g. `user.`).
      *
      * @param  array<string, mixed>  $filters
+     * @param  array<int, int|string>|null  $organizations  Only these organizations; null for no limit.
      * @return LengthAwarePaginator<int, AuditEntry>
      */
-    public function execute(array $filters = []): LengthAwarePaginator
+    public function execute(array $filters = [], ?array $organizations = null): LengthAwarePaginator
     {
         AuditEntriesListingActionEvent::dispatch($filters);
 
@@ -55,6 +56,10 @@ final class ListAuditEntriesAction
 
         if ($organization !== null) {
             $query->where('organization_id', $organization->getKey());
+        }
+
+        if ($organizations !== null) {
+            $query->whereIn('organization_id', $organizations);
         }
 
         if (($filters['user'] ?? null) !== null) {

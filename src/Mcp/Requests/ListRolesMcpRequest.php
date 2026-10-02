@@ -24,6 +24,11 @@ final class ListRolesMcpRequest extends Request
         return Scopes::fromInput($this->get('organization'), $this->get('team'));
     }
 
+    protected function acrossOrganizations(): bool
+    {
+        return true;
+    }
+
     protected function rules(): array
     {
         return ListRolesAction::rules();
@@ -31,7 +36,7 @@ final class ListRolesMcpRequest extends Request
 
     protected function handle(array $validated): ResponseFactory
     {
-        $roles = app(ListRolesAction::class)->execute($validated);
+        $roles = app(ListRolesAction::class)->execute($validated, $this->organizations());
 
         return $this->structuredCollection(RoleResource::collection($roles->items())->resolve(), [
             'meta' => [

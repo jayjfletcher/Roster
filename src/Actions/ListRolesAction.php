@@ -35,9 +35,10 @@ final class ListRolesAction
      * organization: the shared ones plus its own. Without, the shared ones.
      *
      * @param  array<string, mixed>  $filters
+     * @param  array<int, int|string>|null  $organizations  Only these organizations; null for no limit.
      * @return LengthAwarePaginator<int, Role>
      */
-    public function execute(array $filters = []): LengthAwarePaginator
+    public function execute(array $filters = [], ?array $organizations = null): LengthAwarePaginator
     {
         RolesListingActionEvent::dispatch($filters);
 
@@ -46,9 +47,13 @@ final class ListRolesAction
 
         $query = Role::query()
             ->with(['permissions', 'organization'])
-            ->where(fn (Builder $builder): Builder => $organization === null
-                ? $builder->whereNull('organization_id')
-                : $builder->whereNull('organization_id')->orWhere('organization_id', $organization->getKey()));
+            // Shared roles, plus the organization's own - or, for a list limited to
+            // some organizations, their own.
+            ->where(fn (Builder $builder): Builder => match (true) {
+                $organization !== null => $builder->whereNull('organization_id')->orWhere('organization_id', $organization->getKey()),
+                $organizations !== null => $builder->whereNull('organization_id')->orWhereIn('organization_id', $organizations),
+                default => $builder->whereNull('organization_id'),
+            });
 
         if ($scope !== null) {
             $query->where('scope', $scope);

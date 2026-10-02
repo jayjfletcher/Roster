@@ -30,13 +30,13 @@ final class AuditUiController
     {
         $filters = $request->validate(ListAuditEntriesAction::rules());
         $self = isset($filters['user']) ? $this->users->query()->where($this->users->routeKeyName(), $filters['user'])->first() : null;
-        $this->authorizeScreen('roster.audit.view', Scopes::fromInput($filters['organization'] ?? null), $self);
+        $within = $this->authorizeList('roster.audit.view', Scopes::fromInput($filters['organization'] ?? null), $self);
 
         /** @var view-string $view */
         $view = 'roster::ui.audit.index';
 
         return view($view, [
-            'entries' => app(ListAuditEntriesAction::class)->execute($filters)->withQueryString(),
+            'entries' => app(ListAuditEntriesAction::class)->execute($filters, $within)->withQueryString(),
             'filters' => $filters,
         ]);
     }

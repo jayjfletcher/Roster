@@ -31,7 +31,15 @@ it('lets organization admins read only their organization', function (): void {
         ->assertOk()
         ->assertJsonMissingPath('data.0.ip');
     $this->getJson(route('roster.audit.index', ['organization' => 'globex']))->assertForbidden();
-    $this->getJson(route('roster.audit.index'))->assertForbidden();
+
+    // Without an organization of its own, the list holds only theirs.
+    $organizations = collect($this->getJson(route('roster.audit.index', ['per_page' => 100]))->assertOk()->json('data'))
+        ->pluck('organization')
+        ->unique()
+        ->values()
+        ->all();
+
+    expect($organizations)->toBe(['acme']);
 
     $globexEntry = AuditEntry::query()->where('action', 'organization.created')->where('subject_label', 'Globex')->sole();
     $acmeEntry = AuditEntry::query()->where('action', 'organization.created')->where('subject_label', 'Acme')->sole();

@@ -201,6 +201,8 @@ With `roster.authorization` on (the default), every API route, MCP tool and Atri
 
 If your app hasn't defined Atrium's `viewAtrium` gate, Roster defines it as the `atrium.view` permission.
 
+**Organization admins.** A permission held only in some organizations (through an organization role, or by owning the organization) still opens the lists of organizations, roles, impersonations, transfers and the audit log. Asked without an `organization`, those lists hold only what falls within the user's organizations: their organizations, the shared roles plus those organizations' own, their entries, and so on. On every surface: Atrium, the API and MCP. Asking for another organization is still refused. In Atrium, the matching navigation items appear for them too; Users and Permissions stay global, as does the users search.
+
 ## Audit log
 
 Every change Roster makes is recorded: users, profiles and status, organizations, members, teams, invitations, roles, permissions and assignments. Reads are not recorded. Each entry holds:

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JayI\Roster\Actions;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 use JayI\Roster\Actions\Concerns\ResolvesScopes;
@@ -35,12 +36,13 @@ final class ListTransfersAction
 
     /**
      * Newest first. With an organization, its transfers; otherwise only the
-     * requester's own (when one is given).
+     * requester's own (when one is given), plus those of `$organizations`.
      *
      * @param  array<string, mixed>  $filters
+     * @param  array<int, int|string>  $organizations
      * @return LengthAwarePaginator<int, Transfer>
      */
-    public function execute(array $filters = [], ?Model $requester = null): LengthAwarePaginator
+    public function execute(array $filters = [], ?Model $requester = null, array $organizations = []): LengthAwarePaginator
     {
         TransfersListingActionEvent::dispatch($filters);
 
@@ -50,7 +52,10 @@ final class ListTransfersAction
         if ($organization !== null) {
             $query->where('organization_id', $organization->getKey());
         } elseif ($requester !== null) {
-            $query->where('requested_by', $requester->getKey());
+            // Their own, and those of the organizations they may see transfers in.
+            $query->where(fn (Builder $builder): Builder => $builder
+                ->where('requested_by', $requester->getKey())
+                ->when($organizations !== [], fn (Builder $within): Builder => $within->orWhereIn('organization_id', $organizations)));
         }
 
         foreach (['type', 'status'] as $column) {

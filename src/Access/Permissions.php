@@ -121,6 +121,34 @@ final class Permissions
     }
 
     /**
+     * The organizations a user holds a permission in, through an
+     * organization role or by owning the organization. Null when they hold it
+     * globally, so no organization limits them.
+     *
+     * @return array<int, int|string>|null
+     */
+    public function organizationsWith(Model $user, string $permission): ?array
+    {
+        if (in_array($permission, $this->for($user), true)) {
+            return null;
+        }
+
+        $assigned = RoleAssignment::query()
+            ->where('user_id', $user->getKey())
+            ->whereNotNull('organization_id')
+            ->whereNull('team_id')
+            ->whereHas('role.permissions', fn (Builder $query): Builder => $query->where('name', $permission))
+            ->pluck('organization_id')
+            ->all();
+
+        $owned = $this->isGlobalOnly($permission)
+            ? []
+            : Organization::query()->where('owner_id', $user->getKey())->pluck('id')->all();
+
+        return array_values(array_unique([...$assigned, ...$owned]));
+    }
+
+    /**
      * Super-admins hold a super role, or are listed in `roster.super_admins`
      * with a verified email - an unverified address proves nothing.
      */

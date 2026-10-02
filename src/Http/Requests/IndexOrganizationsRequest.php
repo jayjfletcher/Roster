@@ -16,6 +16,11 @@ final class IndexOrganizationsRequest extends Request
         return 'roster.organizations.view';
     }
 
+    protected function acrossOrganizations(): bool
+    {
+        return true;
+    }
+
     public function rules(): array
     {
         return ListOrganizationsAction::rules();
@@ -23,6 +28,6 @@ final class IndexOrganizationsRequest extends Request
 
     public function persist(): JsonResponse
     {
-        return OrganizationResource::collection(app(ListOrganizationsAction::class)->execute($this->validated()))->response();
+        return OrganizationResource::collection(app(ListOrganizationsAction::class)->execute($this->validated(), $this->organizations()))->response();
     }
 }

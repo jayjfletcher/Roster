@@ -54,4 +54,24 @@ final class Authorizer
 
         return $this->permissions->allows($actor, $permission, $scope);
     }
+
+    /**
+     * The organizations `$actor` may use a permission in, for lists that show
+     * what falls within them. Null means no organization limits them: they
+     * hold it globally, or authorization is off.
+     *
+     * @return array<int, int|string>|null
+     */
+    public function organizationsWith(?Model $actor, string $permission): ?array
+    {
+        if (! $this->enabled()) {
+            return null;
+        }
+
+        if ($actor === null || app(ImpersonationContext::class)->isBlocked($permission)) {
+            return [];
+        }
+
+        return $this->permissions->organizationsWith($actor, $permission);
+    }
 }

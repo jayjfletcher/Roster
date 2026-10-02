@@ -37,9 +37,10 @@ final class ListOrganizationsAction
 
     /**
      * @param  array<string, mixed>  $filters
+     * @param  array<int, int|string>|null  $organizations  Only these organizations; null for no limit.
      * @return LengthAwarePaginator<int, Organization>
      */
-    public function execute(array $filters = []): LengthAwarePaginator
+    public function execute(array $filters = [], ?array $organizations = null): LengthAwarePaginator
     {
         OrganizationsListingActionEvent::dispatch($filters);
 
@@ -49,6 +50,10 @@ final class ListOrganizationsAction
             default => Organization::query(),
         };
         $query->with(['domains', 'links', 'owner'])->withCount(['memberships', 'teams']);
+
+        if ($organizations !== null) {
+            $query->whereIn('id', $organizations);
+        }
 
         $search = $filters['search'] ?? null;
 

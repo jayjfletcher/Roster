@@ -24,6 +24,11 @@ final class ListImpersonationsMcpRequest extends Request
         return Scopes::fromInput($this->get('organization'));
     }
 
+    protected function acrossOrganizations(): bool
+    {
+        return true;
+    }
+
     protected function rules(): array
     {
         return ListImpersonationsAction::rules();
@@ -31,7 +36,7 @@ final class ListImpersonationsMcpRequest extends Request
 
     protected function handle(array $validated): ResponseFactory
     {
-        $impersonations = app(ListImpersonationsAction::class)->execute($validated);
+        $impersonations = app(ListImpersonationsAction::class)->execute($validated, $this->organizations());
 
         return $this->structuredCollection(ImpersonationResource::collection($impersonations->items())->resolve(), [
             'meta' => [

@@ -72,7 +72,42 @@ abstract class Request extends McpRequest
 
     protected function authorize(): bool
     {
-        return app(Authorizer::class)->check($this->actor(), $this->ability(), $this->scope(), $this->self());
+        if (app(Authorizer::class)->check($this->actor(), $this->ability(), $this->scope(), $this->self())) {
+            return true;
+        }
+
+        return ($this->organizations() ?? []) !== [];
+    }
+
+    /**
+     * Lists return true: asked without an organization of their own, a user
+     * holding the permission only in some organizations sees what falls
+     * within those, rather than being refused.
+     */
+    protected function acrossOrganizations(): bool
+    {
+        return false;
+    }
+
+    /**
+     * The organizations a list is limited to, or null for no limit: the user
+     * holds the permission globally, or the request names its own scope.
+     *
+     * @return array<int, int|string>|null
+     */
+    protected function organizations(): ?array
+    {
+        if (! $this->acrossOrganizations() || $this->scope() !== null) {
+            return null;
+        }
+
+        $authorizer = app(Authorizer::class);
+
+        if ($authorizer->check($this->actor(), $this->ability(), null, $this->self())) {
+            return null;
+        }
+
+        return $authorizer->organizationsWith($this->actor(), $this->ability());
     }
 
     /**

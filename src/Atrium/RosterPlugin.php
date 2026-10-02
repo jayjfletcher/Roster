@@ -82,13 +82,13 @@ class RosterPlugin extends Plugin
                 ->route('atrium.roster.organizations.index')
                 ->group(__('roster::roster.label'))
                 ->sort(20)
-                ->authorize(fn (Request $request): bool => $this->may($request, 'roster.organizations.view')),
+                ->authorize(fn (Request $request): bool => $this->mayAnywhere($request, 'roster.organizations.view')),
 
             NavItem::make(__('roster::roster.roles'))
                 ->route('atrium.roster.roles.index')
                 ->group(__('roster::roster.label'))
                 ->sort(30)
-                ->authorize(fn (Request $request): bool => $this->may($request, 'roster.roles.view')),
+                ->authorize(fn (Request $request): bool => $this->mayAnywhere($request, 'roster.roles.view')),
 
             NavItem::make(__('roster::roster.permissions'))
                 ->route('atrium.roster.permissions.index')
@@ -100,7 +100,7 @@ class RosterPlugin extends Plugin
                 ->route('atrium.roster.impersonations.index')
                 ->group(__('roster::roster.label'))
                 ->sort(45)
-                ->authorize(fn (Request $request): bool => $this->may($request, 'roster.users.impersonate')),
+                ->authorize(fn (Request $request): bool => $this->mayAnywhere($request, 'roster.users.impersonate')),
 
             // Organization admins reach their organization's imports and
             // exports from its page.
@@ -108,13 +108,13 @@ class RosterPlugin extends Plugin
                 ->route('atrium.roster.transfers.index')
                 ->group(__('roster::roster.label'))
                 ->sort(48)
-                ->authorize(fn (Request $request): bool => collect(TransferType::cases())->contains(fn (TransferType $type): bool => $this->may($request, $type->permission()))),
+                ->authorize(fn (Request $request): bool => collect(TransferType::cases())->contains(fn (TransferType $type): bool => $this->mayAnywhere($request, $type->permission()))),
 
             NavItem::make(__('roster::roster.audit_log'))
                 ->route('atrium.roster.audit.index')
                 ->group(__('roster::roster.label'))
                 ->sort(50)
-                ->authorize(fn (Request $request): bool => $this->may($request, 'roster.audit.view')),
+                ->authorize(fn (Request $request): bool => $this->mayAnywhere($request, 'roster.audit.view')),
         ];
     }
 
@@ -268,8 +268,10 @@ class RosterPlugin extends Plugin
             SearchSource::make('roster-organizations')
                 ->label(__('roster::roster.organizations'))
                 ->description('Organizations (tenants, customers, accounts), by name or slug.')
-                ->authorize(static fn (Request $request): bool => self::allows($request, 'roster.organizations.view'))
+                ->authorize(static fn (Request $request): bool => self::allows($request, 'roster.organizations.view') || self::organizationsFor($request->user()) !== [])
                 ->using(static fn (string $query): array => Organization::query()
+                    // Only the organizations the searcher may view, when not all of them.
+                    ->when(self::organizationsFor(auth()->user()), fn (Builder $builder, array $within): Builder => $builder->whereIn('id', $within))
                     ->where(fn (Builder $builder): Builder => $builder
                         ->where('name', 'like', '%'.$query.'%')
                         ->orWhere('slug', 'like', '%'.$query.'%'))
@@ -309,6 +311,28 @@ class RosterPlugin extends Plugin
         $user = $request->user();
 
         return app(Authorizer::class)->check($user instanceof Model ? $user : null, $permission);
+    }
+
+    /**
+     * Whether the signed-in user holds a Roster permission globally or in any
+     * organization - enough for a list page limited to those organizations.
+     */
+    private function mayAnywhere(Request $request, string $permission): bool
+    {
+        $user = $request->user();
+
+        return $this->may($request, $permission)
+            || app(Authorizer::class)->organizationsWith($user instanceof Model ? $user : null, $permission) !== [];
+    }
+
+    /**
+     * The organizations a user may view, or null when not limited to any.
+     *
+     * @return array<int, int|string>|null
+     */
+    private static function organizationsFor(mixed $user): ?array
+    {
+        return app(Authorizer::class)->organizationsWith($user instanceof Model ? $user : null, 'roster.organizations.view');
     }
 
     /**

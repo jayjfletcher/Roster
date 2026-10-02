@@ -24,6 +24,11 @@ final class IndexImpersonationsRequest extends Request
         return Scopes::fromInput($this->input('organization'));
     }
 
+    protected function acrossOrganizations(): bool
+    {
+        return true;
+    }
+
     public function rules(): array
     {
         return ListImpersonationsAction::rules();
@@ -31,6 +36,6 @@ final class IndexImpersonationsRequest extends Request
 
     public function persist(): JsonResponse
     {
-        return ImpersonationResource::collection(app(ListImpersonationsAction::class)->execute($this->validated()))->response();
+        return ImpersonationResource::collection(app(ListImpersonationsAction::class)->execute($this->validated(), $this->organizations()))->response();
     }
 }
