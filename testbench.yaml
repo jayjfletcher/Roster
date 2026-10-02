@@ -17,6 +17,9 @@ migrations:
   - vendor/jayi/cortex/database/migrations
   # jayi/impex (dev dependency, auto-discovered) runs CSV imports and exports.
   - vendor/jayi/impex/database/migrations
+  # jayi/pennantplus (dev dependency, auto-discovered) decides RosterSupportFeature
+  # through Pennant, whose features table lives here.
+  - vendor/laravel/pennant/database/migrations
 
 seeders:
   - Workbench\Database\Seeders\DatabaseSeeder
