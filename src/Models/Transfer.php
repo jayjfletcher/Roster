@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use JayI\Roster\Database\Factories\TransferFactory;
 use JayI\Roster\Enums\TransferStatus;
@@ -74,12 +77,32 @@ final class Transfer extends Model
     }
 
     /**
+     * @return HasMany<TransferRow, $this>
+     */
+    public function lines(): HasMany
+    {
+        return $this->hasMany(TransferRow::class, 'transfer_id')->orderBy('line');
+    }
+
+    /**
+     * Every row's plan and result. For large imports, page through `lines()`.
+     *
      * @return array<int, array<string, mixed>>
      */
     public function rows(): array
     {
-        /** @var array<int, array<string, mixed>> */
-        return array_values((array) ($this->report['rows'] ?? []));
+        return $this->lines()->get()->map(fn (TransferRow $row): array => $row->toReport())->all();
+    }
+
+    /**
+     * Every column but the report, which can be large.
+     *
+     * @param  Builder<self>  $query
+     */
+    #[Scope]
+    protected function withoutReport(Builder $query): void
+    {
+        $query->select(array_values(array_diff(['id', ...$this->getFillable(), 'created_at', 'updated_at'], ['report'])));
     }
 
     protected static function newFactory(): TransferFactory

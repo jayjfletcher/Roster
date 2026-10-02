@@ -25,7 +25,9 @@ final class InvitationResource extends JsonResource
             'id' => $this->id,
             'email' => $this->email,
             'organization' => $this->organization?->slug,
-            'teams' => Team::query()->whereIn('id', (array) $this->teams)->orderBy('slug')->pluck('slug')->all(),
+            'teams' => $this->relationLoaded('teamModels')
+                ? $this->getRelation('teamModels')->pluck('slug')->all()
+                : Team::query()->whereIn('id', (array) $this->teams)->orderBy('slug')->pluck('slug')->all(),
             'status' => $this->status()->value,
             'expires_at' => $this->expires_at->toIso8601String(),
             'accepted_at' => $this->accepted_at?->toIso8601String(),

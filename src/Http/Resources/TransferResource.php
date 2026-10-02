@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Http\Resources;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Route;
 use JayI\Roster\Models\Transfer;
+use JayI\Roster\Models\TransferRow;
 use JayI\Roster\Transfers\Transfers;
 
 /**
- * The report's rows are only included for a single transfer.
+ * A single transfer includes its rows, a page at a time (`rows_page`, 100
+ * per page).
  *
  * @mixin Transfer
  */
@@ -20,11 +23,17 @@ final class TransferResource extends JsonResource
 {
     private bool $rows = false;
 
+    private int $rowsPage = 1;
+
+    /** @var LengthAwarePaginator<int, TransferRow>|null */
+    private ?LengthAwarePaginator $rowsPaginator = null;
+
     private bool $signed = false;
 
-    public function withRows(): self
+    public function withRows(int $page = 1): self
     {
         $this->rows = true;
+        $this->rowsPage = max(1, $page);
 
         return $this;
     }
@@ -37,6 +46,14 @@ final class TransferResource extends JsonResource
         $this->signed = true;
 
         return $this;
+    }
+
+    /**
+     * @return LengthAwarePaginator<int, TransferRow>
+     */
+    private function rowsPage(): LengthAwarePaginator
+    {
+        return $this->rowsPaginator ??= $this->resource->lines()->paginate(100, ['*'], 'rows_page', $this->rowsPage);
     }
 
     /**
@@ -59,10 +76,17 @@ final class TransferResource extends JsonResource
             'results' => (array) ($this->report['results'] ?? []),
             'error' => $this->report['error'] ?? null,
             'filters' => $this->filters,
-            'rows' => $this->when($this->rows, fn (): array => $this->rows()),
+            'rows' => $this->when($this->rows, fn (): array => array_map(fn (TransferRow $row): array => $row->toReport(), $this->rowsPage()->items())),
+            'rows_meta' => $this->when($this->rows, function (): array {
+                $page = $this->rowsPage();
+
+                return ['current_page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'per_page' => $page->perPage(), 'total' => $page->total()];
+            }),
             'download_url' => match (true) {
                 $this->signed => $transfers->signedDownloadUrl($this->resource),
-                $transfers->downloadable($this->resource) && Route::has('roster.transfers.download') => route('roster.transfers.download', $this->id),
+                // Lists trust the record; only a single transfer checks the file
+                // (one disk call per row is slow on S3).
+                $transfers->downloadable($this->resource, checkFile: $this->rows) && Route::has('roster.transfers.download') => route('roster.transfers.download', $this->id),
                 default => null,
             },
             'expires_at' => $this->expires_at?->toIso8601String(),

@@ -69,13 +69,7 @@ final class CreateInvitationAction
 
     private function guard(Organization $organization, string $email): void
     {
-        $column = $this->users->column('email');
-        // whereLike is case-insensitive; the exact comparison drops any match
-        // a `_` or `%` in the address let through.
-        $existing = $column === null ? null : $this->users->query()
-            ->whereLike($column, $email)
-            ->get()
-            ->first(fn (Model $user): bool => strcasecmp((string) $this->users->email($user), $email) === 0);
+        $existing = $this->users->findByEmail($email);
 
         if ($existing !== null && $organization->membershipFor($existing) !== null) {
             throw ValidationException::withMessages(['email' => __('roster::roster.already_a_member')]);

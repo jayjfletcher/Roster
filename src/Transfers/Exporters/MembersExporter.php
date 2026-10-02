@@ -6,6 +6,7 @@ namespace JayI\Roster\Transfers\Exporters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use JayI\Roster\Models\Membership;
 use JayI\Roster\Models\RoleAssignment;
 use JayI\Roster\Models\Team;
@@ -26,23 +27,26 @@ final class MembersExporter implements Exporter
     {
         $organization = $transfer->organization ?? throw new RuntimeException('A members export needs an organization.');
 
-        return Membership::query()
+        $memberships = Membership::query()
             ->where('organization_id', $organization->getKey())
-            ->with(['user', 'teams'])
+            ->with(['user.rosterProfile', 'teams'])
             ->when($after !== null, fn (Builder $query): Builder => $query->where('id', '>', $after))
             ->orderBy('id')
             ->limit($limit)
+            ->get();
+
+        // Every member's organization roles for the chunk, in one query.
+        $roles = RoleAssignment::query()
+            ->where('organization_id', $organization->getKey())
+            ->whereIn('user_id', $memberships->pluck('user_id')->all())
+            ->with('role')
             ->get()
-            ->map(function (Membership $membership) use ($organization): array {
+            ->groupBy(fn (RoleAssignment $assignment): string => (string) $assignment->user_id)
+            ->map(fn (Collection $assignments): string => $assignments->map(fn (RoleAssignment $assignment): string => (string) $assignment->role?->slug)->sort()->implode(';'));
+
+        return $memberships
+            ->map(function (Membership $membership) use ($organization, $roles): array {
                 $user = $membership->user;
-                $roles = $user instanceof Model ? RoleAssignment::query()
-                    ->where('user_id', $user->getKey())
-                    ->where('organization_id', $organization->getKey())
-                    ->with('role')
-                    ->get()
-                    ->map(fn (RoleAssignment $assignment): string => (string) $assignment->role?->slug)
-                    ->sort()
-                    ->implode(';') : '';
 
                 return [
                     'cursor' => $membership->id,
@@ -52,7 +56,7 @@ final class MembersExporter implements Exporter
                         $user instanceof Model ? ($this->users->profileIfExists($user)->display_name ?? null) : null,
                         $user instanceof Model ? $this->users->status($user)->value : null,
                         $membership->teams->map(fn (Team $team): string => $team->slug)->sort()->implode(';'),
-                        $roles,
+                        $roles->get((string) $membership->user_id, ''),
                         $user instanceof Model && $organization->isOwnedBy($user),
                         $membership->source->value,
                         $membership->created_at?->toIso8601String(),

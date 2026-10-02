@@ -8,6 +8,8 @@ use JayI\Impex\Impex;
 use JayI\Roster\Enums\TransferStatus;
 use JayI\Roster\Events\Action\TransferFinishedActionEvent;
 use JayI\Roster\Models\Transfer;
+use JayI\Roster\Models\TransferRow;
+use JayI\Roster\Transfers\PlanCache;
 
 /**
  * Fold each row's outcome back into the report.
@@ -20,35 +22,34 @@ final class FinishImport
     public function execute(string $transfer, string $batch): array
     {
         $model = Transfer::query()->findOrFail($transfer);
-        $outcomes = [];
 
+        // Rows record their own result as they apply; a row whose job failed
+        // outright (after its retries) never did, so it's marked here.
         foreach (app(Impex::class)->batchItems($batch) as $item) {
-            $value = $item->result['value'] ?? null;
-
-            if (is_array($value) && isset($value['line'])) {
-                $outcomes[(int) $value['line']] = $value;
-            } else {
-                $line = (int) str_replace('line-', '', (string) $item->item_key);
-                $outcomes[$line] = ['line' => $line, 'action' => 'error', 'reasons' => [(string) ($item->error['message'] ?? 'Failed.')]];
+            if (! is_array($item->result['value'] ?? null)) {
+                TransferRow::query()
+                    ->where('transfer_id', $model->id)
+                    ->where('line', (int) str_replace('line-', '', (string) $item->item_key))
+                    ->update(['result' => 'error', 'result_reasons' => json_encode([(string) ($item->error['message'] ?? 'Failed.')])]);
             }
         }
 
-        $rows = array_map(function (array $row) use ($outcomes): array {
-            $outcome = $outcomes[(int) $row['line']] ?? null;
-
-            return $outcome === null ? $row : array_merge($row, ['result' => $outcome['action'], 'result_reasons' => $outcome['reasons']]);
-        }, $model->rows());
+        $results = TransferRow::query()
+            ->where('transfer_id', $model->id)
+            ->selectRaw("coalesce(result, 'error') as outcome, count(*) as total")
+            ->groupBy('outcome')
+            ->orderBy('outcome')
+            ->pluck('total', 'outcome')
+            ->map(fn (mixed $count): int => (int) $count)
+            ->all();
 
         $model->update([
             'status' => TransferStatus::Completed,
             'finished_at' => now(),
-            'report' => [
-                'summary' => $model->summary(),
-                'results' => ValidateImport::count(array_map(fn (array $row): array => ['result' => $row['result'] ?? 'error'], $rows), 'result'),
-                'rows' => $rows,
-            ],
+            'report' => ['summary' => $model->summary(), 'results' => $results],
         ]);
 
+        app(PlanCache::class)->forget($model->id);
         TransferFinishedActionEvent::dispatch($model->refresh());
 
         return ['status' => 'completed'];

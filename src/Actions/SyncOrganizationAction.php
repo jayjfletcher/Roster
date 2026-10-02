@@ -58,9 +58,12 @@ final class SyncOrganizationAction
      * applied when creating, or when the organization has no owner yet; an
      * existing owner is never replaced.
      *
+     * `$fresh: false` skips reloading the organization's domains, links and
+     * counts afterwards, for callers that only need the outcome (bulk sync).
+     *
      * @param  array<string, mixed>  $data
      */
-    public function execute(array $data): OrganizationSyncResult
+    public function execute(array $data, bool $fresh = true): OrganizationSyncResult
     {
         $data = Validator::validate($data, self::rules());
         $source = (string) $data['source'];
@@ -68,7 +71,7 @@ final class SyncOrganizationAction
 
         OrganizationSyncingActionEvent::dispatch($data);
 
-        $result = DB::transaction(function () use ($data, $source, $externalId): OrganizationSyncResult {
+        $result = DB::transaction(function () use ($data, $source, $externalId, $fresh): OrganizationSyncResult {
             $link = OrganizationLink::query()->where('source', $source)->where('external_id', $externalId)->first();
             $organization = $link !== null ? $link->organization : $this->existing($data, $source);
 
@@ -89,7 +92,11 @@ final class SyncOrganizationAction
             $link->synced_at = now();
             $link->save();
 
-            return new OrganizationSyncResult($organization->refresh()->load(['domains', 'links'])->loadCount(['memberships', 'teams']), $link, $outcome);
+            if ($fresh) {
+                $organization->refresh()->load(['domains', 'links'])->loadCount(['memberships', 'teams']);
+            }
+
+            return new OrganizationSyncResult($organization, $link, $outcome);
         });
 
         OrganizationSyncedActionEvent::dispatch($result->organization, $source, $externalId, $result->link->account_number, $result->outcome);
@@ -199,7 +206,7 @@ final class SyncOrganizationAction
     private function differs(Organization $organization, string $field, mixed $value): bool
     {
         return match ($field) {
-            'domains' => $this->normalized((array) $value) !== $this->normalized($organization->domains()->pluck('domain')->all()),
+            'domains' => $this->normalized((array) $value) !== $this->normalized($organization->loadMissing('domains')->domains->pluck('domain')->all()),
             'auto_join' => (bool) $value !== $organization->auto_join,
             'slug' => $value !== null && $value !== '' && $value !== $organization->slug,
             default => (string) $value !== (string) $organization->getAttribute($field),

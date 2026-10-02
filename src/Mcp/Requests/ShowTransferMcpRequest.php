@@ -18,6 +18,6 @@ final class ShowTransferMcpRequest extends TransferMcpRequest
 
     protected function handle(array $validated): ResponseFactory
     {
-        return Response::structured(['data' => TransferResource::make(app(ShowTransferAction::class)->execute($this->transfer()))->withRows()->signed()->resolve()]);
+        return Response::structured(['data' => TransferResource::make(app(ShowTransferAction::class)->execute($this->transfer()))->withRows((int) ($validated['rows_page'] ?? 1))->signed()->resolve()]);
     }
 }

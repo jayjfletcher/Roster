@@ -26,6 +26,8 @@ final class PruneTransfersCommand extends Command
             ->where(fn (Builder $query): Builder => $query->whereNotNull('input_path')->orWhereNotNull('output_path'))
             ->each(function (Transfer $transfer) use ($transfers, &$pruned): void {
                 $transfers->disk()->deleteDirectory('roster/transfers/'.$transfer->id);
+                // The rows hold the imported values (emails, names) too.
+                $transfer->lines()->delete();
                 $transfer->update(['input_path' => null, 'output_path' => null]);
                 $pruned++;
             });

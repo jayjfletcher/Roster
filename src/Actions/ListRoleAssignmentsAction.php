@@ -43,7 +43,7 @@ final class ListRoleAssignmentsAction
         $query = RoleAssignment::query()->with(['role', 'user', 'organization', 'team']);
 
         if (($filters['user'] ?? null) !== null) {
-            $query->where('user_id', $this->users->findOrFail($filters['user'])->getKey());
+            $query->where('user_id', $this->users->resolve($filters['user'])->getKey());
         }
 
         $organization = $this->organizationFrom($filters['organization'] ?? null);

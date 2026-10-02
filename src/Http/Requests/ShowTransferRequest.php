@@ -17,6 +17,6 @@ final class ShowTransferRequest extends TransferRequest
 
     public function persist(): JsonResponse
     {
-        return TransferResource::make(app(ShowTransferAction::class)->execute($this->transfer()))->withRows()->response();
+        return TransferResource::make(app(ShowTransferAction::class)->execute($this->transfer()))->withRows($this->integer('rows_page', 1))->response();
     }
 }

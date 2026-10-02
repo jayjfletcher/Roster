@@ -88,6 +88,7 @@ final class TransferUiController
 
         return view($view, [
             'transfer' => app(ShowTransferAction::class)->execute($model),
+            'rows' => $model->lines()->paginate(50, ['*'], 'rows_page')->withQueryString(),
             'progress' => $this->transfers->progress($model),
             'downloadable' => $this->transfers->downloadable($model),
             'canConfirm' => app(Authorizer::class)->check($this->actor($request), $model->type->permission(), $model->organization),

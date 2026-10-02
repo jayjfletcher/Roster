@@ -7,6 +7,7 @@ namespace JayI\Roster\Atrium;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use JayI\Atrium\Navigation\NavItem;
 use JayI\Atrium\Plugins\Plugin;
@@ -196,50 +197,84 @@ class RosterPlugin extends Plugin
                 ->defaultSize(6, 1)
                 ->view('roster::ui.widgets.organizations')
                 ->authorize(fn (Request $request): bool => $this->may($request, 'roster.organizations.view'))
-                ->resolve(fn (): array => [
-                    'organizations' => Organization::query()->count(),
-                    'teams' => Team::query()->count(),
-                    'pending' => Invitation::query()->pending()->count(),
-                ]),
+                // One query for all three counts.
+                ->resolve(fn (): array => array_map('intval', (array) DB::query()
+                    ->selectSub(Organization::query()->toBase()->selectRaw('count(*)'), 'organizations')
+                    ->selectSub(Team::query()->toBase()->selectRaw('count(*)'), 'teams')
+                    ->selectSub(Invitation::query()->pending()->toBase()->selectRaw('count(*)'), 'pending')
+                    ->first())),
         ];
     }
 
-    public function search(): ?SearchSource
+    /**
+     * Users and organizations as two sources: each fills its own
+     * `atrium.search.results.per_source`, and classification can pick one.
+     *
+     * The closures are static and resolve what they need when they run,
+     * because Atrium may serialize them into a child process.
+     *
+     * @return array<int, SearchSource>
+     */
+    public function search(): array
     {
-        return SearchSource::make('roster')
-            ->label(__('roster::roster.users'))
-            ->authorize(fn (Request $request): bool => $this->may($request, 'roster.users.view') || $this->may($request, 'roster.organizations.view'))
-            ->using(function (string $query): array {
-                $users = app(Users::class);
-                $columns = array_filter([$users->column('name'), $users->column('email')]);
+        return [
+            SearchSource::make('roster-users')
+                ->label(__('roster::roster.users'))
+                ->description('People: user accounts, by name or email address.')
+                ->authorize(static fn (Request $request): bool => self::allows($request, 'roster.users.view'))
+                ->using(static function (string $query): array {
+                    $users = app(Users::class);
+                    $columns = array_filter([$users->column('name'), $users->column('email')]);
 
-                $people = $users->query()
-                    ->where(function (Builder $builder) use ($columns, $query): void {
-                        foreach ($columns as $column) {
-                            $builder->orWhere($column, 'like', '%'.$query.'%');
-                        }
-                    })
-                    ->limit(5)
-                    ->get()
-                    ->map(fn (Model $user): SearchResult => SearchResult::make(
-                        $users->name($user) ?? $users->email($user) ?? (string) $user->getRouteKey(),
-                        route('atrium.roster.users.show', $user->getRouteKey()),
-                    )->subtitle((string) $users->email($user))->group(__('roster::roster.users')));
+                    return $users->query()
+                        ->where(function (Builder $builder) use ($columns, $query): void {
+                            foreach ($columns as $column) {
+                                $builder->orWhere($column, 'like', '%'.$query.'%');
+                            }
+                        })
+                        ->limit(self::searchLimit())
+                        ->get()
+                        ->map(fn (Model $user): SearchResult => SearchResult::make(
+                            $users->name($user) ?? $users->email($user) ?? (string) $user->getRouteKey(),
+                            route('atrium.roster.users.show', $user->getRouteKey()),
+                        )->subtitle((string) $users->email($user))->group(__('roster::roster.users')))
+                        ->all();
+                }),
 
-                $organizations = Organization::query()
+            SearchSource::make('roster-organizations')
+                ->label(__('roster::roster.organizations'))
+                ->description('Organizations (tenants, customers, accounts), by name or slug.')
+                ->authorize(static fn (Request $request): bool => self::allows($request, 'roster.organizations.view'))
+                ->using(static fn (string $query): array => Organization::query()
                     ->where(fn (Builder $builder): Builder => $builder
                         ->where('name', 'like', '%'.$query.'%')
                         ->orWhere('slug', 'like', '%'.$query.'%'))
                     ->orderBy('name')
-                    ->limit(5)
+                    ->limit(self::searchLimit())
                     ->get()
                     ->map(fn (Organization $organization): SearchResult => SearchResult::make(
                         $organization->name,
                         route('atrium.roster.organizations.show', $organization),
-                    )->subtitle($organization->slug)->group(__('roster::roster.organizations')));
+                    )->subtitle($organization->slug)->group(__('roster::roster.organizations')))
+                    ->all()),
+        ];
+    }
 
-                return $people->concat($organizations)->all();
-            });
+    /**
+     * As many results as Atrium keeps per source.
+     */
+    private static function searchLimit(): int
+    {
+        $limit = config('atrium.search.results.per_source');
+
+        return is_int($limit) && $limit > 0 ? $limit : 5;
+    }
+
+    private static function allows(Request $request, string $permission): bool
+    {
+        $user = $request->user();
+
+        return app(Authorizer::class)->check($user instanceof Model ? $user : null, $permission);
     }
 
     /**

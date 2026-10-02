@@ -17,22 +17,40 @@ return new class extends Migration
             $table->foreignUlid('organization_id')->nullable()->constrained('roster_organizations')->nullOnDelete();
             UserKey::column($table, 'requested_by')->index();
             $table->string('status', 32)->index();
-            $table->string('impex_run_id')->nullable();
+            $table->string('impex_run_id')->nullable()->index();
             $table->string('input_path')->nullable();
             $table->string('output_path')->nullable();
             $table->json('filters')->nullable();
-            // Summary counts and the per-row plan/outcome.
+            // Summary counts and any error; per-row results live in
+            // roster_transfer_rows.
             $table->json('report')->nullable();
             $table->unsignedInteger('row_count')->default(0);
             $table->timestamp('confirmed_at')->nullable();
             $table->timestamp('finished_at')->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
+
+            $table->index('created_at');
+        });
+
+        // An import's rows: what the preview planned, then what applying did.
+        Schema::create('roster_transfer_rows', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignUlid('transfer_id')->constrained('roster_transfers')->cascadeOnDelete();
+            $table->unsignedInteger('line');
+            $table->json('values');
+            $table->string('action', 16);
+            $table->json('reasons');
+            $table->string('result', 16)->nullable();
+            $table->json('result_reasons')->nullable();
+
+            $table->unique(['transfer_id', 'line']);
         });
     }
 
     public function down(): void
     {
+        Schema::dropIfExists('roster_transfer_rows');
         Schema::dropIfExists('roster_transfers');
     }
 };

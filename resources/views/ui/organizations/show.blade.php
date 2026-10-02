@@ -89,6 +89,7 @@
                         </x-atrium::table.row>
                     @endforeach
                 </x-atrium::table>
+                <x-atrium::pagination :paginator="$members" />
             @endif
         @elseif ($tab === 'teams')
             <x-atrium::card :title="__('roster::roster.new_team')">
@@ -122,6 +123,7 @@
                         </x-atrium::table.row>
                     @endforeach
                 </x-atrium::table>
+                <x-atrium::pagination :paginator="$teams" />
             @endif
         @elseif ($tab === 'invitations')
             <x-atrium::card :title="__('roster::roster.invite')">
@@ -174,6 +176,7 @@
                         </x-atrium::table.row>
                     @endforeach
                 </x-atrium::table>
+                <x-atrium::pagination :paginator="$invitations" />
             @endif
         @elseif ($tab === 'sso')
             @if ($ssoConnections->isEmpty())
@@ -203,6 +206,7 @@
                         </x-atrium::table.row>
                     @endforeach
                 </x-atrium::table>
+                <x-atrium::pagination :paginator="$ssoConnections" />
             @endif
 
             <x-atrium::card :title="__('roster::roster.new_sso_connection')">
@@ -269,6 +273,7 @@
                         </x-atrium::table.row>
                     @endforeach
                 </x-atrium::table>
+                <x-atrium::pagination :paginator="$scimTokens" />
             @endif
 
             <x-atrium::card :title="__('roster::roster.new_scim_token')">
@@ -289,6 +294,7 @@
             </x-atrium::card>
         @elseif ($tab === 'activity')
             @include('roster::ui.audit.partials.entries', ['entries' => $activity])
+            <x-atrium::pagination :paginator="$activity" />
             <x-atrium::button variant="ghost" :href="route('atrium.roster.audit.index', ['organization' => $organization->slug])">{{ __('roster::roster.view_all') }}</x-atrium::button>
         @elseif ($tab === 'roles')
             <x-atrium::card :title="__('roster::roster.assignments')">
@@ -305,6 +311,7 @@
                             </li>
                         @endforeach
                     </ul>
+                    <x-atrium::pagination :paginator="$assignments" />
                 @endif
             </x-atrium::card>
 

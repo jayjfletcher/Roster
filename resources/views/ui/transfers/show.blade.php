@@ -67,7 +67,7 @@
             @endif
         </x-atrium::card>
 
-        @if ($transfer->rows())
+        @if ($rows->isNotEmpty())
             <x-atrium::table striped>
                 <x-slot:head>
                     <x-atrium::table.row>
@@ -77,7 +77,7 @@
                         <x-atrium::table.cell heading>{{ __('roster::roster.result') }}</x-atrium::table.cell>
                     </x-atrium::table.row>
                 </x-slot:head>
-                @foreach ($transfer->rows() as $row)
+                @foreach ($rows as $row)
                     <x-atrium::table.row>
                         <x-atrium::table.cell>{{ $row['line'] ?? '' }}</x-atrium::table.cell>
                         <x-atrium::table.cell class="text-xs">{{ collect((array) ($row['values'] ?? []))->filter()->join(' · ') }}</x-atrium::table.cell>
@@ -94,6 +94,7 @@
                     </x-atrium::table.row>
                 @endforeach
             </x-atrium::table>
+            <x-atrium::pagination :paginator="$rows" />
         @endif
     </div>
 </x-atrium::layout>

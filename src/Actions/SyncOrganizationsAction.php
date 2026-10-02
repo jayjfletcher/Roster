@@ -48,7 +48,7 @@ final class SyncOrganizationsAction
             $entry = ['source' => $record['source'] ?? null, 'external_id' => $record['external_id'] ?? null];
 
             try {
-                $result = app(SyncOrganizationAction::class)->execute($record);
+                $result = app(SyncOrganizationAction::class)->execute($record, fresh: false);
                 $results[] = $entry + ['outcome' => $result->outcome, 'result' => $result];
             } catch (ValidationException $exception) {
                 $results[] = $entry + ['outcome' => self::ERROR, 'errors' => $exception->errors()];

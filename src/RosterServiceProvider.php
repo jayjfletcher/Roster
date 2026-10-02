@@ -56,6 +56,7 @@ use JayI\Roster\Sso\Sso;
 use JayI\Roster\Support\Users;
 use JayI\Roster\Transfers\Flows\ExportFlow;
 use JayI\Roster\Transfers\Flows\ImportFlow;
+use JayI\Roster\Transfers\PlanCache;
 use JayI\Roster\Transfers\TransferContext;
 use JayI\Roster\Transfers\Transfers;
 use Laravel\Mcp\Facades\Mcp;
@@ -70,7 +71,7 @@ class RosterServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/roster.php', 'roster');
 
-        $this->app->singleton(Roster::class);
+        $this->app->scoped(Roster::class);
         $this->app->singleton(Users::class);
         $this->app->scoped(Permissions::class);
         $this->app->scoped(AuditRecorder::class);
@@ -78,9 +79,12 @@ class RosterServiceProvider extends ServiceProvider
         $this->app->scoped(ImpersonationContext::class);
         $this->app->scoped(ScimContext::class);
         $this->app->scoped(TransferContext::class);
+        $this->app->singleton(PlanCache::class);
         $this->app->scoped(Impersonator::class);
         $this->app->singleton(AuditLog::class);
-        $this->app->singleton(Authorizer::class);
+        // Scoped like the Permissions it uses, so a long-lived worker (Octane,
+        // queues) never keeps one request's resolved permissions.
+        $this->app->scoped(Authorizer::class);
     }
 
     /**
@@ -246,6 +250,23 @@ class RosterServiceProvider extends ServiceProvider
             // Null rather than false: the app's own gates and policies still
             // get their say when the user lacks the permission.
             return $permissions->allows($user, $ability, $scope) ? true : null;
+        });
+
+        // Permissions and the current organization/team are remembered for the
+        // request; anything that changes them (assigning a role, switching
+        // context, joining) clears that, so later checks see the change.
+        $this->app->make(Dispatcher::class)->listen(ActionFinishedEvent::class, function (ActionFinishedEvent $event): void {
+            if (preg_match('/(Listed|Shown)ActionEvent$/', $event::class) === 1) {
+                return;
+            }
+
+            if ($this->app->resolved(Permissions::class)) {
+                $this->app->make(Permissions::class)->flush();
+            }
+
+            if ($this->app->resolved(Roster::class)) {
+                $this->app->make(Roster::class)->forget();
+            }
         });
 
         $this->app->booted(function () use ($gate): void {

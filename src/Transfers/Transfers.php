@@ -88,9 +88,37 @@ class Transfers
             return null;
         }
 
-        $batch = Batch::query()->where('run_id', $transfer->impex_run_id)->latest()->first();
+        $batch = $transfer->relationLoaded('impexBatch')
+            ? $transfer->getRelation('impexBatch')
+            : Batch::query()->where('run_id', $transfer->impex_run_id)->latest()->first();
 
-        return $batch === null ? null : ['done' => $batch->succeeded + $batch->failed, 'total' => $batch->total];
+        if (! $batch instanceof Batch) {
+            return null;
+        }
+
+        return ['done' => $batch->succeeded + $batch->failed, 'total' => $batch->total];
+    }
+
+    /**
+     * Load the progress of many transfers in one query.
+     *
+     * @param  iterable<int, Transfer>  $transfers
+     */
+    public function preloadProgress(iterable $transfers): void
+    {
+        $transfers = collect($transfers)->filter(fn (Transfer $transfer): bool => $transfer->impex_run_id !== null);
+
+        if (! $this->available() || $transfers->isEmpty()) {
+            return;
+        }
+
+        $batches = Batch::query()
+            ->whereIn('run_id', $transfers->pluck('impex_run_id')->all())
+            ->orderBy('created_at')
+            ->get()
+            ->keyBy('run_id');
+
+        $transfers->each(fn (Transfer $transfer) => $transfer->setRelation('impexBatch', $batches->get($transfer->impex_run_id)));
     }
 
     /**
@@ -113,12 +141,12 @@ class Transfers
     /**
      * Whether a finished export's file is still there to download.
      */
-    public function downloadable(Transfer $transfer): bool
+    public function downloadable(Transfer $transfer, bool $checkFile = true): bool
     {
         return ! $transfer->type->isImport()
             && $transfer->status === TransferStatus::Completed
             && $transfer->output_path !== null
-            && $this->disk()->exists($transfer->output_path);
+            && (! $checkFile || $this->disk()->exists($transfer->output_path));
     }
 
     /**

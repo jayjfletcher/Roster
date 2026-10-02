@@ -56,9 +56,6 @@ final class UsersPlanner extends Planner
 
     private function exists(string $email): bool
     {
-        $column = $this->users->column('email');
-
-        return $column !== null && $this->users->query()->whereLike($column, $email)->get()
-            ->contains(fn (Model $user): bool => strcasecmp((string) $this->users->email($user), $email) === 0);
+        return $this->users->findByEmail($email) !== null;
     }
 }

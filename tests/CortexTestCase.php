@@ -31,10 +31,8 @@ abstract class CortexTestCase extends AuthorizationTestCase
         $app['config']->set('cortex.cache.store', 'array');
     }
 
-    protected function defineDatabaseMigrations(): void
+    protected function migrationPaths(): array
     {
-        parent::defineDatabaseMigrations();
-
-        $this->loadMigrationsFrom(dirname(__DIR__).'/vendor/jayi/cortex/database/migrations');
+        return [...parent::migrationPaths(), dirname(__DIR__).'/vendor/jayi/cortex/database/migrations'];
     }
 }

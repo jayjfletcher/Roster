@@ -46,7 +46,7 @@ final class ScimUsers
      */
     public function list(?string $filter, int $startIndex, int $count): array
     {
-        $query = ScimUser::query()->where('organization_id', $this->organization()->getKey())->with('user');
+        $query = ScimUser::query()->where('organization_id', $this->organization()->getKey())->with('user.rosterProfile');
 
         if ($filter !== null && trim($filter) !== '') {
             $email = $this->users->column('email') ?? 'email';
@@ -65,6 +65,8 @@ final class ScimUsers
 
         $total = (clone $query)->count();
         $page = $query->orderBy('created_at')->orderBy('id')->skip(max(0, $startIndex - 1))->take($count)->get()->all();
+
+        $this->preloadGroups($page);
 
         return [$page, $total];
     }
@@ -339,12 +341,7 @@ final class ScimUsers
 
     private function findByEmail(string $email): ?Model
     {
-        $column = $this->users->column('email');
-
-        return $column === null ? null : $this->users->query()
-            ->whereLike($column, $email)
-            ->get()
-            ->first(fn (Model $user): bool => strcasecmp((string) $this->users->email($user), $email) === 0);
+        return $this->users->findByEmail($email);
     }
 
     private function organization(): Organization
@@ -363,12 +360,49 @@ final class ScimUsers
     }
 
     /**
+     * Resolve the groups of a page of users in two queries, so mapping each
+     * one adds none.
+     *
+     * @param  array<int, ScimUser>  $scimUsers
+     */
+    private function preloadGroups(array $scimUsers): void
+    {
+        $userIds = array_values(array_filter(array_map(fn (ScimUser $scimUser): mixed => $scimUser->user_id, $scimUsers)));
+
+        if ($userIds === []) {
+            return;
+        }
+
+        $teams = Membership::query()
+            ->where('organization_id', $this->organization()->getKey())
+            ->whereIn('user_id', $userIds)
+            ->with('teams:id')
+            ->get()
+            ->mapWithKeys(fn (Membership $membership): array => [(string) $membership->user_id => $membership->teams->modelKeys()]);
+
+        $groups = ScimGroup::query()
+            ->where('organization_id', $this->organization()->getKey())
+            ->whereIn('team_id', $teams->flatten()->unique()->all())
+            ->with('team')
+            ->get();
+
+        foreach ($scimUsers as $scimUser) {
+            $mine = $teams->get((string) $scimUser->user_id, []);
+            $this->context->groups[$scimUser->id] = $groups->filter(fn (ScimGroup $group): bool => in_array($group->team_id, $mine, true))->values()->all();
+        }
+    }
+
+    /**
      * Groups this user is in, for the `groups` attribute.
      *
      * @return array<int, ScimGroup>
      */
     public function groupsOf(ScimUser $scimUser): array
     {
+        if (array_key_exists($scimUser->id, $this->context->groups)) {
+            return $this->context->groups[$scimUser->id];
+        }
+
         $membership = $scimUser->user instanceof Model ? $this->organization()->membershipFor($scimUser->user) : null;
 
         if ($membership === null) {

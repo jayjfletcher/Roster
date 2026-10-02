@@ -46,12 +46,14 @@ return new class extends Migration
         Schema::create('roster_role_assignments', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('role_id')->constrained('roster_roles')->cascadeOnDelete();
-            UserKey::column($table, 'user_id')->index();
-            $table->foreignUlid('organization_id')->nullable()->constrained('roster_organizations')->cascadeOnDelete();
-            $table->foreignUlid('team_id')->nullable()->constrained('roster_teams')->cascadeOnDelete();
+            UserKey::column($table, 'user_id');
+            $table->foreignUlid('organization_id')->nullable()->index()->constrained('roster_organizations')->cascadeOnDelete();
+            $table->foreignUlid('team_id')->nullable()->index()->constrained('roster_teams')->cascadeOnDelete();
             $table->timestamps();
 
             $table->unique(['role_id', 'user_id', 'organization_id', 'team_id']);
+            // A user's permissions in a scope: every Gate check reads this.
+            $table->index(['user_id', 'organization_id', 'team_id']);
         });
 
         BuiltInRoles::sync();

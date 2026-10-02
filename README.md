@@ -417,7 +417,7 @@ Run a queue worker, and schedule Laravel's scheduler (Impex's `impex:tick` expir
 | `skip` | Already as the row describes |
 | `error` | The reason is shown, and the row is left out |
 
-Confirming applies the rows one by one, as the person who confirmed. Their permissions are checked again, and each row is checked again against the data at that moment. Errors are reported per row; the rest still apply. A retried row is never applied twice. An import not confirmed within `roster.transfers.confirm_within_hours` (24) expires.
+The preview's rows come back a page at a time (`rows_page`, 100 per page) from `GET /roster/transfers/{transfer}` and `show-transfer-tool`, and are kept in `roster_transfer_rows`. Confirming applies the rows one by one, as the person who confirmed. Their permissions are checked again, and each row is checked again against the data at that moment. Errors are reported per row; the rest still apply. A retried row is never applied twice. An import not confirmed within `roster.transfers.confirm_within_hours` (24) expires.
 
 | Type | Columns (first row is the header) | Permission |
 |---|---|---|

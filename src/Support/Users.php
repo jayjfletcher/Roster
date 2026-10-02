@@ -62,6 +62,34 @@ final class Users
     }
 
     /**
+     * The user with this email, ignoring case. A LIKE without wildcards
+     * matches case-insensitively and can use the email index (no leading
+     * wildcard); the exact comparison drops anything a `_` or `%` in the
+     * address let through. The one shared copy of this lookup.
+     */
+    public function findByEmail(string $email): ?Model
+    {
+        $column = $this->column('email');
+
+        if ($column === null || $email === '') {
+            return null;
+        }
+
+        return $this->query()
+            ->whereLike($column, $email)
+            ->get()
+            ->first(fn (Model $user): bool => strcasecmp((string) $this->email($user), $email) === 0);
+    }
+
+    /**
+     * A user the caller already has (no query), or one found by route key.
+     */
+    public function resolve(mixed $user): Model
+    {
+        return $user instanceof Model ? $user : $this->findOrFail($user);
+    }
+
+    /**
      * Find a user by its route key, the identifier every surface uses.
      */
     public function findOrFail(mixed $key): Model
@@ -114,9 +142,13 @@ final class Users
      */
     public function profileIfExists(Model $user): ?Profile
     {
-        $profile = $user->relationLoaded('rosterProfile')
-            ? $user->getRelation('rosterProfile')
-            : Profile::query()->where('user_id', $user->getKey())->first();
+        if (! $user->relationLoaded('rosterProfile')) {
+            // Remembered on the model, a missing profile included, so status
+            // and context lookups query once per user.
+            $user->setRelation('rosterProfile', Profile::query()->where('user_id', $user->getKey())->first());
+        }
+
+        $profile = $user->getRelation('rosterProfile');
 
         return $profile instanceof Profile ? $profile : null;
     }

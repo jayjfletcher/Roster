@@ -39,11 +39,38 @@ it('maps every status to a badge variant', function (): void {
     }
 });
 
-it('finds users from atrium search', function (): void {
+it('searches users and organizations as separate atrium sources', function (): void {
+    user(['name' => 'Ada Lovelace', 'email' => 'ada@example.com']);
+    organization(attributes: ['name' => 'Adams & Co']);
+
+    [$users, $organizations] = app(RosterPlugin::class)->search();
+
+    expect($users->key)->toBe('roster-users')
+        ->and($users->description)->not->toBeNull()
+        ->and(array_map(fn ($result) => $result->title, $users->results('ada')))->toBe(['Ada Lovelace'])
+        ->and(array_map(fn ($result) => $result->title, $organizations->results('ada')))->toBe(['Adams & Co']);
+});
+
+it('gives organizations their own share of the results', function (): void {
+    config()->set('atrium.search.concurrency', 'sync');
+
+    foreach (range(1, 8) as $i) {
+        user(['name' => "Ada {$i}", 'email' => "ada{$i}@example.com"]);
+    }
+    organization(attributes: ['name' => 'Ada Industries']);
+
+    $titles = collect($this->actingAs(user())->getJson(route('atrium.search', ['q' => 'ada']))->assertOk()->json('data'))->pluck('title');
+
+    // Users fill their own five; the organization still shows.
+    expect($titles->filter(fn (string $title): bool => str_starts_with($title, 'Ada ') && $title !== 'Ada Industries'))->toHaveCount(5)
+        ->and($titles)->toContain('Ada Industries');
+});
+
+it('keeps its search sources working after crossing into another process', function (): void {
     user(['name' => 'Ada Lovelace', 'email' => 'ada@example.com']);
 
-    $results = app(RosterPlugin::class)->search()?->results('ada');
+    // Atrium's process driver serializes sources into a child process.
+    $sources = unserialize(serialize(app(RosterPlugin::class)->search()));
 
-    expect($results)->toHaveCount(1)
-        ->and($results[0]->title)->toBe('Ada Lovelace');
+    expect(array_map(fn ($result) => $result->title, $sources[0]->results('ada')))->toBe(['Ada Lovelace']);
 });

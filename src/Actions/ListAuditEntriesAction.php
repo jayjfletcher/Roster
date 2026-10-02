@@ -58,7 +58,7 @@ final class ListAuditEntriesAction
         }
 
         if (($filters['user'] ?? null) !== null) {
-            $query->about($this->users->findOrFail($filters['user']));
+            $query->about($this->users->resolve($filters['user']));
         }
 
         foreach (['source', 'subject_type'] as $column) {

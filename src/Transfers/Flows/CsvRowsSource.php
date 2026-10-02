@@ -21,7 +21,7 @@ final class CsvRowsSource implements BatchSource
 
     public function chunk(?string $cursor, int $size): BatchChunk
     {
-        $transfer = Transfer::query()->findOrFail($this->transfer);
+        $transfer = Transfer::query()->withoutReport()->findOrFail($this->transfer);
         [$offset, $line] = $cursor === null ? [0, 2] : array_map('intval', explode(':', $cursor, 2));
 
         $reader = new Reader(app(Transfers::class)->disk(), (string) $transfer->input_path, $transfer->type->columns());

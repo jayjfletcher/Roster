@@ -151,16 +151,7 @@ final class SsoLoginAction
 
     private function findByEmail(string $email): ?Model
     {
-        $column = $this->users->column('email');
-
-        if ($column === null) {
-            return null;
-        }
-
-        return $this->users->query()
-            ->whereLike($column, $email)
-            ->get()
-            ->first(fn (Model $user): bool => strcasecmp((string) $this->users->email($user), $email) === 0);
+        return $this->users->findByEmail($email);
     }
 
     private function fail(SsoConnection $connection, IdentityClaims $claims, string $reason): never

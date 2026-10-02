@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Tests;
 
+use Illuminate\Database\DatabaseTransactionsManager;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
 use JayI\Atrium\AtriumServiceProvider;
 use JayI\Impex\ImpexServiceProvider;
@@ -13,6 +15,8 @@ use Laravel\Mcp\Server\McpServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Workbench\App\Models\User;
 
+use function Orchestra\Testbench\default_migration_path;
+
 abstract class TestCase extends Orchestra
 {
     /**
@@ -20,6 +24,20 @@ abstract class TestCase extends Orchestra
      * denies everything outside `local` until its gate is defined.
      */
     protected bool $openAtrium = true;
+
+    /**
+     * Whether the test runs inside a rolled-back transaction on a database
+     * migrated once per process (see defineDatabaseMigrations). Browser
+     * tests talk to a real server, so they migrate per test instead.
+     */
+    protected bool $transactional = true;
+
+    /**
+     * The test-case classes whose database this process has migrated.
+     *
+     * @var array<string, true>
+     */
+    private static array $migrated = [];
 
     protected function setUp(): void
     {
@@ -49,6 +67,9 @@ abstract class TestCase extends Orchestra
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing.foreign_key_constraints', true);
         $app['config']->set('cache.default', 'array');
+        // Minimum bcrypt cost: hashing is the slowest part of creating users,
+        // and the workbench's .env (BCRYPT_ROUNDS=12) would otherwise leak in.
+        $app['config']->set('hashing.bcrypt.rounds', 4);
         $app['config']->set('roster.users.model', User::class);
         // Surface tests need the API mounted; DefaultsTest covers it being off.
         $app['config']->set('roster.routes.enabled', true);
@@ -61,14 +82,92 @@ abstract class TestCase extends Orchestra
         // export completes (or parks on its confirmation) within the call.
         $app['config']->set('queue.default', 'sync');
         $app['config']->set('filesystems.disks.local.root', sys_get_temp_dir().'/roster-tests-'.getmypid());
+
+        if ($this->transactional) {
+            $file = $this->databaseFile();
+
+            if (! is_file($file)) {
+                touch($file);
+            }
+
+            $app['config']->set('database.connections.testing.database', $file);
+            // Throwaway data: skip fsyncs and keep the rollback journal in memory.
+            $app['config']->set('database.connections.testing.synchronous', 'off');
+            $app['config']->set('database.connections.testing.journal_mode', 'memory');
+        }
     }
 
+    /**
+     * Migrations run once per test-case class and parallel worker, into a
+     * file database; each test then runs in a transaction that's rolled back.
+     * Re-running 20 migrations for every test was most of the suite's time.
+     */
     protected function defineDatabaseMigrations(): void
     {
-        $this->loadLaravelMigrations();
+        if (! $this->transactional) {
+            $this->loadLaravelMigrations();
 
-        $this->loadMigrationsFrom(dirname(__DIR__).'/database/migrations');
-        // Impex's migrations are publish-only; jayi/impex is a dev dependency.
-        $this->loadMigrationsFrom(dirname(__DIR__).'/vendor/jayi/impex/database/migrations');
+            foreach (array_slice($this->migrationPaths(), 1) as $path) {
+                $this->loadMigrationsFrom($path);
+            }
+
+            $this->afterMigrating();
+
+            return;
+        }
+
+        if (! isset(self::$migrated[$this->schemaKey()])) {
+            Artisan::call('migrate:fresh', ['--path' => $this->migrationPaths(), '--realpath' => true]);
+            $this->afterMigrating();
+            self::$migrated[$this->schemaKey()] = true;
+        }
+
+        $this->beginTestTransaction();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function migrationPaths(): array
+    {
+        return [
+            default_migration_path(),
+            dirname(__DIR__).'/database/migrations',
+            // Impex's migrations are publish-only; jayi/impex is a dev dependency.
+            dirname(__DIR__).'/vendor/jayi/impex/database/migrations',
+        ];
+    }
+
+    /**
+     * Schema a test case adds beyond the migrations (e.g. a custom users table).
+     */
+    protected function afterMigrating(): void {}
+
+    /**
+     * The same as Laravel's DatabaseTransactions, so after-commit callbacks
+     * still fire when the test's own transaction level is reached.
+     */
+    private function beginTestTransaction(): void
+    {
+        $database = $this->app->make('db');
+        $connection = $database->connection();
+        $this->app->instance('db.transactions', $manager = new DatabaseTransactionsManager([$connection->getName()]));
+        $connection->setTransactionManager($manager);
+        $connection->beginTransaction();
+
+        $this->beforeApplicationDestroyed(fn () => $connection->rollBack());
+    }
+
+    /**
+     * One schema per test-case class (modes differ), per parallel worker.
+     */
+    private function schemaKey(): string
+    {
+        return get_parent_class($this) ?: static::class;
+    }
+
+    private function databaseFile(): string
+    {
+        return sys_get_temp_dir().'/roster-tests-'.md5($this->schemaKey()).'-'.(getenv('TEST_TOKEN') ?: '0').'.sqlite';
     }
 }

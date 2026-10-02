@@ -13,6 +13,8 @@ namespace JayI\Roster\Tests;
  */
 abstract class BrowserTestCase extends AuthorizationTestCase
 {
+    protected bool $transactional = false;
+
     protected function setUp(): void
     {
         parent::setUp();

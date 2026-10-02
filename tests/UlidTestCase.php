@@ -21,11 +21,9 @@ abstract class UlidTestCase extends TestCase
         $app['config']->set('roster.users.key_type', 'ulid');
     }
 
-    protected function defineDatabaseMigrations(): void
+    protected function afterMigrating(): void
     {
-        parent::defineDatabaseMigrations();
-
-        $this->beforeApplicationDestroyed(fn () => Schema::dropIfExists('ulid_users'));
+        Schema::dropIfExists('ulid_users');
 
         Schema::create('ulid_users', function (Blueprint $table): void {
             $table->ulid('id')->primary();

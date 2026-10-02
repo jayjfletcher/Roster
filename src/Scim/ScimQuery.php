@@ -32,6 +32,14 @@ final class ScimQuery
             return $builder->whereLike($column, $value.'%');
         }
 
+        // Without LIKE wildcards in the value, a case-insensitive LIKE is an
+        // exact match: filter in place, inside the caller's scope.
+        if (strpbrk($value, '%_') === false) {
+            return $builder->whereLike($column, $value);
+        }
+
+        // `%` or `_` would widen the LIKE (`a_b@x` matching `axb@x`), so take
+        // the LIKE's matches and keep only the exact ones.
         $model = $builder->getModel();
 
         $keys = $model->newQuery()

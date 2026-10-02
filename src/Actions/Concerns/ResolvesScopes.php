@@ -13,8 +13,15 @@ use JayI\Roster\Models\Team;
  */
 trait ResolvesScopes
 {
+    /**
+     * From a slug, or an organization the caller already has (no query).
+     */
     private function organizationFrom(mixed $slug): ?Organization
     {
+        if ($slug instanceof Organization) {
+            return $slug;
+        }
+
         if (! is_string($slug) || $slug === '') {
             return null;
         }

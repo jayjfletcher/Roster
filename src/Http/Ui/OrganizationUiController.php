@@ -91,20 +91,35 @@ final class OrganizationUiController
         /** @var view-string $view */
         $view = 'roster::ui.organizations.show';
 
+        // Only the open tab's data: each list is paginated and loaded on its own.
+        $page = ['per_page' => 25, 'page' => $request->integer('page', 1)];
+
         return view($view, [
             'organization' => $model,
             'tab' => $tab,
             'tabs' => self::TABS,
-            'members' => app(ListMembersAction::class)->execute($model, ['per_page' => 100]),
-            'teams' => app(ListTeamsAction::class)->execute($model, ['per_page' => 100]),
-            'invitations' => app(ListInvitationsAction::class)->execute($model, ['per_page' => 100]),
-            'roles' => app(ListRolesAction::class)->execute(['organization' => $model->slug, 'per_page' => 100]),
-            'assignments' => app(ListRoleAssignmentsAction::class)->execute(['organization' => $model->slug, 'per_page' => 100]),
-            'activity' => app(ListAuditEntriesAction::class)->execute(['organization' => $model->slug, 'per_page' => 25]),
-            'ssoConnections' => app(ListSsoConnectionsAction::class)->execute(['organization' => $model->slug, 'per_page' => 100]),
-            'scimTokens' => app(ListScimTokensAction::class)->execute($model, ['per_page' => 100]),
             'pending' => InvitationStatus::Pending,
             'directory' => $this->users,
+            ...match ($tab) {
+                'members' => ['members' => app(ListMembersAction::class)->execute($model, $page)->withQueryString()],
+                'teams' => ['teams' => app(ListTeamsAction::class)->execute($model, $page)->withQueryString()],
+                'invitations' => [
+                    'invitations' => app(ListInvitationsAction::class)->execute($model, $page)->withQueryString(),
+                    // Every team, as the invitation form's options.
+                    'teams' => $model->teams()->orderBy('name')->get(['id', 'organization_id', 'name', 'slug']),
+                ],
+                'roles' => [
+                    'roles' => app(ListRolesAction::class)->execute(['organization' => $model, 'per_page' => 100]),
+                    'assignments' => app(ListRoleAssignmentsAction::class)->execute(['organization' => $model] + $page)->withQueryString(),
+                ],
+                'activity' => ['activity' => app(ListAuditEntriesAction::class)->execute(['organization' => $model] + $page)->withQueryString()],
+                'sso' => ['ssoConnections' => app(ListSsoConnectionsAction::class)->execute(['organization' => $model] + $page)->withQueryString()],
+                'scim' => [
+                    'scimTokens' => app(ListScimTokensAction::class)->execute($model, $page)->withQueryString(),
+                    'ssoConnections' => app(ListSsoConnectionsAction::class)->execute(['organization' => $model, 'per_page' => 100]),
+                ],
+                default => [],
+            },
         ]);
     }
 

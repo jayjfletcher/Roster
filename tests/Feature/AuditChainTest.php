@@ -84,3 +84,39 @@ it('reports the chain from the command', function (): void {
 
     $this->artisan('roster:verify-audit')->assertFailed();
 });
+
+it('chains from the locked head row, which follows every append', function (): void {
+    expect(DB::table('roster_audit_chain')->value('head_hash'))->toBeNull();
+
+    $first = Roster::audit('a.one')->record();
+    $second = Roster::audit('a.two')->record();
+
+    expect($first->previous_hash)->toBeNull()
+        ->and($second->previous_hash)->toBe($first->hash)
+        ->and(DB::table('roster_audit_chain')->value('head_hash'))->toBe($second->hash);
+});
+
+it('recreates a missing chain head and keeps chaining', function (): void {
+    $first = Roster::audit('a.one')->record();
+    DB::table('roster_audit_chain')->delete();
+
+    // A lost head restarts the chain; verify treats it as a break.
+    $second = Roster::audit('a.two')->record();
+
+    expect($second->previous_hash)->toBeNull()
+        ->and(DB::table('roster_audit_chain')->value('head_hash'))->toBe($second->hash)
+        ->and(app(AuditLog::class)->verify())->toBe($second->id)
+        ->and($first->exists)->toBeTrue();
+});
+
+it('prunes in batches', function (): void {
+    $this->travelTo(now()->subDays(400));
+    foreach (range(1, 1005) as $i) {
+        Roster::audit('a.old')->record();
+    }
+    $this->travelBack();
+    Roster::audit('a.new')->record();
+
+    expect(app(AuditLog::class)->prune(365))->toBe(1005)
+        ->and(AuditEntry::query()->count())->toBe(1);
+});

@@ -53,11 +53,25 @@ final class AuditRecorder
             return;
         }
 
-        foreach ($this->models($event) as $model) {
-            if ($model->exists) {
-                $this->snapshots[$this->key($model)] ??= $this->snapshotter->of($model);
-            }
+        // Only the entry's subject gets field changes, and only when the
+        // event is about its own fields: `member.added` changes nothing on
+        // the user, so snapshotting them would be wasted queries.
+        [$noun] = $this->name($event);
+        $subject = $this->subject($this->models($event));
+
+        if ($subject !== null && $subject->exists && $this->changesItself($subject, $noun)) {
+            $this->snapshots[$this->key($subject)] ??= $this->snapshotter->of($subject);
         }
+    }
+
+    /**
+     * Whether an event named `$noun` can change the subject's own fields.
+     */
+    private function changesItself(Model $subject, string $noun): bool
+    {
+        return is_a($subject, $this->users->model())
+            ? in_array($noun, ['user', 'profile', 'context'], true)
+            : Str::snake(class_basename($subject)) === $noun;
     }
 
     public function finished(ActionFinishedEvent $event): void

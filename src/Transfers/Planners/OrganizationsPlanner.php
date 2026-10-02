@@ -73,9 +73,7 @@ final class OrganizationsPlanner extends Planner
 
     private function owner(string $email): string
     {
-        $column = $this->users->column('email');
-        $user = $column === null ? null : $this->users->query()->whereLike($column, $email)->get()
-            ->first(fn (Model $user): bool => strcasecmp((string) $this->users->email($user), $email) === 0);
+        $user = $this->users->findByEmail($email);
 
         if ($user === null) {
             throw ValidationException::withMessages(['owner' => __('roster::roster.import_unknown_owner', ['email' => $email])]);

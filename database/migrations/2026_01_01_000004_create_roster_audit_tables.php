@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use JayI\Roster\Support\UserKey;
 
@@ -35,11 +36,24 @@ return new class extends Migration
             $table->index(['organization_id', 'id']);
             $table->index(['subject_type', 'subject_id']);
             $table->index('action');
+            $table->index('created_at');
         });
+
+        // The head of the hash chain: one row every writer locks, so
+        // concurrent appends chain one after another on every database
+        // (locking the newest entry instead forks the chain on Postgres, and
+        // locks nothing while the log is empty).
+        Schema::create('roster_audit_chain', function (Blueprint $table): void {
+            $table->unsignedTinyInteger('id')->primary();
+            $table->string('head_hash', 64)->nullable();
+        });
+
+        DB::table('roster_audit_chain')->insert(['id' => 1, 'head_hash' => null]);
     }
 
     public function down(): void
     {
+        Schema::dropIfExists('roster_audit_chain');
         Schema::dropIfExists('roster_audit_entries');
     }
 };

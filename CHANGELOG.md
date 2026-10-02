@@ -42,6 +42,16 @@
   - `import_organizations` CSV import type, and an `export_organizations` export in the same columns (optionally one source's records) that imports straight back.
   - New global `roster.organizations.sync` permission.
   - Available over HTTP, MCP and Atrium (Settings tab, list filters).
+- Performance:
+  - Gate checks without a scope resolve the current organization/team once per request (20 checks: 125 → 9 queries).
+  - API user lists and SCIM user pages cost a fixed number of queries whatever their length.
+  - The organization page loads and paginates only the open tab.
+  - CSV imports cache organization data per run and keep row results in `roster_transfer_rows` (paged with `rows_page`), and exports batch their lookups.
+  - New indexes.
+- Atrium search: users and organizations are two sources, each with its own result quota and a description for Atrium's classification, and both work under Atrium's process driver (requires Atrium with multi-source plugins).
+- SCIM: `eq` filters match in place inside the organization, and Groups pages load their members in fixed queries.
+- Fixed: `Authorizer` could keep one request's permissions in long-lived workers (Octane, queues).
+- Fixed: concurrent audit writes could fork the hash chain on Postgres; appends now lock a chain-head row.
 - Organizations may have no owner (`owner` is optional when creating); personal organizations still require one.
 - `Roster::audit()` / `RecordAuditEventAction` for the app's own events (`source: app`), plus `roster.audit.view` / `roster.audit.record` permissions and HTTP, MCP and Atrium surfaces.
 

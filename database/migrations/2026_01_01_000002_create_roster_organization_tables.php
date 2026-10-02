@@ -33,11 +33,13 @@ return new class extends Migration
         Schema::create('roster_memberships', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->foreignUlid('organization_id')->constrained('roster_organizations')->cascadeOnDelete();
-            UserKey::column($table, 'user_id')->index();
+            UserKey::column($table, 'user_id');
             $table->string('source', 32)->default('direct');
             $table->timestamps();
 
             $table->unique(['organization_id', 'user_id']);
+            // A user's memberships, oldest first (their default organization).
+            $table->index(['user_id', 'created_at']);
         });
 
         Schema::create('roster_teams', function (Blueprint $table): void {
@@ -55,7 +57,7 @@ return new class extends Migration
             $table->foreignUlid('team_id')->constrained('roster_teams')->cascadeOnDelete();
             // Keyed by the organization membership, so leaving the
             // organization removes every team seat with it.
-            $table->foreignUlid('membership_id')->constrained('roster_memberships')->cascadeOnDelete();
+            $table->foreignUlid('membership_id')->index()->constrained('roster_memberships')->cascadeOnDelete();
             $table->timestamps();
 
             $table->unique(['team_id', 'membership_id']);

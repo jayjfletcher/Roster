@@ -40,7 +40,7 @@ final class ListOrganizationsAction
     {
         OrganizationsListingActionEvent::dispatch($filters);
 
-        $query = Organization::query()->with(['domains', 'links'])->withCount(['memberships', 'teams']);
+        $query = Organization::query()->with(['domains', 'links', 'owner'])->withCount(['memberships', 'teams']);
 
         $search = $filters['search'] ?? null;
 
@@ -51,7 +51,7 @@ final class ListOrganizationsAction
         }
 
         if (($filters['user'] ?? null) !== null) {
-            $user = $this->users->findOrFail($filters['user']);
+            $user = $this->users->resolve($filters['user']);
 
             $query->whereIn('id', Membership::query()->select('organization_id')->where('user_id', $user->getKey()));
         }

@@ -32,7 +32,7 @@ final class TeamsPlanner extends Planner
             return $this->outcome(self::ERROR, __('roster::roster.import_team_name_required'));
         }
 
-        [$members, $unknown] = $this->members($organization, $values['members'] ?? '');
+        [$members, $unknown] = $this->members($transfer, $values['members'] ?? '');
 
         if ($unknown !== []) {
             return $this->outcome(self::ERROR, __('roster::roster.import_not_members', ['emails' => implode(', ', $unknown)]));
@@ -44,7 +44,8 @@ final class TeamsPlanner extends Planner
             return $this->outcome(self::CREATE, __('roster::roster.import_new_team'));
         }
 
-        $new = array_filter($members, fn (Membership $membership): bool => ! $membership->teams()->whereKey($team->getKey())->exists());
+        $seated = $team->seats()->pluck('membership_id')->all();
+        $new = array_filter($members, fn (Membership $membership): bool => ! in_array($membership->getKey(), $seated, true));
 
         return $new === []
             ? $this->outcome(self::SKIP, __('roster::roster.import_team_unchanged'))
@@ -66,13 +67,13 @@ final class TeamsPlanner extends Planner
             'slug' => ($values['slug'] ?? '') !== '' ? $values['slug'] : null,
         ]));
 
-        [$members] = $this->members($organization, $values['members'] ?? '');
+        [$members] = $this->members($transfer, $values['members'] ?? '');
 
         foreach ($members as $membership) {
             $user = $membership->user;
 
             if ($user instanceof Model && ! $team->hasMember($user)) {
-                app(AddTeamMemberAction::class)->execute($team, ['user' => $user->getRouteKey()]);
+                app(AddTeamMemberAction::class)->execute($team, ['user' => $user]);
             }
         }
 
@@ -94,16 +95,27 @@ final class TeamsPlanner extends Planner
     /**
      * @return array{0: array<int, Membership>, 1: array<int, string>}
      */
-    private function members(Organization $organization, string $value): array
+    /**
+     * The listed emails' memberships, from the organization's members loaded
+     * once per transfer (a teams import never changes who is a member).
+     *
+     * @return array{0: array<int, Membership>, 1: array<int, string>}
+     */
+    private function members(Transfer $transfer, string $value): array
     {
+        $byEmail = $this->remember($transfer, 'members', fn (): array => Membership::query()
+            ->with('user')
+            ->where('organization_id', $transfer->organization_id)
+            ->get()
+            ->filter(fn (Membership $membership): bool => $membership->user instanceof Model)
+            ->keyBy(fn (Membership $membership): string => strtolower((string) $this->users->email($membership->user)))
+            ->all());
+
         $found = [];
         $unknown = [];
-        $column = $this->users->column('email');
 
         foreach ($this->list($value) as $email) {
-            $user = $column === null ? null : $this->users->query()->whereLike($column, $email)->get()
-                ->first(fn (Model $candidate): bool => strcasecmp((string) $this->users->email($candidate), $email) === 0);
-            $membership = $user === null ? null : $organization->membershipFor($user);
+            $membership = $byEmail[strtolower($email)] ?? null;
 
             $membership === null ? $unknown[] = $email : $found[] = $membership;
         }

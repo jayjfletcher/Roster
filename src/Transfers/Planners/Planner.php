@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Transfers\Planners;
 
+use Closure;
 use Illuminate\Database\Eloquent\Model;
 use JayI\Roster\Models\Transfer;
+use JayI\Roster\Transfers\PlanCache;
 
 /**
  * Decides what one imported row would do, and does it.
@@ -40,6 +42,17 @@ abstract class Planner
      * @return array{action: string, reasons: array<int, string>}
      */
     abstract public function apply(array $values, Transfer $transfer, ?Model $actor): array;
+
+    /**
+     * @template TValue
+     *
+     * @param  Closure(): TValue  $resolve
+     * @return TValue
+     */
+    protected function remember(Transfer $transfer, string $key, Closure $resolve): mixed
+    {
+        return app(PlanCache::class)->remember($transfer->id, $key, $resolve);
+    }
 
     /**
      * @return array<int, string>

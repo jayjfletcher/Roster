@@ -7,6 +7,7 @@ namespace JayI\Roster\Transfers\Flows\Actions;
 use JayI\Roster\Enums\TransferStatus;
 use JayI\Roster\Events\Action\TransferFinishedActionEvent;
 use JayI\Roster\Models\Transfer;
+use JayI\Roster\Transfers\PlanCache;
 
 /**
  * An import that was cancelled, or never confirmed in time.
@@ -26,6 +27,7 @@ final class CloseTransfer
                 'finished_at' => now(),
             ]);
 
+            app(PlanCache::class)->forget($model->id);
             TransferFinishedActionEvent::dispatch($model->refresh());
         }
 

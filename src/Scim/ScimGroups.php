@@ -17,6 +17,7 @@ use JayI\Roster\Models\Organization;
 use JayI\Roster\Models\ScimGroup;
 use JayI\Roster\Models\ScimUser;
 use JayI\Roster\Models\Team;
+use JayI\Roster\Models\TeamMember;
 
 /**
  * SCIM Groups for one organization: its teams, on top of Roster's Actions.
@@ -48,7 +49,47 @@ final class ScimGroups
         $total = (clone $query)->count();
         $page = $query->orderBy('created_at')->orderBy('id')->skip(max(0, $startIndex - 1))->take($count)->get()->all();
 
+        $this->preloadMembers($page);
+
         return [$page, $total];
+    }
+
+    /**
+     * Resolve the members of a page of groups in two queries, so mapping each
+     * one adds none.
+     *
+     * @param  array<int, ScimGroup>  $groups
+     */
+    private function preloadMembers(array $groups): void
+    {
+        $teamIds = array_values(array_filter(array_map(fn (ScimGroup $group): string => (string) $group->team_id, $groups)));
+
+        if ($teamIds === []) {
+            return;
+        }
+
+        $seats = TeamMember::query()
+            ->join('roster_memberships', 'roster_memberships.id', '=', 'roster_team_members.membership_id')
+            ->whereIn('roster_team_members.team_id', $teamIds)
+            ->get(['roster_team_members.team_id', 'roster_memberships.user_id']);
+
+        $scimUsers = ScimUser::query()
+            ->where('organization_id', $this->organization()->getKey())
+            ->whereIn('user_id', $seats->pluck('user_id')->unique()->all())
+            ->with('user')
+            ->orderBy('id')
+            ->get()
+            ->groupBy(fn (ScimUser $scimUser): string => (string) $scimUser->user_id);
+
+        foreach ($groups as $group) {
+            $userIds = $seats->where('team_id', $group->team_id)->pluck('user_id')->map(fn (mixed $id): string => (string) $id)->all();
+
+            $this->context->members[$group->id] = collect($userIds)
+                ->flatMap(fn (string $userId): array => $scimUsers->get($userId)?->all() ?? [])
+                ->sortBy('id')
+                ->values()
+                ->all();
+        }
     }
 
     public function find(string $id): ScimGroup

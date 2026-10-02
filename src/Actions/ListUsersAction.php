@@ -12,6 +12,7 @@ use JayI\Roster\Enums\UserStatus;
 use JayI\Roster\Events\Action\UsersListedActionEvent;
 use JayI\Roster\Events\Action\UsersListingActionEvent;
 use JayI\Roster\Models\Profile;
+use JayI\Roster\Roster;
 use JayI\Roster\Support\Users;
 
 final class ListUsersAction
@@ -73,6 +74,9 @@ final class ListUsersAction
         $page = is_numeric($filters['page'] ?? null) ? (int) $filters['page'] : null;
 
         $users = $query->orderBy($key)->paginate($perPage, ['*'], 'page', $page);
+
+        // Each user's current organization and team, for the whole page at once.
+        app(Roster::class)->preload($users->getCollection());
 
         UsersListedActionEvent::dispatch($filters);
 

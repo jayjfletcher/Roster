@@ -11,6 +11,7 @@ use JayI\Roster\Events\Action\InvitationsListedActionEvent;
 use JayI\Roster\Events\Action\InvitationsListingActionEvent;
 use JayI\Roster\Models\Invitation;
 use JayI\Roster\Models\Organization;
+use JayI\Roster\Models\Team;
 
 final class ListInvitationsAction
 {
@@ -48,6 +49,17 @@ final class ListInvitationsAction
         $page = is_numeric($filters['page'] ?? null) ? (int) $filters['page'] : null;
 
         $invitations = $query->latest()->latest('id')->paginate($perPage, ['*'], 'page', $page);
+
+        // The teams invitations name, for the whole page in one query.
+        $teams = Team::query()
+            ->whereIn('id', $invitations->getCollection()->flatMap(fn (Invitation $invitation): array => (array) $invitation->teams)->unique()->all())
+            ->get(['id', 'slug'])
+            ->keyBy('id');
+
+        $invitations->getCollection()->each(fn (Invitation $invitation) => $invitation->setRelation(
+            'teamModels',
+            $teams->only((array) $invitation->teams)->sortBy('slug')->values(),
+        ));
 
         InvitationsListedActionEvent::dispatch($organization, $filters);
 

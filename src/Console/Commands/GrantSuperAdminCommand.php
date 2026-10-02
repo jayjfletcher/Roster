@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace JayI\Roster\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Model;
 use JayI\Roster\Enums\RoleScope;
 use JayI\Roster\Models\Role;
 use JayI\Roster\Models\RoleAssignment;
@@ -21,12 +20,7 @@ final class GrantSuperAdminCommand extends Command
     public function handle(Users $users): int
     {
         $email = strtolower($this->argument('email'));
-        $column = $users->column('email') ?? 'email';
-
-        $user = $users->query()
-            ->whereLike($column, $email)
-            ->get()
-            ->first(fn (Model $candidate): bool => strcasecmp((string) $users->email($candidate), $email) === 0);
+        $user = $users->findByEmail($email);
 
         if ($user === null) {
             $this->components->error("No user has the email [{$email}].");

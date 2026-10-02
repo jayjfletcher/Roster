@@ -67,9 +67,10 @@ final class ScimMapper
         $members = [];
 
         if ($team instanceof Team) {
-            $userIds = $team->memberships()->pluck('user_id')->all();
+            $scimUsers = $this->context->members[$group->id]
+                ?? ScimUser::query()->where('organization_id', $group->organization_id)->whereIn('user_id', $team->memberships()->pluck('user_id'))->with('user')->orderBy('id')->get()->all();
 
-            foreach (ScimUser::query()->where('organization_id', $group->organization_id)->whereIn('user_id', $userIds)->with('user')->orderBy('id')->get() as $scimUser) {
+            foreach ($scimUsers as $scimUser) {
                 $user = $scimUser->user;
                 $members[] = [
                     'value' => $scimUser->id,

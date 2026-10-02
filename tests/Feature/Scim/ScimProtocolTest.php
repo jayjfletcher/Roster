@@ -99,3 +99,18 @@ it('describes itself', function (): void {
     scim('GET', '/ResourceTypes')->assertOk()->assertJsonPath('totalResults', 2)->assertJsonPath('Resources.0.endpoint', '/Users');
     scim('GET', '/Schemas')->assertOk()->assertJsonPath('Resources.0.id', 'urn:ietf:params:scim:schemas:core:2.0:User');
 });
+
+it('matches eq filters exactly, even with LIKE wildcards in the value', function (): void {
+    scim('POST', '/Users', oktaUser('a_b@acme.test', 'ext-1'))->assertCreated();
+    scim('POST', '/Users', oktaUser('axb@acme.test', 'ext-2'))->assertCreated();
+
+    scim('GET', '/Users?filter='.urlencode('userName eq "A_B@acme.test"'))
+        ->assertOk()
+        ->assertJsonPath('totalResults', 1)
+        ->assertJsonPath('Resources.0.userName', 'a_b@acme.test');
+
+    scim('GET', '/Users?filter='.urlencode('userName eq "AXB@ACME.TEST"'))
+        ->assertOk()
+        ->assertJsonPath('totalResults', 1)
+        ->assertJsonPath('Resources.0.userName', 'axb@acme.test');
+});

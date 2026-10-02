@@ -36,7 +36,7 @@ final class AddTeamMemberAction
      */
     public function execute(Team $team, array $data): Team
     {
-        $user = $this->users->findOrFail($data['user'] ?? null);
+        $user = $this->users->resolve($data['user'] ?? null);
 
         /** @var Organization $organization */
         $organization = $team->organization;

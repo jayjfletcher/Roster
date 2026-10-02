@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use JayI\Roster\Audit\Surface;
 use JayI\Roster\Models\Transfer;
+use JayI\Roster\Models\TransferRow;
+use JayI\Roster\Transfers\PlanCache;
 use JayI\Roster\Transfers\Planners\Planner;
 use JayI\Roster\Transfers\TransferContext;
 use JayI\Roster\Transfers\Transfers;
@@ -32,8 +34,9 @@ final class ApplyImportRow
      */
     public function execute(array $item): array
     {
-        $transfer = Transfer::query()->findOrFail($item['transfer']);
-        $requester = $transfer->requester;
+        // Without the report: rows never need it, and it can be megabytes.
+        $transfer = Transfer::query()->withoutReport()->findOrFail($item['transfer']);
+        $requester = app(PlanCache::class)->remember($transfer->id, 'requester', fn (): ?Model => $transfer->requester);
         $actor = $requester instanceof Model ? $requester : null;
         $guard = $this->auth->guard();
         $previous = $guard->user();
@@ -57,6 +60,12 @@ final class ApplyImportRow
                 $guard->forgetUser();
             }
         }
+
+        // Each row records its own result; retries just write it again.
+        TransferRow::query()
+            ->where('transfer_id', $transfer->id)
+            ->where('line', $item['line'])
+            ->update(['result' => $outcome['action'], 'result_reasons' => json_encode($outcome['reasons'])]);
 
         return ['line' => $item['line']] + $outcome;
     }

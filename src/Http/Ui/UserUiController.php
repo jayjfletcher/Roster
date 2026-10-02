@@ -13,7 +13,6 @@ use JayI\Roster\Actions\DeactivateUserAction;
 use JayI\Roster\Actions\DeleteUserAction;
 use JayI\Roster\Actions\JoinOrganizationsByDomainAction;
 use JayI\Roster\Actions\ListAuditEntriesAction;
-use JayI\Roster\Actions\ListOrganizationsAction;
 use JayI\Roster\Actions\ListRoleAssignmentsAction;
 use JayI\Roster\Actions\ListSsoIdentitiesAction;
 use JayI\Roster\Actions\ListUserPermissionsAction;
@@ -97,15 +96,14 @@ final class UserUiController
             'profile' => $model->getRelation('rosterProfile'),
             'status' => $this->users->status($model),
             'directory' => $this->users,
-            'organizations' => app(ListOrganizationsAction::class)->execute(['user' => $model->getRouteKey(), 'per_page' => 100]),
-            'memberships' => Membership::query()->where('user_id', $model->getKey())->with(['organization.teams', 'teams'])->get(),
+            'memberships' => Membership::query()->where('user_id', $model->getKey())->with(['organization', 'teams'])->get(),
             'currentOrganization' => app(Roster::class)->organization($model),
             'currentTeam' => app(Roster::class)->team($model),
-            'assignments' => app(ListRoleAssignmentsAction::class)->execute(['user' => $model->getRouteKey(), 'per_page' => 100]),
+            'assignments' => app(ListRoleAssignmentsAction::class)->execute(['user' => $model, 'per_page' => 100]),
             'effective' => app(ListUserPermissionsAction::class)->execute($model),
             'assignableRoles' => Role::query()->with('organization')->orderBy('scope')->orderBy('name')->get(),
-            'activity' => app(ListAuditEntriesAction::class)->execute(['user' => $model->getRouteKey(), 'per_page' => 10]),
-            'ssoIdentities' => app(ListSsoIdentitiesAction::class)->execute(['user' => $model->getRouteKey(), 'per_page' => 50]),
+            'activity' => app(ListAuditEntriesAction::class)->execute(['user' => $model, 'per_page' => 10]),
+            'ssoIdentities' => app(ListSsoIdentitiesAction::class)->execute(['user' => $model, 'per_page' => 50]),
         ]);
     }
 

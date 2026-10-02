@@ -13,6 +13,7 @@ use JayI\Roster\Enums\TransferType;
 use JayI\Roster\Events\Action\TransfersListedActionEvent;
 use JayI\Roster\Events\Action\TransfersListingActionEvent;
 use JayI\Roster\Models\Transfer;
+use JayI\Roster\Transfers\Transfers;
 
 final class ListTransfersAction
 {
@@ -62,6 +63,9 @@ final class ListTransfersAction
         $page = is_numeric($filters['page'] ?? null) ? (int) $filters['page'] : null;
 
         $transfers = $query->latest()->latest('id')->paginate($perPage, ['*'], 'page', $page);
+
+        // Progress for the whole page in one query rather than one per row.
+        app(Transfers::class)->preloadProgress($transfers->getCollection());
 
         TransfersListedActionEvent::dispatch($filters);
 

@@ -15,7 +15,9 @@ final class ShowTransferAction
      */
     public static function rules(): array
     {
-        return [];
+        return [
+            'rows_page' => ['sometimes', 'integer', 'min:1'],
+        ];
     }
 
     public function execute(Transfer $transfer): Transfer

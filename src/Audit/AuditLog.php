@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JayI\Roster\Audit;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use JayI\Roster\Models\AuditEntry;
@@ -24,7 +25,16 @@ final class AuditLog
     public function append(array $attributes): AuditEntry
     {
         return DB::transaction(function () use ($attributes): AuditEntry {
-            $previous = AuditEntry::query()->orderByDesc('id')->lockForUpdate()->value('hash');
+            // Lock the chain head, not the newest entry: every writer waits
+            // on this one row and then reads the head the last one left.
+            $head = $this->chain()->lockForUpdate()->first();
+
+            if ($head === null) {
+                $this->chain()->insertOrIgnore(['id' => 1, 'head_hash' => null]);
+                $head = $this->chain()->lockForUpdate()->first();
+            }
+
+            $previous = $head?->head_hash;
 
             $attributes['previous_hash'] = is_string($previous) ? $previous : null;
             $attributes['created_at'] = Carbon::now()->startOfSecond();
@@ -32,6 +42,8 @@ final class AuditLog
             $entry = new AuditEntry($attributes);
             $entry->setAttribute('hash', $this->hash($entry));
             $entry->save();
+
+            $this->chain()->update(['head_hash' => $entry->hash]);
 
             return $entry;
         });
@@ -75,7 +87,21 @@ final class AuditLog
      */
     public function prune(int $days): int
     {
-        return AuditEntry::query()->toBase()->where('created_at', '<', Carbon::now()->subDays($days))->delete();
+        $cutoff = Carbon::now()->subDays($days);
+        $deleted = 0;
+
+        // In batches, so a large prune never holds one long lock.
+        do {
+            $ids = AuditEntry::query()->toBase()->where('created_at', '<', $cutoff)->orderBy('id')->limit(1000)->pluck('id');
+            $deleted += $ids->isEmpty() ? 0 : AuditEntry::query()->toBase()->whereIn('id', $ids)->delete();
+        } while ($ids->count() === 1000);
+
+        return $deleted;
+    }
+
+    private function chain(): Builder
+    {
+        return DB::table('roster_audit_chain')->where('id', 1);
     }
 
     public function hash(AuditEntry $entry): string

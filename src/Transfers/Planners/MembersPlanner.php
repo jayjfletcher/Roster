@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JayI\Roster\Transfers\Planners;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use JayI\Roster\Access\Authorizer;
@@ -48,7 +49,7 @@ final class MembersPlanner extends Planner
             return $this->outcome(self::ERROR, __('roster::roster.import_invalid_email'));
         }
 
-        [$teams, $unknownTeams] = $this->teams($organization, $values['teams'] ?? '');
+        [$teams, $unknownTeams] = $this->teams($transfer, $values['teams'] ?? '');
 
         if ($unknownTeams !== []) {
             return $this->outcome(self::ERROR, __('roster::roster.import_unknown_teams', ['teams' => implode(', ', $unknownTeams)]));
@@ -57,18 +58,18 @@ final class MembersPlanner extends Planner
         $role = null;
 
         if (($values['role'] ?? '') !== '') {
-            $role = $this->role($organization, $values['role']);
+            $role = $this->role($transfer, $values['role']);
 
             if ($role === null) {
                 return $this->outcome(self::ERROR, __('roster::roster.import_unknown_role', ['role' => $values['role']]));
             }
 
-            if (! $this->mayGrant($actor, $role, $organization)) {
+            if (! $this->mayGrant($transfer, $actor, $role)) {
                 return $this->outcome(self::ERROR, __('roster::roster.import_role_not_grantable', ['role' => $role->slug]));
             }
         }
 
-        $user = $this->find($email);
+        $user = $this->users->findByEmail($email);
 
         if ($user !== null && $organization->membershipFor($user) !== null) {
             $newTeams = array_filter($teams, fn (Team $team): bool => ! $team->hasMember($user));
@@ -79,13 +80,13 @@ final class MembersPlanner extends Planner
                 : $this->outcome(self::UPDATE, __('roster::roster.import_adds_teams_or_role'));
         }
 
-        if ($this->owned($organization, $email)) {
+        if ($this->owned($transfer, $email)) {
             return $user !== null
                 ? $this->outcome(self::LINK, __('roster::roster.import_existing_account'))
                 : $this->outcome(self::CREATE, __('roster::roster.import_new_account'));
         }
 
-        if (! app(Authorizer::class)->check($actor, 'roster.invitations.manage', $organization)) {
+        if (! $this->remember($transfer, 'may-invite', fn (): bool => app(Authorizer::class)->check($actor, 'roster.invitations.manage', $organization))) {
             return $this->outcome(self::ERROR, __('roster::roster.import_cannot_invite'));
         }
 
@@ -101,8 +102,8 @@ final class MembersPlanner extends Planner
         $plan = $this->plan($values, $transfer, $actor);
         $organization = $this->organization($transfer);
         $email = strtolower($values['email'] ?? '');
-        [$teams] = $this->teams($organization, $values['teams'] ?? '');
-        $role = ($values['role'] ?? '') !== '' ? $this->role($organization, $values['role']) : null;
+        [$teams] = $this->teams($transfer, $values['teams'] ?? '');
+        $role = ($values['role'] ?? '') !== '' ? $this->role($transfer, $values['role']) : null;
 
         if (in_array($plan['action'], [self::ERROR, self::SKIP], true)) {
             return $plan;
@@ -117,7 +118,7 @@ final class MembersPlanner extends Planner
             return $plan;
         }
 
-        $user = $this->find($email);
+        $user = $this->users->findByEmail($email);
 
         if ($user === null) {
             $user = app(CreateUserAction::class)->execute([
@@ -140,7 +141,7 @@ final class MembersPlanner extends Planner
 
         foreach ($teams as $team) {
             if (! $team->hasMember($user)) {
-                app(AddTeamMemberAction::class)->execute($team, ['user' => $user->getRouteKey()]);
+                app(AddTeamMemberAction::class)->execute($team, ['user' => $user]);
             }
         }
 
@@ -153,21 +154,24 @@ final class MembersPlanner extends Planner
 
     private function organization(Transfer $transfer): Organization
     {
-        return $transfer->organization ?? throw new RuntimeException('A members import needs an organization.');
+        return $this->remember($transfer, 'organization', fn (): ?Organization => $transfer->organization)
+            ?? throw new RuntimeException('A members import needs an organization.');
     }
 
     /**
+     * Teams named by slug or name, from the organization's teams loaded once.
+     *
      * @return array{0: array<int, Team>, 1: array<int, string>}
      */
-    private function teams(Organization $organization, string $value): array
+    private function teams(Transfer $transfer, string $value): array
     {
+        $teams = $this->remember($transfer, 'teams', fn (): Collection => $this->organization($transfer)->teams()->get());
         $found = [];
         $unknown = [];
 
         foreach ($this->list($value) as $name) {
-            $team = $organization->teams()
-                ->where(fn (Builder $query): Builder => $query->where('slug', $name)->orWhere('name', $name))
-                ->first();
+            $team = $teams->first(fn (Team $team): bool => $team->slug === $name)
+                ?? $teams->first(fn (Team $team): bool => strcasecmp($team->name, $name) === 0);
 
             $team === null ? $unknown[] = $name : $found[] = $team;
         }
@@ -175,29 +179,35 @@ final class MembersPlanner extends Planner
         return [$found, $unknown];
     }
 
-    private function role(Organization $organization, string $slug): ?Role
+    /**
+     * An organization role by slug: the organization's own before a shared one.
+     */
+    private function role(Transfer $transfer, string $slug): ?Role
     {
-        return Role::query()
+        $organization = $this->organization($transfer);
+
+        return $this->remember($transfer, 'roles', fn (): Collection => Role::query()
+            ->with('permissions')
             ->where('scope', RoleScope::Organization)
-            ->where('slug', $slug)
             ->where(fn (Builder $query): Builder => $query->whereNull('organization_id')->orWhere('organization_id', $organization->getKey()))
             ->orderByRaw('organization_id is null')
-            ->first();
+            ->get())
+            ->firstWhere('slug', $slug);
     }
 
     /**
      * The same rule as assigning by hand: nobody hands out more than they hold.
      */
-    private function mayGrant(?Model $actor, Role $role, Organization $organization): bool
+    private function mayGrant(Transfer $transfer, ?Model $actor, Role $role): bool
     {
         if ($actor === null || ! app(Authorizer::class)->enabled()) {
             return true;
         }
 
-        $permissions = app(Permissions::class);
+        $held = $this->remember($transfer, 'actor-permissions', fn (): array => app(Permissions::class)->for($actor, $this->organization($transfer)));
 
         return ! $role->super
-            && array_diff($role->permissions()->pluck('name')->all(), $permissions->for($actor, $organization)) === [];
+            && array_diff($role->permissions->pluck('name')->all(), $held) === [];
     }
 
     private function holds(Model $user, Role $role, Organization $organization): bool
@@ -210,18 +220,10 @@ final class MembersPlanner extends Planner
             ->exists();
     }
 
-    private function owned(Organization $organization, string $email): bool
+    private function owned(Transfer $transfer, string $email): bool
     {
-        return $organization->domains()->where('domain', strtolower(Str::after($email, '@')))->exists();
-    }
+        $domains = $this->remember($transfer, 'domains', fn (): array => array_map('strtolower', $this->organization($transfer)->domains()->pluck('domain')->all()));
 
-    private function find(string $email): ?Model
-    {
-        $column = $this->users->column('email');
-
-        return $column === null ? null : $this->users->query()
-            ->whereLike($column, $email)
-            ->get()
-            ->first(fn (Model $user): bool => strcasecmp((string) $this->users->email($user), $email) === 0);
+        return in_array(strtolower(Str::after($email, '@')), $domains, true);
     }
 }
