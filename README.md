@@ -433,7 +433,7 @@ The preview's rows come back a page at a time (`rows_page`, 100 per page) from `
 | `export_audit` | the audit log, optionally one organization's, with `filters` (`source`, `action`, `since`, `until`) | `roster.audit.view` (globally, or in the organization) |
 | `export_organizations` | the `import_organizations` columns, one row per external record (unlinked organizations get one row with no source), so an edited file imports straight back; optional `filters.external_source` keeps one system's records | `roster.organizations.view` |
 
-**Templates.** Every import type has a CSV template: the header row, plus commented example rows. Rows whose first cell starts with `#` are ignored, so an untouched template imports nothing; it's refused as having no rows. Download them in Atrium (a template picker on Imports & exports, and a "Download template" button on an organization's Members and Teams tabs), from `GET /roster/imports/templates/{type}`, or with `show-import-template-tool`. Any signed-in user may download them, since they hold no data. To change them (for example to match your own wording or examples), publish them:
+**Templates.** Every import type has a CSV template: the header row, plus commented example rows. Rows whose first cell starts with `#` are ignored, so an untouched template imports nothing; it's refused as having no rows. Download them in Atrium (the template picker on Imports & exports), from `GET /roster/imports/templates/{type}`, or with `show-import-template-tool`. Any signed-in user may download them, since they hold no data. To change them (for example to match your own wording or examples), publish them:
 
 ```bash
 php artisan vendor:publish --tag="roster-import-templates"

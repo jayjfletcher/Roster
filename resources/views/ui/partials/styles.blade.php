@@ -22,6 +22,8 @@
     .ms-auto { margin-inline-start: auto; }
     .underline-offset-2 { text-underline-offset: 2px; }
     .hover\:underline:hover { text-decoration-line: underline; }
+    /* Icon-only buttons (x-roster::icon-button): square, at Atrium's button height. */
+    .roster-icon-button { width: 2.25rem; padding-inline: 0; }
     .roster-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; padding-top: 1.625rem; }
     @media (min-width: 40rem) {
         .sm\:col-span-2 { grid-column: span 2 / span 2; }

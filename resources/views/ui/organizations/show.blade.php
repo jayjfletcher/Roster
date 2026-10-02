@@ -3,9 +3,10 @@
 
     <x-atrium::page-header :title="$organization->name" :description="$organization->slug">
         <x-slot:actions>
-            @rosterCan('roster.members.view', $organization)
-                <x-atrium::button variant="ghost" :href="route('atrium.roster.transfers.index', ['organization' => $organization->slug])" data-testid="organization-transfers">{{ __('roster::roster.import_export') }}</x-atrium::button>
-            @endrosterCan
+            {{-- Members and teams are what an organization imports and exports. --}}
+            @if (in_array($tab, ['members', 'teams'], true) && \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.members.view', $organization))
+                <x-roster::icon-button icon="transfers" :label="__('roster::roster.import_export')" :href="route('atrium.roster.transfers.index', ['organization' => $organization->slug])" data-testid="organization-transfers" />
+            @endif
         </x-slot:actions>
     </x-atrium::page-header>
 
@@ -20,14 +21,6 @@
                     data-testid="tab-{{ $name }}">{{ __('roster::roster.'.$name) }}</x-atrium::button>
             @endforeach
         </nav>
-
-        {{-- Members and teams can be imported: offer the matching CSV template to those who may import them. --}}
-        @if (in_array($tab, ['members', 'teams'], true) && \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.'.$tab.'.manage', $organization))
-            <div class="flex flex-wrap justify-end gap-2">
-                <x-atrium::button variant="ghost" size="sm" :href="route('atrium.roster.transfers.template', 'import_'.$tab)" data-testid="{{ $tab }}-template">{{ __('roster::roster.download_template') }}</x-atrium::button>
-                <x-atrium::button variant="ghost" size="sm" :href="route('atrium.roster.transfers.index', ['organization' => $organization->slug])">{{ __('roster::roster.import_csv') }}</x-atrium::button>
-            </div>
-        @endif
 
         @if ($tab === 'members')
             @if ($organization->owner_id === null)

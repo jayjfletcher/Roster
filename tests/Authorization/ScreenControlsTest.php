@@ -167,7 +167,6 @@ it('shows organization controls with their permissions in that organization', fu
     $this->actingAs($viewer)->get(route('atrium.roster.organizations.show', 'acme'))
         ->assertSee(testId('add-member'), false)
         ->assertSee(testId('remove-member'), false)
-        ->assertSee(testId('members-template'), false)
         ->assertSee(testId('organization-transfers'), false);
 
     $this->actingAs($viewer)->get(route('atrium.roster.organizations.show', ['acme', 'tab' => 'teams']))
