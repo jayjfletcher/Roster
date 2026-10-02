@@ -40,7 +40,19 @@ final class OrganizationUiController
 {
     use AuthorizesScreens;
 
-    private const array TABS = ['members', 'teams', 'invitations', 'roles', 'sso', 'scim', 'activity', 'settings'];
+    /**
+     * Each tab and the permission, in the organization, that opens it.
+     */
+    private const array TABS = [
+        'members' => 'roster.members.view',
+        'teams' => 'roster.teams.view',
+        'invitations' => 'roster.invitations.view',
+        'roles' => 'roster.roles.view',
+        'sso' => 'roster.sso.view',
+        'scim' => 'roster.scim.manage',
+        'activity' => 'roster.audit.view',
+        'settings' => 'roster.organizations.view',
+    ];
 
     public function __construct(private readonly Users $users) {}
 
@@ -95,7 +107,16 @@ final class OrganizationUiController
         }
 
         $model = app(ShowOrganizationAction::class)->execute($model);
-        $tab = in_array($request->query('tab'), self::TABS, true) ? (string) $request->query('tab') : 'members';
+
+        // Only the tabs the viewer may open here; asking for another is refused.
+        $tabs = array_keys(array_filter(self::TABS, fn (string $permission): bool => ScreenAccess::allows($permission, $model)));
+        $requested = $request->query('tab');
+
+        if (is_string($requested) && array_key_exists($requested, self::TABS)) {
+            $this->authorizeScreen(self::TABS[$requested], $model);
+        }
+
+        $tab = is_string($requested) && in_array($requested, $tabs, true) ? $requested : ($tabs[0] ?? 'settings');
 
         /** @var view-string $view */
         $view = 'roster::ui.organizations.show';
@@ -106,7 +127,7 @@ final class OrganizationUiController
         return view($view, [
             'organization' => $model,
             'tab' => $tab,
-            'tabs' => self::TABS,
+            'tabs' => $tabs,
             'pending' => InvitationStatus::Pending,
             'directory' => $this->users,
             ...match ($tab) {

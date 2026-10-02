@@ -3,9 +3,13 @@
 
     <x-atrium::page-header :title="__('roster::roster.organizations')">
         <x-slot:actions>
+            @rosterCan('roster.organizations.sync')
             <x-atrium::button variant="ghost" :href="route('atrium.roster.transfers.template', 'import_organizations')" data-testid="organizations-template">{{ __('roster::roster.download_template') }}</x-atrium::button>
+            @endrosterCan
             <x-atrium::button variant="ghost" :href="route('atrium.roster.transfers.index')" data-testid="organization-index-transfers">{{ __('roster::roster.import_export') }}</x-atrium::button>
+            @rosterCan('roster.organizations.create')
             <x-atrium::button :href="route('atrium.roster.organizations.create')" data-testid="new-organization">{{ __('roster::roster.new_organization') }}</x-atrium::button>
+            @endrosterCan
         </x-slot:actions>
     </x-atrium::page-header>
 
@@ -70,7 +74,7 @@
                         </x-atrium::table.cell>
                         <x-atrium::table.cell>
                             <div class="flex justify-end gap-2">
-                                @if ($organization->trashed())
+                                @if ($organization->trashed() && \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.organizations.delete', $organization))
                                     <form method="POST" action="{{ route('atrium.roster.organizations.restore', $organization) }}">
                                         @csrf
                                         <x-atrium::button type="submit" size="sm" data-testid="restore-organization">{{ __('roster::roster.restore') }}</x-atrium::button>

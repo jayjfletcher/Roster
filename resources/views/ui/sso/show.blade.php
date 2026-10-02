@@ -25,7 +25,8 @@
             @endif
         </x-atrium::card>
 
-        <x-atrium::card :title="__('roster::roster.settings')">
+        @rosterCan('roster.sso.manage', $connection->organization)
+        <x-atrium::card :title="__('roster::roster.settings')" data-testid="sso-settings">
             <form method="POST" action="{{ route('atrium.roster.sso.update', $connection->slug) }}" class="flex max-w-3xl flex-col gap-4">
                 @csrf
                 @method('PATCH')
@@ -42,5 +43,6 @@
             @method('DELETE')
             <x-atrium::button type="submit" variant="danger" data-testid="delete-sso">{{ __('roster::roster.delete') }}</x-atrium::button>
         </form>
+        @endrosterCan
     </div>
 </x-atrium::layout>

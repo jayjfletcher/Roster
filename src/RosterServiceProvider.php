@@ -43,6 +43,7 @@ use JayI\Roster\Enums\TransferStatus;
 use JayI\Roster\Http\Middleware\EnsureUserHasOrganization;
 use JayI\Roster\Http\Middleware\EnsureUserIsActive;
 use JayI\Roster\Http\Middleware\SyncImpersonation;
+use JayI\Roster\Http\Ui\ScreenAccess;
 use JayI\Roster\Impersonation\ImpersonationContext;
 use JayI\Roster\Impersonation\Impersonator;
 use JayI\Roster\Listeners\ApplyRegistrationStatus;
@@ -142,6 +143,10 @@ class RosterServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'roster');
         Blade::anonymousComponentPath(__DIR__.'/../resources/views/components', 'roster');
+
+        // @rosterCan('roster.users.update', $scope, $self) ... @endrosterCan:
+        // the screens' own check, so a control shows only when its action is allowed.
+        Blade::if('rosterCan', ScreenAccess::allows(...));
 
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'roster');
 

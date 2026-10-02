@@ -13,14 +13,20 @@
                 <code>composer require jayi/impex</code> · {{ __('roster::roster.transfers_unavailable_hint') }}
             </x-atrium::alert>
         @else
+            {{-- Only the types the viewer may start here: each type's permission, in this organization when it needs one. --}}
+            @php($allowed = fn (array $types) => collect($types)->filter(fn ($type) => \JayI\Roster\Http\Ui\ScreenAccess::allows($type->permission(), \JayI\Roster\Transfers\Transfers::scope($type, $organization)))->values())
+            @php($imports = $allowed($imports))
+            @php($exports = $allowed($exports))
+
             <div class="grid gap-4 lg:grid-cols-2">
-                <x-atrium::card :title="__('roster::roster.new_import')">
+                @if ($imports->isNotEmpty())
+                <x-atrium::card :title="__('roster::roster.new_import')" data-testid="import-card">
                     <form method="GET" action="{{ route('atrium.roster.transfers.template') }}" class="mb-4 flex flex-wrap items-start gap-3" data-testid="import-templates">
                         <x-atrium::form.select
                             name="type"
                             id="template-type"
                             :label="__('roster::roster.template')"
-                            :options="collect($imports)->mapWithKeys(fn ($type) => [$type->value => $type->label()])"
+                            :options="$imports->mapWithKeys(fn ($type) => [$type->value => $type->label()])"
                             wrapper="w-56" />
                         <div class="roster-actions">
                             <x-atrium::button type="submit" variant="secondary" data-testid="download-template">{{ __('roster::roster.download_template') }}</x-atrium::button>
@@ -33,7 +39,7 @@
                             name="type"
                             id="import-type"
                             :label="__('roster::roster.type')"
-                            :options="collect($imports)->mapWithKeys(fn ($type) => [$type->value => $type->label()])"
+                            :options="$imports->mapWithKeys(fn ($type) => [$type->value => $type->label()])"
                             :selected="old('type')"
                             required />
                         <x-atrium::form.input name="organization" id="import-organization" :label="__('roster::roster.organization')" :value="old('organization', $organization?->slug)" :hint="__('roster::roster.import_organization_hint')" />
@@ -43,16 +49,18 @@
                         </div>
                     </form>
                 </x-atrium::card>
+                @endif
 
-                <x-atrium::card :title="__('roster::roster.new_export')">
+                @if ($exports->isNotEmpty())
+                <x-atrium::card :title="__('roster::roster.new_export')" data-testid="export-card">
                     {{-- Alpine shows only the fields the picked export type uses. It reads the select on start, in case it changed before Alpine loaded. --}}
-                    <form method="POST" action="{{ route('atrium.roster.transfers.export') }}" class="flex flex-col gap-3" x-data="{ type: @js(old('type', array_values($exports)[0]->value)) }" x-init="type = $el.querySelector('select[name=type]').value">
+                    <form method="POST" action="{{ route('atrium.roster.transfers.export') }}" class="flex flex-col gap-3" x-data="{ type: @js(old('type', $exports->first()->value)) }" x-init="type = $el.querySelector('select[name=type]').value">
                         @csrf
                         <x-atrium::form.select
                             name="type"
                             id="export-type"
                             :label="__('roster::roster.type')"
-                            :options="collect($exports)->mapWithKeys(fn ($type) => [$type->value => $type->label()])"
+                            :options="$exports->mapWithKeys(fn ($type) => [$type->value => $type->label()])"
                             x-model="type"
                             required />
                         <div x-show="['export_members', 'export_audit'].includes(type)" data-export-field="organization">
@@ -73,6 +81,7 @@
                         </div>
                     </form>
                 </x-atrium::card>
+                @endif
             </div>
         @endunless
 

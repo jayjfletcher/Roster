@@ -1,5 +1,6 @@
 @use(JayI\Roster\Atrium\Badges)
 @use(JayI\Roster\Enums\UserStatus)
+@use(JayI\Roster\Http\Ui\ScreenAccess)
 
 @php($title = $profile?->display_name ?? $directory->name($user) ?? $directory->email($user) ?? __('roster::roster.user'))
 
@@ -17,6 +18,7 @@
             @include('roster::ui.partials.status')
         </div>
 
+        @rosterCan('roster.users.update')
         <x-atrium::card :title="__('roster::roster.account')">
             <form method="POST" action="{{ route('atrium.roster.users.update', $user->getRouteKey()) }}" class="flex flex-col gap-4">
                 @csrf
@@ -33,7 +35,9 @@
                 </div>
             </form>
         </x-atrium::card>
+        @endrosterCan
 
+        @rosterCan('roster.users.update', null, $user)
         <x-atrium::card :title="__('roster::roster.profile')">
             <form method="POST" action="{{ route('atrium.roster.users.profile', $user->getRouteKey()) }}" class="flex flex-col gap-4">
                 @csrf
@@ -46,8 +50,9 @@
                 </div>
             </form>
         </x-atrium::card>
+        @endrosterCan
 
-        @if ($status === UserStatus::Pending)
+        @if ($status === UserStatus::Pending && ScreenAccess::allows('roster.users.approve'))
             <x-atrium::card :title="__('roster::roster.awaiting_approval')" class="lg:col-span-2" data-testid="approval-card">
                 <p class="mb-4 text-sm">{{ __('roster::roster.awaiting_approval_hint') }}</p>
 
@@ -70,6 +75,7 @@
             </x-atrium::card>
         @endif
 
+        @rosterCan('roster.users.manage-status')
         <x-atrium::card :title="__('roster::roster.status')" class="lg:col-span-2">
             @if ($profile?->status_reason)
                 <p class="mb-4 text-sm">{{ __('roster::roster.reason') }}: {{ $profile->status_reason }}</p>
@@ -95,6 +101,7 @@
                 </div>
             </form>
         </x-atrium::card>
+        @endrosterCan
 
         <x-atrium::card :title="__('roster::roster.memberships')" class="lg:col-span-2">
             @if ($memberships->isEmpty())
@@ -114,6 +121,7 @@
                     @endforeach
                 </ul>
 
+                @rosterCan('roster.users.update', null, $user)
                 <form method="POST" action="{{ route('atrium.roster.users.context', $user->getRouteKey()) }}" class="flex flex-wrap items-start gap-2">
                     @csrf
                     @method('PUT')
@@ -134,15 +142,19 @@
                         <x-atrium::button type="submit" data-testid="switch-context">{{ __('roster::roster.switch') }}</x-atrium::button>
                     </div>
                 </form>
+                @endrosterCan
             @endif
 
+            @rosterCan('roster.users.update')
             <form method="POST" action="{{ route('atrium.roster.users.domain-join', $user->getRouteKey()) }}" class="mt-4">
                 @csrf
                 <x-atrium::button type="submit" variant="ghost" data-testid="domain-join">{{ __('roster::roster.run_domain_join') }}</x-atrium::button>
             </form>
+            @endrosterCan
         </x-atrium::card>
 
-        <x-atrium::card :title="__('roster::roster.roles')" class="lg:col-span-2">
+        @rosterCan('roster.roles.view', null, $user)
+        <x-atrium::card :title="__('roster::roster.roles')" class="lg:col-span-2" data-testid="roles-card">
             @if ($effective['super_admin'])
                 <p class="mb-3"><x-atrium::badge variant="danger">{{ __('roster::roster.super_admin') }}</x-atrium::badge></p>
             @endif
@@ -157,16 +169,23 @@
                                 <span class="font-medium">{{ $assignment->role?->name }}</span>
                                 <span class="opacity-70">— {{ $assignment->team ? $assignment->organization?->name.' / '.$assignment->team->name : ($assignment->organization?->name ?? __('roster::roster.scope_global')) }}</span>
                             </span>
+                            @rosterCan('roster.roles.assign', $assignment->team ?? $assignment->organization)
                             <form method="POST" action="{{ route('atrium.roster.users.roles.destroy', [$user->getRouteKey(), $assignment->id]) }}">
                                 @csrf
                                 @method('DELETE')
-                                <x-atrium::button type="submit" size="sm" variant="ghost">{{ __('roster::roster.revoke') }}</x-atrium::button>
+                                <x-atrium::button type="submit" size="sm" variant="ghost" data-testid="revoke-role">{{ __('roster::roster.revoke') }}</x-atrium::button>
                             </form>
+                            @endrosterCan
                         </li>
                     @endforeach
                 </ul>
             @endif
 
+            {{-- Assign where the actor may: globally, or in this user's organizations. --}}
+            @php($assignGlobally = ScreenAccess::allows('roster.roles.assign'))
+            @php($assignIn = $assignGlobally ? $memberships : $memberships->filter(fn ($m) => $m->organization && ScreenAccess::allows('roster.roles.assign', $m->organization)))
+
+            @if ($assignGlobally || $assignIn->isNotEmpty())
             <form method="POST" action="{{ route('atrium.roster.users.roles.store', $user->getRouteKey()) }}" class="flex flex-wrap items-start gap-2">
                 @csrf
                 <x-atrium::form.select
@@ -177,33 +196,37 @@
                 <x-atrium::form.select
                     name="organization"
                     :label="__('roster::roster.organization')"
-                    :placeholder="__('roster::roster.scope_global')"
-                    :options="$memberships->mapWithKeys(fn ($m) => [$m->organization?->slug => $m->organization?->name])"
+                    :placeholder="$assignGlobally ? __('roster::roster.scope_global') : null"
+                    :options="$assignIn->mapWithKeys(fn ($m) => [$m->organization?->slug => $m->organization?->name])"
                     wrapper="w-56" />
                 <x-atrium::form.select
                     name="team"
                     :label="__('roster::roster.team')"
                     :placeholder="__('roster::roster.no_team')"
-                    :options="$memberships->flatMap(fn ($m) => $m->teams->mapWithKeys(fn ($t) => [$t->slug => $m->organization?->name.' / '.$t->name]))"
+                    :options="$assignIn->flatMap(fn ($m) => $m->teams->mapWithKeys(fn ($t) => [$t->slug => $m->organization?->name.' / '.$t->name]))"
                     wrapper="w-56" />
                 <div class="roster-actions">
                     <x-atrium::button type="submit" data-testid="assign-role">{{ __('roster::roster.assign') }}</x-atrium::button>
                 </div>
             </form>
+            @endif
 
             <details class="mt-4 text-sm">
                 <summary class="cursor-pointer">{{ __('roster::roster.effective_permissions') }} ({{ count($effective['permissions']) }})</summary>
                 <p class="mt-2 font-mono text-xs leading-relaxed">{{ implode(', ', $effective['permissions']) ?: __('roster::roster.none') }}</p>
             </details>
         </x-atrium::card>
+        @endrosterCan
 
-        <x-atrium::card :title="__('roster::roster.activity')" class="lg:col-span-2">
+        @rosterCan('roster.audit.view', null, $user)
+        <x-atrium::card :title="__('roster::roster.activity')" class="lg:col-span-2" data-testid="activity-card">
             @include('roster::ui.audit.partials.entries', ['entries' => $activity])
             <x-atrium::button class="mt-3" variant="ghost" :href="route('atrium.roster.audit.index', ['user' => $user->getRouteKey()])">{{ __('roster::roster.view_all') }}</x-atrium::button>
         </x-atrium::card>
+        @endrosterCan
 
-        @can('roster.users.impersonate')
-            <x-atrium::card :title="__('roster::roster.impersonate')" class="lg:col-span-2">
+        @rosterCan('roster.users.impersonate')
+            <x-atrium::card :title="__('roster::roster.impersonate')" class="lg:col-span-2" data-testid="impersonate-card">
                 <form method="POST" action="{{ route('atrium.roster.users.impersonate', $user->getRouteKey()) }}" class="flex flex-wrap items-start gap-2">
                     @csrf
                     <x-atrium::form.input name="reason" id="impersonation-reason" :label="__('roster::roster.reason')" :hint="__('roster::roster.impersonation_reason_hint')" wrapper="w-80" required />
@@ -212,7 +235,7 @@
                     </div>
                 </form>
             </x-atrium::card>
-        @endcan
+        @endrosterCan
 
         @if ($ssoIdentities->isNotEmpty())
             <x-atrium::card :title="__('roster::roster.sso_identities')" class="lg:col-span-2">
@@ -220,17 +243,20 @@
                     @foreach ($ssoIdentities as $identity)
                         <li class="flex items-center justify-between gap-2">
                             <span>{{ $identity->connection?->name }} — {{ $identity->email ?? $identity->subject }} <span class="opacity-60">{{ __('roster::roster.last_login') }}: {{ $identity->last_login_at?->diffForHumans() ?? __('roster::roster.none') }}</span></span>
+                            @rosterCan('roster.sso.manage', $identity->connection?->organization, $identity->user_id == auth()->id() ? auth()->user() : null)
                             <form method="POST" action="{{ route('atrium.roster.sso-identities.destroy', $identity->id) }}">
                                 @csrf
                                 @method('DELETE')
-                                <x-atrium::button type="submit" size="sm" variant="ghost">{{ __('roster::roster.unlink') }}</x-atrium::button>
+                                <x-atrium::button type="submit" size="sm" variant="ghost" data-testid="unlink-sso-identity">{{ __('roster::roster.unlink') }}</x-atrium::button>
                             </form>
+                            @endrosterCan
                         </li>
                     @endforeach
                 </ul>
             </x-atrium::card>
         @endif
 
+        @rosterCan('roster.users.delete')
         <x-atrium::card :title="__('roster::roster.danger_zone')" class="lg:col-span-2" data-testid="danger-zone">
             @if ($directory->softDeletes())
                 <x-atrium::alert variant="warning" :title="__('roster::roster.delete_user_soft_title')">
@@ -249,5 +275,6 @@
                 <x-atrium::button type="submit" variant="danger" data-testid="delete-user">{{ __('roster::roster.delete_user') }}</x-atrium::button>
             </form>
         </x-atrium::card>
+        @endrosterCan
     </div>
 </x-atrium::layout>

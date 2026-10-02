@@ -21,17 +21,20 @@
                         @if ($membership->user)
                             <li class="flex items-center justify-between gap-2">
                                 <span>{{ $directory->name($membership->user) ?? $directory->email($membership->user) }}</span>
+                                @rosterCan('roster.teams.manage', $team)
                                 <form method="POST" action="{{ route('atrium.roster.teams.members.destroy', [$organization, $team->slug, $membership->user->getRouteKey()]) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <x-atrium::button type="submit" size="sm" variant="ghost">{{ __('roster::roster.remove') }}</x-atrium::button>
+                                    <x-atrium::button type="submit" size="sm" variant="ghost" data-testid="remove-team-member">{{ __('roster::roster.remove') }}</x-atrium::button>
                                 </form>
+                                @endrosterCan
                             </li>
                         @endif
                     @endforeach
                 </ul>
             @endif
 
+            @rosterCan('roster.teams.manage', $team)
             <form method="POST" action="{{ route('atrium.roster.teams.members.store', [$organization, $team->slug]) }}" class="mt-4 flex items-start gap-2">
                 @csrf
                 <x-atrium::form.select
@@ -43,9 +46,11 @@
                     <x-atrium::button type="submit" data-testid="add-team-member">{{ __('roster::roster.add_member') }}</x-atrium::button>
                 </div>
             </form>
+            @endrosterCan
         </x-atrium::card>
 
-        <x-atrium::card :title="__('roster::roster.settings')">
+        @rosterCan('roster.teams.manage', $team)
+        <x-atrium::card :title="__('roster::roster.settings')" data-testid="team-settings">
             <form method="POST" action="{{ route('atrium.roster.teams.update', [$organization, $team->slug]) }}" class="flex flex-col gap-4">
                 @csrf
                 @method('PATCH')
@@ -56,11 +61,14 @@
                 </div>
             </form>
 
+            @rosterCan('roster.teams.manage', $organization)
             <form method="POST" action="{{ route('atrium.roster.teams.destroy', [$organization, $team->slug]) }}" class="mt-4">
                 @csrf
                 @method('DELETE')
                 <x-atrium::button type="submit" variant="danger" data-testid="delete-team">{{ __('roster::roster.delete') }}</x-atrium::button>
             </form>
+            @endrosterCan
         </x-atrium::card>
+        @endrosterCan
     </div>
 </x-atrium::layout>

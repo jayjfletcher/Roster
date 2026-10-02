@@ -36,13 +36,14 @@
                             @endif
                         </x-atrium::table.cell>
                         <x-atrium::table.cell>
-                            @unless ($impersonation->ended_at)
+                            {{-- Your own impersonation, or anyone's with the permission in its organization. --}}
+                            @if (! $impersonation->ended_at && \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.users.impersonate', $impersonation->organization, (string) $impersonation->impersonator_id === (string) auth()->id() ? auth()->user() : null))
                                 <form method="POST" action="{{ route('atrium.roster.impersonations.stop', $impersonation->id) }}" class="flex justify-end">
                                     @csrf
                                     @method('DELETE')
-                                    <x-atrium::button type="submit" size="sm" variant="danger">{{ __('roster::roster.end') }}</x-atrium::button>
+                                    <x-atrium::button type="submit" size="sm" variant="danger" data-testid="end-impersonation">{{ __('roster::roster.end') }}</x-atrium::button>
                                 </form>
-                            @endunless
+                            @endif
                         </x-atrium::table.cell>
                     </x-atrium::table.row>
                 @endforeach

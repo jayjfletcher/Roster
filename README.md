@@ -635,6 +635,7 @@ Roster registers itself with Atrium automatically. It adds:
 - **Imports & exports**: upload a CSV, review the preview, confirm or cancel, follow progress, and download exports, also reached from each organization and from Users
 - "Users by status" and "Organizations" widgets
 - navigation, widgets and search hidden from users without the matching permission
+- on every page, only the controls the viewer may use: each form, button and organization tab asks the same permission, in the same organization or team, as the action behind it (Impersonate needs `roster.users.impersonate`, the Roles card `roster.roles.view`, assigning `roster.roles.assign`, each import or export type its own permission, and so on). Opening a tab you may not see is refused. Published views can do the same with `@rosterCan('roster.users.update', $organization, $self) ... @endrosterCan`
 - search over users and organizations
 
 Access follows Atrium's `viewAtrium` gate. To hide it, add `'roster'` to `atrium.disabled`. Roster can also be switched by feature flag. `roster.atrium.features` lists the features that must all be on: while any is off, Roster's navigation, widgets and search disappear and its pages answer 404. Atrium asks its feature resolver, so Pennant (through `jayi/pennantplus`) or any other flag system decides.

@@ -31,7 +31,8 @@
 
         <x-atrium::pagination :paginator="$entries" />
 
-        <x-atrium::card :title="__('roster::roster.record_note')">
+        @rosterCan('roster.audit.record', \JayI\Roster\Support\Scopes::fromInput($filters['organization'] ?? null))
+        <x-atrium::card :title="__('roster::roster.record_note')" data-testid="record-note-card">
             <form method="POST" action="{{ route('atrium.roster.audit.store') }}" class="flex flex-wrap items-start gap-3">
                 @csrf
                 <x-atrium::form.input name="action" :label="__('roster::roster.action')" :hint="__('roster::roster.audit_record_hint')" wrapper="w-56" required />
@@ -43,5 +44,6 @@
                 </div>
             </form>
         </x-atrium::card>
+        @endrosterCan
     </div>
 </x-atrium::layout>

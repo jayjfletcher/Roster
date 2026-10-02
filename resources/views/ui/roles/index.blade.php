@@ -53,7 +53,9 @@
 
         <x-atrium::pagination :paginator="$roles" />
 
-        <x-atrium::card :title="__('roster::roster.new_role')">
+        {{-- New roles in the filtered organization, or globally without a filter. --}}
+        @rosterCan('roster.roles.manage', \JayI\Roster\Support\Scopes::fromInput($filters['organization'] ?? null))
+        <x-atrium::card :title="__('roster::roster.new_role')" data-testid="new-role-card">
             <form method="POST" action="{{ route('atrium.roster.roles.store') }}" class="flex max-w-3xl flex-col gap-4">
                 @csrf
                 <div class="flex flex-wrap gap-3">
@@ -63,7 +65,7 @@
                         :label="__('roster::roster.scope')"
                         :options="collect($scopes)->mapWithKeys(fn ($scope) => [$scope->value => $scope->label()])"
                         wrapper="w-48" />
-                    <x-atrium::form.input name="organization" :label="__('roster::roster.organization')" :hint="__('roster::roster.role_organization_hint')" wrapper="w-56" />
+                    <x-atrium::form.input name="organization" :label="__('roster::roster.organization')" :value="old('organization', $filters['organization'] ?? null)" :hint="__('roster::roster.role_organization_hint')" wrapper="w-56" />
                 </div>
                 <x-atrium::form.textarea name="description" :label="__('roster::roster.description')" rows="2" />
                 <fieldset class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -77,5 +79,6 @@
                 </div>
             </form>
         </x-atrium::card>
+        @endrosterCan
     </div>
 </x-atrium::layout>

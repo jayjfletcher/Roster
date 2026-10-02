@@ -13,6 +13,12 @@
         <x-atrium::card>
             @if ($role->super)
                 <p class="text-sm">{{ __('roster::roster.super_role_hint') }}</p>
+            @elseif (! \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.roles.manage', $role->organization))
+                {{-- Read only for those who may view roles but not change them. --}}
+                @if ($role->description)
+                    <p class="mb-3 text-sm">{{ $role->description }}</p>
+                @endif
+                <p class="font-mono text-xs leading-relaxed" data-testid="role-permissions">{{ $role->permissions->pluck('name')->sort()->implode(', ') ?: __('roster::roster.none') }}</p>
             @else
                 <form method="POST" action="{{ route('atrium.roster.roles.update', $role->id) }}" class="flex max-w-3xl flex-col gap-4">
                     @csrf
@@ -37,12 +43,12 @@
             @endif
         </x-atrium::card>
 
-        @unless ($role->system)
+        @if (! $role->system && \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.roles.manage', $role->organization))
             <form method="POST" action="{{ route('atrium.roster.roles.destroy', $role->id) }}">
                 @csrf
                 @method('DELETE')
                 <x-atrium::button type="submit" variant="danger" data-testid="delete-role">{{ __('roster::roster.delete') }}</x-atrium::button>
             </form>
-        @endunless
+        @endif
     </div>
 </x-atrium::layout>

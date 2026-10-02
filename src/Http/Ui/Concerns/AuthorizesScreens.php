@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace JayI\Roster\Http\Ui\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Access\Authorizer;
+use JayI\Roster\Http\Ui\ScreenAccess;
 use JayI\Roster\Models\Organization;
 use JayI\Roster\Models\Team;
 
@@ -16,11 +16,6 @@ trait AuthorizesScreens
 {
     private function authorizeScreen(string $permission, Organization|Team|null $scope = null, ?Model $self = null): void
     {
-        $user = request()->user();
-
-        abort_unless(
-            app(Authorizer::class)->check($user instanceof Model ? $user : null, $permission, $scope, $self),
-            403,
-        );
+        abort_unless(ScreenAccess::allows($permission, $scope, $self), 403);
     }
 }

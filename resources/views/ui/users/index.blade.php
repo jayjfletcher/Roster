@@ -5,9 +5,13 @@
 
     <x-atrium::page-header :title="__('roster::roster.users')">
         <x-slot:actions>
-            <x-atrium::button variant="ghost" :href="route('atrium.roster.transfers.template', 'import_users')" data-testid="users-template">{{ __('roster::roster.download_template') }}</x-atrium::button>
+            @rosterCan('roster.users.create')
+                <x-atrium::button variant="ghost" :href="route('atrium.roster.transfers.template', 'import_users')" data-testid="users-template">{{ __('roster::roster.download_template') }}</x-atrium::button>
+            @endrosterCan
             <x-atrium::button variant="ghost" :href="route('atrium.roster.transfers.index')" data-testid="user-transfers">{{ __('roster::roster.import_export') }}</x-atrium::button>
-            <x-atrium::button :href="route('atrium.roster.users.create')" data-testid="new-user">{{ __('roster::roster.new_user') }}</x-atrium::button>
+            @rosterCan('roster.users.create')
+                <x-atrium::button :href="route('atrium.roster.users.create')" data-testid="new-user">{{ __('roster::roster.new_user') }}</x-atrium::button>
+            @endrosterCan
         </x-slot:actions>
     </x-atrium::page-header>
 
@@ -80,10 +84,12 @@
                         <x-atrium::table.cell>
                             <div class="flex justify-end gap-2">
                                 @if ($directory->trashed($user))
+                                    @rosterCan('roster.users.delete')
                                     <form method="POST" action="{{ route('atrium.roster.users.restore', $user->getRouteKey()) }}">
                                         @csrf
                                         <x-atrium::button type="submit" size="sm" data-testid="restore-user">{{ __('roster::roster.restore') }}</x-atrium::button>
                                     </form>
+                                    @endrosterCan
                                 @else
                                     @include('roster::ui.users.partials.activate', ['user' => $user, 'status' => $status])
                                 @endif
