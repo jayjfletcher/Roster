@@ -28,6 +28,7 @@ use JayI\Roster\Mcp\Tools\DeleteSsoConnectionTool;
 use JayI\Roster\Mcp\Tools\DeleteTeamTool;
 use JayI\Roster\Mcp\Tools\DeleteUserTool;
 use JayI\Roster\Mcp\Tools\JoinByDomainTool;
+use JayI\Roster\Mcp\Tools\LinkOrganizationTool;
 use JayI\Roster\Mcp\Tools\ListAuditEntriesTool;
 use JayI\Roster\Mcp\Tools\ListImpersonationsTool;
 use JayI\Roster\Mcp\Tools\ListInvitationsTool;
@@ -51,6 +52,7 @@ use JayI\Roster\Mcp\Tools\RevokeInvitationTool;
 use JayI\Roster\Mcp\Tools\RevokeRoleTool;
 use JayI\Roster\Mcp\Tools\RevokeScimTokenTool;
 use JayI\Roster\Mcp\Tools\ShowAuditEntryTool;
+use JayI\Roster\Mcp\Tools\ShowImportTemplateTool;
 use JayI\Roster\Mcp\Tools\ShowOrganizationTool;
 use JayI\Roster\Mcp\Tools\ShowRoleTool;
 use JayI\Roster\Mcp\Tools\ShowSsoConnectionTool;
@@ -63,7 +65,10 @@ use JayI\Roster\Mcp\Tools\StartImportTool;
 use JayI\Roster\Mcp\Tools\StopImpersonationTool;
 use JayI\Roster\Mcp\Tools\SuspendUserTool;
 use JayI\Roster\Mcp\Tools\SwitchContextTool;
+use JayI\Roster\Mcp\Tools\SyncOrganizationsTool;
+use JayI\Roster\Mcp\Tools\SyncOrganizationTool;
 use JayI\Roster\Mcp\Tools\TransferOwnershipTool;
+use JayI\Roster\Mcp\Tools\UnlinkOrganizationTool;
 use JayI\Roster\Mcp\Tools\UnlinkSsoIdentityTool;
 use JayI\Roster\Mcp\Tools\UpdateOrganizationTool;
 use JayI\Roster\Mcp\Tools\UpdatePermissionTool;
@@ -98,8 +103,10 @@ use Laravel\Mcp\Server\Tools\ToolSearch;
     'shows what a user holds. You can only grant permissions you hold yourself. '.
     'Every change is recorded in an append-only audit log (list-audit-entries-tool); the application can record '.
     'its own events there too (record-audit-event-tool). '.
-    'Bulk changes go through CSV: start-import-tool previews every row without changing anything, and only '.
-    'confirm-import-tool applies it; start-export-tool builds a CSV whose download link show-transfer-tool returns.',
+    'Bulk changes go through CSV (show-import-template-tool gives each import type\'s columns): start-import-tool previews every row without changing anything, and only '.
+    'confirm-import-tool applies it; start-export-tool builds a CSV whose download link show-transfer-tool returns. '.
+    'Organizations kept in an external system (ERP, CRM) are synced by their id there with sync-organization-tool or '.
+    'sync-organizations-tool, and found with list-organizations-tool (source, external_id, account_number).',
 )]
 final class RosterServer extends Server
 {
@@ -135,6 +142,10 @@ final class RosterServer extends Server
         UpdateOrganizationTool::class,
         DeleteOrganizationTool::class,
         TransferOwnershipTool::class,
+        SyncOrganizationTool::class,
+        SyncOrganizationsTool::class,
+        LinkOrganizationTool::class,
+        UnlinkOrganizationTool::class,
 
         // Members
         ListMembersTool::class,
@@ -197,6 +208,7 @@ final class RosterServer extends Server
         RecordAuditEventTool::class,
 
         // CSV import and export
+        ShowImportTemplateTool::class,
         StartImportTool::class,
         ConfirmImportTool::class,
         StartExportTool::class,

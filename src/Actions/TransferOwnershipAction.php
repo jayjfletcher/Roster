@@ -41,7 +41,7 @@ final class TransferOwnershipAction
 
         DB::transaction(fn () => $organization->update(['owner_id' => $user->getKey()]));
 
-        $organization = $organization->refresh()->load('domains')->loadCount(['memberships', 'teams']);
+        $organization = $organization->refresh()->load(['domains', 'links'])->loadCount(['memberships', 'teams']);
 
         OwnershipTransferredActionEvent::dispatch($organization, $user);
 

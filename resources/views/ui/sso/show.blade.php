@@ -30,7 +30,7 @@
                 @csrf
                 @method('PATCH')
                 <x-atrium::form.input name="name" :label="__('roster::roster.name')" :value="old('name', $connection->name)" required />
-                @include('roster::ui.sso.partials.fields', ['settings' => (array) $resource['settings'], 'editing' => true, 'jit' => $connection->jit, 'enforced' => $connection->enforced, 'enabled' => $connection->enabled])
+                @include('roster::ui.sso.partials.fields', ['settings' => (array) $resource['settings'], 'editing' => true, 'protocol' => $connection->protocol, 'jit' => $connection->jit, 'enforced' => $connection->enforced, 'enabled' => $connection->enabled])
                 <div>
                     <x-atrium::button type="submit" data-testid="save-sso">{{ __('roster::roster.save') }}</x-atrium::button>
                 </div>

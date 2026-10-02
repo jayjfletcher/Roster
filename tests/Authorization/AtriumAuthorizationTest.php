@@ -27,6 +27,8 @@ function screens(): array
         'organizations.show' => ['GET', 'atrium.roster.organizations.show', fn (): array => ['acme']],
         'organizations.destroy' => ['DELETE', 'atrium.roster.organizations.destroy', fn (): array => ['acme']],
         'organizations.members.store' => ['POST', 'atrium.roster.organizations.members.store', fn (): array => ['acme']],
+        'organizations.links.store' => ['POST', 'atrium.roster.organizations.links.store', fn (): array => ['acme']],
+        'organizations.links.destroy' => ['DELETE', 'atrium.roster.organizations.links.destroy', fn (): array => ['acme', 'erp']],
         'teams.show' => ['GET', 'atrium.roster.teams.show', fn (): array => ['acme', 'ops']],
         'teams.destroy' => ['DELETE', 'atrium.roster.teams.destroy', fn (): array => ['acme', 'ops']],
         'invitations.store' => ['POST', 'atrium.roster.invitations.store', fn (): array => ['acme']],
@@ -43,6 +45,7 @@ function screens(): array
         'transfers.confirm' => ['POST', 'atrium.roster.transfers.confirm', fn (array $w): array => [$w['transfer']->id]],
         'transfers.cancel' => ['DELETE', 'atrium.roster.transfers.cancel', fn (array $w): array => [$w['transfer']->id]],
         'transfers.download' => ['GET', 'atrium.roster.transfers.download', fn (array $w): array => [$w['transfer']->id]],
+        'transfers.template' => ['GET', 'atrium.roster.transfers.template', fn (): array => ['import_users']],
     ];
 }
 
@@ -56,7 +59,7 @@ it('forbids each screen to an atrium user without the permission', function (str
     RoleAssignment::query()->create(['role_id' => roleWith(['atrium.view'])->id, 'user_id' => $viewer->getKey()]);
 
     $this->actingAs($viewer)->call($method, route($name, $parameters($world)))->assertForbidden();
-})->with(screens());
+})->with(fn (): array => array_diff_key(screens(), array_flip(OPEN_TO_SIGNED_IN)));
 
 it('opens each screen to a super-admin', function (string $method, string $name, Closure $parameters): void {
     $world = authorizationWorld();

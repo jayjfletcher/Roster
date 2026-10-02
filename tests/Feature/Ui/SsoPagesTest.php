@@ -27,3 +27,25 @@ it('creates, edits and deletes a connection from the organization page', functio
     $this->delete(route('atrium.roster.sso.destroy', $connection->slug))->assertRedirect();
     expect(SsoConnection::query()->count())->toBe(0);
 });
+
+it('shows only the connection\'s own protocol settings when editing', function (string $protocol, array $shown, array $hidden): void {
+    $this->actingAs(user());
+    $connection = SsoConnection::factory()->create([
+        'organization_id' => organization(attributes: ['name' => 'Acme'])->id,
+        'protocol' => $protocol,
+    ]);
+
+    $page = $this->get(route('atrium.roster.sso.show', $connection->slug))->assertOk();
+
+    foreach ($shown as $field) {
+        $page->assertSee('data-sso-field="'.$field.'"', false);
+    }
+
+    foreach ($hidden as $field) {
+        $page->assertDontSee('data-sso-field="'.$field.'"', false);
+    }
+})->with([
+    'oidc' => ['oidc', ['issuer', 'client_id', 'client_secret'], ['tenant', 'metadata_url', 'certificate']],
+    'azure' => ['azure', ['tenant', 'client_id', 'client_secret'], ['issuer', 'entity_id']],
+    'saml' => ['saml', ['metadata_url', 'entity_id', 'sso_url', 'certificate'], ['issuer', 'tenant', 'client_id']],
+]);

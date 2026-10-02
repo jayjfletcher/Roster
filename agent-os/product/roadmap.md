@@ -14,4 +14,8 @@
 - ✅ **SSO / SCIM** — SAML/OIDC/Entra ID login and SCIM 2.0 provisioning per organization.
 - ✅ **CSV import/export** — bulk user/member import and export via `jayi/impex`.
 
+## Phase 3: Integrations
+
+- **Organization sync** — create and update organizations from external systems (ERP, CRM) with per-source external IDs and account numbers; upsert, bulk, and CSV.
+
 Specs and decision logs: `agent-os/specs/`.

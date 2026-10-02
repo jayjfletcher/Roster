@@ -9,9 +9,11 @@ use JayI\Roster\Http\Requests\CancelTransferRequest;
 use JayI\Roster\Http\Requests\ConfirmImportRequest;
 use JayI\Roster\Http\Requests\DownloadTransferRequest;
 use JayI\Roster\Http\Requests\IndexTransfersRequest;
+use JayI\Roster\Http\Requests\ShowImportTemplateRequest;
 use JayI\Roster\Http\Requests\ShowTransferRequest;
 use JayI\Roster\Http\Requests\StartExportRequest;
 use JayI\Roster\Http\Requests\StartImportRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class TransferController
@@ -42,6 +44,11 @@ final class TransferController
     }
 
     public function destroy(CancelTransferRequest $request): JsonResponse
+    {
+        return $request->persist();
+    }
+
+    public function template(ShowImportTemplateRequest $request): Response
     {
         return $request->persist();
     }

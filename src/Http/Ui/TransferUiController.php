@@ -12,6 +12,7 @@ use JayI\Roster\Access\Authorizer;
 use JayI\Roster\Actions\CancelTransferAction;
 use JayI\Roster\Actions\ConfirmImportAction;
 use JayI\Roster\Actions\ListTransfersAction;
+use JayI\Roster\Actions\ShowImportTemplateAction;
 use JayI\Roster\Actions\ShowTransferAction;
 use JayI\Roster\Actions\StartExportAction;
 use JayI\Roster\Actions\StartImportAction;
@@ -20,6 +21,7 @@ use JayI\Roster\Http\Ui\Concerns\AuthorizesScreens;
 use JayI\Roster\Models\Organization;
 use JayI\Roster\Models\Transfer;
 use JayI\Roster\Transfers\Transfers;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -115,6 +117,23 @@ final class TransferUiController
         return redirect()
             ->route('atrium.roster.transfers.show', $model->id)
             ->with('status', __('roster::roster.transfer_cancelled'));
+    }
+
+    /**
+     * Templates hold no data; anyone who can open Atrium may download them.
+     * The type comes in the path (index page buttons) or the query (the
+     * import page's picker).
+     */
+    public function template(Request $request, ?string $type = null): Response
+    {
+        // The import page's template picker submits the type as a query.
+        $type = TransferType::tryFrom($type ?? $request->string('type')->toString());
+        abort_unless($type !== null && $type->isImport(), 404);
+
+        return response(app(ShowImportTemplateAction::class)->execute($type), 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="roster-'.$type->value.'-template.csv"',
+        ]);
     }
 
     public function download(Request $request, string $transfer): StreamedResponse

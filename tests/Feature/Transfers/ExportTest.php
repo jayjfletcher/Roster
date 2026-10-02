@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use JayI\Roster\Actions\StartExportAction;
+use JayI\Roster\Actions\StartImportAction;
+use JayI\Roster\Actions\SyncOrganizationAction;
 use JayI\Roster\Enums\TransferStatus;
 use JayI\Roster\Facades\Roster;
 use JayI\Roster\Models\Transfer;
@@ -75,4 +77,37 @@ it('prunes old transfer files', function (): void {
 
     expect(app(Transfers::class)->disk()->exists($path))->toBeFalse()
         ->and($transfer->refresh()->output_path)->toBeNull();
+});
+
+it('exports organizations in the import columns, one row per external record', function (): void {
+    $sync = app(SyncOrganizationAction::class);
+    $sync->execute(['source' => 'erp', 'external_id' => 'C-1', 'name' => 'Initech', 'account_number' => 'A-1', 'domains' => ['initech.test', 'initech.example']]);
+    $sync->execute(['source' => 'crm', 'external_id' => '0015g', 'organization' => 'initech']);
+
+    $transfer = app(StartExportAction::class)->execute(['type' => 'export_organizations'], $this->owner)->refresh();
+    $rows = exported($transfer);
+
+    expect($rows[0])->toBe(['source', 'external_id', 'name', 'account_number', 'slug', 'domains', 'owner'])
+        ->and(array_slice($rows, 1))->toContain(
+            ['', '', 'Acme', '', 'acme', '', 'owner@acme.test'],
+            ['crm', '0015g', 'Initech', '', 'initech', 'initech.example;initech.test', ''],
+            ['erp', 'C-1', 'Initech', 'A-1', 'initech', 'initech.example;initech.test', ''],
+        );
+
+    $erp = app(StartExportAction::class)->execute(['type' => 'export_organizations', 'filters' => ['external_source' => 'erp']], $this->owner)->refresh();
+
+    expect(array_slice(exported($erp), 1))->toBe([['erp', 'C-1', 'Initech', 'A-1', 'initech', 'initech.example;initech.test', '']]);
+});
+
+it('round-trips an organizations export through the import unchanged', function (): void {
+    app(SyncOrganizationAction::class)->execute(['source' => 'erp', 'external_id' => 'C-1', 'name' => 'Initech', 'account_number' => 'A-1', 'domains' => ['initech.test']]);
+
+    $export = app(StartExportAction::class)->execute(['type' => 'export_organizations', 'filters' => ['external_source' => 'erp']], $this->owner)->refresh();
+
+    $import = app(StartImportAction::class)->execute([
+        'type' => 'import_organizations',
+        'content' => app(Transfers::class)->disk()->get((string) $export->output_path),
+    ], $this->owner);
+
+    expect(collect($import->rows())->pluck('action')->all())->toBe(['skip']);
 });

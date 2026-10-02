@@ -117,7 +117,8 @@ $ops = app(CreateTeamAction::class)->execute($acme, ['name' => 'Ops']);
 app(AddTeamMemberAction::class)->execute($ops, ['user' => $ada->getRouteKey()]); // must be an org member
 ```
 
-- Every organization has one **owner**. The owner can't be removed, and `TransferOwnershipAction` hands ownership to another member. A user who owns a shared organization can't be deleted until they transfer it.
+- An organization has at most one **owner**. The owner can't be removed, and `TransferOwnershipAction` hands ownership to another member. A user who owns a shared organization can't be deleted until they transfer it.
+- An organization may have **no owner** (leave out `owner`), as organizations synced from an ERP usually start. Atrium flags it, and `TransferOwnershipAction` makes a member the owner. Personal organizations always have one.
 - Removing a member also removes their team seats.
 - **Personal organizations:** set `roster.organizations.personal` to `true` and every user created through Roster gets one. It is deleted with its owner and can't be deleted or transferred on its own.
 
@@ -170,7 +171,7 @@ $user->can('invoices.edit');         // checks the user's current organization/t
 How a check resolves:
 
 - **Scopes add up.** A user's permissions in an organization are their global roles plus their roles in that organization. On a team, they also include the team's roles.
-- **Owners.** An organization's owner holds every permission inside it, except the global-only ones (`roster.users.*`, `roster.organizations.create`, `atrium.*`).
+- **Owners.** An organization's owner holds every permission inside it, except the global-only ones (`roster.users.*`, `roster.organizations.create`, `roster.organizations.sync`, `atrium.*`).
 - **Super-admins** pass every Gate check, Roster's or your app's.
 - **Gate integration.** `Gate::before` answers any ability that is a known permission. When the user lacks it, Roster returns `null` rather than `false`, so your own gates and policies still run.
 - **Shared and custom roles.** A role without an organization is shared by every organization. With `organization`, it is that organization's own.
@@ -298,6 +299,35 @@ $request->validate(['email' => ['required', 'email', new NotSsoEnforced]]);
 
 It fails with a link to the organization's SSO sign-in. Super-admins are never forced, so you can't lock yourself out. `Roster::ssoRequiredFor($email)` gives the same answer in code.
 
+## Syncing organizations from external systems
+
+When your organizations live in another system of record, such as an ERP or a CRM, Roster can create and update them from those records. It remembers each organization's id and account number in every system it comes from.
+
+```php
+use JayI\Roster\Actions\SyncOrganizationAction;
+
+$result = app(SyncOrganizationAction::class)->execute([
+    'source' => 'erp',              // which system, lower case
+    'external_id' => 'C-100',       // its id there
+    'account_number' => 'A-42',
+    'name' => 'Initech',
+    'domains' => ['initech.test'],
+]);
+
+$result->outcome;                   // 'created', 'updated' or 'unchanged'
+$result->organization->links;       // [OrganizationLink{source: erp, external_id: C-100, account_number: A-42}]
+```
+
+- **Matching** is by `source` + `external_id`. An unknown record creates an organization. To link an existing organization on its first sync, pass `organization` (its slug) instead.
+- **Only the fields you send are written:** `name`, `slug`, `domains`, `auto_join` and `account_number`. Anything left out stays as it is. Local edits are allowed, and the next sync overwrites them.
+- **Owners.** A new organization has no owner unless the record names one (`owner`, a user key). An owner is only applied to an organization that doesn't have one yet; sync never replaces an existing owner.
+- **Several systems:** an organization can be linked to one record per source, for example `erp` and `crm`. Manage links by hand with `LinkOrganizationAction` / `UnlinkOrganizationAction`, or on the organization's Settings tab in Atrium.
+- **Finding them:** `ListOrganizationsAction` and `GET /roster/organizations` take `source`, `external_id` and `account_number` filters.
+- **Exporting:** the `export_organizations` CSV uses the same columns as the import, so you can export, edit and re-import. Atrium's Organizations page links to Imports & exports.
+- **In bulk:** `SyncOrganizationsAction` (`POST /roster/organizations/sync`) takes up to `roster.organizations.sync_batch` (500) records. Each record succeeds or fails on its own, and the response lists `created` / `updated` / `unchanged` / `error` (with messages) per record, in order. For files, use the `import_organizations` CSV import.
+- **Permission:** the sync Actions and the CSV import need the global `roster.organizations.sync` permission. Give an integration user just that, plus `roster.organizations.view` if it needs to look organizations up. Linking and unlinking by hand need `roster.organizations.update` in the organization.
+- **Audit:** each sync records `organization.synced` with the source, id and outcome, next to the usual `organization.created` / `organization.updated` entries. A batch also records `organizations.synced` with its counts.
+
 ## SCIM provisioning
 
 Each organization gets a SCIM 2.0 endpoint, so its identity provider (Okta, Microsoft Entra ID, OneLogin, JumpCloud …) keeps its members and teams in sync:
@@ -394,11 +424,21 @@ Confirming applies the rows one by one, as the person who confirmed. Their permi
 | `import_members` | `email` required; `name`, `display_name`, `teams`, `role` | `roster.members.manage` in the organization; `invite` rows also need `roster.invitations.manage` |
 | `import_users` | `email` required; `name`, `display_name` | `roster.users.create` |
 | `import_teams` | `name` required; `slug`, `members` (emails of existing members) | `roster.teams.manage` in the organization |
+| `import_organizations` | `source`, `external_id` required; `name` (required for new ones), `account_number`, `slug`, `domains`, `owner` (an email). Blank cells leave a field as it is | `roster.organizations.sync` |
 | `export_members` | email, name, display name, status, teams, roles, owner, source, joined | `roster.members.view` in the organization |
 | `export_users` | id, email, name, display name, status, created | `roster.users.view` |
 | `export_audit` | the audit log, optionally one organization's, with `filters` (`source`, `action`, `since`, `until`) | `roster.audit.view` (globally, or in the organization) |
+| `export_organizations` | the `import_organizations` columns, one row per external record (unlinked organizations get one row with no source), so an edited file imports straight back; optional `filters.external_source` keeps one system's records | `roster.organizations.view` |
 
-Separate lists (`teams`, `members`) with `;`, `,` or `|`. Teams are matched by slug or name, and roles by slug. You can only assign roles whose permissions you hold.
+**Templates.** Every import type has a CSV template: the header row, plus commented example rows. Rows whose first cell starts with `#` are ignored, so an untouched template imports nothing; it's refused as having no rows. Download them in Atrium (a template picker on Imports & exports, and a "Download template" button on the Users and Organizations pages and an organization's Members and Teams tabs), from `GET /roster/imports/templates/{type}`, or with `show-import-template-tool`. Any signed-in user may download them, since they hold no data. To change them (for example to match your own wording or examples), publish them:
+
+```bash
+php artisan vendor:publish --tag="roster-import-templates"
+```
+
+The published copies in `resources/roster/import-templates/{type}.csv` are served instead of Roster's own.
+
+Separate lists (`teams`, `members`, `domains`) with `;`, `,` or `|`. Teams are matched by slug or name, and roles by slug. You can only assign roles whose permissions you hold.
 
 ```php
 use JayI\Roster\Actions\ConfirmImportAction;
@@ -461,6 +501,9 @@ Suspended and deactivated users get a 403. A user with no profile row is active.
 | GET, POST | `/roster/organizations` | `roster.organizations.index`, `.store` |
 | GET, PATCH, DELETE | `/roster/organizations/{organization}` | `roster.organizations.show`, `.update`, `.destroy` |
 | POST | `/roster/organizations/{organization}/transfer` | `roster.organizations.transfer` |
+| PUT | `/roster/organizations/external/{source}/{externalId}` | `roster.organizations.sync` (upsert; 201 when created) |
+| POST | `/roster/organizations/sync` | `roster.organizations.sync-many` (`{records: [...]}`) |
+| PUT, DELETE | `/roster/organizations/{organization}/links/{source}` | `roster.organizations.links.update`, `.destroy` |
 | GET, POST | `/roster/organizations/{organization}/members` | `roster.organizations.members.index`, `.store` |
 | DELETE | `/roster/organizations/{organization}/members/{user}` | `roster.organizations.members.destroy` |
 | GET, POST | `/roster/organizations/{organization}/teams` | `roster.organizations.teams.index`, `.store` |
@@ -490,6 +533,7 @@ Suspended and deactivated users get a 403. A user with no profile row is active.
 | GET, POST | `/roster/audit` | `roster.audit.index`, `.store` |
 | GET | `/roster/audit/{entry}` | `roster.audit.show` |
 | POST | `/roster/imports` | `roster.imports.store` (multipart `file`, or `content`) |
+| GET | `/roster/imports/templates/{type}` | `roster.imports.templates.show` (CSV template; any signed-in user) |
 | POST | `/roster/imports/{transfer}/confirm` | `roster.imports.confirm` |
 | POST | `/roster/exports` | `roster.exports.store` |
 | GET | `/roster/transfers` | `roster.transfers.index` |
@@ -504,14 +548,14 @@ MCP tools (all behind Laravel MCP's tool search):
 | Area | Tools |
 |---|---|
 | Users | `list-users-tool`, `show-user-tool`, `create-user-tool`, `update-user-tool`, `delete-user-tool`, `update-profile-tool`, `suspend-user-tool`, `deactivate-user-tool`, `reactivate-user-tool`, `switch-context-tool`, `join-by-domain-tool` |
-| Organizations | `list-organizations-tool`, `show-organization-tool`, `create-organization-tool`, `update-organization-tool`, `delete-organization-tool`, `transfer-ownership-tool`, `list-members-tool`, `add-member-tool`, `remove-member-tool` |
+| Organizations | `list-organizations-tool`, `show-organization-tool`, `create-organization-tool`, `update-organization-tool`, `delete-organization-tool`, `transfer-ownership-tool`, `list-members-tool`, `add-member-tool`, `remove-member-tool`, `sync-organization-tool`, `sync-organizations-tool`, `link-organization-tool`, `unlink-organization-tool` |
 | Teams | `list-teams-tool`, `show-team-tool`, `create-team-tool`, `update-team-tool`, `delete-team-tool`, `add-team-member-tool`, `remove-team-member-tool` |
 | Invitations | `list-invitations-tool`, `create-invitation-tool`, `revoke-invitation-tool`, `accept-invitation-tool`, `decline-invitation-tool` |
 | Single sign-on | `list-sso-connections-tool`, `show-sso-connection-tool`, `create-sso-connection-tool`, `update-sso-connection-tool`, `delete-sso-connection-tool`, `list-sso-identities-tool`, `unlink-sso-identity-tool` |
 | SCIM | `list-scim-tokens-tool`, `create-scim-token-tool`, `revoke-scim-token-tool` |
 | Impersonation | `start-impersonation-tool`, `list-impersonations-tool`, `stop-impersonation-tool` |
 | Audit | `list-audit-entries-tool`, `show-audit-entry-tool`, `record-audit-event-tool` |
-| CSV import and export | `start-import-tool`, `confirm-import-tool`, `start-export-tool`, `list-transfers-tool`, `show-transfer-tool`, `cancel-transfer-tool` |
+| CSV import and export | `show-import-template-tool`, `start-import-tool`, `confirm-import-tool`, `start-export-tool`, `list-transfers-tool`, `show-transfer-tool`, `cancel-transfer-tool` |
 | Roles | `list-permissions-tool`, `create-permission-tool`, `update-permission-tool`, `delete-permission-tool`, `list-roles-tool`, `show-role-tool`, `create-role-tool`, `update-role-tool`, `delete-role-tool`, `list-role-assignments-tool`, `assign-role-tool`, `revoke-role-tool`, `list-user-permissions-tool` |
 
 ### Rate limiting
@@ -530,7 +574,7 @@ When [`jayi/cortex`](https://github.com/jayjfletcher/cortex) is installed, Roste
 Roster registers itself with Atrium automatically. It adds:
 
 - a **Users** section: list, filter, create, edit account and profile, suspend/deactivate/reactivate, delete, memberships and context switching
-- an **Organizations** section: members, ownership, teams, invitations and settings (domains, auto-join)
+- an **Organizations** section: members, ownership, teams, invitations, settings (domains, auto-join) and external records (link, unlink; filter the list by source, external id or account number)
 - **Roles** and **Permissions** sections, a Roles card on each user, and a Roles tab on each organization
 - **Impersonations** (active and history, end any) and an Impersonate card on each user
 - an **SSO** tab on each organization (connections with their callback and metadata URLs) and SSO identities on each user

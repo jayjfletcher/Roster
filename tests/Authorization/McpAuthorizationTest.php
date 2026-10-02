@@ -29,6 +29,10 @@ function toolArguments(): array
             'ShowOrganizationTool', 'UpdateOrganizationTool', 'DeleteOrganizationTool', 'TransferOwnershipTool', 'ListMembersTool',
             'AddMemberTool', 'ListTeamsTool', 'CreateTeamTool', 'ListInvitationsTool', 'CreateInvitationTool' => $org,
             'RemoveMemberTool' => fn (array $w): array => $org() + $user($w),
+            'SyncOrganizationTool' => fn (): array => ['source' => 'erp', 'external_id' => 'C-2', 'name' => 'Initech'],
+            'SyncOrganizationsTool' => fn (): array => ['records' => [['source' => 'erp', 'external_id' => 'C-3', 'name' => 'Globex']]],
+            'LinkOrganizationTool' => fn (): array => ['organization' => 'acme', 'source' => 'crm', 'external_id' => 'X-1'],
+            'UnlinkOrganizationTool' => fn (): array => ['organization' => 'acme', 'source' => 'erp'],
             'RevokeInvitationTool' => fn (array $w): array => $org() + ['invitation' => $w['invitation']->id],
             'ShowTeamTool', 'UpdateTeamTool', 'DeleteTeamTool', 'AddTeamMemberTool' => $team,
             'RemoveTeamMemberTool' => fn (array $w): array => $team() + $user($w),
@@ -43,6 +47,7 @@ function toolArguments(): array
             'StopImpersonationTool' => fn (array $w): array => ['impersonation' => $w['impersonation']->id],
             'StartImpersonationTool' => fn (array $w): array => $user($w) + ['reason' => 'Ticket 1'],
             'RecordAuditEventTool' => fn (): array => ['action' => 'invoice.paid'],
+            'ShowImportTemplateTool' => fn (): array => ['type' => 'import_users'],
             'StartImportTool' => fn (): array => ['type' => 'import_members', 'organization' => 'acme', 'content' => "email\nx@example.com"],
             'StartExportTool' => fn (): array => ['type' => 'export_members', 'organization' => 'acme'],
             'ListTransfersTool' => $org,
@@ -60,7 +65,9 @@ it('refuses every tool to guests and to users without the permission', function 
 
     $this->actingAs(user());
 
-    mcpTool($tool, $arguments)->assertHasErrors(['Unauthorized.']);
+    in_array(class_basename($tool), OPEN_TO_SIGNED_IN, true)
+        ? mcpTool($tool, $arguments)->assertOk()
+        : mcpTool($tool, $arguments)->assertHasErrors(['Unauthorized.']);
 })->with(fn (): array => array_keys(toolArguments()));
 
 it('lets a super-admin past authorization on every tool', function (string $tool): void {

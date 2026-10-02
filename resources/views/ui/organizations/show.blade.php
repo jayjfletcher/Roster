@@ -19,7 +19,19 @@
             @endforeach
         </nav>
 
+        {{-- Members and teams can be imported: offer the matching CSV template. --}}
+        @if (in_array($tab, ['members', 'teams'], true))
+            <div class="flex flex-wrap justify-end gap-2">
+                <x-atrium::button variant="ghost" size="sm" :href="route('atrium.roster.transfers.template', 'import_'.$tab)" data-testid="{{ $tab }}-template">{{ __('roster::roster.download_template') }}</x-atrium::button>
+                <x-atrium::button variant="ghost" size="sm" :href="route('atrium.roster.transfers.index', ['organization' => $organization->slug])">{{ __('roster::roster.import_csv') }}</x-atrium::button>
+            </div>
+        @endif
+
         @if ($tab === 'members')
+            @if ($organization->owner_id === null)
+                <x-atrium::alert variant="warning" data-testid="no-owner">{{ __('roster::roster.no_owner') }}</x-atrium::alert>
+            @endif
+
             <x-atrium::card :title="__('roster::roster.add_member')">
                 <form method="POST" action="{{ route('atrium.roster.organizations.members.store', $organization) }}" class="flex items-start gap-2">
                     @csrf
@@ -194,7 +206,7 @@
             @endif
 
             <x-atrium::card :title="__('roster::roster.new_sso_connection')">
-                <form method="POST" action="{{ route('atrium.roster.sso.store', $organization) }}" class="flex max-w-3xl flex-col gap-4">
+                <form method="POST" action="{{ route('atrium.roster.sso.store', $organization) }}" class="flex max-w-3xl flex-col gap-4" x-data="{ protocol: @js(old('protocol', 'oidc')) }">
                     @csrf
                     <div class="flex flex-wrap gap-3">
                         <x-atrium::form.input name="name" :label="__('roster::roster.name')" wrapper="w-56" required />
@@ -202,6 +214,8 @@
                             name="protocol"
                             :label="__('roster::roster.protocol')"
                             :options="['oidc' => __('roster::roster.protocol_oidc'), 'azure' => __('roster::roster.protocol_azure'), 'saml' => __('roster::roster.protocol_saml')]"
+                            :selected="old('protocol', 'oidc')"
+                            x-model="protocol"
                             wrapper="w-56" />
                     </div>
                     @include('roster::ui.sso.partials.fields', ['settings' => [], 'editing' => false])
@@ -318,6 +332,49 @@
 
                     <div>
                         <x-atrium::button type="submit" data-testid="save-organization">{{ __('roster::roster.save') }}</x-atrium::button>
+                    </div>
+                </form>
+            </x-atrium::card>
+
+            <x-atrium::card :title="__('roster::roster.external_links')">
+                @if ($organization->links->isEmpty())
+                    <p class="text-sm">{{ __('roster::roster.no_external_links') }}</p>
+                @else
+                    <x-atrium::table>
+                        <x-slot:head>
+                            <x-atrium::table.row>
+                                <x-atrium::table.cell heading>{{ __('roster::roster.external_source') }}</x-atrium::table.cell>
+                                <x-atrium::table.cell heading>{{ __('roster::roster.external_id') }}</x-atrium::table.cell>
+                                <x-atrium::table.cell heading>{{ __('roster::roster.account_number') }}</x-atrium::table.cell>
+                                <x-atrium::table.cell heading>{{ __('roster::roster.synced') }}</x-atrium::table.cell>
+                                <x-atrium::table.cell heading></x-atrium::table.cell>
+                            </x-atrium::table.row>
+                        </x-slot:head>
+                        @foreach ($organization->links->sortBy('source') as $link)
+                            <x-atrium::table.row data-testid="external-link">
+                                <x-atrium::table.cell><code>{{ $link->source }}</code></x-atrium::table.cell>
+                                <x-atrium::table.cell>{{ $link->external_id }}</x-atrium::table.cell>
+                                <x-atrium::table.cell>{{ $link->account_number ?? __('roster::roster.none') }}</x-atrium::table.cell>
+                                <x-atrium::table.cell>{{ $link->synced_at?->diffForHumans() ?? __('roster::roster.never') }}</x-atrium::table.cell>
+                                <x-atrium::table.cell>
+                                    <form method="POST" action="{{ route('atrium.roster.organizations.links.destroy', [$organization, $link->source]) }}" class="flex justify-end">
+                                        @csrf
+                                        @method('DELETE')
+                                        <x-atrium::button type="submit" size="sm" variant="ghost">{{ __('roster::roster.unlink') }}</x-atrium::button>
+                                    </form>
+                                </x-atrium::table.cell>
+                            </x-atrium::table.row>
+                        @endforeach
+                    </x-atrium::table>
+                @endif
+
+                <form method="POST" action="{{ route('atrium.roster.organizations.links.store', $organization) }}" class="mt-4 flex flex-wrap items-start gap-3">
+                    @csrf
+                    <x-atrium::form.input name="source" id="link-source" :label="__('roster::roster.external_source')" :hint="__('roster::roster.external_source_hint')" wrapper="w-40" required />
+                    <x-atrium::form.input name="external_id" id="link-external-id" :label="__('roster::roster.external_id')" wrapper="w-56" required />
+                    <x-atrium::form.input name="account_number" id="link-account-number" :label="__('roster::roster.account_number')" wrapper="w-48" />
+                    <div class="roster-actions">
+                        <x-atrium::button type="submit" data-testid="link-organization">{{ __('roster::roster.link') }}</x-atrium::button>
                     </div>
                 </form>
             </x-atrium::card>

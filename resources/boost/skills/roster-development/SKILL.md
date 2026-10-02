@@ -71,35 +71,43 @@ php artisan migrate
 - Record the app's own events with `Roster::audit('invoice.paid')->on($model)->in($organization)->with([...])->changes([...])->record();` (facade `JayI\Roster\Facades\Roster`). Action names are dot-separated lower case.
 - Add app secrets to `roster.audit.redact`. Schedule `roster:prune-audit`; run `roster:verify-audit` to check for tampering.
 
-### 7. Single sign-on
+### 7. Organizations from external systems
+
+- Sync an ERP or CRM record with `SyncOrganizationAction(['source' => 'erp', 'external_id' => $id, 'account_number' => ..., 'name' => ..., 'domains' => [...]])`. It creates or updates by `source` + `external_id`, writes only the fields given, and returns `->outcome` (created/updated/unchanged) and `->organization`.
+- Use `SyncOrganizationsAction(['records' => [...]])` for scheduled batches; it returns per-record results and never fails the whole batch. Use the `import_organizations` CSV type for files; `export_organizations` writes the same columns (`filters.external_source` for one system), so exports re-import unchanged.
+- Find organizations with `ListOrganizationsAction(['source' => 'erp', 'account_number' => 'A-42'])`. Each organization's `links` holds `source`, `external_id`, `account_number` and `synced_at`.
+- Synced organizations may have no owner; assign one with `TransferOwnershipAction`. Give the integration user `roster.organizations.sync`.
+
+### 8. Single sign-on
 
 - Install the protocol packages you need: `laravel/socialite` plus `firebase/php-jwt` (OIDC), `socialiteproviders/microsoft-azure` (Entra ID) or `socialiteproviders/saml2` (SAML).
 - Create connections per organization with `CreateSsoConnectionAction($organization, ['name' => ..., 'protocol' => 'oidc'|'azure'|'saml', ...settings])`, and register the returned `callback_url` at the provider.
 - Link people to `route('roster.sso.discover', ['email' => $email])` or `route('roster.sso.start', $connection->slug)`.
 - When an organization enforces SSO, add `new \JayI\Roster\Rules\NotSsoEnforced` to the app's password login validation.
 
-### 8. SCIM provisioning
+### 9. SCIM provisioning
 
 - Issue a token with `CreateScimTokenAction($organization, ['name' => 'Okta', 'sso_connection' => $slug?])`; `$issued->plain` is the only copy. The provider's base URL is `url('scim/v2/'.$organization->slug)`.
 - The organization must own its email domains (`domains`), or SCIM refuses its users.
 - SCIM changes run through Roster's Actions: listen to the normal Action events, and find them in the audit log under surface `scim`.
 
-### 9. Impersonation
+### 10. Impersonation
 
 - Grant `roster.users.impersonate` explicitly. Start with `StartImpersonationAction($user, ['reason' => ...], actor: $admin)` and redirect the impersonator's browser to `$started->url`.
 - Add `<x-roster::impersonation-banner />` to the app layout. List app abilities that must never run while impersonating in `roster.impersonation.blocked` (wildcards allowed).
 - Use `app(JayI\Roster\Impersonation\ImpersonationContext::class)->active()` to detect an impersonated request.
 
-### 10. CSV import and export
+### 11. CSV import and export
 
 - Requires `jayi/impex`: `composer require jayi/impex`, `php artisan vendor:publish --tag="impex-migrations"`, migrate, and run a queue worker and the scheduler. Schedule `roster:prune-transfers`.
 - Start with `StartImportAction(['type' => 'import_members'|'import_users'|'import_teams', 'organization' => slug, 'file' => $upload /* or 'content' => $csv */], $user)`. It only previews: read `$transfer->rows()` (`action` is create/link/invite/update/skip/error).
 - Apply with `ConfirmImportAction($transfer, $user)`. Rows run as that user, with their permissions checked again. Cancel with `CancelTransferAction`.
 - Export with `StartExportAction(['type' => 'export_members'|'export_users'|'export_audit', 'organization' => slug, 'filters' => [...]], $user)`, then serve the file through `route('roster.transfers.download', $transfer->id)` or Atrium.
-- Columns: members `email,name,display_name,teams,role`; users `email,name,display_name`; teams `name,slug,members`.
+- Get a starting file with `ShowImportTemplateAction(TransferType::ImportMembers)` (or `GET /roster/imports/templates/{type}`); rows starting with `#` are ignored. Customize with `php artisan vendor:publish --tag="roster-import-templates"`.
+- Columns: members `email,name,display_name,teams,role`; users `email,name,display_name`; teams `name,slug,members`; organizations `source,external_id,name,account_number,slug,domains,owner`.
 - Without Impex, these Actions throw `JayI\Roster\Transfers\TransfersUnavailableException`.
 
-### 11. Guard routes and surfaces
+### 12. Guard routes and surfaces
 
 - Add `roster.active` middleware to routes only active users may use, and `roster.organization` to routes that need a tenant.
 - The HTTP API (`roster.routes.enabled`) and MCP (`roster.mcp.web.enabled`, `roster.mcp.local.enabled`) are off by default and do **no authorization** themselves. Only enable them with auth plus admin-only middleware in the `middleware` config.
@@ -170,6 +178,7 @@ In app tests, assert with `expect($user->rosterStatus())->toBe(UserStatus::Suspe
 - Changing `roster.users.key_type` after `roster_profiles` has been migrated.
 - Putting a `password` column in an import CSV (it is refused), or serving `roster.transfers.disk` files publicly instead of through Roster's download route.
 - Calling a user model's `profile()` relation for Roster data: the relation is `rosterProfile` (and `rosterMemberships` / `rosterOrganizations`).
+- Storing ERP/CRM ids in your own columns or writing `roster_organization_links` directly; use the sync and link Actions, which enforce one record per source and audit every change.
 - Writing `roster_memberships` or `roster_team_members` rows directly; seats must go through an organization membership.
 - Removing `auth` from `roster.invitations.middleware`: accepting acts as the signed-in user.
 - Enabling domain auto-join and expecting unverified users to join; that is deliberately blocked.

@@ -226,14 +226,22 @@ return [
     |           organization they own. It is deleted with them and cannot be
     |           deleted on its own.
     |
+    | sync_batch: The most records one bulk sync call may carry
+    |             (SyncOrganizationsAction / POST roster/organizations/sync).
+    |
     | Domain auto-join is configured per organization (its `auto_join` flag
     | and domain list). It only ever fires for users with a verified email,
     | so registering an address on someone else's domain is not enough.
+    |
+    | Organizations synced from external systems (an ERP, a CRM, ...) keep
+    | their id and account number there per source, and may have no owner
+    | until ownership is transferred to a member.
     |
     */
 
     'organizations' => [
         'personal' => false,
+        'sync_batch' => 500,
     ],
 
     /*

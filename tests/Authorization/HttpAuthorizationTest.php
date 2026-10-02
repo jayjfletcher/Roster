@@ -31,7 +31,14 @@ it('rejects users without the permission with 403', function (string $method, st
     $world = authorizationWorld();
 
     $this->actingAs(user())->json($method, route($name, $parameters($world)), $body)->assertForbidden();
-})->with(apiRoutes());
+})->with(fn (): array => array_diff_key(apiRoutes(), array_flip(OPEN_TO_SIGNED_IN)));
+
+it('opens import templates to any signed-in user', function (): void {
+    $this->actingAs(user())->get(route('roster.imports.templates.show', 'import_members'))
+        ->assertOk()
+        ->assertHeader('content-type', 'text/csv; charset=UTF-8')
+        ->assertSee('email,name,display_name,teams,role');
+});
 
 it('lets a super-admin through', function (string $method, string $name, Closure $parameters, array $body): void {
     $world = authorizationWorld();

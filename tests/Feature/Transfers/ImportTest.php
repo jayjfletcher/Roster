@@ -9,10 +9,12 @@ use JayI\Impex\Testing\Flows;
 use JayI\Roster\Actions\CancelTransferAction;
 use JayI\Roster\Actions\ConfirmImportAction;
 use JayI\Roster\Actions\StartImportAction;
+use JayI\Roster\Actions\SyncOrganizationAction;
 use JayI\Roster\Enums\TransferStatus;
 use JayI\Roster\Models\AuditEntry;
 use JayI\Roster\Models\Invitation;
 use JayI\Roster\Models\Membership;
+use JayI\Roster\Models\Organization;
 use JayI\Roster\Models\Team;
 use JayI\Roster\Models\Transfer;
 use Workbench\App\Models\User;
@@ -145,4 +147,29 @@ it('marks the transfer failed when its run fails', function (): void {
     event(new RunFailed((string) $transfer->impex_run_id));
 
     expect($transfer->refresh()->status)->toBe(TransferStatus::Failed);
+});
+
+it('imports organizations from an external system', function (): void {
+    app(SyncOrganizationAction::class)->execute(['source' => 'erp', 'external_id' => 'C-1', 'name' => 'Initech', 'account_number' => 'A-1']);
+
+    $transfer = startImport('import_organizations', implode("\n", [
+        'source,external_id,name,account_number,domains,owner',
+        'erp,C-1,Initech,A-1,,',
+        'erp,C-1b,Initrode,A-2,initrode.test;initrode.example,owner@acme.test',
+        'erp,C-1,Initech Corp,,,',
+        'erp,C-3,,,,',
+        'erp,C-4,Ghost,,,ghost@nowhere.test',
+    ]), $this->owner);
+
+    expect(collect($transfer->rows())->pluck('action')->all())->toBe(['skip', 'create', 'update', 'error', 'error'])
+        ->and($transfer->rows()[4]['reasons'][0])->toBe('No user has the owner email ghost@nowhere.test.')
+        ->and(Organization::query()->where('slug', 'initrode')->exists())->toBeFalse();
+
+    app(ConfirmImportAction::class)->execute($transfer, $this->owner);
+
+    $initrode = Organization::query()->where('slug', 'initrode')->firstOrFail();
+
+    expect($initrode->isOwnedBy($this->owner))->toBeTrue()
+        ->and($initrode->domains()->pluck('domain')->sort()->values()->all())->toBe(['initrode.example', 'initrode.test'])
+        ->and(Organization::query()->where('slug', 'initech')->value('name'))->toBe('Initech Corp');
 });

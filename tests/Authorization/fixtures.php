@@ -45,6 +45,8 @@ function authorizationWorld(): array
 
     $scimToken = ScimToken::query()->create(['organization_id' => $acme->id, 'name' => 'Okta', 'token_hash' => hash('sha256', 'x')]);
 
+    $acme->links()->create(['source' => 'erp', 'external_id' => 'C-1']);
+
     $transfer = Transfer::factory()->create([
         'type' => 'import_members',
         'status' => 'awaiting_confirmation',
@@ -54,6 +56,11 @@ function authorizationWorld(): array
 
     return compact('acme', 'target', 'ops', 'invitation', 'role', 'assignment', 'entry', 'impersonation', 'connection', 'identity', 'scimToken', 'transfer');
 }
+
+/**
+ * Routes and tools any signed-in user may use: import templates hold no data.
+ */
+const OPEN_TO_SIGNED_IN = ['imports.templates.show', 'ShowImportTemplateTool', 'transfers.template'];
 
 /**
  * Every JSON API route: [method, name, parameters, body].
@@ -85,6 +92,10 @@ function apiRoutes(): array
         'organizations.update' => ['PATCH', 'roster.organizations.update', $org, ['name' => 'Renamed']],
         'organizations.destroy' => ['DELETE', 'roster.organizations.destroy', $org, []],
         'organizations.transfer' => ['POST', 'roster.organizations.transfer', $org, ['user' => 1]],
+        'organizations.sync' => ['PUT', 'roster.organizations.sync', fn (): array => ['erp', 'C-2'], ['name' => 'Initech']],
+        'organizations.sync-many' => ['POST', 'roster.organizations.sync-many', $none, ['records' => [['source' => 'erp', 'external_id' => 'C-3', 'name' => 'Globex']]]],
+        'organizations.links.update' => ['PUT', 'roster.organizations.links.update', fn (): array => ['acme', 'crm'], ['external_id' => 'X-1']],
+        'organizations.links.destroy' => ['DELETE', 'roster.organizations.links.destroy', fn (): array => ['acme', 'erp'], []],
         'members.index' => ['GET', 'roster.organizations.members.index', $org, []],
         'members.store' => ['POST', 'roster.organizations.members.store', $org, ['user' => 1]],
         'members.destroy' => ['DELETE', 'roster.organizations.members.destroy', fn (array $w): array => ['acme', $w['target']->getRouteKey()], []],
@@ -128,6 +139,7 @@ function apiRoutes(): array
         'audit.store' => ['POST', 'roster.audit.store', $none, ['action' => 'invoice.paid']],
         'audit.show' => ['GET', 'roster.audit.show', fn (array $w): array => [$w['entry']->id], []],
         'imports.store' => ['POST', 'roster.imports.store', $none, ['type' => 'import_members', 'organization' => 'acme', 'content' => "email\nx@example.com"]],
+        'imports.templates.show' => ['GET', 'roster.imports.templates.show', fn (): array => ['import_members'], []],
         'imports.confirm' => ['POST', 'roster.imports.confirm', fn (array $w): array => [$w['transfer']->id], []],
         'exports.store' => ['POST', 'roster.exports.store', $none, ['type' => 'export_members', 'organization' => 'acme']],
         'transfers.index' => ['GET', 'roster.transfers.index', $none, ['organization' => 'acme']],

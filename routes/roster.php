@@ -8,6 +8,7 @@ use JayI\Roster\Http\Controllers\ImpersonationController;
 use JayI\Roster\Http\Controllers\InvitationController;
 use JayI\Roster\Http\Controllers\MemberController;
 use JayI\Roster\Http\Controllers\OrganizationController;
+use JayI\Roster\Http\Controllers\OrganizationSyncController;
 use JayI\Roster\Http\Controllers\PermissionController;
 use JayI\Roster\Http\Controllers\RoleController;
 use JayI\Roster\Http\Controllers\ScimTokenController;
@@ -50,6 +51,12 @@ Route::prefix((string) config('roster.routes.prefix', 'roster'))
 
         Route::get('organizations', [OrganizationController::class, 'index'])->name('organizations.index');
         Route::post('organizations', [OrganizationController::class, 'store'])->name('organizations.store');
+        // Organizations from external systems (ERP, CRM, ...), by their id there.
+        Route::put('organizations/external/{source}/{externalId}', [OrganizationSyncController::class, 'sync'])->where('externalId', '.+')->name('organizations.sync');
+        Route::post('organizations/sync', [OrganizationSyncController::class, 'syncMany'])->name('organizations.sync-many');
+        Route::put('organizations/{organization}/links/{source}', [OrganizationSyncController::class, 'link'])->name('organizations.links.update');
+        Route::delete('organizations/{organization}/links/{source}', [OrganizationSyncController::class, 'unlink'])->name('organizations.links.destroy');
+
         Route::get('organizations/{organization}', [OrganizationController::class, 'show'])->name('organizations.show');
         Route::patch('organizations/{organization}', [OrganizationController::class, 'update'])->name('organizations.update');
         Route::delete('organizations/{organization}', [OrganizationController::class, 'destroy'])->name('organizations.destroy');
@@ -111,6 +118,7 @@ Route::prefix((string) config('roster.routes.prefix', 'roster'))
         Route::get('audit/{entry}', [AuditController::class, 'show'])->whereNumber('entry')->name('audit.show');
 
         Route::post('imports', [TransferController::class, 'import'])->name('imports.store');
+        Route::get('imports/templates/{type}', [TransferController::class, 'template'])->name('imports.templates.show');
         Route::post('imports/{transfer}/confirm', [TransferController::class, 'confirm'])->name('imports.confirm');
         Route::post('exports', [TransferController::class, 'export'])->name('exports.store');
         Route::get('transfers', [TransferController::class, 'index'])->name('transfers.index');

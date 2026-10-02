@@ -124,6 +124,8 @@ class RosterPlugin extends Plugin
             Route::delete('roster/organizations/{organization}', [OrganizationUiController::class, 'destroy'])->name('organizations.destroy');
             Route::post('roster/organizations/{organization}/transfer', [OrganizationUiController::class, 'transfer'])->name('organizations.transfer');
             Route::post('roster/organizations/{organization}/members', [OrganizationUiController::class, 'addMember'])->name('organizations.members.store');
+            Route::post('roster/organizations/{organization}/links', [OrganizationUiController::class, 'link'])->name('organizations.links.store');
+            Route::delete('roster/organizations/{organization}/links/{source}', [OrganizationUiController::class, 'unlink'])->name('organizations.links.destroy');
             Route::delete('roster/organizations/{organization}/members/{user}', [OrganizationUiController::class, 'removeMember'])->name('organizations.members.destroy');
 
             Route::post('roster/organizations/{organization}/teams', [TeamUiController::class, 'store'])->name('teams.store');
@@ -164,6 +166,7 @@ class RosterPlugin extends Plugin
 
             Route::get('roster/transfers', [TransferUiController::class, 'index'])->name('transfers.index');
             Route::post('roster/imports', [TransferUiController::class, 'import'])->name('transfers.import');
+            Route::get('roster/imports/templates/{type?}', [TransferUiController::class, 'template'])->name('transfers.template');
             Route::post('roster/exports', [TransferUiController::class, 'export'])->name('transfers.export');
             Route::get('roster/transfers/{transfer}', [TransferUiController::class, 'show'])->name('transfers.show');
             Route::post('roster/transfers/{transfer}/confirm', [TransferUiController::class, 'confirm'])->name('transfers.confirm');

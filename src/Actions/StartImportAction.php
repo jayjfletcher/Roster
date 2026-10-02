@@ -30,7 +30,7 @@ final class StartImportAction
     public static function rules(): array
     {
         return [
-            'type' => ['required', Rule::in([TransferType::ImportMembers->value, TransferType::ImportUsers->value, TransferType::ImportTeams->value])],
+            'type' => ['required', Rule::in([TransferType::ImportMembers->value, TransferType::ImportUsers->value, TransferType::ImportTeams->value, TransferType::ImportOrganizations->value])],
             'organization' => ['sometimes', 'nullable', 'string'],
             'file' => ['sometimes', 'file', 'max:'.(int) ceil((int) config('roster.transfers.max_bytes', 5242880) / 1024)],
             'content' => ['required_without:file', 'nullable', 'string', 'max:'.(int) config('roster.transfers.max_bytes', 5242880)],

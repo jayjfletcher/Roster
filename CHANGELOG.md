@@ -35,6 +35,14 @@
   - Exports neutralize spreadsheet formulas and download through an authorized route; MCP gets 15-minute signed links.
   - Files are pruned by `roster:prune-transfers`.
   - Available over HTTP, MCP and Atrium (Imports & exports).
+  - Downloadable CSV templates for every import type (header plus `#` comment examples, which imports skip), publishable with the `roster-import-templates` tag. Imports with no rows are refused.
+- Organization sync from external systems (ERP, CRM, …):
+  - `SyncOrganizationAction` upserts by `source` + `external_id`, writing only the fields sent; `SyncOrganizationsAction` handles bulk, with per-record results.
+  - Per-source links (`roster_organization_links`) hold the external id, account number and last sync time. Manage them with `LinkOrganizationAction` / `UnlinkOrganizationAction`, and filter organizations by them.
+  - `import_organizations` CSV import type, and an `export_organizations` export in the same columns (optionally one source's records) that imports straight back.
+  - New global `roster.organizations.sync` permission.
+  - Available over HTTP, MCP and Atrium (Settings tab, list filters).
+- Organizations may have no owner (`owner` is optional when creating); personal organizations still require one.
 - `Roster::audit()` / `RecordAuditEventAction` for the app's own events (`source: app`), plus `roster.audit.view` / `roster.audit.record` permissions and HTTP, MCP and Atrium surfaces.
 
 

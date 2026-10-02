@@ -48,6 +48,10 @@ final class Reader
             }
         }
 
+        if ($count === 0) {
+            throw ValidationException::withMessages(['file' => __('roster::roster.csv_no_rows')]);
+        }
+
         return $count;
     }
 
@@ -107,7 +111,9 @@ final class Reader
             $cells = $file->fgetcsv(escape: '\\');
             $line++;
 
-            if (! is_array($cells) || $cells === [null]) {
+            // Blank lines, and comment rows (first cell starting with #, as
+            // in the import templates), are skipped.
+            if (! is_array($cells) || $cells === [null] || str_starts_with(trim((string) ($cells[0] ?? '')), '#')) {
                 continue;
             }
 

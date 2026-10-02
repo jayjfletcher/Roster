@@ -9,9 +9,11 @@ enum TransferType: string
     case ImportMembers = 'import_members';
     case ImportUsers = 'import_users';
     case ImportTeams = 'import_teams';
+    case ImportOrganizations = 'import_organizations';
     case ExportMembers = 'export_members';
     case ExportUsers = 'export_users';
     case ExportAudit = 'export_audit';
+    case ExportOrganizations = 'export_organizations';
 
     public function isImport(): bool
     {
@@ -35,9 +37,11 @@ enum TransferType: string
             self::ImportMembers => 'roster.members.manage',
             self::ImportTeams => 'roster.teams.manage',
             self::ImportUsers => 'roster.users.create',
+            self::ImportOrganizations => 'roster.organizations.sync',
             self::ExportMembers => 'roster.members.view',
             self::ExportUsers => 'roster.users.view',
             self::ExportAudit => 'roster.audit.view',
+            self::ExportOrganizations => 'roster.organizations.view',
         };
     }
 
@@ -52,6 +56,7 @@ enum TransferType: string
             self::ImportMembers => ['required' => ['email'], 'optional' => ['name', 'display_name', 'teams', 'role']],
             self::ImportUsers => ['required' => ['email'], 'optional' => ['name', 'display_name']],
             self::ImportTeams => ['required' => ['name'], 'optional' => ['slug', 'members']],
+            self::ImportOrganizations => ['required' => ['source', 'external_id'], 'optional' => ['name', 'account_number', 'slug', 'domains', 'owner']],
             default => ['required' => [], 'optional' => []],
         };
     }

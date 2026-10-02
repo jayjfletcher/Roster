@@ -48,3 +48,8 @@ it('cancels from the page', function (): void {
 
     expect($transfer->refresh()->status)->toBe(TransferStatus::Cancelled);
 });
+
+it('links to imports and exports from the organizations list', function (): void {
+    $this->get(route('atrium.roster.organizations.index'))->assertOk()->assertSee(route('atrium.roster.transfers.index'));
+    $this->get(route('atrium.roster.transfers.index'))->assertSee('Export organizations')->assertSee('Import organizations');
+});

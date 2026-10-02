@@ -10,8 +10,15 @@ it('creates an Entra ID connection and shows its callback URL', function (): voi
     organization(attributes: ['name' => 'Acme']);
 
     visit('/atrium/roster/organizations/acme?tab=sso')
+        ->assertVisible('[data-sso-field="issuer"]')
+        ->assertMissing('[data-sso-field="tenant"]')
+        ->assertMissing('[data-sso-field="metadata_url"]')
+        ->select('protocol', 'saml')
+        ->assertVisible('[data-sso-field="metadata_url"]')
+        ->assertMissing('[data-sso-field="client_id"]')
         ->type('name', 'Entra')
         ->select('protocol', 'azure')
+        ->assertMissing('[data-sso-field="issuer"]')
         ->type('tenant', 'acme.onmicrosoft.com')
         ->type('client_id', 'app')
         ->type('client_secret', 'secret')

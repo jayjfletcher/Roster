@@ -33,6 +33,7 @@ final class BuiltInRoles
         'roster.organizations.update' => "Edit an organization's settings.",
         'roster.organizations.delete' => 'Delete organizations.',
         'roster.organizations.transfer' => 'Transfer organization ownership.',
+        'roster.organizations.sync' => 'Create and update organizations from external systems.',
         'roster.members.view' => 'View organization members.',
         'roster.members.manage' => 'Add and remove organization members.',
         'roster.teams.view' => 'View teams and their members.',
@@ -61,7 +62,7 @@ final class BuiltInRoles
             array_keys(self::PERMISSIONS),
             fn (string $permission): bool => str_starts_with($permission, 'roster.')
                 && ! str_starts_with($permission, 'roster.users.')
-                && $permission !== 'roster.organizations.create',
+                && ! in_array($permission, ['roster.organizations.create', 'roster.organizations.sync'], true),
         ));
 
         return [

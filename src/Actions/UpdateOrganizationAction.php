@@ -52,7 +52,7 @@ final class UpdateOrganizationAction
             }
         });
 
-        $organization = $organization->refresh()->load('domains')->loadCount(['memberships', 'teams']);
+        $organization = $organization->refresh()->load(['domains', 'links'])->loadCount(['memberships', 'teams']);
 
         OrganizationUpdatedActionEvent::dispatch($organization);
 

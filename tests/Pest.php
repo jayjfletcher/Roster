@@ -142,6 +142,10 @@ const PARITY_EXCEPTIONS = [
     // identity provider; there is nothing for an API caller to send.
     'SsoLoginAction' => ['http', 'mcp'],
     'LinkSsoIdentityAction' => ['http', 'mcp'],
+    // Machine-to-machine sync from an ERP or CRM. In Atrium the same results
+    // come from the organization CSV import (bulk) and the link form.
+    'SyncOrganizationAction' => ['ui'],
+    'SyncOrganizationsAction' => ['ui'],
 ];
 
 function parityGaps(): array

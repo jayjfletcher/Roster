@@ -23,3 +23,19 @@ it('uploads a members csv, previews it and confirms', function (): void {
         ->assertSee('Import confirmed')
         ->assertSee('Completed');
 });
+
+it('shows only the export fields the picked type uses', function (): void {
+    visit('/atrium/roster/organizations')
+        ->click('@organization-index-transfers')
+        ->assertVisible('[data-export-field="organization"]')
+        ->assertMissing('[data-export-field="audit"]')
+        ->select('#export-type', 'export_audit')
+        ->assertVisible('[data-export-field="audit"]')
+        ->select('#export-type', 'export_organizations')
+        ->assertMissing('[data-export-field="organization"]')
+        ->assertMissing('[data-export-field="audit"]')
+        ->assertVisible('[data-export-field="external_source"]')
+        ->click('@start-export')
+        ->assertSee('Completed')
+        ->assertSee('Download CSV');
+});

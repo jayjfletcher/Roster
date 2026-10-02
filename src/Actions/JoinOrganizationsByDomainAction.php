@@ -64,7 +64,7 @@ final class JoinOrganizationsByDomainAction
             return $organizations;
         });
 
-        $joined->load('domains')->loadCount(['memberships', 'teams']);
+        $joined->load(['domains', 'links'])->loadCount(['memberships', 'teams']);
 
         DomainJoinedActionEvent::dispatch($user, $joined->pluck('slug')->all());
 

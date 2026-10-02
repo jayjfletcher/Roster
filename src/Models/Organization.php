@@ -20,7 +20,7 @@ use JayI\Roster\Support\Users;
  * @property string $id
  * @property string $name
  * @property string $slug
- * @property int|string $owner_id
+ * @property int|string|null $owner_id
  * @property bool $personal
  * @property bool $auto_join
  * @property Carbon|null $created_at
@@ -96,9 +96,17 @@ final class Organization extends Model
         return $this->hasMany(Invitation::class, 'organization_id');
     }
 
+    /**
+     * @return HasMany<OrganizationLink, $this>
+     */
+    public function links(): HasMany
+    {
+        return $this->hasMany(OrganizationLink::class, 'organization_id');
+    }
+
     public function isOwnedBy(Model $user): bool
     {
-        return (string) $this->owner_id === (string) $user->getKey();
+        return $this->owner_id !== null && (string) $this->owner_id === (string) $user->getKey();
     }
 
     public function membershipFor(Model $user): ?Membership

@@ -22,7 +22,7 @@ final class ShowOrganizationAction
     {
         OrganizationShowingActionEvent::dispatch($organization);
 
-        $organization->load('domains')->loadCount(['memberships', 'teams']);
+        $organization->load(['domains', 'links'])->loadCount(['memberships', 'teams']);
 
         OrganizationShownActionEvent::dispatch($organization);
 

@@ -12,7 +12,7 @@
 
                 <x-atrium::form.input name="name" :label="__('roster::roster.name')" :value="old('name')" required />
                 <x-atrium::form.input name="slug" :label="__('roster::roster.slug')" :value="old('slug')" :hint="__('roster::roster.slug_hint')" />
-                <x-atrium::form.input name="owner" :label="__('roster::roster.owner')" :value="old('owner', auth()->id())" :hint="__('roster::roster.user_key_hint')" required />
+                <x-atrium::form.input name="owner" :label="__('roster::roster.owner')" :value="old('owner', auth()->id())" :hint="__('roster::roster.owner_optional_hint')" />
                 <x-atrium::form.textarea name="domains" :label="__('roster::roster.domains')" :value="old('domains')" :hint="__('roster::roster.domains_hint')" rows="3" />
                 <x-atrium::form.checkbox name="auto_join" value="1" :label="__('roster::roster.auto_join')" />
 

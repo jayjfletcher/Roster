@@ -18,8 +18,10 @@ use JayI\Roster\Models\Transfer;
 use JayI\Roster\Transfers\Exporters\AuditExporter;
 use JayI\Roster\Transfers\Exporters\Exporter;
 use JayI\Roster\Transfers\Exporters\MembersExporter;
+use JayI\Roster\Transfers\Exporters\OrganizationsExporter;
 use JayI\Roster\Transfers\Exporters\UsersExporter;
 use JayI\Roster\Transfers\Planners\MembersPlanner;
+use JayI\Roster\Transfers\Planners\OrganizationsPlanner;
 use JayI\Roster\Transfers\Planners\Planner;
 use JayI\Roster\Transfers\Planners\TeamsPlanner;
 use JayI\Roster\Transfers\Planners\UsersPlanner;
@@ -53,6 +55,7 @@ class Transfers
             TransferType::ImportMembers => app(MembersPlanner::class),
             TransferType::ImportUsers => app(UsersPlanner::class),
             TransferType::ImportTeams => app(TeamsPlanner::class),
+            TransferType::ImportOrganizations => app(OrganizationsPlanner::class),
             default => throw new LogicException("[{$transfer->type->value}] is not an import."),
         };
     }
@@ -63,6 +66,7 @@ class Transfers
             TransferType::ExportMembers => app(MembersExporter::class),
             TransferType::ExportUsers => app(UsersExporter::class),
             TransferType::ExportAudit => app(AuditExporter::class),
+            TransferType::ExportOrganizations => app(OrganizationsExporter::class),
             default => throw new LogicException("[{$transfer->type->value}] is not an export."),
         };
     }
@@ -87,6 +91,23 @@ class Transfers
         $batch = Batch::query()->where('run_id', $transfer->impex_run_id)->latest()->first();
 
         return $batch === null ? null : ['done' => $batch->succeeded + $batch->failed, 'total' => $batch->total];
+    }
+
+    /**
+     * The CSV template for an import type: the app's published copy
+     * (`resources/roster/import-templates`) when there is one, otherwise
+     * Roster's own. Templates hold no data, only the header and commented
+     * example rows.
+     */
+    public function template(TransferType $type): string
+    {
+        if (! $type->isImport()) {
+            throw new LogicException("[{$type->value}] is not an import.");
+        }
+
+        $published = resource_path('roster/import-templates/'.$type->value.'.csv');
+
+        return (string) file_get_contents(is_file($published) ? $published : dirname(__DIR__, 2).'/resources/import-templates/'.$type->value.'.csv');
     }
 
     /**

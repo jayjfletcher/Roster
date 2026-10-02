@@ -27,7 +27,7 @@ final class CreateOrganizationTool extends Tool
         return [
             'name' => $schema->string()->description('Display name.')->required(),
             'slug' => $schema->string()->description('URL identifier (letters, numbers, dashes). Omit to generate one from the name.'),
-            'owner' => $schema->string()->description('The owning user id.')->required(),
+            'owner' => $schema->string()->description('The owning user id. Optional: an organization may have no owner until ownership is transferred to a member.'),
         ] + $this->organizationSettingsSchema($schema);
     }
 }

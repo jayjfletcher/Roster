@@ -1,0 +1,3 @@
+email,name,display_name,teams,role
+"# Rows starting with # are ignored: delete them or replace them with your own. Required: email. teams: team slugs or names, separated with ; or |. role: an organization role slug. People outside the organization's domains are invited."
+#ada@example.com,Ada Lovelace,Ada,engineering;support,member

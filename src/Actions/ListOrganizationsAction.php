@@ -24,6 +24,9 @@ final class ListOrganizationsAction
         return [
             'search' => ['sometimes', 'nullable', 'string', 'max:255'],
             'user' => ['sometimes', 'nullable'],
+            'source' => ['sometimes', 'nullable', 'string', 'max:64'],
+            'external_id' => ['sometimes', 'nullable', 'string', 'max:191'],
+            'account_number' => ['sometimes', 'nullable', 'string', 'max:191'],
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
             'page' => ['sometimes', 'integer', 'min:1'],
         ];
@@ -37,7 +40,7 @@ final class ListOrganizationsAction
     {
         OrganizationsListingActionEvent::dispatch($filters);
 
-        $query = Organization::query()->with('domains')->withCount(['memberships', 'teams']);
+        $query = Organization::query()->with(['domains', 'links'])->withCount(['memberships', 'teams']);
 
         $search = $filters['search'] ?? null;
 
@@ -51,6 +54,13 @@ final class ListOrganizationsAction
             $user = $this->users->findOrFail($filters['user']);
 
             $query->whereIn('id', Membership::query()->select('organization_id')->where('user_id', $user->getKey()));
+        }
+
+        // Find organizations by their records in external systems.
+        $link = array_filter(array_intersect_key($filters, array_flip(['source', 'external_id', 'account_number'])), fn (mixed $value): bool => is_string($value) && $value !== '');
+
+        if ($link !== []) {
+            $query->whereHas('links', fn (Builder $builder): Builder => $builder->where($link));
         }
 
         $perPage = is_numeric($filters['per_page'] ?? null) ? (int) $filters['per_page'] : 15;

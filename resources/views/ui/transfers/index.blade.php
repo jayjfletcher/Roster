@@ -15,6 +15,18 @@
         @else
             <div class="grid gap-4 lg:grid-cols-2">
                 <x-atrium::card :title="__('roster::roster.new_import')">
+                    <form method="GET" action="{{ route('atrium.roster.transfers.template') }}" class="mb-4 flex flex-wrap items-start gap-3" data-testid="import-templates">
+                        <x-atrium::form.select
+                            name="type"
+                            id="template-type"
+                            :label="__('roster::roster.template')"
+                            :options="collect($imports)->mapWithKeys(fn ($type) => [$type->value => $type->label()])"
+                            wrapper="w-56" />
+                        <div class="roster-actions">
+                            <x-atrium::button type="submit" variant="secondary" data-testid="download-template">{{ __('roster::roster.download_template') }}</x-atrium::button>
+                        </div>
+                    </form>
+
                     <form method="POST" action="{{ route('atrium.roster.transfers.import') }}" enctype="multipart/form-data" class="flex flex-col gap-3">
                         @csrf
                         <x-atrium::form.select
@@ -33,19 +45,28 @@
                 </x-atrium::card>
 
                 <x-atrium::card :title="__('roster::roster.new_export')">
-                    <form method="POST" action="{{ route('atrium.roster.transfers.export') }}" class="flex flex-col gap-3">
+                    {{-- Alpine shows only the fields the picked export type uses. --}}
+                    <form method="POST" action="{{ route('atrium.roster.transfers.export') }}" class="flex flex-col gap-3" x-data="{ type: @js(old('type', array_values($exports)[0]->value)) }">
                         @csrf
                         <x-atrium::form.select
                             name="type"
                             id="export-type"
                             :label="__('roster::roster.type')"
                             :options="collect($exports)->mapWithKeys(fn ($type) => [$type->value => $type->label()])"
+                            x-model="type"
                             required />
-                        <x-atrium::form.input name="organization" id="export-organization" :label="__('roster::roster.organization')" :value="$organization?->slug" :hint="__('roster::roster.export_organization_hint')" />
-                        <x-atrium::form.input name="filters[action]" id="export-action" :label="__('roster::roster.action')" :hint="__('roster::roster.audit_action_hint')" />
-                        <div class="grid gap-3 sm:grid-cols-2">
-                            <x-atrium::form.input name="filters[since]" id="export-since" type="date" :label="__('roster::roster.since')" />
-                            <x-atrium::form.input name="filters[until]" id="export-until" type="date" :label="__('roster::roster.until')" />
+                        <div x-show="['export_members', 'export_audit'].includes(type)" data-export-field="organization">
+                            <x-atrium::form.input name="organization" id="export-organization" :label="__('roster::roster.organization')" :value="$organization?->slug" :hint="__('roster::roster.export_organization_hint')" />
+                        </div>
+                        <div x-show="type === 'export_audit'" x-cloak class="flex flex-col gap-3" data-export-field="audit">
+                            <x-atrium::form.input name="filters[action]" id="export-action" :label="__('roster::roster.action')" :hint="__('roster::roster.audit_action_hint')" />
+                            <div class="grid gap-3 sm:grid-cols-2">
+                                <x-atrium::form.input name="filters[since]" id="export-since" type="date" :label="__('roster::roster.since')" />
+                                <x-atrium::form.input name="filters[until]" id="export-until" type="date" :label="__('roster::roster.until')" />
+                            </div>
+                        </div>
+                        <div x-show="type === 'export_organizations'" x-cloak data-export-field="external_source">
+                            <x-atrium::form.input name="filters[external_source]" id="export-external-source" :label="__('roster::roster.external_source')" :hint="__('roster::roster.external_source_filter_hint')" />
                         </div>
                         <div>
                             <x-atrium::button type="submit" data-testid="start-export">{{ __('roster::roster.start_export') }}</x-atrium::button>

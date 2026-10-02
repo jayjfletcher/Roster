@@ -1,13 +1,45 @@
-{{-- Protocol settings. Which apply depends on the protocol; the Action checks the right ones are present. --}}
+{{--
+    Protocol settings. With a fixed $protocol (editing) only its fields
+    render; without one (creating) every field renders and Alpine shows the
+    ones for the protocol picked in the form's `protocol` select. The Action
+    checks the right ones are present either way.
+--}}
+@php
+    $fields = [
+        'issuer' => ['protocols' => ['oidc'], 'label' => 'Issuer', 'hint' => null],
+        'tenant' => ['protocols' => ['azure'], 'label' => 'Tenant', 'hint' => __('roster::roster.tenant_hint')],
+        'client_id' => ['protocols' => ['oidc', 'azure'], 'label' => 'Client ID', 'hint' => null],
+        'client_secret' => ['protocols' => ['oidc', 'azure'], 'label' => 'Client secret', 'hint' => $editing ? __('roster::roster.client_secret_hint') : null],
+        'metadata_url' => ['protocols' => ['saml'], 'label' => 'Metadata URL', 'hint' => null],
+        'entity_id' => ['protocols' => ['saml'], 'label' => 'Entity ID', 'hint' => null],
+        'sso_url' => ['protocols' => ['saml'], 'label' => 'SSO URL', 'hint' => null],
+        'certificate' => ['protocols' => ['saml'], 'label' => 'Certificate', 'hint' => null],
+    ];
+    $protocol ??= null;
+@endphp
+
 <div class="grid gap-3 sm:grid-cols-2">
-    <x-atrium::form.input name="issuer" :label="__('roster::roster.protocol_oidc').': issuer'" :value="old('issuer', $settings['issuer'] ?? null)" />
-    <x-atrium::form.input name="tenant" :label="__('roster::roster.protocol_azure').': tenant'" :value="old('tenant', $settings['tenant'] ?? null)" :hint="__('roster::roster.tenant_hint')" />
-    <x-atrium::form.input name="client_id" label="Client ID" :value="old('client_id', $settings['client_id'] ?? null)" />
-    <x-atrium::form.input name="client_secret" type="password" label="Client secret" :hint="$editing ? __('roster::roster.client_secret_hint') : null" />
-    <x-atrium::form.input name="metadata_url" :label="__('roster::roster.protocol_saml').': metadata URL'" :value="old('metadata_url', $settings['metadata_url'] ?? null)" />
-    <x-atrium::form.input name="entity_id" :label="__('roster::roster.protocol_saml').': entity ID'" :value="old('entity_id', $settings['entity_id'] ?? null)" />
-    <x-atrium::form.input name="sso_url" :label="__('roster::roster.protocol_saml').': SSO URL'" :value="old('sso_url', $settings['sso_url'] ?? null)" />
-    <x-atrium::form.textarea name="certificate" :label="__('roster::roster.protocol_saml').': certificate'" rows="2" />
+    @foreach ($fields as $name => $field)
+        @continue($protocol !== null && ! in_array($protocol, $field['protocols'], true))
+
+        <div
+            @if ($protocol === null)
+                x-show="@js($field['protocols']).includes(protocol)" x-cloak
+            @endif
+            data-sso-field="{{ $name }}"
+            @class(['sm:col-span-2' => $name === 'certificate'])>
+            @if ($name === 'certificate')
+                <x-atrium::form.textarea :name="$name" :label="$field['label']" rows="3" />
+            @else
+                <x-atrium::form.input
+                    :name="$name"
+                    :type="$name === 'client_secret' ? 'password' : 'text'"
+                    :label="$field['label']"
+                    :value="$name === 'client_secret' ? null : old($name, $settings[$name] ?? null)"
+                    :hint="$field['hint']" />
+            @endif
+        </div>
+    @endforeach
 </div>
 <div class="flex flex-wrap gap-4">
     <x-atrium::form.checkbox name="jit" value="1" :checked="$jit ?? true" :label="__('roster::roster.jit')" />

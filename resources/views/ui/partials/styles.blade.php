@@ -23,6 +23,9 @@
     .underline-offset-2 { text-underline-offset: 2px; }
     .hover\:underline:hover { text-decoration-line: underline; }
     .roster-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; padding-top: 1.625rem; }
+    @media (min-width: 40rem) {
+        .sm\:col-span-2 { grid-column: span 2 / span 2; }
+    }
     @media (min-width: 64rem) {
         .lg\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .lg\:col-span-2 { grid-column: span 2 / span 2; }

@@ -31,3 +31,20 @@ it('creates an organization, adds a team and sends an invitation', function (): 
     expect(Organization::query()->sole()->teams()->count())->toBe(1)
         ->and(Invitation::query()->sole()->email)->toBe('new@example.com');
 });
+
+it('links an organization to an external record and finds it by account number', function (): void {
+    organization(attributes: ['name' => 'Acme']);
+
+    visit('/atrium/roster/organizations/acme?tab=settings')
+        ->assertSee('Not linked to any external system.')
+        ->type('#link-source', 'erp')
+        ->type('#link-external-id', 'C-100')
+        ->type('#link-account-number', 'A-42')
+        ->click('@link-organization')
+        ->assertSee('Linked.')
+        ->assertPresent('@external-link');
+
+    visit('/atrium/roster/organizations?account_number=A-42')
+        ->assertSee('Acme')
+        ->assertSee('C-100');
+});

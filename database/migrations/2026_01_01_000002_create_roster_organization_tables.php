@@ -15,7 +15,8 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->string('name');
             $table->string('slug')->unique();
-            UserKey::column($table, 'owner_id')->index();
+            // Nullable: organizations synced from external systems may have no owner yet.
+            UserKey::column($table, 'owner_id')->nullable()->index();
             $table->boolean('personal')->default(false);
             $table->boolean('auto_join')->default(false);
             $table->timestamps();

@@ -159,6 +159,11 @@ class RosterServiceProvider extends ServiceProvider
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], ['roster', 'roster-migrations']);
 
+        // Published copies are served instead of these; see Transfers::template().
+        $this->publishes([
+            __DIR__.'/../resources/import-templates' => resource_path('roster/import-templates'),
+        ], ['roster', 'roster-import-templates']);
+
         $this->commands([
             GrantSuperAdminCommand::class,
             PruneAuditCommand::class,

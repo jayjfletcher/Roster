@@ -1,0 +1,3 @@
+source,external_id,name,account_number,slug,domains,owner
+"# Rows starting with # are ignored: delete them or replace them with your own. Required: source and external_id; name too for new organizations. Blank cells leave a field as it is. domains: separated with ; or |. owner: an existing user's email."
+#erp,C-100,Initech,A-42,initech,initech.com;initech.example,owner@initech.com

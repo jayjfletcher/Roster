@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use JayI\Roster\Actions\AddMemberAction;
 use JayI\Roster\Actions\CreateOrganizationAction;
 use JayI\Roster\Actions\DeleteOrganizationAction;
+use JayI\Roster\Actions\LinkOrganizationAction;
 use JayI\Roster\Actions\ListAuditEntriesAction;
 use JayI\Roster\Actions\ListInvitationsAction;
 use JayI\Roster\Actions\ListMembersAction;
@@ -22,6 +23,7 @@ use JayI\Roster\Actions\ListTeamsAction;
 use JayI\Roster\Actions\RemoveMemberAction;
 use JayI\Roster\Actions\ShowOrganizationAction;
 use JayI\Roster\Actions\TransferOwnershipAction;
+use JayI\Roster\Actions\UnlinkOrganizationAction;
 use JayI\Roster\Actions\UpdateOrganizationAction;
 use JayI\Roster\Enums\InvitationStatus;
 use JayI\Roster\Http\Ui\Concerns\AuthorizesScreens;
@@ -159,6 +161,26 @@ final class OrganizationUiController
         app(RemoveMemberAction::class)->execute($model, $this->users->findOrFail($user));
 
         return $this->backTo($model, 'members', 'roster::roster.member_removed');
+    }
+
+    public function link(Request $request, string $organization): RedirectResponse
+    {
+        $model = $this->find($organization);
+        $this->authorizeScreen('roster.organizations.update', $model);
+
+        app(LinkOrganizationAction::class)->execute($model, $request->validate(LinkOrganizationAction::rules()));
+
+        return $this->backTo($model, 'settings', __('roster::roster.organization_linked'));
+    }
+
+    public function unlink(string $organization, string $source): RedirectResponse
+    {
+        $model = $this->find($organization);
+        $this->authorizeScreen('roster.organizations.update', $model);
+
+        app(UnlinkOrganizationAction::class)->execute($model, $source);
+
+        return $this->backTo($model, 'settings', __('roster::roster.organization_unlinked'));
     }
 
     private function find(string $slug): Organization

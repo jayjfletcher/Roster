@@ -5,6 +5,7 @@
 
     <x-atrium::page-header :title="__('roster::roster.users')">
         <x-slot:actions>
+            <x-atrium::button variant="ghost" :href="route('atrium.roster.transfers.template', 'import_users')" data-testid="users-template">{{ __('roster::roster.download_template') }}</x-atrium::button>
             <x-atrium::button variant="ghost" :href="route('atrium.roster.transfers.index')" data-testid="user-transfers">{{ __('roster::roster.import_export') }}</x-atrium::button>
             <x-atrium::button :href="route('atrium.roster.users.create')" data-testid="new-user">{{ __('roster::roster.new_user') }}</x-atrium::button>
         </x-slot:actions>
