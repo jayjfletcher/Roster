@@ -116,13 +116,11 @@ it('hides user list actions without their permissions', function (): void {
     $this->actingAs(viewer(['roster.users.view']))
         ->get(route('atrium.roster.users.index'))
         ->assertOk()
-        ->assertDontSee(testId('new-user'), false)
-        ->assertDontSee(testId('users-template'), false);
+        ->assertDontSee(testId('new-user'), false);
 
     $this->actingAs(viewer(['roster.users.view', 'roster.users.create']))
         ->get(route('atrium.roster.users.index'))
-        ->assertSee(testId('new-user'), false)
-        ->assertSee(testId('users-template'), false);
+        ->assertSee(testId('new-user'), false);
 });
 
 it('lists only the organization tabs the viewer may open', function (): void {

@@ -3,9 +3,6 @@
 
     <x-atrium::page-header :title="__('roster::roster.organizations')">
         <x-slot:actions>
-            @rosterCan('roster.organizations.sync')
-            <x-atrium::button variant="ghost" :href="route('atrium.roster.transfers.template', 'import_organizations')" data-testid="organizations-template">{{ __('roster::roster.download_template') }}</x-atrium::button>
-            @endrosterCan
             <x-atrium::button variant="ghost" :href="route('atrium.roster.transfers.index')" data-testid="organization-index-transfers">{{ __('roster::roster.import_export') }}</x-atrium::button>
             @rosterCan('roster.organizations.create')
             <x-atrium::button :href="route('atrium.roster.organizations.create')" data-testid="new-organization">{{ __('roster::roster.new_organization') }}</x-atrium::button>

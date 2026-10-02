@@ -71,7 +71,7 @@ it('downloads templates over http, mcp and atrium', function (): void {
     $this->get(route('atrium.roster.transfers.template', 'export_users'))->assertNotFound();
 });
 
-it('offers templates on the import page and each importable index', function (): void {
+it('offers templates on the import page and organization tabs, not the index pages', function (): void {
     $this->actingAs(user());
     organization(attributes: ['name' => 'Acme']);
 
@@ -80,8 +80,8 @@ it('offers templates on the import page and each importable index', function ():
     $this->get(route('atrium.roster.transfers.template', ['type' => 'import_teams']))->assertOk()->assertSee('name,slug,members');
     $this->get(route('atrium.roster.transfers.template'))->assertNotFound();
 
-    $this->get(route('atrium.roster.users.index'))->assertSee(route('atrium.roster.transfers.template', 'import_users'));
-    $this->get(route('atrium.roster.organizations.index'))->assertSee(route('atrium.roster.transfers.template', 'import_organizations'));
+    $this->get(route('atrium.roster.users.index'))->assertDontSee(route('atrium.roster.transfers.template', 'import_users'));
+    $this->get(route('atrium.roster.organizations.index'))->assertDontSee(route('atrium.roster.transfers.template', 'import_organizations'));
     $this->get(route('atrium.roster.organizations.show', 'acme'))->assertSee(route('atrium.roster.transfers.template', 'import_members'));
     $this->get(route('atrium.roster.organizations.show', ['acme', 'tab' => 'teams']))->assertSee(route('atrium.roster.transfers.template', 'import_teams'));
     $this->get(route('atrium.roster.organizations.show', ['acme', 'tab' => 'sso']))->assertDontSee(route('atrium.roster.transfers.template', 'import_members'));
