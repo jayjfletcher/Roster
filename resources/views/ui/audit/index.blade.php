@@ -21,8 +21,8 @@
                     :selected="$filters['source'] ?? null"
                     wrapper="w-40" />
                 <div class="roster-actions">
-                    <x-roster::icon-button icon="funnel" :label="__('roster::roster.filter')" variant="primary" type="submit" data-testid="filter-audit" />
-                    <x-roster::icon-button icon="x-mark" :label="__('roster::roster.clear')" variant="ghost" :href="route('atrium.roster.audit.index')" />
+                    <x-atrium::icon-button icon="funnel" :label="__('roster::roster.filter')" variant="primary" type="submit" data-testid="filter-audit" />
+                    <x-atrium::icon-button icon="x-mark" :label="__('roster::roster.clear')" variant="ghost" :href="route('atrium.roster.audit.index')" />
                 </div>
             </form>
         </x-atrium::card>
@@ -40,7 +40,7 @@
                 <x-atrium::form.input name="organization" :label="__('roster::roster.organization')" wrapper="w-48" />
                 <x-atrium::form.input name="context[note]" id="audit-note" :label="__('roster::roster.note')" wrapper="w-80" />
                 <div class="roster-actions">
-                    <x-roster::icon-button icon="pencil-square" :label="__('roster::roster.record')" variant="primary" type="submit" data-testid="record-audit" />
+                    <x-atrium::icon-button icon="pencil-square" :label="__('roster::roster.record')" variant="primary" type="submit" data-testid="record-audit" />
                 </div>
             </form>
         </x-atrium::card>

@@ -3,9 +3,9 @@
 
     <x-atrium::page-header :title="__('roster::roster.organizations')">
         <x-slot:actions>
-            <x-roster::icon-button icon="arrows-up-down" :label="__('roster::roster.import_export')" :href="route('atrium.roster.transfers.index')" data-testid="organization-index-transfers" />
+            <x-atrium::icon-button icon="arrows-up-down" :label="__('roster::roster.import_export')" :href="route('atrium.roster.transfers.index')" data-testid="organization-index-transfers" />
             @rosterCan('roster.organizations.create')
-            <x-roster::icon-button icon="plus" variant="primary" :label="__('roster::roster.new_organization')" :href="route('atrium.roster.organizations.create')" data-testid="new-organization" />
+            <x-atrium::icon-button icon="plus" variant="primary" :label="__('roster::roster.new_organization')" :href="route('atrium.roster.organizations.create')" data-testid="new-organization" />
             @endrosterCan
         </x-slot:actions>
     </x-atrium::page-header>
@@ -29,8 +29,8 @@
                     data-testid="show-filter" />
 
                 <div class="roster-actions">
-                    <x-roster::icon-button icon="funnel" :label="__('roster::roster.filter')" variant="primary" type="submit" />
-                    <x-roster::icon-button icon="x-mark" :label="__('roster::roster.clear')" variant="ghost" :href="route('atrium.roster.organizations.index')" />
+                    <x-atrium::icon-button icon="funnel" :label="__('roster::roster.filter')" variant="primary" type="submit" />
+                    <x-atrium::icon-button icon="x-mark" :label="__('roster::roster.clear')" variant="ghost" :href="route('atrium.roster.organizations.index')" />
                 </div>
             </form>
         </x-atrium::card>
@@ -74,7 +74,7 @@
                                 @if ($organization->trashed() && \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.organizations.delete', $organization))
                                     <form method="POST" action="{{ route('atrium.roster.organizations.restore', $organization) }}">
                                         @csrf
-                                        <x-roster::icon-button icon="arrow-uturn-left" :label="__('roster::roster.restore')" variant="primary" type="submit" size="sm" data-testid="restore-organization" />
+                                        <x-atrium::icon-button icon="arrow-uturn-left" :label="__('roster::roster.restore')" variant="primary" type="submit" size="sm" data-testid="restore-organization" />
                                     </form>
                                 @endif
                             </div>

@@ -4,9 +4,9 @@
 
     <x-atrium::page-header :title="__('roster::roster.users')">
         <x-slot:actions>
-            <x-roster::icon-button icon="arrows-up-down" :label="__('roster::roster.import_export')" :href="route('atrium.roster.transfers.index')" data-testid="user-transfers" />
+            <x-atrium::icon-button icon="arrows-up-down" :label="__('roster::roster.import_export')" :href="route('atrium.roster.transfers.index')" data-testid="user-transfers" />
             @rosterCan('roster.users.create')
-                <x-roster::icon-button icon="plus" variant="primary" :label="__('roster::roster.new_user')" :href="route('atrium.roster.users.create')" data-testid="new-user" />
+                <x-atrium::icon-button icon="plus" variant="primary" :label="__('roster::roster.new_user')" :href="route('atrium.roster.users.create')" data-testid="new-user" />
             @endrosterCan
         </x-slot:actions>
     </x-atrium::page-header>
@@ -38,8 +38,8 @@
                 @endif
 
                 <div class="roster-actions">
-                    <x-roster::icon-button icon="funnel" :label="__('roster::roster.filter')" variant="primary" type="submit" data-testid="filter-users" />
-                    <x-roster::icon-button icon="x-mark" :label="__('roster::roster.clear')" variant="ghost" :href="route('atrium.roster.users.index')" />
+                    <x-atrium::icon-button icon="funnel" :label="__('roster::roster.filter')" variant="primary" type="submit" data-testid="filter-users" />
+                    <x-atrium::icon-button icon="x-mark" :label="__('roster::roster.clear')" variant="ghost" :href="route('atrium.roster.users.index')" />
                 </div>
             </form>
         </x-atrium::card>
@@ -83,7 +83,7 @@
                                     @rosterCan('roster.users.delete')
                                     <form method="POST" action="{{ route('atrium.roster.users.restore', $user->getRouteKey()) }}">
                                         @csrf
-                                        <x-roster::icon-button icon="arrow-uturn-left" :label="__('roster::roster.restore')" variant="primary" type="submit" size="sm" data-testid="restore-user" />
+                                        <x-atrium::icon-button icon="arrow-uturn-left" :label="__('roster::roster.restore')" variant="primary" type="submit" size="sm" data-testid="restore-user" />
                                     </form>
                                     @endrosterCan
                                 @else

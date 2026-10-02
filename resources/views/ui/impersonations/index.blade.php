@@ -41,7 +41,7 @@
                                 <form method="POST" action="{{ route('atrium.roster.impersonations.stop', $impersonation->id) }}" class="flex justify-end">
                                     @csrf
                                     @method('DELETE')
-                                    <x-roster::icon-button icon="stop" :label="__('roster::roster.end')" type="submit" size="sm" variant="danger" data-testid="end-impersonation" />
+                                    <x-atrium::icon-button icon="stop" :label="__('roster::roster.end')" type="submit" size="sm" variant="danger" data-testid="end-impersonation" />
                                 </form>
                             @endif
                         </x-atrium::table.cell>

@@ -7,9 +7,9 @@
     <x-atrium::page-header :title="$transfer->type->label()" :description="$transfer->organization?->name">
         <x-slot:actions>
             @if ($downloadable)
-                <x-roster::icon-button icon="arrow-down-tray" :label="__('roster::roster.download_csv')" variant="primary" :href="route('atrium.roster.transfers.download', $transfer->id)" data-testid="download-transfer" />
+                <x-atrium::icon-button icon="arrow-down-tray" :label="__('roster::roster.download_csv')" variant="primary" :href="route('atrium.roster.transfers.download', $transfer->id)" data-testid="download-transfer" />
             @endif
-            <x-roster::icon-button icon="arrow-left" :label="__('roster::roster.transfers')" variant="ghost" :href="route('atrium.roster.transfers.index', array_filter(['organization' => $transfer->organization?->slug]))" />
+            <x-atrium::icon-button icon="arrow-left" :label="__('roster::roster.transfers')" variant="ghost" :href="route('atrium.roster.transfers.index', array_filter(['organization' => $transfer->organization?->slug]))" />
         </x-slot:actions>
     </x-atrium::page-header>
 
@@ -55,13 +55,13 @@
                     @if ($transfer->status === TransferStatus::AwaitingConfirmation && $canConfirm)
                         <form method="POST" action="{{ route('atrium.roster.transfers.confirm', $transfer->id) }}">
                             @csrf
-                            <x-roster::icon-button icon="check" :label="__('roster::roster.confirm_import')" variant="primary" type="submit" data-testid="confirm-import" />
+                            <x-atrium::icon-button icon="check" :label="__('roster::roster.confirm_import')" variant="primary" type="submit" data-testid="confirm-import" />
                         </form>
                     @endif
                     <form method="POST" action="{{ route('atrium.roster.transfers.cancel', $transfer->id) }}">
                         @csrf
                         @method('DELETE')
-                        <x-roster::icon-button icon="x-mark" :label="__('roster::roster.cancel')" type="submit" variant="danger" data-testid="cancel-transfer" />
+                        <x-atrium::icon-button icon="x-mark" :label="__('roster::roster.cancel')" type="submit" variant="danger" data-testid="cancel-transfer" />
                     </form>
                 </div>
             @endif

@@ -29,7 +29,7 @@
                             :options="$imports->mapWithKeys(fn ($type) => [$type->value => $type->label()])"
                             wrapper="w-56" />
                         <div class="roster-actions">
-                            <x-roster::icon-button icon="arrow-down-tray" :label="__('roster::roster.download_template')" type="submit" variant="secondary" data-testid="download-template" />
+                            <x-atrium::icon-button icon="arrow-down-tray" :label="__('roster::roster.download_template')" type="submit" variant="secondary" data-testid="download-template" />
                         </div>
                     </form>
 
@@ -45,7 +45,7 @@
                         <x-atrium::form.input name="organization" id="import-organization" :label="__('roster::roster.organization')" :value="old('organization', $organization?->slug)" :hint="__('roster::roster.import_organization_hint')" />
                         <x-atrium::form.file name="file" :label="__('roster::roster.csv_file')" :hint="__('roster::roster.import_columns_hint')" accept=".csv,text/csv" />
                         <div>
-                            <x-roster::icon-button icon="arrow-up-tray" :label="__('roster::roster.preview_import')" variant="primary" type="submit" data-testid="start-import" />
+                            <x-atrium::icon-button icon="arrow-up-tray" :label="__('roster::roster.preview_import')" variant="primary" type="submit" data-testid="start-import" />
                         </div>
                     </form>
                 </x-atrium::card>
@@ -77,7 +77,7 @@
                             <x-atrium::form.input name="filters[external_source]" id="export-external-source" :label="__('roster::roster.external_source')" :hint="__('roster::roster.external_source_filter_hint')" />
                         </div>
                         <div>
-                            <x-roster::icon-button icon="arrow-down-tray" :label="__('roster::roster.start_export')" variant="primary" type="submit" data-testid="start-export" />
+                            <x-atrium::icon-button icon="arrow-down-tray" :label="__('roster::roster.start_export')" variant="primary" type="submit" data-testid="start-export" />
                         </div>
                     </form>
                 </x-atrium::card>

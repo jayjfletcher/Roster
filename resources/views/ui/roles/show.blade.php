@@ -3,7 +3,7 @@
 
     <x-atrium::page-header :title="$role->name" :description="$role->scope->label().' · '.($role->organization?->name ?? __('roster::roster.shared'))">
         <x-slot:actions>
-            <x-roster::icon-button icon="arrow-left" :label="__('roster::roster.roles')" variant="ghost" :href="route('atrium.roster.roles.index')" />
+            <x-atrium::icon-button icon="arrow-left" :label="__('roster::roster.roles')" variant="ghost" :href="route('atrium.roster.roles.index')" />
         </x-slot:actions>
     </x-atrium::page-header>
 
@@ -37,7 +37,7 @@
                         @endforeach
                     </fieldset>
                     <div>
-                        <x-roster::icon-button icon="check" :label="__('roster::roster.save')" variant="primary" type="submit" data-testid="save-role" />
+                        <x-atrium::icon-button icon="check" :label="__('roster::roster.save')" variant="primary" type="submit" data-testid="save-role" />
                     </div>
                 </form>
             @endif
@@ -47,7 +47,7 @@
             <form method="POST" action="{{ route('atrium.roster.roles.destroy', $role->id) }}">
                 @csrf
                 @method('DELETE')
-                <x-roster::icon-button icon="trash" :label="__('roster::roster.delete')" type="submit" variant="danger" data-testid="delete-role" />
+                <x-atrium::icon-button icon="trash" :label="__('roster::roster.delete')" type="submit" variant="danger" data-testid="delete-role" />
             </form>
         @endif
     </div>

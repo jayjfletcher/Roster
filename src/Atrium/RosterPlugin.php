@@ -13,6 +13,7 @@ use JayI\Atrium\Navigation\NavItem;
 use JayI\Atrium\Plugins\Plugin;
 use JayI\Atrium\Search\SearchResult;
 use JayI\Atrium\Search\SearchSource;
+use JayI\Atrium\Support\Icons;
 use JayI\Atrium\Widgets\WidgetDefinition;
 use JayI\Roster\Access\Authorizer;
 use JayI\Roster\Enums\TransferType;
