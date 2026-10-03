@@ -1,6 +1,4 @@
 <x-atrium::layout :title="__('roster::roster.roles')">
-    @include('roster::ui.partials.styles')
-
     <x-atrium::page-header :title="__('roster::roster.roles')" />
 
     <div class="mt-5 flex flex-col gap-4">

@@ -1,6 +1,4 @@
 <x-atrium::layout :title="$role->name">
-    @include('roster::ui.partials.styles')
-
     <x-atrium::page-header :title="$role->name" :description="$role->scope->label().' · '.($role->organization?->name ?? __('roster::roster.shared'))">
         <x-slot:actions>
             <x-atrium::icon-button icon="arrow-left" :label="__('roster::roster.roles')" variant="ghost" :href="route('atrium.roster.roles.index')" />

@@ -4,8 +4,6 @@
 @php($title = $profile?->display_name ?? $directory->name($user) ?? $directory->email($user) ?? __('roster::roster.user'))
 
 <x-atrium::layout :title="$title">
-    @include('roster::ui.partials.styles')
-
     <x-atrium::page-header :title="$title" :description="$directory->email($user)">
         <x-slot:actions>
             <x-roster::status :status="$status" data-testid="user-status" />

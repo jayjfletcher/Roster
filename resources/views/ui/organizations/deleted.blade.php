@@ -1,6 +1,4 @@
 <x-atrium::layout :title="$organization->name">
-    @include('roster::ui.partials.styles')
-
     <x-atrium::page-header :title="$organization->name" :description="$organization->slug">
         <x-slot:actions>
             <x-atrium::badge>{{ __('roster::roster.deleted') }}</x-atrium::badge>

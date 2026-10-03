@@ -1,6 +1,4 @@
 <x-atrium::layout :title="$team->name">
-    @include('roster::ui.partials.styles')
-
     <x-atrium::page-header :title="$team->name" :description="$organization->name">
         <x-slot:actions>
             <x-atrium::icon-button icon="arrow-left" :label="$organization->name" variant="ghost" :href="route('atrium.roster.organizations.show', [$organization, 'tab' => 'teams'])" />

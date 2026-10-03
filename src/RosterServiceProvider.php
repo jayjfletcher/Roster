@@ -23,6 +23,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use JayI\Atrium\Facades\Atrium;
 use JayI\Impex\Events\RunFailed;
 use JayI\Impex\Flows\FlowRegistry;
 use JayI\Roster\Access\Authorizer;
@@ -143,6 +144,9 @@ class RosterServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'roster');
         Blade::anonymousComponentPath(__DIR__.'/../resources/views/components', 'roster');
+
+        // Utilities Roster's screens use that Atrium's stylesheet lacks.
+        Atrium::css((string) file_get_contents(__DIR__.'/../resources/css/atrium.css'), 'roster');
 
         // @rosterCan('roster.users.update', $scope, $self) ... @endrosterCan:
         // the screens' own check, so a control shows only when its action is allowed.

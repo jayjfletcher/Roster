@@ -7,12 +7,12 @@ use Symfony\Component\Finder\Finder;
 /**
  * Atrium ships one precompiled stylesheet built from its own views, so a
  * Tailwind class only Roster uses silently does nothing. Every class in
- * Roster's Atrium screens must exist there or in Roster's own partial.
+ * Roster's Atrium screens must exist there or in resources/css/atrium.css.
  */
 it('styles every class used on the atrium screens', function (): void {
     $root = dirname(__DIR__, 3);
     $stylesheets = file_get_contents($root.'/vendor/jayi/atrium/public/atrium.css')
-        .file_get_contents($root.'/resources/views/ui/partials/styles.blade.php');
+        .file_get_contents($root.'/resources/css/atrium.css');
 
     $missing = [];
 
@@ -38,4 +38,12 @@ it('styles every class used on the atrium screens', function (): void {
     }
 
     expect($missing)->toBe([]);
+});
+
+it('adds its styles to the dashboard head through atrium', function (): void {
+    $this->actingAs(user());
+
+    $html = $this->get(route('atrium.roster.users.index'))->assertOk()->getContent();
+
+    expect(substr($html, 0, (int) strpos($html, '</head>')))->toContain('.roster-actions {');
 });

@@ -1,6 +1,4 @@
 <x-atrium::layout :title="$directory->name($user) ?? $directory->email($user) ?? ''">
-    @include('roster::ui.partials.styles')
-
     <x-atrium::page-header :title="$directory->name($user) ?? $directory->email($user) ?? ''" :description="$directory->email($user)">
         <x-slot:actions>
             <x-atrium::badge>{{ __('roster::roster.deleted') }}</x-atrium::badge>

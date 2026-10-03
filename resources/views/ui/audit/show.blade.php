@@ -1,8 +1,6 @@
 @inject('directory', 'JayI\Roster\Support\Users')
 
 <x-atrium::layout :title="$entry->action">
-    @include('roster::ui.partials.styles')
-
     <x-atrium::page-header :title="$entry->action" :description="$entry->created_at->toDayDateTimeString()">
         <x-slot:actions>
             <x-atrium::icon-button icon="arrow-left" :label="__('roster::roster.audit_log')" variant="ghost" :href="route('atrium.roster.audit.index')" />

@@ -2,8 +2,6 @@
 @inject('directory', 'JayI\Roster\Support\Users')
 
 <x-atrium::layout :title="$transfer->type->label()">
-    @include('roster::ui.partials.styles')
-
     <x-atrium::page-header :title="$transfer->type->label()" :description="$transfer->organization?->name">
         <x-slot:actions>
             @if ($downloadable)

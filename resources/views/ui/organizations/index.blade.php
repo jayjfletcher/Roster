@@ -1,6 +1,4 @@
 <x-atrium::layout :title="__('roster::roster.organizations')">
-    @include('roster::ui.partials.styles')
-
     <x-atrium::page-header :title="__('roster::roster.organizations')">
         <x-slot:actions>
             <x-atrium::icon-button icon="arrows-up-down" :label="__('roster::roster.import_export')" :href="route('atrium.roster.transfers.index')" data-testid="organization-index-transfers" />

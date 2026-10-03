@@ -1,6 +1,4 @@
 <x-atrium::layout :title="__('roster::roster.new_user')">
-    @include('roster::ui.partials.styles')
-
     <x-atrium::page-header :title="__('roster::roster.new_user')" />
 
     <div class="mt-5 flex max-w-2xl flex-col gap-4">
