@@ -43,6 +43,9 @@ workbench:
     - migrate-fresh
   assets:
     - laravel-assets
+    # Atrium's stylesheet and scripts, republished on every build so the
+    # dashboard always matches the installed Atrium.
+    - atrium-assets
   sync:
     - from: storage
       to: workbench/storage
