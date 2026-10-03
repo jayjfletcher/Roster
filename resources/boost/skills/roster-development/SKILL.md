@@ -18,7 +18,7 @@ Use this skill when a Laravel application manages users, profiles, account statu
 
 ## Primary Goal
 
-- Use the `jayi/roster` package's public API in the smallest correct way. Every operation is an Action in `JayI\Roster\Actions`; call the Action instead of writing the queries yourself.
+- Use the `jayi/roster` package's public API in the smallest correct way. Every operation is an Action in its domain (`JayI\Roster\Domains\{Domain}\Actions`, e.g. `Domains\Organization\Actions\CreateOrganizationAction`); call the Action instead of writing the queries yourself.
 
 ## Workflow
 
@@ -38,9 +38,9 @@ php artisan migrate
 - Set `roster.users.key_type` (`int` | `ulid` | `uuid`) **before** migrating; it decides the type of the `roster_profiles.user_id` column.
 - If the users table uses other column names, set `roster.users.columns` (`name`, `email`, `password`; set `name` to `null` if there is none).
 - Pick a user mode:
-  - Add `use JayI\Roster\Concerns\HasRoster;` to the user model (recommended). It provides `roster()`, `rosterStatus()`, `isRosterActive()` and the `rosterProfile` relation.
+  - Add `use JayI\Roster\Domains\User\Concerns\HasRoster;` to the user model (recommended). It provides `roster()`, `rosterStatus()`, `isRosterActive()` and the `rosterProfile` relation.
   - Or leave the model untouched. Roster registers `rosterProfile` dynamically; use `app(JayI\Roster\Support\Users::class)->profile($user)` / `->status($user)`.
-  - Or, with no users table, use `JayI\Roster\Models\User` and `php artisan vendor:publish --tag="roster-users-migration"`.
+  - Or, with no users table, use `JayI\Roster\Domains\User\Models\UserModel` and `php artisan vendor:publish --tag="roster-users-migration"`.
 
 ### 3. Apply the Actions
 
@@ -83,7 +83,7 @@ php artisan migrate
 - Install the protocol packages you need: `laravel/socialite` plus `firebase/php-jwt` (OIDC), `socialiteproviders/microsoft-azure` (Entra ID) or `socialiteproviders/saml2` (SAML).
 - Create connections per organization with `CreateSsoConnectionAction($organization, ['name' => ..., 'protocol' => 'oidc'|'azure'|'saml', ...settings])`, and register the returned `callback_url` at the provider.
 - Link people to `route('roster.sso.discover', ['email' => $email])` or `route('roster.sso.start', $connection->slug)`.
-- When an organization enforces SSO, add `new \JayI\Roster\Rules\NotSsoEnforced` to the app's password login validation.
+- When an organization enforces SSO, add `new \JayI\Roster\Domains\Sso\Support\NotSsoEnforced` to the app's password login validation.
 
 ### 9. SCIM provisioning
 
@@ -95,7 +95,7 @@ php artisan migrate
 
 - Grant `roster.users.impersonate` explicitly. Start with `StartImpersonationAction($user, ['reason' => ...], actor: $admin)` and redirect the impersonator's browser to `$started->url`.
 - Add `<x-roster::impersonation-banner />` to the app layout. List app abilities that must never run while impersonating in `roster.impersonation.blocked` (wildcards allowed).
-- Use `app(JayI\Roster\Impersonation\ImpersonationContext::class)->active()` to detect an impersonated request.
+- Use `app(JayI\Roster\Domains\Impersonation\Services\ImpersonationContext::class)->active()` to detect an impersonated request.
 
 ### 11. CSV import and export
 
@@ -105,7 +105,7 @@ php artisan migrate
 - Export with `StartExportAction(['type' => 'export_members'|'export_users'|'export_audit', 'organization' => slug, 'filters' => [...]], $user)`, then serve the file through `route('roster.transfers.download', $transfer->id)` or Atrium.
 - Get a starting file with `ShowImportTemplateAction(TransferType::ImportMembers)` (or `GET /roster/imports/templates/{type}`); rows starting with `#` are ignored. Customize with `php artisan vendor:publish --tag="roster-import-templates"`.
 - Columns: members `email,name,display_name,teams,role`; users `email,name,display_name`; teams `name,slug,members`; organizations `source,external_id,name,account_number,slug,domains,owner`.
-- Without Impex, these Actions throw `JayI\Roster\Transfers\TransfersUnavailableException`.
+- Without Impex, these Actions throw `JayI\Roster\Domains\Transfer\Exceptions\TransfersUnavailableException`.
 
 ### 12. Guard routes and surfaces
 
@@ -115,7 +115,7 @@ php artisan migrate
 ## Rules, References, and Templates
 
 - Config: `config/roster.php` (users, authorization, super_admins, roles, audit, impersonation, sso, scim, transfers, organizations, invitations, routes, mcp).
-- Statuses: `JayI\Roster\Enums\UserStatus` (`Active`, `Pending`, `Suspended`, `Deactivated`). A user with no profile row is `Active`.
+- Statuses: `JayI\Roster\Domains\User\Enums\UserStatus` (`Active`, `Pending`, `Suspended`, `Deactivated`). A user with no profile row is `Active`.
 - Deletes are soft:
   - Add `SoftDeletes` (and a `deleted_at` column) to the user model so deleted users can be restored; without it, users are deleted permanently.
   - Restore with `RestoreUserAction` / `RestoreOrganizationAction`.
@@ -125,16 +125,16 @@ php artisan migrate
   - Pass `'status' => 'pending'` to `CreateUserAction`.
   - Set an organization's `provisioned_status` for its SSO and SCIM accounts.
   - Accept with `ApproveUserAction`, or turn down with `RejectUserAction` (which deactivates).
-- Events: `JayI\Roster\Events\Action\*ActionEvent`; listen to `JayI\Roster\Contracts\ActionStartingEvent` / `ActionFinishedEvent` to see every action.
+- Events: `JayI\Roster\Domains\{Domain}\Events\*ActionEvent`; listen to `JayI\Roster\Contracts\ActionStartingEvent` / `ActionFinishedEvent` to see every action.
 - HTTP routes are named `roster.users.*`, `roster.organizations.*`, `roster.invitations.*`; `{user}` is the user model's route key, organizations and teams use slugs.
-- Atrium: Users at `atrium.roster.users.index`, Organizations at `atrium.roster.organizations.index`. Access uses Atrium's `viewAtrium` gate. Lists of organizations, roles, impersonations, transfers and audit entries, asked without an `organization`, open to users holding the permission in any organization and hold only what falls within those (`Authorizer::organizationsWith()`); Atrium's navigation follows. Pages show only the controls the viewer may use and organization tabs need their own permission; published views use `@rosterCan($permission, $scope, $self)`, the same check the screens make. Hide it with `atrium.disabled => ['roster']`, or by feature flag through `roster.atrium.features` (navigation, widgets and search hide and pages 404 while a feature is off; Atrium's feature resolver, e.g. jayi/pennantplus, decides). The default is `JayI\Roster\Features\RosterSupportFeature`, a PennantPlus `OnLayeredFeature` checked globally only; subclass it to change its default, and it is skipped when jayi/pennantplus is not installed.
+- Atrium: Users at `atrium.roster.users.index`, Organizations at `atrium.roster.organizations.index`. Access uses Atrium's `viewAtrium` gate. Lists of organizations, roles, impersonations, transfers and audit entries, asked without an `organization`, open to users holding the permission in any organization and hold only what falls within those (`Authorizer::organizationsWith()`); Atrium's navigation follows. Pages show only the controls the viewer may use and organization tabs need their own permission; published views use `@rosterCan($permission, $scope, $self)`, the same check the screens make. Hide it with `atrium.disabled => ['roster']`, or by feature flag through `roster.atrium.features` (navigation, widgets and search hide and pages 404 while a feature is off; Atrium's feature resolver, e.g. jayi/pennantplus, decides). The default is `JayI\Roster\Atrium\Features\RosterSupportFeature`, a PennantPlus `OnLayeredFeature` checked globally only; subclass it to change its default, and it is skipped when jayi/pennantplus is not installed.
 
 ## Examples
 
 ```php
-use JayI\Roster\Actions\CreateUserAction;
-use JayI\Roster\Actions\SuspendUserAction;
-use JayI\Roster\Actions\UpdateProfileAction;
+use JayI\Roster\Domains\User\Actions\CreateUserAction;
+use JayI\Roster\Domains\User\Actions\SuspendUserAction;
+use JayI\Roster\Domains\User\Actions\UpdateProfileAction;
 
 $user = app(CreateUserAction::class)->execute([
     'name' => 'Ada Lovelace',
@@ -150,8 +150,8 @@ $user->isRosterActive(); // false
 ```
 
 ```php
-use JayI\Roster\Actions\CreateInvitationAction;
-use JayI\Roster\Actions\CreateOrganizationAction;
+use JayI\Roster\Domains\Invitation\Actions\CreateInvitationAction;
+use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
 
 $acme = app(CreateOrganizationAction::class)->execute(['name' => 'Acme', 'domains' => ['acme.com']], owner: $request->user());
 
@@ -166,7 +166,7 @@ Route::middleware(['auth', 'roster.active', 'roster.organization'])->group(funct
 });
 ```
 
-In app tests, assert with `expect($user->rosterStatus())->toBe(UserStatus::Suspended)`, `Event::fake([UserSuspendedActionEvent::class])`, or `Notification::fake()` + `Notification::assertSentOnDemand(JayI\Roster\Notifications\InvitationNotification::class)`.
+In app tests, assert with `expect($user->rosterStatus())->toBe(UserStatus::Suspended)`, `Event::fake([UserSuspendedActionEvent::class])`, or `Notification::fake()` + `Notification::assertSentOnDemand(JayI\Roster\Domains\Invitation\Notifications\InvitationNotification::class)`.
 
 ## Anti-patterns
 

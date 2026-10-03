@@ -1,0 +1,68 @@
+<?php
+
+declare(strict_types=1);
+
+namespace JayI\Roster\Domains\Organization\Actions;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use JayI\Roster\Domains\Organization\Events\ContextSwitchedActionEvent;
+use JayI\Roster\Domains\Organization\Events\ContextSwitchingActionEvent;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Team\Models\TeamModel;
+use JayI\Roster\Support\Users;
+
+final class SwitchContextAction
+{
+    public function __construct(private readonly Users $users) {}
+
+    /**
+     * @return array<string, array<int, mixed>>
+     */
+    public static function rules(): array
+    {
+        return [
+            'organization' => ['required', 'string'],
+            'team' => ['sometimes', 'nullable', 'string'],
+        ];
+    }
+
+    /**
+     * Make an organization (by slug), and optionally one of its teams, the
+     * user's current context. The user must belong to both.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function execute(Model $user, array $data): Model
+    {
+        $organization = OrganizationModel::query()->where('slug', $data['organization'] ?? null)->first();
+
+        if ($organization === null || $organization->membershipFor($user) === null) {
+            throw ValidationException::withMessages(['organization' => __('roster::roster.not_a_member')]);
+        }
+
+        $team = null;
+
+        if (is_string($data['team'] ?? null) && $data['team'] !== '') {
+            $team = TeamModel::query()->where('organization_id', $organization->getKey())->where('slug', $data['team'])->first();
+
+            if ($team === null || ! $team->hasMember($user)) {
+                throw ValidationException::withMessages(['team' => __('roster::roster.not_on_team')]);
+            }
+        }
+
+        ContextSwitchingActionEvent::dispatch($user, $data);
+
+        DB::transaction(fn () => $this->users->profile($user)->update([
+            'current_organization_id' => $organization->getKey(),
+            'current_team_id' => $team?->getKey(),
+        ]));
+
+        $user = $user->load('rosterProfile');
+
+        ContextSwitchedActionEvent::dispatch($user);
+
+        return $user;
+    }
+}

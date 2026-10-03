@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\File;
-use JayI\Roster\Actions\ShowImportTemplateAction;
-use JayI\Roster\Actions\StartImportAction;
-use JayI\Roster\Enums\TransferStatus;
-use JayI\Roster\Enums\TransferType;
-use JayI\Roster\Mcp\Tools\ShowImportTemplateTool;
+use JayI\Roster\Domains\Transfer\Actions\ShowImportTemplateAction;
+use JayI\Roster\Domains\Transfer\Actions\StartImportAction;
+use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
+use JayI\Roster\Domains\Transfer\Enums\TransferType;
+use JayI\Roster\Domains\Transfer\Mcp\Tools\ShowImportTemplateTool;
 use JayI\Roster\RosterServiceProvider;
 use Workbench\App\Models\User;
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Access\Permissions;
-use JayI\Roster\Models\Permission;
-use JayI\Roster\Models\Role;
+use JayI\Roster\Domains\Permission\Models\PermissionModel;
+use JayI\Roster\Domains\Permission\Services\Permissions;
+use JayI\Roster\Domains\Role\Models\RoleModel;
 
 it('grants super-admin by email', function (): void {
     $ada = user(['email' => 'ada@example.com']);
@@ -22,13 +22,13 @@ it('fails for an unknown email', function (): void {
 });
 
 it('restores missing built-ins without touching edits', function (): void {
-    Permission::query()->where('name', 'atrium.view')->delete();
-    $member = Role::query()->where('slug', 'member')->sole();
+    PermissionModel::query()->where('name', 'atrium.view')->delete();
+    $member = RoleModel::query()->where('slug', 'member')->sole();
     $member->permissions()->detach();
 
     $this->artisan('roster:sync-permissions')->assertSuccessful();
 
-    expect(Permission::query()->where('name', 'atrium.view')->exists())->toBeTrue()
+    expect(PermissionModel::query()->where('name', 'atrium.view')->exists())->toBeTrue()
         // Admin edits to existing roles are kept.
         ->and($member->permissions()->count())->toBe(0);
 });

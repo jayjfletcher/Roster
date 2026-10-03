@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__.'/helpers.php';
 
-use JayI\Roster\Models\Team;
+use JayI\Roster\Domains\Team\Models\TeamModel;
 use Workbench\App\Models\User;
 
 beforeEach(function (): void {
@@ -20,7 +20,7 @@ it('creates a group as a team with members', function (): void {
         ->assertJsonPath('members.0.value', $this->ada)
         ->json();
 
-    $team = Team::query()->sole();
+    $team = TeamModel::query()->sole();
 
     expect($team->name)->toBe('Engineering')
         ->and($team->hasMember(User::query()->where('email', 'ada@acme.test')->sole()))->toBeTrue();
@@ -57,5 +57,5 @@ it('deletes a group and its team', function (): void {
 
     scim('DELETE', '/Groups/'.$id)->assertNoContent();
 
-    expect(Team::query()->count())->toBe(0);
+    expect(TeamModel::query()->count())->toBe(0);
 });

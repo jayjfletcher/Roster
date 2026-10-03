@@ -6,7 +6,7 @@ namespace JayI\Roster\Tests\Fixtures;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use JayI\Roster\Concerns\HasRoster;
+use JayI\Roster\Domains\User\Concerns\HasRoster;
 
 /**
  * A host user model keyed by ULID with non-standard column names.

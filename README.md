@@ -47,7 +47,7 @@ Roster manages whatever model `roster.users.model` points at (default `App\Model
 **1. Your model with the trait (recommended).** This gives typed helpers:
 
 ```php
-use JayI\Roster\Concerns\HasRoster;
+use JayI\Roster\Domains\User\Concerns\HasRoster;
 
 class User extends Authenticatable
 {
@@ -61,7 +61,7 @@ $user->isRosterActive();
 
 **2. Your model, untouched.** Without the trait, Roster registers the `rosterProfile` relation on the configured model at boot. Everything works the same; use `app(JayI\Roster\Support\Users::class)->profile($user)` / `->status($user)` in place of the helpers.
 
-**3. Roster's model.** For apps without a users table, point `roster.users.model` and your auth provider at `JayI\Roster\Models\User`, then publish its migration:
+**3. Roster's model.** For apps without a users table, point `roster.users.model` and your auth provider at `JayI\Roster\Domains\User\Models\UserModel`, then publish its migration:
 
 ```bash
 php artisan vendor:publish --tag="roster-users-migration"
@@ -75,11 +75,11 @@ If your users table names its columns differently, map them:
 
 ## Actions
 
-Every operation is an Action in `JayI\Roster\Actions`. Each has a static `rules()` method, and every surface validates with those same rules.
+Every operation is an Action in its domain's `Actions` namespace (`JayI\Roster\Domains\{Domain}\Actions`, e.g. `Domains\User\Actions\CreateUserAction`). Each has a static `rules()` method, and every surface validates with those same rules.
 
 ```php
-use JayI\Roster\Actions\CreateUserAction;
-use JayI\Roster\Actions\SuspendUserAction;
+use JayI\Roster\Domains\User\Actions\CreateUserAction;
+use JayI\Roster\Domains\User\Actions\SuspendUserAction;
 
 $user = app(CreateUserAction::class)->execute([
     'name' => 'Ada Lovelace',
@@ -102,14 +102,15 @@ app(SuspendUserAction::class)->execute($user, ['reason' => 'Chargeback'], actor:
 | `ApproveUserAction` / `RejectUserAction` | Accept or turn down an account awaiting approval (see below) |
 | `ReactivateUserAction` | Back to active |
 
-Business-rule failures, such as suspending yourself or suspending a user who is already suspended, throw a field-keyed `ValidationException`. Each Action dispatches an event before and after it runs (`JayI\Roster\Events\Action\*`). They implement `ActionStartingEvent` / `ActionFinishedEvent`, so you can listen to every action at once.
+Business-rule failures, such as suspending yourself or suspending a user who is already suspended, throw a field-keyed `ValidationException`. Each Action dispatches an event before and after it runs (`JayI\Roster\Domains\{Domain}\Events\*ActionEvent`). They implement `ActionStartingEvent` / `ActionFinishedEvent`, so you can listen to every action at once.
 
 ## Organizations and teams
 
 An organization is the tenant. Users join it as members, and teams group members inside it. A user can belong to many organizations. Organizations and teams are identified by slug; team slugs are unique within their organization.
 
 ```php
-use JayI\Roster\Actions\{CreateOrganizationAction, AddMemberAction, CreateTeamAction, AddTeamMemberAction};
+use JayI\Roster\Domains\Organization\Actions\{AddMemberAction, CreateOrganizationAction};
+use JayI\Roster\Domains\Team\Actions\{AddTeamMemberAction, CreateTeamAction};
 
 $acme = app(CreateOrganizationAction::class)->execute(['name' => 'Acme'], owner: $user);
 app(AddMemberAction::class)->execute($acme, ['user' => $ada->getRouteKey()]);
@@ -153,7 +154,8 @@ Give an organization domains and turn on `auto_join`. Users then join automatica
 Permissions are named abilities (`roster.users.update`, or your own `invoices.edit`). Roles bundle permissions and are assigned **globally**, **in an organization**, or **on a team**. Both live in the database and can be edited from Atrium, the API or MCP.
 
 ```php
-use JayI\Roster\Actions\{AssignRoleAction, CreatePermissionAction, CreateRoleAction};
+use JayI\Roster\Domains\Permission\Actions\CreatePermissionAction;
+use JayI\Roster\Domains\Role\Actions\{AssignRoleAction, CreateRoleAction};
 
 app(CreatePermissionAction::class)->execute(['name' => 'invoices.edit']);
 
@@ -295,7 +297,7 @@ The user becomes a member of the organization. Suspended or deactivated users ar
 Turn on `enforced` to make SSO mandatory for an organization's domains. Roster has no password login of its own; add the rule to yours:
 
 ```php
-use JayI\Roster\Rules\NotSsoEnforced;
+use JayI\Roster\Domains\Sso\Support\NotSsoEnforced;
 
 $request->validate(['email' => ['required', 'email', new NotSsoEnforced]]);
 ```
@@ -307,7 +309,7 @@ It fails with a link to the organization's SSO sign-in. Super-admins are never f
 When your organizations live in another system of record, such as an ERP or a CRM, Roster can create and update them from those records. It remembers each organization's id and account number in every system it comes from.
 
 ```php
-use JayI\Roster\Actions\SyncOrganizationAction;
+use JayI\Roster\Domains\Organization\Actions\SyncOrganizationAction;
 
 $result = app(SyncOrganizationAction::class)->execute([
     'source' => 'erp',              // which system, lower case
@@ -368,7 +370,7 @@ Tokens are shown **once**, stored only as a hash, can expire, can be revoked, an
 Holders of `roster.users.impersonate` can temporarily act as another user to see what they see. Nobody gets it by default, so grant it deliberately: globally to impersonate anyone, or in an organization to impersonate its members.
 
 ```php
-use JayI\Roster\Actions\StartImpersonationAction;
+use JayI\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
 
 $started = app(StartImpersonationAction::class)->execute($user, ['reason' => 'Ticket #4521'], actor: $admin);
 
@@ -444,9 +446,9 @@ The published copies in `resources/roster/import-templates/{type}.csv` are serve
 Separate lists (`teams`, `members`, `domains`) with `;`, `,` or `|`. Teams are matched by slug or name, and roles by slug. You can only assign roles whose permissions you hold.
 
 ```php
-use JayI\Roster\Actions\ConfirmImportAction;
-use JayI\Roster\Actions\StartExportAction;
-use JayI\Roster\Actions\StartImportAction;
+use JayI\Roster\Domains\Transfer\Actions\ConfirmImportAction;
+use JayI\Roster\Domains\Transfer\Actions\StartExportAction;
+use JayI\Roster\Domains\Transfer\Actions\StartImportAction;
 
 $import = app(StartImportAction::class)->execute([
     'type' => 'import_members',
@@ -475,7 +477,7 @@ $export = app(StartExportAction::class)->execute(['type' => 'export_members', 'o
 
 Deleting a user or an organization is recoverable. It goes to **Deleted** (Atrium's lists have a Show: Current / Deleted filter), and can be restored with everything it had until it's deleted permanently.
 
-- **Users** need Laravel's `SoftDeletes` on the user model. Roster's bundled `JayI\Roster\Models\User` has it; add it to your own model and a `deleted_at` column (`$table->softDeletes()`):
+- **Users** need Laravel's `SoftDeletes` on the user model. Roster's bundled `JayI\Roster\Domains\User\Models\UserModel` has it; add it to your own model and a `deleted_at` column (`$table->softDeletes()`):
 
   ```php
   use Illuminate\Database\Eloquent\SoftDeletes;
@@ -642,12 +644,12 @@ Roster registers itself with Atrium automatically. It adds:
 
 Access follows Atrium's `viewAtrium` gate. To hide it, add `'roster'` to `atrium.disabled`. Roster can also be switched by feature flag. `roster.atrium.features` lists the features that must all be on: while any is off, Roster's navigation, widgets and search disappear and its pages answer 404. Atrium asks its feature resolver, so Pennant (through `jayi/pennantplus`) or any other flag system decides.
 
-By default it lists `JayI\Roster\Features\RosterSupportFeature`, a PennantPlus feature that is on until its global value is set. Its `SupportFeature` suffix matches PennantPlus's `gate.global_only` pattern, so only the global value counts and who sees which page stays with Roster's permissions. Turn Roster off for everyone with `Feature::for(null)->deactivate(RosterSupportFeature::class)` or from the Feature flags page. Without `jayi/pennantplus` the class is skipped and nothing is checked.
+By default it lists `JayI\Roster\Atrium\Features\RosterSupportFeature`, a PennantPlus feature that is on until its global value is set. Its `SupportFeature` suffix matches PennantPlus's `gate.global_only` pattern, so only the global value counts and who sees which page stays with Roster's permissions. Turn Roster off for everyone with `Feature::for(null)->deactivate(RosterSupportFeature::class)` or from the Feature flags page. Without `jayi/pennantplus` the class is skipped and nothing is checked.
 
 To change the default, point the config at a subclass:
 
 ```php
-use JayI\Roster\Features\RosterSupportFeature;
+use JayI\Roster\Atrium\Features\RosterSupportFeature;
 
 class RosterFeature extends RosterSupportFeature
 {

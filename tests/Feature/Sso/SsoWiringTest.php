@@ -7,15 +7,15 @@ require_once __DIR__.'/helpers.php';
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\CreateSsoConnectionAction;
-use JayI\Roster\Actions\UpdateSsoConnectionAction;
-use JayI\Roster\Http\Resources\SsoConnectionResource;
-use JayI\Roster\Models\AuditEntry;
-use JayI\Roster\Models\SsoConnection;
-use JayI\Roster\Models\SsoIdentity;
+use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use JayI\Roster\Domains\Sso\Actions\CreateSsoConnectionAction;
+use JayI\Roster\Domains\Sso\Actions\UpdateSsoConnectionAction;
+use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
+use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
+use JayI\Roster\Domains\Sso\Resources\SsoConnectionResource;
+use JayI\Roster\Domains\Sso\Services\Sso;
+use JayI\Roster\Domains\Sso\Support\NotSsoEnforced;
 use JayI\Roster\Roster;
-use JayI\Roster\Rules\NotSsoEnforced;
-use JayI\Roster\Sso\Sso;
 use Laravel\Socialite\Contracts\Provider;
 use Laravel\Socialite\Two\User as SocialiteUser;
 
@@ -31,7 +31,7 @@ function idpVouchesFor(string $subject, string $email): void
             parent::__construct($request);
         }
 
-        public function provider(SsoConnection $connection): Provider
+        public function provider(SsoConnectionModel $connection): Provider
         {
             $user = (new SocialiteUser)->setRaw([])->map(['id' => $this->subject, 'email' => $this->email, 'name' => 'Someone']);
 
@@ -90,7 +90,7 @@ it('links an identity to the signed-in account', function (): void {
     $this->post(route('roster.sso.link', 'acme-sso'))->assertRedirect('https://idp.test/authorize');
     $this->get(route('roster.sso.callback', 'acme-sso'))->assertRedirect('/')->assertSessionHas('status');
 
-    expect(SsoIdentity::query()->sole()->user_id)->toBe($ada->getKey());
+    expect(SsoIdentityModel::query()->sole()->user_id)->toBe($ada->getKey());
 
     // Someone else cannot claim the same identity.
     $this->actingAs(user());
@@ -122,14 +122,14 @@ it('keeps secrets encrypted, hidden and redacted', function (): void {
 
     expect($raw)->not->toContain('top-secret')
         ->and(json_encode((new SsoConnectionResource($connection))->resolve()))->not->toContain('top-secret')
-        ->and(json_encode(AuditEntry::query()->get()->toArray()))->not->toContain('top-secret');
+        ->and(json_encode(AuditEntryModel::query()->get()->toArray()))->not->toContain('top-secret');
 
     // A blank secret keeps the old one; a new one replaces it and the change shows, redacted.
     app(UpdateSsoConnectionAction::class)->execute($connection, ['client_secret' => '']);
     expect($connection->refresh()->setting('client_secret'))->toBe('top-secret');
 
     app(UpdateSsoConnectionAction::class)->execute($connection, ['client_secret' => 'rotated']);
-    $entry = AuditEntry::query()->where('action', 'sso_connection.updated')->orderByDesc('id')->firstOrFail();
+    $entry = AuditEntryModel::query()->where('action', 'sso_connection.updated')->orderByDesc('id')->firstOrFail();
 
     expect($entry->changes['config'][1]['client_secret'])->toBe('[redacted]')
         ->and(json_encode($entry->toArray()))->not->toContain('rotated');

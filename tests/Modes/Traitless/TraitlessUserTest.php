@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Actions\DeleteUserAction;
-use JayI\Roster\Actions\SuspendUserAction;
-use JayI\Roster\Actions\UpdateProfileAction;
-use JayI\Roster\Enums\UserStatus;
-use JayI\Roster\Models\Profile;
+use JayI\Roster\Domains\User\Actions\DeleteUserAction;
+use JayI\Roster\Domains\User\Actions\SuspendUserAction;
+use JayI\Roster\Domains\User\Actions\UpdateProfileAction;
+use JayI\Roster\Domains\User\Enums\UserStatus;
+use JayI\Roster\Domains\User\Models\ProfileModel;
 use JayI\Roster\Support\Users;
 use JayI\Roster\Tests\Fixtures\PlainUser;
 
@@ -18,7 +18,7 @@ it('gives a model without the trait a profile relation', function (): void {
 
     $fresh = PlainUser::query()->with('rosterProfile')->sole();
 
-    expect($fresh->getRelation('rosterProfile'))->toBeInstanceOf(Profile::class)
+    expect($fresh->getRelation('rosterProfile'))->toBeInstanceOf(ProfileModel::class)
         ->and($fresh->getRelation('rosterProfile')->display_name)->toBe('Countess')
         ->and(app(Users::class)->status($fresh))->toBe(UserStatus::Suspended);
 });

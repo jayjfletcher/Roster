@@ -6,14 +6,14 @@ namespace JayI\Roster\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use JayI\Roster\Models\Organization;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
 
 /**
- * @extends Factory<Organization>
+ * @extends Factory<OrganizationModel>
  */
 final class OrganizationFactory extends Factory
 {
-    protected $model = Organization::class;
+    protected $model = OrganizationModel::class;
 
     /**
      * @return array<string, mixed>

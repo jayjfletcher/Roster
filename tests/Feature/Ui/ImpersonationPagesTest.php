@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Auth;
-use JayI\Roster\Models\Impersonation;
+use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
 
 it('impersonates from the user page and ends from the list', function (): void {
     $admin = user(['name' => 'Admin']);
@@ -22,7 +22,7 @@ it('impersonates from the user page and ends from the list', function (): void {
     $this->post(route('roster.impersonation.leave'));
     $this->get(route('atrium.roster.impersonations.index'))->assertOk()->assertSee('Ticket 42');
 
-    $pending = Impersonation::factory()->create(['impersonator_id' => user()->getKey(), 'user_id' => $ada->getKey()]);
+    $pending = ImpersonationModel::factory()->create(['impersonator_id' => user()->getKey(), 'user_id' => $ada->getKey()]);
 
     $this->delete(route('atrium.roster.impersonations.stop', $pending->id))->assertRedirect();
 

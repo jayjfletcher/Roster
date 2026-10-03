@@ -1,5 +1,5 @@
-@use(JayI\Roster\Enums\UserStatus)
-@use(JayI\Roster\Http\Ui\ScreenAccess)
+@use(JayI\Roster\Domains\User\Enums\UserStatus)
+@use(JayI\Roster\Atrium\ScreenAccess)
 
 @php($title = $profile?->display_name ?? $directory->name($user) ?? $directory->email($user) ?? __('roster::roster.user'))
 

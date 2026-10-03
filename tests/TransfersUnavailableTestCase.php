@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Tests;
 
-use JayI\Roster\Transfers\Transfers;
+use JayI\Roster\Domains\Transfer\Services\Transfers;
 
 /**
  * Roster as installed without the optional jayi/impex package.

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Actions\StartExportAction;
-use JayI\Roster\Actions\StartImportAction;
-use JayI\Roster\Actions\SyncOrganizationAction;
-use JayI\Roster\Enums\TransferStatus;
+use JayI\Roster\Domains\Organization\Actions\SyncOrganizationAction;
+use JayI\Roster\Domains\Transfer\Actions\StartExportAction;
+use JayI\Roster\Domains\Transfer\Actions\StartImportAction;
+use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
+use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use JayI\Roster\Domains\Transfer\Services\Transfers;
 use JayI\Roster\Facades\Roster;
-use JayI\Roster\Models\Transfer;
-use JayI\Roster\Transfers\Transfers;
 
-function exported(Transfer $transfer): array
+function exported(TransferModel $transfer): array
 {
     $csv = app(Transfers::class)->disk()->get((string) $transfer->output_path);
 

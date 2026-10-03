@@ -3,19 +3,19 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\CreateOrganizationAction;
-use JayI\Roster\Actions\LinkOrganizationAction;
-use JayI\Roster\Actions\ListOrganizationsAction;
-use JayI\Roster\Actions\RemoveMemberAction;
-use JayI\Roster\Actions\SyncOrganizationAction;
-use JayI\Roster\Actions\SyncOrganizationsAction;
-use JayI\Roster\Actions\TransferOwnershipAction;
-use JayI\Roster\Actions\UnlinkOrganizationAction;
-use JayI\Roster\Models\AuditEntry;
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Models\OrganizationLink;
-use JayI\Roster\Support\OrganizationSyncResult;
+use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
+use JayI\Roster\Domains\Organization\Actions\LinkOrganizationAction;
+use JayI\Roster\Domains\Organization\Actions\ListOrganizationsAction;
+use JayI\Roster\Domains\Organization\Actions\RemoveMemberAction;
+use JayI\Roster\Domains\Organization\Actions\SyncOrganizationAction;
+use JayI\Roster\Domains\Organization\Actions\SyncOrganizationsAction;
+use JayI\Roster\Domains\Organization\Actions\TransferOwnershipAction;
+use JayI\Roster\Domains\Organization\Actions\UnlinkOrganizationAction;
+use JayI\Roster\Domains\Organization\Data\OrganizationSyncResult;
+use JayI\Roster\Domains\Organization\Models\OrganizationLinkModel;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
 
 function sync(array $record): OrganizationSyncResult
 {
@@ -42,7 +42,7 @@ it('creates an ownerless organization from an external record, then updates it',
 
     expect(sync(['source' => 'erp', 'external_id' => 'C-100', 'name' => 'Initech Corp', 'account_number' => 'A-42'])->outcome)->toBe('unchanged')
         ->and(sync(['source' => 'erp', 'external_id' => 'C-100', 'account_number' => 'A-43'])->outcome)->toBe('updated')
-        ->and(Organization::query()->count())->toBe(1);
+        ->and(OrganizationModel::query()->count())->toBe(1);
 });
 
 it('needs a name to create', function (): void {
@@ -109,9 +109,9 @@ it('syncs a batch record by record', function (): void {
     expect(array_column($results, 'outcome'))->toBe(['created', 'error', 'unchanged', 'error'])
         ->and($results[1]['errors'])->toHaveKey('domains.0')
         ->and($results[3]['errors'])->toHaveKey('source')
-        ->and(OrganizationLink::query()->count())->toBe(1);
+        ->and(OrganizationLinkModel::query()->count())->toBe(1);
 
-    expect(AuditEntry::query()->where('action', 'organizations.synced')->sole()->context['summary'])
+    expect(AuditEntryModel::query()->where('action', 'organizations.synced')->sole()->context['summary'])
         ->toBe(['created' => 1, 'error' => 2, 'unchanged' => 1]);
 });
 
@@ -130,7 +130,7 @@ it('links, relinks and unlinks by hand', function (): void {
     app(UnlinkOrganizationAction::class)->execute($acme, 'erp');
 
     expect($acme->links()->count())->toBe(0)
-        ->and(AuditEntry::query()->where('action', 'organization.unlinked')->sole()->context)->toMatchArray(['source' => 'erp']);
+        ->and(AuditEntryModel::query()->where('action', 'organization.unlinked')->sole()->context)->toMatchArray(['source' => 'erp']);
 });
 
 it('finds organizations by their external records', function (): void {

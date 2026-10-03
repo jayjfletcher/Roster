@@ -2,6 +2,144 @@
 
 ## [Unreleased](https://github.com/jayi/roster/compare/v0.1.0...1.x)
 
+### Breaking
+
+- The package is reorganised into domain modules (`src/Domains/User`, `Organization`, `Team`, `Invitation`, `Role`, `Permission`, `Audit`, `Impersonation`, `Sso`, `Scim`, `Transfer`), mirroring the mono application's layout. Classes move namespaces and the models gain a `Model` suffix (`Organization` → `OrganizationModel`, the bundled `User` → `Domains\User\Models\UserModel`); there are no aliases for the old class names, so update imports, `roster.users.model` if it named Roster's bundled user, and any published migration that imports `Support\BuiltInRoles`. Each domain has its own service provider, registered by `Domains\DomainServiceProvider`, and loads its own routes (`routes/*.php` are gone). Config keys, route names and paths, MCP tool names, publish tags, views, translations, the `@rosterCan` directive, tables and event class names are unchanged. Package-wide pieces keep their names: `RosterServiceProvider`, the `Roster` class and facade, `RosterPlugin`, `Badges`, `CortexIntegration`, the event contracts, `Http\Request`, `Http\Controllers\TrashController`, `Console\Commands\PurgeDeletedCommand`, `Mcp\Request`, `Mcp\Tool`, `Mcp\RosterServer` and `Support\Users`/`Scopes`/`Slugs`/`UserKey`. The Impex flows (`Transfers\Flows\ImportFlow`, `ExportFlow`, `CsvRowsSource` and `Transfers\Flows\Actions\*`) keep their names too: Impex stores them on every run and batch, so imports already waiting for confirmation still finish. Each model keeps its old class name (`JayI\Roster\Models\{Entity}`) as its morph alias, so audit entries keep recording the same subject type and the existing hash chain still verifies, and `RosterSupportFeature` keeps its Pennant stored name (`JayI\Roster\Features\RosterSupportFeature`). References to Atrium, Cortex, Impex and PennantPlus follow their domain-module renames.
+- Same-named classes that move by domain (`{Domain}` is the domain each is listed under):
+  - `Actions\*` → `Domains\{Domain}\Actions\*`: Audit: `ListAuditEntriesAction`, `RecordAuditEventAction`, `ShowAuditEntryAction`; Impersonation: `EnterImpersonationAction`, `ListImpersonationsAction`, `StartImpersonationAction`, `StopImpersonationAction`; Invitation: `AcceptInvitationAction`, `CreateInvitationAction`, `DeclineInvitationAction`, `ListInvitationsAction`, `RevokeInvitationAction`; Organization: `AddMemberAction`, `CreateOrganizationAction`, `DeleteOrganizationAction`, `JoinOrganizationsByDomainAction`, `LinkOrganizationAction`, `ListMembersAction`, `ListOrganizationsAction`, `PurgeOrganizationAction`, `RemoveMemberAction`, `RestoreOrganizationAction`, `ShowOrganizationAction`, `SwitchContextAction`, `SyncOrganizationAction`, `SyncOrganizationsAction`, `TransferOwnershipAction`, `UnlinkOrganizationAction`, `UpdateOrganizationAction`; Permission: `CreatePermissionAction`, `DeletePermissionAction`, `ListPermissionsAction`, `ListUserPermissionsAction`, `UpdatePermissionAction`; Role: `AssignRoleAction`, `CreateRoleAction`, `DeleteRoleAction`, `ListRoleAssignmentsAction`, `ListRolesAction`, `RevokeRoleAction`, `ShowRoleAction`, `UpdateRoleAction`; Scim: `CreateScimTokenAction`, `ListScimTokensAction`, `RevokeScimTokenAction`; Sso: `CreateSsoConnectionAction`, `DeleteSsoConnectionAction`, `LinkSsoIdentityAction`, `ListSsoConnectionsAction`, `ListSsoIdentitiesAction`, `ShowSsoConnectionAction`, `SsoLoginAction`, `UnlinkSsoIdentityAction`, `UpdateSsoConnectionAction`; Team: `AddTeamMemberAction`, `CreateTeamAction`, `DeleteTeamAction`, `ListTeamsAction`, `RemoveTeamMemberAction`, `ShowTeamAction`, `UpdateTeamAction`; Transfer: `CancelTransferAction`, `ConfirmImportAction`, `ListTransfersAction`, `ShowImportTemplateAction`, `ShowTransferAction`, `StartExportAction`, `StartImportAction`; User: `ApproveUserAction`, `CreateUserAction`, `DeactivateUserAction`, `DeleteUserAction`, `ListUsersAction`, `PurgeUserAction`, `ReactivateUserAction`, `RejectUserAction`, `RestoreUserAction`, `ShowUserAction`, `SuspendUserAction`, `UpdateProfileAction`, `UpdateUserAction`.
+  - `Events\Action\*` → `Domains\{Domain}\Events\*`: Audit: `AuditEntriesListedActionEvent`, `AuditEntriesListingActionEvent`, `AuditEntryShowingActionEvent`, `AuditEntryShownActionEvent`, `AuditEventRecordedActionEvent`, `AuditEventRecordingActionEvent`; Impersonation: `ImpersonationEnteredActionEvent`, `ImpersonationEnteringActionEvent`, `ImpersonationStartedActionEvent`, `ImpersonationStartingActionEvent`, `ImpersonationStoppedActionEvent`, `ImpersonationStoppingActionEvent`, `ImpersonationsListedActionEvent`, `ImpersonationsListingActionEvent`; Invitation: `InvitationAcceptedActionEvent`, `InvitationAcceptingActionEvent`, `InvitationCreatedActionEvent`, `InvitationCreatingActionEvent`, `InvitationDeclinedActionEvent`, `InvitationDecliningActionEvent`, `InvitationRevokedActionEvent`, `InvitationRevokingActionEvent`, `InvitationsListedActionEvent`, `InvitationsListingActionEvent`; Organization: `ContextSwitchedActionEvent`, `ContextSwitchingActionEvent`, `DomainJoinedActionEvent`, `DomainJoiningActionEvent`, `MemberAddedActionEvent`, `MemberAddingActionEvent`, `MemberRemovedActionEvent`, `MemberRemovingActionEvent`, `MembersListedActionEvent`, `MembersListingActionEvent`, `OrganizationCreatedActionEvent`, `OrganizationCreatingActionEvent`, `OrganizationDeletedActionEvent`, `OrganizationDeletingActionEvent`, `OrganizationLinkedActionEvent`, `OrganizationLinkingActionEvent`, `OrganizationPurgedActionEvent`, `OrganizationPurgingActionEvent`, `OrganizationRestoredActionEvent`, `OrganizationRestoringActionEvent`, `OrganizationShowingActionEvent`, `OrganizationShownActionEvent`, `OrganizationSyncedActionEvent`, `OrganizationSyncingActionEvent`, `OrganizationUnlinkedActionEvent`, `OrganizationUnlinkingActionEvent`, `OrganizationUpdatedActionEvent`, `OrganizationUpdatingActionEvent`, `OrganizationsListedActionEvent`, `OrganizationsListingActionEvent`, `OrganizationsSyncedActionEvent`, `OrganizationsSyncingActionEvent`, `OwnershipTransferredActionEvent`, `OwnershipTransferringActionEvent`; Permission: `PermissionCreatedActionEvent`, `PermissionCreatingActionEvent`, `PermissionDeletedActionEvent`, `PermissionDeletingActionEvent`, `PermissionUpdatedActionEvent`, `PermissionUpdatingActionEvent`, `PermissionsListedActionEvent`, `PermissionsListingActionEvent`, `UserPermissionsListedActionEvent`, `UserPermissionsListingActionEvent`; Role: `RoleAssignedActionEvent`, `RoleAssigningActionEvent`, `RoleAssignmentsListedActionEvent`, `RoleAssignmentsListingActionEvent`, `RoleCreatedActionEvent`, `RoleCreatingActionEvent`, `RoleDeletedActionEvent`, `RoleDeletingActionEvent`, `RoleRevokedActionEvent`, `RoleRevokingActionEvent`, `RoleShowingActionEvent`, `RoleShownActionEvent`, `RoleUpdatedActionEvent`, `RoleUpdatingActionEvent`, `RolesListedActionEvent`, `RolesListingActionEvent`; Scim: `ScimTokenCreatedActionEvent`, `ScimTokenCreatingActionEvent`, `ScimTokenRevokedActionEvent`, `ScimTokenRevokingActionEvent`, `ScimTokensListedActionEvent`, `ScimTokensListingActionEvent`; Sso: `SsoConnectionCreatedActionEvent`, `SsoConnectionCreatingActionEvent`, `SsoConnectionDeletedActionEvent`, `SsoConnectionDeletingActionEvent`, `SsoConnectionShowingActionEvent`, `SsoConnectionShownActionEvent`, `SsoConnectionUpdatedActionEvent`, `SsoConnectionUpdatingActionEvent`, `SsoConnectionsListedActionEvent`, `SsoConnectionsListingActionEvent`, `SsoIdentitiesListedActionEvent`, `SsoIdentitiesListingActionEvent`, `SsoIdentityLinkedActionEvent`, `SsoIdentityLinkingActionEvent`, `SsoIdentityUnlinkedActionEvent`, `SsoIdentityUnlinkingActionEvent`, `SsoLoginFailedActionEvent`, `SsoLoginStartingActionEvent`, `SsoLoginSucceededActionEvent`; Team: `TeamCreatedActionEvent`, `TeamCreatingActionEvent`, `TeamDeletedActionEvent`, `TeamDeletingActionEvent`, `TeamMemberAddedActionEvent`, `TeamMemberAddingActionEvent`, `TeamMemberRemovedActionEvent`, `TeamMemberRemovingActionEvent`, `TeamShowingActionEvent`, `TeamShownActionEvent`, `TeamUpdatedActionEvent`, `TeamUpdatingActionEvent`, `TeamsListedActionEvent`, `TeamsListingActionEvent`; Transfer: `ImportTemplateShowingActionEvent`, `ImportTemplateShownActionEvent`, `TransferCancelledActionEvent`, `TransferCancellingActionEvent`, `TransferConfirmedActionEvent`, `TransferConfirmingActionEvent`, `TransferFinishedActionEvent`, `TransferShowingActionEvent`, `TransferShownActionEvent`, `TransferStartedActionEvent`, `TransferStartingActionEvent`, `TransfersListedActionEvent`, `TransfersListingActionEvent`; User: `ProfileUpdatedActionEvent`, `ProfileUpdatingActionEvent`, `UserApprovedActionEvent`, `UserApprovingActionEvent`, `UserCreatedActionEvent`, `UserCreatingActionEvent`, `UserDeactivatedActionEvent`, `UserDeactivatingActionEvent`, `UserDeletedActionEvent`, `UserDeletingActionEvent`, `UserPurgedActionEvent`, `UserPurgingActionEvent`, `UserReactivatedActionEvent`, `UserReactivatingActionEvent`, `UserRejectedActionEvent`, `UserRejectingActionEvent`, `UserRestoredActionEvent`, `UserRestoringActionEvent`, `UserShowingActionEvent`, `UserShownActionEvent`, `UserSuspendedActionEvent`, `UserSuspendingActionEvent`, `UserUpdatedActionEvent`, `UserUpdatingActionEvent`, `UsersListedActionEvent`, `UsersListingActionEvent`.
+  - `Http\Controllers\*` → `Domains\{Domain}\Http\Controllers\*`: Audit: `AuditController`; Impersonation: `ImpersonationController`; Invitation: `InvitationController`; Organization: `MemberController`, `OrganizationController`, `OrganizationSyncController`, `UserContextController`; Permission: `PermissionController`; Role: `RoleController`, `UserRoleController`; Scim: `ScimTokenController`; Sso: `SsoController`; Team: `TeamController`, `TeamMemberController`; Transfer: `TransferController`; User: `UserController`, `UserProfileController`, `UserStatusController`.
+  - `Http\Requests\*` → `Domains\{Domain}\Http\Requests\*`: Audit: `IndexAuditRequest`, `ShowAuditRequest`, `StoreAuditRequest`; Impersonation: `IndexImpersonationsRequest`, `StartImpersonationRequest`, `StopImpersonationRequest`; Invitation: `AcceptInvitationRequest`, `DeclineInvitationRequest`, `IndexInvitationsRequest`, `InvitationResponseRequest`, `RevokeInvitationRequest`, `StoreInvitationRequest`; Organization: `DestroyMemberRequest`, `DestroyOrganizationRequest`, `IndexMembersRequest`, `IndexOrganizationsRequest`, `JoinByDomainRequest`, `LinkOrganizationRequest`, `OrganizationRequest`, `PurgeOrganizationRequest`, `RestoreOrganizationRequest`, `ShowOrganizationRequest`, `StoreMemberRequest`, `StoreOrganizationRequest`, `SwitchContextRequest`, `SyncOrganizationRequest`, `SyncOrganizationsRequest`, `TransferOwnershipRequest`, `UnlinkOrganizationRequest`, `UpdateOrganizationRequest`; Permission: `DestroyPermissionRequest`, `IndexPermissionsRequest`, `PermissionRequest`, `ShowUserPermissionsRequest`, `StorePermissionRequest`, `UpdatePermissionRequest`; Role: `AssignRoleRequest`, `DestroyRoleRequest`, `IndexRolesRequest`, `IndexUserRolesRequest`, `RevokeRoleRequest`, `RoleRequest`, `ShowRoleRequest`, `StoreRoleRequest`, `UpdateRoleRequest`; Scim: `IndexScimTokensRequest`, `RevokeScimTokenRequest`, `StoreScimTokenRequest`; Sso: `DestroySsoConnectionRequest`, `DestroySsoIdentityRequest`, `IndexSsoConnectionsRequest`, `IndexUserSsoIdentitiesRequest`, `ShowSsoConnectionRequest`, `SsoConnectionRequest`, `StoreSsoConnectionRequest`, `UpdateSsoConnectionRequest`; Team: `DestroyTeamMemberRequest`, `DestroyTeamRequest`, `IndexTeamsRequest`, `ShowTeamRequest`, `StoreTeamMemberRequest`, `StoreTeamRequest`, `TeamRequest`, `UpdateTeamRequest`; Transfer: `CancelTransferRequest`, `ConfirmImportRequest`, `DownloadTransferRequest`, `IndexTransfersRequest`, `ShowImportTemplateRequest`, `ShowTransferRequest`, `StartExportRequest`, `StartImportRequest`, `StartTransferRequest`, `TransferRequest`; User: `ApproveUserRequest`, `DeactivateUserRequest`, `DestroyUserRequest`, `IndexUsersRequest`, `PurgeUserRequest`, `ReactivateUserRequest`, `RejectUserRequest`, `RestoreUserRequest`, `ShowUserRequest`, `StoreUserRequest`, `SuspendUserRequest`, `UpdateProfileRequest`, `UpdateUserRequest`, `UserRequest`.
+  - `Http\Resources\*` → `Domains\{Domain}\Resources\*`: Audit: `AuditEntryResource`; Impersonation: `ImpersonationResource`; Invitation: `InvitationResource`; Organization: `MemberResource`, `OrganizationResource`, `OrganizationSyncResults`; Permission: `PermissionResource`; Role: `RoleAssignmentResource`, `RoleResource`; Scim: `ScimTokenResource`; Sso: `SsoConnectionResource`, `SsoIdentityResource`; Team: `TeamResource`; Transfer: `TransferResource`; User: `ProfileResource`, `UserResource`, `UserSummaryResource`.
+  - `Mcp\Requests\*` → `Domains\{Domain}\Mcp\Requests\*`: Audit: `ListAuditEntriesMcpRequest`, `RecordAuditEventMcpRequest`, `ShowAuditEntryMcpRequest`; Impersonation: `ListImpersonationsMcpRequest`, `StartImpersonationMcpRequest`, `StopImpersonationMcpRequest`; Invitation: `AcceptInvitationMcpRequest`, `CreateInvitationMcpRequest`, `DeclineInvitationMcpRequest`, `InvitationResponseMcpRequest`, `ListInvitationsMcpRequest`, `RevokeInvitationMcpRequest`; Organization: `AddMemberMcpRequest`, `CreateOrganizationMcpRequest`, `DeleteOrganizationMcpRequest`, `JoinByDomainMcpRequest`, `LinkOrganizationMcpRequest`, `ListMembersMcpRequest`, `ListOrganizationsMcpRequest`, `OrganizationMcpRequest`, `PurgeOrganizationMcpRequest`, `RemoveMemberMcpRequest`, `RestoreOrganizationMcpRequest`, `ShowOrganizationMcpRequest`, `SwitchContextMcpRequest`, `SyncOrganizationMcpRequest`, `SyncOrganizationsMcpRequest`, `TransferOwnershipMcpRequest`, `UnlinkOrganizationMcpRequest`, `UpdateOrganizationMcpRequest`; Permission: `CreatePermissionMcpRequest`, `DeletePermissionMcpRequest`, `ListPermissionsMcpRequest`, `ListUserPermissionsMcpRequest`, `UpdatePermissionMcpRequest`; Role: `AssignRoleMcpRequest`, `CreateRoleMcpRequest`, `DeleteRoleMcpRequest`, `ListRoleAssignmentsMcpRequest`, `ListRolesMcpRequest`, `RevokeRoleMcpRequest`, `RoleMcpRequest`, `ShowRoleMcpRequest`, `UpdateRoleMcpRequest`; Scim: `CreateScimTokenMcpRequest`, `ListScimTokensMcpRequest`, `RevokeScimTokenMcpRequest`; Sso: `CreateSsoConnectionMcpRequest`, `DeleteSsoConnectionMcpRequest`, `ListSsoConnectionsMcpRequest`, `ListSsoIdentitiesMcpRequest`, `ShowSsoConnectionMcpRequest`, `SsoConnectionMcpRequest`, `UnlinkSsoIdentityMcpRequest`, `UpdateSsoConnectionMcpRequest`; Team: `AddTeamMemberMcpRequest`, `CreateTeamMcpRequest`, `DeleteTeamMcpRequest`, `ListTeamsMcpRequest`, `RemoveTeamMemberMcpRequest`, `ShowTeamMcpRequest`, `TeamMcpRequest`, `UpdateTeamMcpRequest`; Transfer: `CancelTransferMcpRequest`, `ConfirmImportMcpRequest`, `ListTransfersMcpRequest`, `ShowImportTemplateMcpRequest`, `ShowTransferMcpRequest`, `StartExportMcpRequest`, `StartImportMcpRequest`, `StartTransferMcpRequest`, `TransferMcpRequest`; User: `ApproveUserMcpRequest`, `CreateUserMcpRequest`, `DeactivateUserMcpRequest`, `DeleteUserMcpRequest`, `ListUsersMcpRequest`, `PurgeUserMcpRequest`, `ReactivateUserMcpRequest`, `RejectUserMcpRequest`, `RestoreUserMcpRequest`, `ShowUserMcpRequest`, `SuspendUserMcpRequest`, `UpdateProfileMcpRequest`, `UpdateUserMcpRequest`, `UserMcpRequest`.
+  - `Mcp\Tools\*` → `Domains\{Domain}\Mcp\Tools\*`: Audit: `ListAuditEntriesTool`, `RecordAuditEventTool`, `ShowAuditEntryTool`; Impersonation: `ListImpersonationsTool`, `StartImpersonationTool`, `StopImpersonationTool`; Invitation: `AcceptInvitationTool`, `CreateInvitationTool`, `DeclineInvitationTool`, `ListInvitationsTool`, `RevokeInvitationTool`; Organization: `AddMemberTool`, `CreateOrganizationTool`, `DeleteOrganizationTool`, `JoinByDomainTool`, `LinkOrganizationTool`, `ListMembersTool`, `ListOrganizationsTool`, `PurgeOrganizationTool`, `RemoveMemberTool`, `RestoreOrganizationTool`, `ShowOrganizationTool`, `SwitchContextTool`, `SyncOrganizationTool`, `SyncOrganizationsTool`, `TransferOwnershipTool`, `UnlinkOrganizationTool`, `UpdateOrganizationTool`; Permission: `CreatePermissionTool`, `DeletePermissionTool`, `ListPermissionsTool`, `ListUserPermissionsTool`, `UpdatePermissionTool`; Role: `AssignRoleTool`, `CreateRoleTool`, `DeleteRoleTool`, `ListRoleAssignmentsTool`, `ListRolesTool`, `RevokeRoleTool`, `ShowRoleTool`, `UpdateRoleTool`; Scim: `CreateScimTokenTool`, `ListScimTokensTool`, `RevokeScimTokenTool`; Sso: `CreateSsoConnectionTool`, `DeleteSsoConnectionTool`, `ListSsoConnectionsTool`, `ListSsoIdentitiesTool`, `ShowSsoConnectionTool`, `UnlinkSsoIdentityTool`, `UpdateSsoConnectionTool`; Team: `AddTeamMemberTool`, `CreateTeamTool`, `DeleteTeamTool`, `ListTeamsTool`, `RemoveTeamMemberTool`, `ShowTeamTool`, `UpdateTeamTool`; Transfer: `CancelTransferTool`, `ConfirmImportTool`, `ListTransfersTool`, `ShowImportTemplateTool`, `ShowTransferTool`, `StartExportTool`, `StartImportTool`; User: `ApproveUserTool`, `CreateUserTool`, `DeactivateUserTool`, `DeleteUserTool`, `ListUsersTool`, `PurgeUserTool`, `ReactivateUserTool`, `RejectUserTool`, `RestoreUserTool`, `ShowUserTool`, `SuspendUserTool`, `UpdateProfileTool`, `UpdateUserTool`.
+- Every other moved class, old → new (all under `JayI\Roster\`):
+  - `Access\Authorizer` → `Domains\Permission\Services\Authorizer`
+  - `Access\Permissions` → `Domains\Permission\Services\Permissions`
+  - `Actions\Concerns\ChangesStatus` → `Domains\User\Concerns\ChangesStatus`
+  - `Actions\Concerns\GuardsEscalation` → `Domains\Role\Concerns\GuardsEscalation`
+  - `Actions\Concerns\ManagesMemberships` → `Domains\Organization\Concerns\ManagesMemberships`
+  - `Actions\Concerns\OrganizationRules` → `Domains\Organization\Concerns\OrganizationRules`
+  - `Actions\Concerns\ProfileRules` → `Domains\User\Concerns\ProfileRules`
+  - `Actions\Concerns\ResolvesInvitations` → `Domains\Invitation\Concerns\ResolvesInvitations`
+  - `Actions\Concerns\ResolvesScopes` → `Support\Concerns\ResolvesScopes`
+  - `Actions\Concerns\SsoConnectionRules` → `Domains\Sso\Concerns\SsoConnectionRules`
+  - `Audit\AuditLog` → `Domains\Audit\Services\AuditLog`
+  - `Audit\AuditRecorder` → `Domains\Audit\Services\AuditRecorder`
+  - `Audit\PendingAuditEntry` → `Domains\Audit\Data\PendingAuditEntry`
+  - `Audit\Snapshots` → `Domains\Audit\Services\Snapshots`
+  - `Audit\Surface` → `Domains\Audit\Services\Surface`
+  - `Concerns\HasRoster` → `Domains\User\Concerns\HasRoster`
+  - `Console\Commands\GrantSuperAdminCommand` → `Domains\Role\Console\Commands\GrantSuperAdminCommand`
+  - `Console\Commands\PruneAuditCommand` → `Domains\Audit\Console\Commands\PruneAuditCommand`
+  - `Console\Commands\PruneTransfersCommand` → `Domains\Transfer\Console\Commands\PruneTransfersCommand`
+  - `Console\Commands\SyncPermissionsCommand` → `Domains\Permission\Console\Commands\SyncPermissionsCommand`
+  - `Console\Commands\VerifyAuditCommand` → `Domains\Audit\Console\Commands\VerifyAuditCommand`
+  - `Enums\InvitationStatus` → `Domains\Invitation\Enums\InvitationStatus`
+  - `Enums\MembershipSource` → `Domains\Organization\Enums\MembershipSource`
+  - `Enums\RoleScope` → `Domains\Role\Enums\RoleScope`
+  - `Enums\TransferStatus` → `Domains\Transfer\Enums\TransferStatus`
+  - `Enums\TransferType` → `Domains\Transfer\Enums\TransferType`
+  - `Enums\UserStatus` → `Domains\User\Enums\UserStatus`
+  - `Exceptions\AuditLogIsAppendOnlyException` → `Domains\Audit\Exceptions\AuditLogIsAppendOnlyException`
+  - `Exceptions\InvalidInvitationException` → `Domains\Invitation\Exceptions\InvalidInvitationException`
+  - `Features\RosterSupportFeature` → `Atrium\Features\RosterSupportFeature`
+  - `Http\Middleware\AuthenticateScimToken` → `Domains\Scim\Http\Middleware\AuthenticateScimToken`
+  - `Http\Middleware\EnsureUserHasOrganization` → `Domains\Organization\Http\Middleware\EnsureUserHasOrganization`
+  - `Http\Middleware\EnsureUserIsActive` → `Domains\User\Http\Middleware\EnsureUserIsActive`
+  - `Http\Middleware\SyncImpersonation` → `Domains\Impersonation\Http\Middleware\SyncImpersonation`
+  - `Http\Scim\ScimController` → `Domains\Scim\Http\Controllers\ScimController`
+  - `Http\Ui\AuditUiController` → `Atrium\Http\Controllers\AuditUiController`
+  - `Http\Ui\Concerns\AuthorizesScreens` → `Atrium\Http\Controllers\Concerns\AuthorizesScreens`
+  - `Http\Ui\ImpersonationUiController` → `Atrium\Http\Controllers\ImpersonationUiController`
+  - `Http\Ui\InvitationUiController` → `Atrium\Http\Controllers\InvitationUiController`
+  - `Http\Ui\OrganizationUiController` → `Atrium\Http\Controllers\OrganizationUiController`
+  - `Http\Ui\PermissionUiController` → `Atrium\Http\Controllers\PermissionUiController`
+  - `Http\Ui\RoleUiController` → `Atrium\Http\Controllers\RoleUiController`
+  - `Http\Ui\ScimUiController` → `Atrium\Http\Controllers\ScimUiController`
+  - `Http\Ui\ScreenAccess` → `Atrium\ScreenAccess`
+  - `Http\Ui\SsoUiController` → `Atrium\Http\Controllers\SsoUiController`
+  - `Http\Ui\TeamUiController` → `Atrium\Http\Controllers\TeamUiController`
+  - `Http\Ui\TransferUiController` → `Atrium\Http\Controllers\TransferUiController`
+  - `Http\Ui\UserUiController` → `Atrium\Http\Controllers\UserUiController`
+  - `Http\Web\ImpersonationWebController` → `Domains\Impersonation\Http\Controllers\ImpersonationWebController`
+  - `Http\Web\InvitationWebController` → `Domains\Invitation\Http\Controllers\InvitationWebController`
+  - `Http\Web\SsoWebController` → `Domains\Sso\Http\Controllers\SsoWebController`
+  - `Http\Web\TransferFileController` → `Domains\Transfer\Http\Controllers\TransferFileController`
+  - `Impersonation\ImpersonationContext` → `Domains\Impersonation\Services\ImpersonationContext`
+  - `Impersonation\Impersonator` → `Domains\Impersonation\Services\Impersonator`
+  - `Impersonation\StartedImpersonation` → `Domains\Impersonation\Data\StartedImpersonation`
+  - `Listeners\ApplyRegistrationStatus` → `Domains\User\Listeners\ApplyRegistrationStatus`
+  - `Listeners\JoinOrganizationsOnVerified` → `Domains\Organization\Listeners\JoinOrganizationsOnVerified`
+  - `Mcp\Tools\Concerns\DescribesOrganization` → `Mcp\Concerns\DescribesOrganization`
+  - `Mcp\Tools\Concerns\DescribesProfilePayload` → `Mcp\Concerns\DescribesProfilePayload`
+  - `Mcp\Tools\Concerns\DescribesTeam` → `Mcp\Concerns\DescribesTeam`
+  - `Mcp\Tools\Concerns\DescribesUser` → `Mcp\Concerns\DescribesUser`
+  - `Models\AuditEntry` → `Domains\Audit\Models\AuditEntryModel`
+  - `Models\Impersonation` → `Domains\Impersonation\Models\ImpersonationModel`
+  - `Models\Invitation` → `Domains\Invitation\Models\InvitationModel`
+  - `Models\Membership` → `Domains\Organization\Models\MembershipModel`
+  - `Models\Organization` → `Domains\Organization\Models\OrganizationModel`
+  - `Models\OrganizationDomain` → `Domains\Organization\Models\OrganizationDomainModel`
+  - `Models\OrganizationLink` → `Domains\Organization\Models\OrganizationLinkModel`
+  - `Models\Permission` → `Domains\Permission\Models\PermissionModel`
+  - `Models\Profile` → `Domains\User\Models\ProfileModel`
+  - `Models\Role` → `Domains\Role\Models\RoleModel`
+  - `Models\RoleAssignment` → `Domains\Role\Models\RoleAssignmentModel`
+  - `Models\ScimGroup` → `Domains\Scim\Models\ScimGroupModel`
+  - `Models\ScimToken` → `Domains\Scim\Models\ScimTokenModel`
+  - `Models\ScimUser` → `Domains\Scim\Models\ScimUserModel`
+  - `Models\SsoConnection` → `Domains\Sso\Models\SsoConnectionModel`
+  - `Models\SsoIdentity` → `Domains\Sso\Models\SsoIdentityModel`
+  - `Models\Team` → `Domains\Team\Models\TeamModel`
+  - `Models\TeamMember` → `Domains\Team\Models\TeamMemberModel`
+  - `Models\Transfer` → `Domains\Transfer\Models\TransferModel`
+  - `Models\TransferRow` → `Domains\Transfer\Models\TransferRowModel`
+  - `Models\User` → `Domains\User\Models\UserModel`
+  - `Notifications\InvitationNotification` → `Domains\Invitation\Notifications\InvitationNotification`
+  - `Notifications\UserApprovedNotification` → `Domains\User\Notifications\UserApprovedNotification`
+  - `Notifications\UserAwaitingApprovalNotification` → `Domains\User\Notifications\UserAwaitingApprovalNotification`
+  - `Notifications\UserRejectedNotification` → `Domains\User\Notifications\UserRejectedNotification`
+  - `Rules\NotSsoEnforced` → `Domains\Sso\Support\NotSsoEnforced`
+  - `Scim\Bulk` → `Domains\Scim\Services\Bulk`
+  - `Scim\Discovery` → `Domains\Scim\Services\Discovery`
+  - `Scim\FilterParser` → `Domains\Scim\Services\FilterParser`
+  - `Scim\IssuedScimToken` → `Domains\Scim\Data\IssuedScimToken`
+  - `Scim\PatchApplier` → `Domains\Scim\Services\PatchApplier`
+  - `Scim\Scim` → `Domains\Scim\Services\Scim`
+  - `Scim\ScimContext` → `Domains\Scim\Services\ScimContext`
+  - `Scim\ScimException` → `Domains\Scim\Exceptions\ScimException`
+  - `Scim\ScimGroups` → `Domains\Scim\Services\ScimGroups`
+  - `Scim\ScimMapper` → `Domains\Scim\Services\ScimMapper`
+  - `Scim\ScimQuery` → `Domains\Scim\Services\ScimQuery`
+  - `Scim\ScimUsers` → `Domains\Scim\Services\ScimUsers`
+  - `Sso\IdentityClaims` → `Domains\Sso\Data\IdentityClaims`
+  - `Sso\OidcProvider` → `Domains\Sso\Services\OidcProvider`
+  - `Sso\Sso` → `Domains\Sso\Services\Sso`
+  - `Sso\SsoLoginRefused` → `Domains\Sso\Exceptions\SsoLoginRefused`
+  - `Sso\SsoUnavailableException` → `Domains\Sso\Exceptions\SsoUnavailableException`
+  - `Support\Approvals` → `Domains\User\Services\Approvals`
+  - `Support\AuditAccess` → `Domains\Audit\Services\AuditAccess`
+  - `Support\BuiltInRoles` → `Domains\Role\Support\BuiltInRoles`
+  - `Support\InvitationTokens` → `Domains\Invitation\Services\InvitationTokens`
+  - `Support\OrganizationSyncResult` → `Domains\Organization\Data\OrganizationSyncResult`
+  - `Transfers\Csv\Reader` → `Domains\Transfer\Support\Csv\Reader`
+  - `Transfers\Csv\Writer` → `Domains\Transfer\Support\Csv\Writer`
+  - `Transfers\Exporters\AuditExporter` → `Domains\Transfer\Services\Exporters\AuditExporter`
+  - `Transfers\Exporters\Exporter` → `Domains\Transfer\Services\Exporters\Exporter`
+  - `Transfers\Exporters\MembersExporter` → `Domains\Transfer\Services\Exporters\MembersExporter`
+  - `Transfers\Exporters\OrganizationsExporter` → `Domains\Transfer\Services\Exporters\OrganizationsExporter`
+  - `Transfers\Exporters\UsersExporter` → `Domains\Transfer\Services\Exporters\UsersExporter`
+  - `Transfers\PlanCache` → `Domains\Transfer\Services\PlanCache`
+  - `Transfers\Planners\MembersPlanner` → `Domains\Transfer\Services\Planners\MembersPlanner`
+  - `Transfers\Planners\OrganizationsPlanner` → `Domains\Transfer\Services\Planners\OrganizationsPlanner`
+  - `Transfers\Planners\Planner` → `Domains\Transfer\Services\Planners\Planner`
+  - `Transfers\Planners\TeamsPlanner` → `Domains\Transfer\Services\Planners\TeamsPlanner`
+  - `Transfers\Planners\UsersPlanner` → `Domains\Transfer\Services\Planners\UsersPlanner`
+  - `Transfers\TransferContext` → `Domains\Transfer\Services\TransferContext`
+  - `Transfers\Transfers` → `Domains\Transfer\Services\Transfers`
+  - `Transfers\TransfersUnavailableException` → `Domains\Transfer\Exceptions\TransfersUnavailableException`
+
 ### Fixed
 
 - An organization's tabs each need their own permission there (`roster.members.view`, `roster.teams.view`, `roster.invitations.view`, `roster.roles.view`, `roster.sso.view`, `roster.scim.manage`, `roster.audit.view`). Before, anyone who could view the organization could open every tab, including SCIM tokens, SSO connections and its audit log.

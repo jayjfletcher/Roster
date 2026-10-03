@@ -5,7 +5,7 @@ declare(strict_types=1);
 require_once __DIR__.'/fixtures.php';
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
 
 it('covers every roster API route', function (): void {
     $names = collect(Route::getRoutes()->getRoutesByName())

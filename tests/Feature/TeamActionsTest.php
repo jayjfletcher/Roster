@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\AddTeamMemberAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Actions\DeleteTeamAction;
-use JayI\Roster\Actions\ListTeamsAction;
-use JayI\Roster\Actions\RemoveTeamMemberAction;
-use JayI\Roster\Actions\ShowTeamAction;
-use JayI\Roster\Actions\UpdateTeamAction;
-use JayI\Roster\Models\Team;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use JayI\Roster\Domains\Team\Actions\DeleteTeamAction;
+use JayI\Roster\Domains\Team\Actions\ListTeamsAction;
+use JayI\Roster\Domains\Team\Actions\RemoveTeamMemberAction;
+use JayI\Roster\Domains\Team\Actions\ShowTeamAction;
+use JayI\Roster\Domains\Team\Actions\UpdateTeamAction;
+use JayI\Roster\Domains\Team\Models\TeamModel;
 
 it('creates teams with slugs unique within the organization', function (): void {
     $acme = organization(attributes: ['name' => 'Acme']);
@@ -40,7 +40,7 @@ it('lists, shows, updates and deletes teams', function (): void {
 
     app(DeleteTeamAction::class)->execute($team);
 
-    expect(Team::query()->count())->toBe(0);
+    expect(TeamModel::query()->count())->toBe(0);
 });
 
 it('seats only organization members, once', function (): void {

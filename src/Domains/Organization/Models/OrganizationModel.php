@@ -1,0 +1,135 @@
+<?php
+
+declare(strict_types=1);
+
+namespace JayI\Roster\Domains\Organization\Models;
+
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
+use JayI\Roster\Database\Factories\OrganizationFactory;
+use JayI\Roster\Domains\Invitation\Models\InvitationModel;
+use JayI\Roster\Domains\Team\Models\TeamModel;
+use JayI\Roster\Support\Users;
+
+/**
+ * The tenant: owns teams, memberships and invitations.
+ *
+ * @property string $id
+ * @property string $name
+ * @property string $slug
+ * @property int|string|null $owner_id
+ * @property bool $personal
+ * @property bool $auto_join
+ * @property string $provisioned_status
+ * @property Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
+final class OrganizationModel extends Model
+{
+    /** @use HasFactory<OrganizationFactory> */
+    use HasFactory;
+
+    use HasUlids;
+    use SoftDeletes;
+
+    protected $table = 'roster_organizations';
+
+    protected $fillable = ['name', 'slug', 'owner_id', 'personal', 'auto_join', 'provisioned_status'];
+
+    protected $attributes = [
+        'personal' => false,
+        'auto_join' => false,
+    ];
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    /**
+     * @return BelongsTo<Model, $this>
+     */
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(app(Users::class)->model(), 'owner_id');
+    }
+
+    /**
+     * @return HasMany<MembershipModel, $this>
+     */
+    public function memberships(): HasMany
+    {
+        return $this->hasMany(MembershipModel::class, 'organization_id');
+    }
+
+    /**
+     * @return BelongsToMany<Model, $this>
+     */
+    public function members(): BelongsToMany
+    {
+        return $this->belongsToMany(app(Users::class)->model(), 'roster_memberships', 'organization_id', 'user_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * @return HasMany<TeamModel, $this>
+     */
+    public function teams(): HasMany
+    {
+        return $this->hasMany(TeamModel::class, 'organization_id');
+    }
+
+    /**
+     * @return HasMany<OrganizationDomainModel, $this>
+     */
+    public function domains(): HasMany
+    {
+        return $this->hasMany(OrganizationDomainModel::class, 'organization_id');
+    }
+
+    /**
+     * @return HasMany<InvitationModel, $this>
+     */
+    public function invitations(): HasMany
+    {
+        return $this->hasMany(InvitationModel::class, 'organization_id');
+    }
+
+    /**
+     * @return HasMany<OrganizationLinkModel, $this>
+     */
+    public function links(): HasMany
+    {
+        return $this->hasMany(OrganizationLinkModel::class, 'organization_id');
+    }
+
+    public function isOwnedBy(Model $user): bool
+    {
+        return $this->owner_id !== null && (string) $this->owner_id === (string) $user->getKey();
+    }
+
+    public function membershipFor(Model $user): ?MembershipModel
+    {
+        return $this->memberships()->where('user_id', $user->getKey())->first();
+    }
+
+    protected static function newFactory(): OrganizationFactory
+    {
+        return OrganizationFactory::new();
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'personal' => 'boolean',
+            'auto_join' => 'boolean',
+        ];
+    }
+}

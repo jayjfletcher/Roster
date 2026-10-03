@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Notification;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Actions\CreateUserAction;
 use JayI\Roster\Atrium\RosterPlugin;
-use JayI\Roster\Models\Invitation;
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Notifications\InvitationNotification;
+use JayI\Roster\Domains\Invitation\Models\InvitationModel;
+use JayI\Roster\Domains\Invitation\Notifications\InvitationNotification;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use JayI\Roster\Domains\User\Actions\CreateUserAction;
 use JayI\Roster\Roster;
 
 beforeEach(function (): void {
@@ -26,7 +26,7 @@ it('lists, creates and shows organizations', function (): void {
         'domains' => "acme.com\nacme.io",
     ])->assertRedirect(route('atrium.roster.organizations.show', 'acme'));
 
-    expect(Organization::query()->sole()->domains()->pluck('domain')->sort()->values()->all())->toBe(['acme.com', 'acme.io']);
+    expect(OrganizationModel::query()->sole()->domains()->pluck('domain')->sort()->values()->all())->toBe(['acme.com', 'acme.io']);
 
     $this->get(route('atrium.roster.organizations.index'))->assertOk()->assertSee('Acme');
 
@@ -55,11 +55,11 @@ it('edits settings and deletes', function (): void {
 
     // Refused until "I understand" is ticked.
     $this->delete(route('atrium.roster.organizations.destroy', $organization))->assertSessionHasErrors('confirm');
-    expect(Organization::query()->count())->toBe(1);
+    expect(OrganizationModel::query()->count())->toBe(1);
 
     $this->delete(route('atrium.roster.organizations.destroy', $organization), ['confirm' => '1'])->assertRedirect(route('atrium.roster.organizations.index', ['trashed' => 'only']));
 
-    expect(Organization::query()->count())->toBe(0);
+    expect(OrganizationModel::query()->count())->toBe(0);
 });
 
 it('manages members and ownership', function (): void {
@@ -102,7 +102,7 @@ it('invites and revokes', function (): void {
     $this->post(route('atrium.roster.invitations.store', $organization), ['email' => 'ada@example.com', 'teams' => ['ops']])->assertRedirect();
 
     Notification::assertSentOnDemand(InvitationNotification::class);
-    $invitation = Invitation::query()->sole();
+    $invitation = InvitationModel::query()->sole();
 
     $this->get(route('atrium.roster.organizations.show', [$organization, 'tab' => 'invitations']))->assertSee('ada@example.com');
 

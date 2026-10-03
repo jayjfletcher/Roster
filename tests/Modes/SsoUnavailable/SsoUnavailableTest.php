@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Models\SsoConnection;
-use JayI\Roster\Sso\Sso;
-use JayI\Roster\Sso\SsoUnavailableException;
+use JayI\Roster\Domains\Sso\Exceptions\SsoUnavailableException;
+use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
+use JayI\Roster\Domains\Sso\Services\Sso;
 
 it('registers no sign-in routes but still manages connections', function (): void {
     expect(Route::has('roster.sso.start'))->toBeFalse()
@@ -17,5 +17,5 @@ it('registers no sign-in routes but still manages connections', function (): voi
 });
 
 it('explains which packages to install', function (): void {
-    app(Sso::class)->provider(SsoConnection::factory()->azure()->create(['organization_id' => organization()->id]));
+    app(Sso::class)->provider(SsoConnectionModel::factory()->azure()->create(['organization_id' => organization()->id]));
 })->throws(SsoUnavailableException::class, 'composer require laravel/socialite socialiteproviders/microsoft-azure');

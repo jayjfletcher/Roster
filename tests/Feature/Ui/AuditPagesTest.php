@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Actions\SuspendUserAction;
-use JayI\Roster\Models\AuditEntry;
+use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use JayI\Roster\Domains\User\Actions\SuspendUserAction;
 
 beforeEach(function (): void {
     $this->actingAs(user(['name' => 'Admin']));
@@ -12,7 +12,7 @@ beforeEach(function (): void {
 it('lists, filters and shows entries', function (): void {
     $ada = user(['name' => 'Ada Lovelace']);
     app(SuspendUserAction::class)->execute($ada, ['reason' => 'Spam']);
-    $entry = AuditEntry::query()->where('action', 'user.suspended')->sole();
+    $entry = AuditEntryModel::query()->where('action', 'user.suspended')->sole();
 
     $this->get(route('atrium.roster.audit.index'))->assertOk()->assertSee('user.suspended')->assertSee('Ada Lovelace');
     $this->get(route('atrium.roster.audit.index', ['action' => 'user.']))->assertOk()->assertSee('user.suspended');
@@ -25,7 +25,7 @@ it('records a note', function (): void {
     $this->post(route('atrium.roster.audit.store'), ['action' => 'contract.signed', 'subject_label' => 'MSA', 'context' => ['note' => 'Signed on paper']])
         ->assertRedirect(route('atrium.roster.audit.index'));
 
-    $entry = AuditEntry::query()->where('source', 'app')->sole();
+    $entry = AuditEntryModel::query()->where('source', 'app')->sole();
 
     expect($entry->context)->toBe(['note' => 'Signed on paper'])
         ->and($entry->surface)->toBe('atrium');

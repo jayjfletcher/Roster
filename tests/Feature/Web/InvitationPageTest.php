@@ -5,11 +5,11 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
-use JayI\Roster\Actions\CreateInvitationAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Enums\InvitationStatus;
-use JayI\Roster\Models\Invitation;
-use JayI\Roster\Notifications\InvitationNotification;
+use JayI\Roster\Domains\Invitation\Actions\CreateInvitationAction;
+use JayI\Roster\Domains\Invitation\Enums\InvitationStatus;
+use JayI\Roster\Domains\Invitation\Models\InvitationModel;
+use JayI\Roster\Domains\Invitation\Notifications\InvitationNotification;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
 
 beforeEach(function (): void {
     Notification::fake();
@@ -64,7 +64,7 @@ it('declines', function (): void {
         ->post(route('roster.invitations.page.decline', $this->token))
         ->assertRedirect('/');
 
-    expect(Invitation::query()->sole()->status())->toBe(InvitationStatus::Declined);
+    expect(InvitationModel::query()->sole()->status())->toBe(InvitationStatus::Declined);
 });
 
 it('shows an error to the wrong user', function (): void {

@@ -7,18 +7,18 @@ require_once __DIR__.'/Sso/helpers.php';
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\CreateOrganizationAction;
-use JayI\Roster\Actions\DeleteOrganizationAction;
-use JayI\Roster\Actions\DeleteUserAction;
-use JayI\Roster\Actions\JoinOrganizationsByDomainAction;
-use JayI\Roster\Actions\PurgeOrganizationAction;
-use JayI\Roster\Actions\PurgeUserAction;
-use JayI\Roster\Actions\RestoreOrganizationAction;
-use JayI\Roster\Actions\SwitchContextAction;
-use JayI\Roster\Models\AuditEntry;
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Models\SsoConnection;
+use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
+use JayI\Roster\Domains\Organization\Actions\DeleteOrganizationAction;
+use JayI\Roster\Domains\Organization\Actions\JoinOrganizationsByDomainAction;
+use JayI\Roster\Domains\Organization\Actions\PurgeOrganizationAction;
+use JayI\Roster\Domains\Organization\Actions\RestoreOrganizationAction;
+use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
+use JayI\Roster\Domains\User\Actions\DeleteUserAction;
+use JayI\Roster\Domains\User\Actions\PurgeUserAction;
 use JayI\Roster\Roster;
 use Workbench\App\Models\User;
 
@@ -41,7 +41,7 @@ it('turns a deleted organization off everywhere until it is restored', function 
     $member = user(['email' => 'member@example.com']);
     app(AddMemberAction::class)->execute($acme, ['user' => $member->getRouteKey()]);
     app(SwitchContextAction::class)->execute($member, ['organization' => 'acme']);
-    SsoConnection::factory()->create(['organization_id' => $acme->id, 'slug' => 'acme-okta']);
+    SsoConnectionModel::factory()->create(['organization_id' => $acme->id, 'slug' => 'acme-okta']);
 
     app(DeleteOrganizationAction::class)->execute($acme);
     app()->forgetScopedInstances();
@@ -49,7 +49,7 @@ it('turns a deleted organization off everywhere until it is restored', function 
     $this->actingAs(user())->getJson(route('roster.organizations.show', 'acme'))->assertNotFound();
     $this->getJson('/scim/v2/acme/Users', ['Authorization' => 'Bearer '.$token])->assertUnauthorized();
 
-    expect(SsoConnection::query()->where('slug', 'acme-okta')->exists())->toBeFalse()
+    expect(SsoConnectionModel::query()->where('slug', 'acme-okta')->exists())->toBeFalse()
         ->and(app(Roster::class)->organization($member->fresh()))->toBeNull()
         ->and(app(JoinOrganizationsByDomainAction::class)->execute(user(['email' => 'new@acme.test', 'email_verified_at' => now()])))->toHaveCount(0);
 
@@ -57,7 +57,7 @@ it('turns a deleted organization off everywhere until it is restored', function 
     expect(fn () => validator(['name' => 'Acme', 'slug' => 'acme', 'owner' => user()->getRouteKey()], CreateOrganizationAction::rules())->validate())->toThrow(ValidationException::class)
         ->and(fn () => validator(['name' => 'New', 'domains' => ['acme.test']], CreateOrganizationAction::rules())->validate())->toThrow(ValidationException::class);
 
-    app(RestoreOrganizationAction::class)->execute(Organization::withTrashed()->sole());
+    app(RestoreOrganizationAction::class)->execute(OrganizationModel::withTrashed()->sole());
     app()->forgetScopedInstances();
 
     expect(app(Roster::class)->organization($member->fresh())?->slug)->toBe('acme');
@@ -72,9 +72,9 @@ it('only purges deleted records, and audits it', function (): void {
         ->and(fn () => app(PurgeUserAction::class)->execute($ada))->toThrow(ValidationException::class, 'Delete it first');
 
     app(DeleteOrganizationAction::class)->execute($acme);
-    app(PurgeOrganizationAction::class)->execute(Organization::withTrashed()->sole());
+    app(PurgeOrganizationAction::class)->execute(OrganizationModel::withTrashed()->sole());
 
-    expect(AuditEntry::query()->where('action', 'organization.purged')->exists())->toBeTrue();
+    expect(AuditEntryModel::query()->where('action', 'organization.purged')->exists())->toBeTrue();
 });
 
 it('purges records deleted longer ago than the retention period', function (): void {
@@ -90,16 +90,16 @@ it('purges records deleted longer ago than the retention period', function (): v
 
     // Null retention keeps deleted records forever.
     $this->artisan('roster:purge-deleted')->expectsOutputToContain('forever')->assertSuccessful();
-    expect(Organization::onlyTrashed()->count())->toBe(2);
+    expect(OrganizationModel::onlyTrashed()->count())->toBe(2);
 
     config()->set('roster.deletes.retention_days', 30);
     $this->artisan('roster:purge-deleted')->expectsOutputToContain('Purged 1 users')->assertSuccessful();
 
-    expect(Organization::onlyTrashed()->pluck('name')->all())->toBe(['Recent'])
+    expect(OrganizationModel::onlyTrashed()->pluck('name')->all())->toBe(['Recent'])
         ->and(User::withTrashed()->whereKey($gone->getKey())->exists())->toBeFalse();
 
     $this->artisan('roster:purge-deleted', ['--days' => 0])->assertSuccessful();
-    expect(Organization::onlyTrashed()->count())->toBe(0);
+    expect(OrganizationModel::onlyTrashed()->count())->toBe(0);
 });
 
 it('restores and purges from atrium, and lists deleted records', function (): void {
@@ -120,5 +120,5 @@ it('restores and purges from atrium, and lists deleted records', function (): vo
 
     $this->delete(route('atrium.roster.organizations.purge', 'globex'))->assertSessionHasErrors('confirm');
     $this->delete(route('atrium.roster.organizations.purge', 'globex'), ['confirm' => '1'])->assertRedirect();
-    expect(Organization::withTrashed()->where('slug', 'globex')->exists())->toBeFalse();
+    expect(OrganizationModel::withTrashed()->where('slug', 'globex')->exists())->toBeFalse();
 });

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Mcp\Tools\CreateSsoConnectionTool;
-use JayI\Roster\Mcp\Tools\ListSsoIdentitiesTool;
-use JayI\Roster\Mcp\Tools\ShowSsoConnectionTool;
-use JayI\Roster\Models\SsoIdentity;
+use JayI\Roster\Domains\Sso\Mcp\Tools\CreateSsoConnectionTool;
+use JayI\Roster\Domains\Sso\Mcp\Tools\ListSsoIdentitiesTool;
+use JayI\Roster\Domains\Sso\Mcp\Tools\ShowSsoConnectionTool;
+use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
 
 it('manages connections over HTTP and MCP without exposing secrets', function (): void {
     $acme = organization(attributes: ['name' => 'Acme']);
@@ -36,11 +36,11 @@ it('lists and unlinks identities', function (): void {
     require_once dirname(__DIR__).'/Sso/helpers.php';
     $connection = acmeWithSso();
     $ada = user();
-    $identity = SsoIdentity::query()->create(['connection_id' => $connection->id, 'user_id' => $ada->getKey(), 'subject' => 's1', 'email' => 'ada@acme.test']);
+    $identity = SsoIdentityModel::query()->create(['connection_id' => $connection->id, 'user_id' => $ada->getKey(), 'subject' => 's1', 'email' => 'ada@acme.test']);
 
     $this->getJson(route('roster.users.sso-identities.index', $ada->getRouteKey()))->assertOk()->assertJsonPath('data.0.subject', 's1');
     mcpTool(ListSsoIdentitiesTool::class, ['user' => $ada->getRouteKey()])->assertOk()->assertSee('s1');
 
     $this->deleteJson(route('roster.sso-identities.destroy', $identity->id))->assertNoContent();
-    expect(SsoIdentity::query()->count())->toBe(0);
+    expect(SsoIdentityModel::query()->count())->toBe(0);
 });

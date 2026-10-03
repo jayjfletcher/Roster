@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Atrium;
 
-use JayI\Roster\Enums\InvitationStatus;
-use JayI\Roster\Enums\TransferStatus;
-use JayI\Roster\Enums\UserStatus;
+use JayI\Roster\Domains\Invitation\Enums\InvitationStatus;
+use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
+use JayI\Roster\Domains\User\Enums\UserStatus;
 
 /**
  * Atrium badge variants for Roster's enums.

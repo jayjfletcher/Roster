@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Tests;
 
-use JayI\Roster\Sso\Sso;
+use JayI\Roster\Domains\Sso\Services\Sso;
 
 /**
  * Roster as installed without the optional SSO packages.

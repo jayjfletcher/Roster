@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once __DIR__.'/fixtures.php';
 
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Models\RoleAssignment;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
 use Workbench\App\Models\User;
 
 /**
@@ -15,14 +15,14 @@ use Workbench\App\Models\User;
  * @param  array<int, string>  $permissions
  * @param  array<int, string>  $inOrganization
  */
-function viewer(array $permissions = [], ?Organization $organization = null, array $inOrganization = []): User
+function viewer(array $permissions = [], ?OrganizationModel $organization = null, array $inOrganization = []): User
 {
     $user = user();
 
-    RoleAssignment::query()->create(['role_id' => roleWith(['atrium.view', ...$permissions])->id, 'user_id' => $user->getKey()]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['atrium.view', ...$permissions])->id, 'user_id' => $user->getKey()]);
 
     if ($organization !== null) {
-        RoleAssignment::query()->create([
+        RoleAssignmentModel::query()->create([
             'role_id' => roleWith($inOrganization, 'organization')->id,
             'user_id' => $user->getKey(),
             'organization_id' => $organization->getKey(),

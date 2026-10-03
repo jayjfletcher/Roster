@@ -16,7 +16,7 @@
                 <x-atrium::form.select
                     name="status"
                     :label="__('roster::roster.initial_status')"
-                    :options="[\JayI\Roster\Enums\UserStatus::Active->value => \JayI\Roster\Enums\UserStatus::Active->label(), \JayI\Roster\Enums\UserStatus::Pending->value => \JayI\Roster\Enums\UserStatus::Pending->label()]"
+                    :options="[\JayI\Roster\Domains\User\Enums\UserStatus::Active->value => \JayI\Roster\Domains\User\Enums\UserStatus::Active->label(), \JayI\Roster\Domains\User\Enums\UserStatus::Pending->value => \JayI\Roster\Domains\User\Enums\UserStatus::Pending->label()]"
                     :selected="old('status', 'active')"
                     data-testid="initial-status" />
 

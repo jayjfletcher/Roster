@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace JayI\Roster\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JayI\Roster\Enums\UserStatus;
-use JayI\Roster\Models\Profile;
+use JayI\Roster\Domains\User\Enums\UserStatus;
+use JayI\Roster\Domains\User\Models\ProfileModel;
 
 /**
- * @extends Factory<Profile>
+ * @extends Factory<ProfileModel>
  */
 final class ProfileFactory extends Factory
 {
-    protected $model = Profile::class;
+    protected $model = ProfileModel::class;
 
     /**
      * @return array<string, mixed>

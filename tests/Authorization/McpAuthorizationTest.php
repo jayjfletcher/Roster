@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__.'/fixtures.php';
 
+use JayI\Roster\Domains\Invitation\Mcp\Tools\AcceptInvitationTool;
+use JayI\Roster\Domains\Invitation\Mcp\Tools\DeclineInvitationTool;
 use JayI\Roster\Mcp\RosterServer;
-use JayI\Roster\Mcp\Tools\AcceptInvitationTool;
-use JayI\Roster\Mcp\Tools\DeclineInvitationTool;
 
 /**
  * Arguments that name existing records for every tool.

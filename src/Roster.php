@@ -6,14 +6,14 @@ namespace JayI\Roster;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Access\Permissions;
-use JayI\Roster\Audit\PendingAuditEntry;
-use JayI\Roster\Audit\Surface;
-use JayI\Roster\Models\Membership;
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Models\SsoConnection;
-use JayI\Roster\Models\Team;
-use JayI\Roster\Models\TeamMember;
+use JayI\Roster\Domains\Audit\Data\PendingAuditEntry;
+use JayI\Roster\Domains\Audit\Services\Surface;
+use JayI\Roster\Domains\Organization\Models\MembershipModel;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Permission\Services\Permissions;
+use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
+use JayI\Roster\Domains\Team\Models\TeamMemberModel;
+use JayI\Roster\Domains\Team\Models\TeamModel;
 use JayI\Roster\Support\Users;
 
 /**
@@ -26,11 +26,11 @@ class Roster
      * Current organization and team per user, for this request. Cleared by
      * `forget()` whenever an Action changes something.
      *
-     * @var array<string, Organization|null>
+     * @var array<string, OrganizationModel|null>
      */
     private array $organizations = [];
 
-    /** @var array<string, Team|null> */
+    /** @var array<string, TeamModel|null> */
     private array $teams = [];
 
     public function __construct(private readonly Users $users) {}
@@ -51,7 +51,7 @@ class Roster
      * or when they have since left the stored one. Null when they belong to
      * no organization.
      */
-    public function organization(Model $user): ?Organization
+    public function organization(Model $user): ?OrganizationModel
     {
         $key = $this->key($user);
 
@@ -60,16 +60,16 @@ class Roster
             : $this->organizations[$key] = $this->resolveOrganization($user);
     }
 
-    private function resolveOrganization(Model $user): ?Organization
+    private function resolveOrganization(Model $user): ?OrganizationModel
     {
         $profile = $this->users->profileIfExists($user);
         $stored = $profile?->current_organization_id;
 
         // Memberships of deleted organizations don't count.
-        $memberships = Membership::query()->where('user_id', $user->getKey())->whereHas('organization');
+        $memberships = MembershipModel::query()->where('user_id', $user->getKey())->whereHas('organization');
 
         if ($stored !== null && (clone $memberships)->where('organization_id', $stored)->exists()) {
-            return Organization::query()->find($stored);
+            return OrganizationModel::query()->find($stored);
         }
 
         $first = $memberships->oldest()->oldest('id')->first();
@@ -90,7 +90,7 @@ class Roster
      * The enforced SSO connection that must be used to sign in with this
      * email, if any. Super-admins are never forced, so nobody is locked out.
      */
-    public function ssoRequiredFor(string $email): ?SsoConnection
+    public function ssoRequiredFor(string $email): ?SsoConnectionModel
     {
         $domain = strtolower(substr($email, (int) strrpos($email, '@') + 1));
 
@@ -98,7 +98,7 @@ class Roster
             return null;
         }
 
-        $connection = SsoConnection::query()
+        $connection = SsoConnectionModel::query()
             ->where('enforced', true)
             ->where('enabled', true)
             ->whereHas('organization.domains', fn (Builder $query): Builder => $query->where('domain', $domain))
@@ -117,7 +117,7 @@ class Roster
      * The user's current team: the stored one, while it belongs to the
      * current organization and the user still holds a seat on it.
      */
-    public function team(Model $user): ?Team
+    public function team(Model $user): ?TeamModel
     {
         $key = $this->key($user);
 
@@ -126,7 +126,7 @@ class Roster
             : $this->teams[$key] = $this->resolveTeam($user);
     }
 
-    private function resolveTeam(Model $user): ?Team
+    private function resolveTeam(Model $user): ?TeamModel
     {
         $organization = $this->organization($user);
         $stored = $this->users->profileIfExists($user)?->current_team_id;
@@ -135,7 +135,7 @@ class Roster
             return null;
         }
 
-        $team = Team::query()->whereKey($stored)->where('organization_id', $organization->getKey())->first();
+        $team = TeamModel::query()->whereKey($stored)->where('organization_id', $organization->getKey())->first();
 
         // Permission checks in a team scope need its organization; it's this one.
         $team?->setRelation('organization', $organization);
@@ -158,14 +158,14 @@ class Roster
             return;
         }
 
-        $memberships = Membership::query()
+        $memberships = MembershipModel::query()
             ->with('organization')
             ->whereHas('organization')
             ->whereIn('user_id', $users->map(fn (Model $user): mixed => $user->getKey())->all())
             ->oldest()
             ->oldest('id')
             ->get()
-            ->groupBy(fn (Membership $membership): string => (string) $membership->user_id);
+            ->groupBy(fn (MembershipModel $membership): string => (string) $membership->user_id);
 
         $current = [];
 
@@ -179,16 +179,16 @@ class Roster
         }
 
         $teamIds = array_values(array_filter(array_column($current, 2)));
-        $teams = $teamIds === [] ? collect() : Team::query()->whereIn('id', $teamIds)->get()->keyBy('id');
-        $seats = $teamIds === [] ? collect() : TeamMember::query()
+        $teams = $teamIds === [] ? collect() : TeamModel::query()->whereIn('id', $teamIds)->get()->keyBy('id');
+        $seats = $teamIds === [] ? collect() : TeamMemberModel::query()
             ->whereIn('team_id', $teamIds)
             ->whereIn('membership_id', array_filter(array_map(fn (array $entry): mixed => $entry[1]?->getKey(), $current)))
             ->get(['team_id', 'membership_id'])
-            ->map(fn (TeamMember $seat): string => $seat->team_id.':'.$seat->membership_id);
+            ->map(fn (TeamMemberModel $seat): string => $seat->team_id.':'.$seat->membership_id);
 
         foreach ($current as $key => [$user, $membership, $teamId]) {
             $team = $teamId === null ? null : $teams->get($teamId);
-            $seated = $team instanceof Team && $membership !== null
+            $seated = $team instanceof TeamModel && $membership !== null
                 && $team->organization_id === $membership->organization_id
                 && $seats->contains($team->id.':'.$membership->getKey());
 

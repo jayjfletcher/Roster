@@ -3,18 +3,18 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\CreateOrganizationAction;
-use JayI\Roster\Actions\DeleteOrganizationAction;
-use JayI\Roster\Actions\ListOrganizationsAction;
-use JayI\Roster\Actions\PurgeOrganizationAction;
-use JayI\Roster\Actions\RestoreOrganizationAction;
-use JayI\Roster\Actions\ShowOrganizationAction;
-use JayI\Roster\Actions\TransferOwnershipAction;
-use JayI\Roster\Actions\UpdateOrganizationAction;
-use JayI\Roster\Enums\MembershipSource;
-use JayI\Roster\Models\Membership;
-use JayI\Roster\Models\Organization;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
+use JayI\Roster\Domains\Organization\Actions\DeleteOrganizationAction;
+use JayI\Roster\Domains\Organization\Actions\ListOrganizationsAction;
+use JayI\Roster\Domains\Organization\Actions\PurgeOrganizationAction;
+use JayI\Roster\Domains\Organization\Actions\RestoreOrganizationAction;
+use JayI\Roster\Domains\Organization\Actions\ShowOrganizationAction;
+use JayI\Roster\Domains\Organization\Actions\TransferOwnershipAction;
+use JayI\Roster\Domains\Organization\Actions\UpdateOrganizationAction;
+use JayI\Roster\Domains\Organization\Enums\MembershipSource;
+use JayI\Roster\Domains\Organization\Models\MembershipModel;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
 
 it('creates an organization with its owner as first member', function (): void {
     $owner = user();
@@ -98,15 +98,15 @@ it('soft-deletes an organization, keeping everything until it is purged', functi
 
     app(DeleteOrganizationAction::class)->execute($organization);
 
-    expect(Organization::query()->count())->toBe(0)->and(Membership::query()->count())->toBe(1);
+    expect(OrganizationModel::query()->count())->toBe(0)->and(MembershipModel::query()->count())->toBe(1);
 
-    app(RestoreOrganizationAction::class)->execute(Organization::withTrashed()->sole());
-    expect(Organization::query()->count())->toBe(1);
+    app(RestoreOrganizationAction::class)->execute(OrganizationModel::withTrashed()->sole());
+    expect(OrganizationModel::query()->count())->toBe(1);
 
-    app(DeleteOrganizationAction::class)->execute(Organization::query()->sole());
-    app(PurgeOrganizationAction::class)->execute(Organization::withTrashed()->sole());
+    app(DeleteOrganizationAction::class)->execute(OrganizationModel::query()->sole());
+    app(PurgeOrganizationAction::class)->execute(OrganizationModel::withTrashed()->sole());
 
-    expect(Organization::withTrashed()->count())->toBe(0)->and(Membership::query()->count())->toBe(0);
+    expect(OrganizationModel::withTrashed()->count())->toBe(0)->and(MembershipModel::query()->count())->toBe(0);
 });
 
 it('refuses to delete or transfer a personal organization', function (string $action): void {

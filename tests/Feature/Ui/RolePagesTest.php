@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Models\Permission;
-use JayI\Roster\Models\Role;
-use JayI\Roster\Models\RoleAssignment;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Permission\Models\PermissionModel;
+use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
+use JayI\Roster\Domains\Role\Models\RoleModel;
 
 beforeEach(function (): void {
     $this->actingAs(user(['name' => 'Admin']));
@@ -17,18 +17,18 @@ it('manages permissions', function (): void {
     $this->post(route('atrium.roster.permissions.store'), ['name' => 'invoices.edit', 'description' => 'Edit'])->assertRedirect();
     $this->patch(route('atrium.roster.permissions.update', 'invoices.edit'), ['description' => 'Change'])->assertRedirect();
 
-    expect(Permission::query()->where('name', 'invoices.edit')->sole()->description)->toBe('Change');
+    expect(PermissionModel::query()->where('name', 'invoices.edit')->sole()->description)->toBe('Change');
 
     $this->delete(route('atrium.roster.permissions.destroy', 'invoices.edit'))->assertRedirect();
 
-    expect(Permission::query()->where('name', 'invoices.edit')->exists())->toBeFalse();
+    expect(PermissionModel::query()->where('name', 'invoices.edit')->exists())->toBeFalse();
 });
 
 it('manages roles', function (): void {
     $this->get(route('atrium.roster.roles.index'))->assertOk()->assertSee('Super admin');
 
     $this->post(route('atrium.roster.roles.store'), ['name' => 'Auditor', 'scope' => 'global', 'permissions' => ['roster.users.view']])->assertRedirect();
-    $role = Role::query()->where('slug', 'auditor')->sole();
+    $role = RoleModel::query()->where('slug', 'auditor')->sole();
 
     $this->get(route('atrium.roster.roles.show', $role->id))->assertOk()->assertSee('Auditor');
 
@@ -44,24 +44,24 @@ it('assigns and revokes from the user page', function (): void {
     $acme = organization(attributes: ['name' => 'Acme']);
     $ada = user();
     app(AddMemberAction::class)->execute($acme, ['user' => $ada->getRouteKey()]);
-    $admin = Role::query()->where('slug', 'admin')->sole();
+    $admin = RoleModel::query()->where('slug', 'admin')->sole();
 
     $this->get(route('atrium.roster.users.show', $ada->getRouteKey()))->assertOk()->assertSee('Member');
 
     $this->post(route('atrium.roster.users.roles.store', $ada->getRouteKey()), ['role' => $admin->id, 'organization' => 'acme', 'team' => ''])->assertRedirect();
 
-    $assignment = RoleAssignment::query()->where('role_id', $admin->id)->sole();
+    $assignment = RoleAssignmentModel::query()->where('role_id', $admin->id)->sole();
 
     $this->get(route('atrium.roster.organizations.show', ['acme', 'tab' => 'roles']))->assertOk()->assertSee('Admin');
 
     $this->delete(route('atrium.roster.users.roles.destroy', [$ada->getRouteKey(), $assignment->id]))->assertRedirect();
 
-    expect(RoleAssignment::query()->whereKey($assignment->id)->exists())->toBeFalse();
+    expect(RoleAssignmentModel::query()->whereKey($assignment->id)->exists())->toBeFalse();
 });
 
 it('keeps each permission row\'s buttons in its actions column, with the description input tied to its save form', function (): void {
     $this->actingAs(user());
-    $permission = Permission::query()->create(['name' => 'invoices.edit']);
+    $permission = PermissionModel::query()->create(['name' => 'invoices.edit']);
 
     $html = $this->get(route('atrium.roster.permissions.index'))->assertOk()->assertSee('Actions')->getContent();
 

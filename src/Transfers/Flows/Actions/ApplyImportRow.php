@@ -8,13 +8,13 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Audit\Surface;
-use JayI\Roster\Models\Transfer;
-use JayI\Roster\Models\TransferRow;
-use JayI\Roster\Transfers\PlanCache;
-use JayI\Roster\Transfers\Planners\Planner;
-use JayI\Roster\Transfers\TransferContext;
-use JayI\Roster\Transfers\Transfers;
+use JayI\Roster\Domains\Audit\Services\Surface;
+use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use JayI\Roster\Domains\Transfer\Models\TransferRowModel;
+use JayI\Roster\Domains\Transfer\Services\PlanCache;
+use JayI\Roster\Domains\Transfer\Services\Planners\Planner;
+use JayI\Roster\Domains\Transfer\Services\TransferContext;
+use JayI\Roster\Domains\Transfer\Services\Transfers;
 
 /**
  * Apply one row, as the person who confirmed the import, so every change is
@@ -35,7 +35,7 @@ final class ApplyImportRow
     public function execute(array $item): array
     {
         // Without the report: rows never need it, and it can be megabytes.
-        $transfer = Transfer::query()->withoutReport()->findOrFail($item['transfer']);
+        $transfer = TransferModel::query()->withoutReport()->findOrFail($item['transfer']);
         $requester = app(PlanCache::class)->remember($transfer->id, 'requester', fn (): ?Model => $transfer->requester);
         $actor = $requester instanceof Model ? $requester : null;
         $guard = $this->auth->guard();
@@ -62,7 +62,7 @@ final class ApplyImportRow
         }
 
         // Each row records its own result; retries just write it again.
-        TransferRow::query()
+        TransferRowModel::query()
             ->where('transfer_id', $transfer->id)
             ->where('line', $item['line'])
             ->update(['result' => $outcome['action'], 'result_reasons' => json_encode($outcome['reasons'])]);

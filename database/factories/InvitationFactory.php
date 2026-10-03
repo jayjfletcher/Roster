@@ -6,14 +6,14 @@ namespace JayI\Roster\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use JayI\Roster\Models\Invitation;
+use JayI\Roster\Domains\Invitation\Models\InvitationModel;
 
 /**
- * @extends Factory<Invitation>
+ * @extends Factory<InvitationModel>
  */
 final class InvitationFactory extends Factory
 {
-    protected $model = Invitation::class;
+    protected $model = InvitationModel::class;
 
     /**
      * @return array<string, mixed>

@@ -6,14 +6,14 @@ namespace JayI\Roster\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use JayI\Roster\Models\Team;
+use JayI\Roster\Domains\Team\Models\TeamModel;
 
 /**
- * @extends Factory<Team>
+ * @extends Factory<TeamModel>
  */
 final class TeamFactory extends Factory
 {
-    protected $model = Team::class;
+    protected $model = TeamModel::class;
 
     /**
      * @return array<string, mixed>

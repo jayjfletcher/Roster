@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\AddTeamMemberAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Actions\ListMembersAction;
-use JayI\Roster\Actions\RemoveMemberAction;
-use JayI\Roster\Actions\SwitchContextAction;
-use JayI\Roster\Models\TeamMember;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Actions\ListMembersAction;
+use JayI\Roster\Domains\Organization\Actions\RemoveMemberAction;
+use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
+use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use JayI\Roster\Domains\Team\Models\TeamMemberModel;
 use JayI\Roster\Roster;
 
 it('adds and lists members', function (): void {
@@ -41,7 +41,7 @@ it('removes a member with their team seats and context', function (): void {
     app(RemoveMemberAction::class)->execute($organization, $ada);
 
     expect($organization->membershipFor($ada))->toBeNull()
-        ->and(TeamMember::query()->count())->toBe(0)
+        ->and(TeamMemberModel::query()->count())->toBe(0)
         ->and(app(Roster::class)->organization($ada))->toBeNull()
         ->and($ada->roster()->refresh()->current_organization_id)->toBeNull();
 });

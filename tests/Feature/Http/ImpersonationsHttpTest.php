@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Mcp\Tools\ListImpersonationsTool;
-use JayI\Roster\Mcp\Tools\StartImpersonationTool;
-use JayI\Roster\Mcp\Tools\StopImpersonationTool;
-use JayI\Roster\Models\Impersonation;
+use JayI\Roster\Domains\Impersonation\Mcp\Tools\ListImpersonationsTool;
+use JayI\Roster\Domains\Impersonation\Mcp\Tools\StartImpersonationTool;
+use JayI\Roster\Domains\Impersonation\Mcp\Tools\StopImpersonationTool;
+use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
 
 it('starts over HTTP, returning the link once', function (): void {
     $admin = user();
@@ -25,7 +25,7 @@ it('starts over HTTP, returning the link once', function (): void {
         ->assertJsonPath('meta.total', 1)
         ->assertJsonMissingPath('url');
 
-    $this->deleteJson(route('roster.impersonations.destroy', Impersonation::query()->value('id')))
+    $this->deleteJson(route('roster.impersonations.destroy', ImpersonationModel::query()->value('id')))
         ->assertOk()
         ->assertJsonPath('data.end_reason', 'stopped');
 });
@@ -43,7 +43,7 @@ it('starts, lists and stops over MCP', function (): void {
         'meta' => ['current_page' => 1, 'last_page' => 1, 'per_page' => 25, 'total' => 1],
     ]);
 
-    mcpTool(StopImpersonationTool::class, ['impersonation' => Impersonation::query()->value('id')])->assertOk()->assertSee('stopped');
+    mcpTool(StopImpersonationTool::class, ['impersonation' => ImpersonationModel::query()->value('id')])->assertOk()->assertSee('stopped');
 });
 
 it('needs a signed-in caller to start', function (): void {

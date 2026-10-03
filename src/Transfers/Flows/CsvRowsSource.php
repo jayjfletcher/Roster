@@ -7,9 +7,9 @@ namespace JayI\Roster\Transfers\Flows;
 use JayI\Impex\Domains\Batch\Contracts\BatchSource;
 use JayI\Impex\Domains\Batch\Data\BatchChunk;
 use JayI\Impex\Domains\Batch\Data\BatchChunkItem;
-use JayI\Roster\Models\Transfer;
-use JayI\Roster\Transfers\Csv\Reader;
-use JayI\Roster\Transfers\Transfers;
+use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use JayI\Roster\Domains\Transfer\Services\Transfers;
+use JayI\Roster\Domains\Transfer\Support\Csv\Reader;
 
 /**
  * Feeds an import's CSV into a batch, resuming by byte offset. Each item is
@@ -21,7 +21,7 @@ final class CsvRowsSource implements BatchSource
 
     public function chunk(?string $cursor, int $size): BatchChunk
     {
-        $transfer = Transfer::query()->withoutReport()->findOrFail($this->transfer);
+        $transfer = TransferModel::query()->withoutReport()->findOrFail($this->transfer);
         [$offset, $line] = $cursor === null ? [0, 2] : array_map('intval', explode(':', $cursor, 2));
 
         $reader = new Reader(app(Transfers::class)->disk(), (string) $transfer->input_path, $transfer->type->columns());

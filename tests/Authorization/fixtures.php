@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\AddTeamMemberAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Models\AuditEntry;
-use JayI\Roster\Models\Impersonation;
-use JayI\Roster\Models\Invitation;
-use JayI\Roster\Models\Permission;
-use JayI\Roster\Models\Role;
-use JayI\Roster\Models\RoleAssignment;
-use JayI\Roster\Models\ScimToken;
-use JayI\Roster\Models\SsoConnection;
-use JayI\Roster\Models\SsoIdentity;
-use JayI\Roster\Models\Transfer;
+use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use JayI\Roster\Domains\Invitation\Models\InvitationModel;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Permission\Models\PermissionModel;
+use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
+use JayI\Roster\Domains\Role\Models\RoleModel;
+use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
+use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
+use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
+use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use JayI\Roster\Domains\Transfer\Models\TransferModel;
 
 /**
  * One of everything, for exercising every route and tool: an organization
@@ -31,23 +31,23 @@ function authorizationWorld(): array
     $ops = app(CreateTeamAction::class)->execute($acme, ['name' => 'Ops']);
     app(AddTeamMemberAction::class)->execute($ops, ['user' => $target->getRouteKey()]);
 
-    $invitation = Invitation::factory()->create(['organization_id' => $acme->id, 'email' => 'new@example.com']);
-    Permission::query()->create(['name' => 'invoices.edit']);
-    $role = Role::factory()->create(['scope' => 'global', 'slug' => 'custom']);
-    $assignment = RoleAssignment::query()->create(['role_id' => $role->id, 'user_id' => $target->getKey()]);
+    $invitation = InvitationModel::factory()->create(['organization_id' => $acme->id, 'email' => 'new@example.com']);
+    PermissionModel::query()->create(['name' => 'invoices.edit']);
+    $role = RoleModel::factory()->create(['scope' => 'global', 'slug' => 'custom']);
+    $assignment = RoleAssignmentModel::query()->create(['role_id' => $role->id, 'user_id' => $target->getKey()]);
 
-    $entry = AuditEntry::query()->orderBy('id')->firstOrFail();
+    $entry = AuditEntryModel::query()->orderBy('id')->firstOrFail();
 
-    $impersonation = Impersonation::factory()->create(['impersonator_id' => user()->getKey(), 'user_id' => $target->getKey()]);
+    $impersonation = ImpersonationModel::factory()->create(['impersonator_id' => user()->getKey(), 'user_id' => $target->getKey()]);
 
-    $connection = SsoConnection::factory()->create(['organization_id' => $acme->id, 'slug' => 'acme-okta']);
-    $identity = SsoIdentity::query()->create(['connection_id' => $connection->id, 'user_id' => $target->getKey(), 'subject' => 'sub-1']);
+    $connection = SsoConnectionModel::factory()->create(['organization_id' => $acme->id, 'slug' => 'acme-okta']);
+    $identity = SsoIdentityModel::query()->create(['connection_id' => $connection->id, 'user_id' => $target->getKey(), 'subject' => 'sub-1']);
 
-    $scimToken = ScimToken::query()->create(['organization_id' => $acme->id, 'name' => 'Okta', 'token_hash' => hash('sha256', 'x')]);
+    $scimToken = ScimTokenModel::query()->create(['organization_id' => $acme->id, 'name' => 'Okta', 'token_hash' => hash('sha256', 'x')]);
 
     $acme->links()->create(['source' => 'erp', 'external_id' => 'C-1']);
 
-    $transfer = Transfer::factory()->create([
+    $transfer = TransferModel::factory()->create([
         'type' => 'import_members',
         'status' => 'awaiting_confirmation',
         'organization_id' => $acme->id,

@@ -6,11 +6,11 @@ namespace JayI\Roster\Transfers\Flows\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Enums\TransferStatus;
-use JayI\Roster\Models\Transfer;
-use JayI\Roster\Models\TransferRow;
-use JayI\Roster\Transfers\Csv\Reader;
-use JayI\Roster\Transfers\Transfers;
+use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
+use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use JayI\Roster\Domains\Transfer\Models\TransferRowModel;
+use JayI\Roster\Domains\Transfer\Services\Transfers;
+use JayI\Roster\Domains\Transfer\Support\Csv\Reader;
 
 /**
  * Check the file and plan every row. Changes nothing but the report.
@@ -22,7 +22,7 @@ final class ValidateImport
      */
     public function execute(string $transfer): array
     {
-        $model = Transfer::query()->findOrFail($transfer);
+        $model = TransferModel::query()->findOrFail($transfer);
         $transfers = app(Transfers::class);
         $reader = new Reader($transfers->disk(), (string) $model->input_path, $model->type->columns());
 
@@ -59,13 +59,13 @@ final class ValidateImport
             ];
 
             if (count($batch) === 500) {
-                TransferRow::query()->insert($batch);
+                TransferRowModel::query()->insert($batch);
                 $batch = [];
             }
         }
 
         if ($batch !== []) {
-            TransferRow::query()->insert($batch);
+            TransferRowModel::query()->insert($batch);
         }
 
         ksort($summary);

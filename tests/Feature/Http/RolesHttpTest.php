@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Models\Role;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Role\Models\RoleModel;
 
 it('manages permissions', function (): void {
     $this->postJson(route('roster.permissions.store'), ['name' => 'invoices.edit'])
@@ -33,7 +33,7 @@ it('assigns and revokes roles and reports permissions', function (): void {
     $acme = organization(attributes: ['name' => 'Acme']);
     $ada = user();
     app(AddMemberAction::class)->execute($acme, ['user' => $ada->getRouteKey()]);
-    $admin = Role::query()->where('slug', 'admin')->sole();
+    $admin = RoleModel::query()->where('slug', 'admin')->sole();
 
     $assignment = $this->postJson(route('roster.users.roles.store', $ada->getRouteKey()), ['role' => $admin->id, 'organization' => 'acme'])
         ->assertCreated()

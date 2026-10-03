@@ -5,12 +5,12 @@ declare(strict_types=1);
 require_once __DIR__.'/helpers.php';
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\ApproveUserAction;
-use JayI\Roster\Actions\SsoLoginAction;
-use JayI\Roster\Actions\SuspendUserAction;
-use JayI\Roster\Models\AuditEntry;
-use JayI\Roster\Models\SsoIdentity;
-use JayI\Roster\Sso\IdentityClaims;
+use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use JayI\Roster\Domains\Sso\Actions\SsoLoginAction;
+use JayI\Roster\Domains\Sso\Data\IdentityClaims;
+use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
+use JayI\Roster\Domains\User\Actions\ApproveUserAction;
+use JayI\Roster\Domains\User\Actions\SuspendUserAction;
 use Workbench\App\Models\User;
 
 function claims(string $email = 'ada@acme.test', string $subject = 'sub-1'): IdentityClaims
@@ -27,8 +27,8 @@ it('creates an account just in time for the organization\'s domains', function (
         ->and($user->getAttribute('email'))->toBe('ada@acme.test')
         ->and($user->getAttribute('email_verified_at'))->not->toBeNull()
         ->and($connection->organization->membershipFor($user))->not->toBeNull()
-        ->and(SsoIdentity::query()->sole()->subject)->toBe('sub-1')
-        ->and(AuditEntry::query()->where('action', 'sso_login.succeeded')->sole()->context['method'])->toBe('jit');
+        ->and(SsoIdentityModel::query()->sole()->subject)->toBe('sub-1')
+        ->and(AuditEntryModel::query()->where('action', 'sso_login.succeeded')->sole()->context['method'])->toBe('jit');
 });
 
 it('matches returning users by subject, even after an email change', function (): void {
@@ -64,7 +64,7 @@ it('records refused sign-ins', function (): void {
     } catch (ValidationException) {
     }
 
-    $entry = AuditEntry::query()->where('action', 'sso_login.failed')->sole();
+    $entry = AuditEntryModel::query()->where('action', 'sso_login.failed')->sole();
 
     expect($entry->context['reason'])->toBe('untrusted_email')
         ->and($entry->context['email'])->toBe('eve@gmail.test');
@@ -106,8 +106,8 @@ it('keeps a just-in-time account the organization wants approved, and refuses it
 
     expect($ada->rosterStatus()->value)->toBe('pending')
         ->and($connection->organization->membershipFor($ada))->not->toBeNull()
-        ->and(SsoIdentity::query()->sole()->user_id)->toBe($ada->id)
-        ->and(AuditEntry::query()->where('action', 'sso_login.failed')->sole()->context['reason'])->toBe('pending');
+        ->and(SsoIdentityModel::query()->sole()->user_id)->toBe($ada->id)
+        ->and(AuditEntryModel::query()->where('action', 'sso_login.failed')->sole()->context['reason'])->toBe('pending');
 
     app(ApproveUserAction::class)->execute($ada);
 

@@ -12,7 +12,7 @@
             </x-atrium::alert>
         @else
             {{-- Only the types the viewer may start here: each type's permission, in this organization when it needs one. --}}
-            @php($allowed = fn (array $types) => collect($types)->filter(fn ($type) => \JayI\Roster\Http\Ui\ScreenAccess::allows($type->permission(), \JayI\Roster\Transfers\Transfers::scope($type, $organization)))->values())
+            @php($allowed = fn (array $types) => collect($types)->filter(fn ($type) => \JayI\Roster\Atrium\ScreenAccess::allows($type->permission(), \JayI\Roster\Domains\Transfer\Services\Transfers::scope($type, $organization)))->values())
             @php($imports = $allowed($imports))
             @php($exports = $allowed($exports))
 

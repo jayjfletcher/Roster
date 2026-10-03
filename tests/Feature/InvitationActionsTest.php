@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\AcceptInvitationAction;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\CreateInvitationAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Actions\DeclineInvitationAction;
-use JayI\Roster\Actions\ListInvitationsAction;
-use JayI\Roster\Actions\RevokeInvitationAction;
-use JayI\Roster\Enums\InvitationStatus;
-use JayI\Roster\Enums\MembershipSource;
-use JayI\Roster\Models\Invitation;
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Notifications\InvitationNotification;
+use JayI\Roster\Domains\Invitation\Actions\AcceptInvitationAction;
+use JayI\Roster\Domains\Invitation\Actions\CreateInvitationAction;
+use JayI\Roster\Domains\Invitation\Actions\DeclineInvitationAction;
+use JayI\Roster\Domains\Invitation\Actions\ListInvitationsAction;
+use JayI\Roster\Domains\Invitation\Actions\RevokeInvitationAction;
+use JayI\Roster\Domains\Invitation\Enums\InvitationStatus;
+use JayI\Roster\Domains\Invitation\Models\InvitationModel;
+use JayI\Roster\Domains\Invitation\Notifications\InvitationNotification;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Enums\MembershipSource;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
 use JayI\Roster\Roster;
 
 beforeEach(function (): void {
@@ -25,7 +25,7 @@ beforeEach(function (): void {
 /**
  * Send an invitation and return its plain token from the faked email.
  */
-function invite(Organization $organization, string $email, array $teams = []): string
+function invite(OrganizationModel $organization, string $email, array $teams = []): string
 {
     app(CreateInvitationAction::class)->execute($organization, ['email' => $email, 'teams' => $teams]);
 
@@ -43,7 +43,7 @@ function invite(Organization $organization, string $email, array $teams = []): s
 it('emails an invitation without storing the token', function (): void {
     $token = invite(organization(), 'Ada@Example.com');
 
-    $invitation = Invitation::query()->sole();
+    $invitation = InvitationModel::query()->sole();
 
     expect($invitation->email)->toBe('ada@example.com')
         ->and($invitation->token_hash)->not->toBe($token)
@@ -74,7 +74,7 @@ it('refuses an invitation answered by a different user', function (): void {
 it('refuses expired, revoked, used and unknown tokens', function (string $state): void {
     $token = invite(organization(), 'ada@example.com');
     $ada = user(['email' => 'ada@example.com']);
-    $invitation = Invitation::query()->sole();
+    $invitation = InvitationModel::query()->sole();
 
     match ($state) {
         'expired' => $invitation->update(['expires_at' => now()->subMinute()]),
@@ -116,7 +116,7 @@ it('lists invitations by status', function (): void {
     $organization = organization();
     invite($organization, 'ada@example.com');
     invite($organization, 'grace@example.com');
-    app(RevokeInvitationAction::class)->execute(Invitation::query()->where('email', 'grace@example.com')->sole());
+    app(RevokeInvitationAction::class)->execute(InvitationModel::query()->where('email', 'grace@example.com')->sole());
 
     $emails = fn (string $status): array => collect(app(ListInvitationsAction::class)->execute($organization, ['status' => $status])->items())->pluck('email')->all();
 

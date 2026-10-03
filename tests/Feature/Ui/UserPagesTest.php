@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use JayI\Roster\Atrium\RosterPlugin;
-use JayI\Roster\Enums\UserStatus;
+use JayI\Roster\Domains\User\Enums\UserStatus;
 use Workbench\App\Models\User;
 
 beforeEach(function (): void {

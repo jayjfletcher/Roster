@@ -3,22 +3,22 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\DeactivateUserAction;
-use JayI\Roster\Actions\ReactivateUserAction;
-use JayI\Roster\Actions\SuspendUserAction;
-use JayI\Roster\Actions\UpdateProfileAction;
-use JayI\Roster\Enums\UserStatus;
-use JayI\Roster\Models\Profile;
+use JayI\Roster\Domains\User\Actions\DeactivateUserAction;
+use JayI\Roster\Domains\User\Actions\ReactivateUserAction;
+use JayI\Roster\Domains\User\Actions\SuspendUserAction;
+use JayI\Roster\Domains\User\Actions\UpdateProfileAction;
+use JayI\Roster\Domains\User\Enums\UserStatus;
+use JayI\Roster\Domains\User\Models\ProfileModel;
 
 it('creates a profile lazily on first update', function (): void {
     $user = user();
 
-    expect(Profile::query()->count())->toBe(0)
+    expect(ProfileModel::query()->count())->toBe(0)
         ->and($user->rosterStatus())->toBe(UserStatus::Active);
 
     $updated = app(UpdateProfileAction::class)->execute($user, ['bio' => 'Mathematician', 'meta' => ['team' => 'x']]);
 
-    expect(Profile::query()->count())->toBe(1)
+    expect(ProfileModel::query()->count())->toBe(1)
         ->and($updated->rosterProfile?->bio)->toBe('Mathematician')
         ->and($updated->rosterProfile?->meta)->toBe(['team' => 'x']);
 });

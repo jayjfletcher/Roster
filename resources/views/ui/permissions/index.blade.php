@@ -1,7 +1,7 @@
 <x-atrium::layout :title="__('roster::roster.permissions')">
     <x-atrium::page-header :title="__('roster::roster.permissions')" />
 
-    @php($manage = \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.roles.manage'))
+    @php($manage = \JayI\Roster\Atrium\ScreenAccess::allows('roster.roles.manage'))
 
     <div class="mt-5 flex flex-col gap-4">
         @include('roster::ui.partials.status')

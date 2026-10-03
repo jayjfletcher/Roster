@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Http;
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Models\SsoConnection;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
 
 /**
  * A fake OpenID provider: discovery, JWKS and a token endpoint that hands
@@ -56,12 +56,12 @@ final class FakeIdp
     }
 }
 
-function acmeWithSso(array $connection = [], string $protocol = 'oidc'): SsoConnection
+function acmeWithSso(array $connection = [], string $protocol = 'oidc'): SsoConnectionModel
 {
-    /** @var Organization $acme */
+    /** @var OrganizationModel $acme */
     $acme = organization(attributes: ['name' => 'Acme', 'domains' => ['acme.test']]);
 
-    $factory = SsoConnection::factory();
+    $factory = SsoConnectionModel::factory();
     $factory = match ($protocol) {
         'azure' => $factory->azure(),
         'saml' => $factory->saml(),

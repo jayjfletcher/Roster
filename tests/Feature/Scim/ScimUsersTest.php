@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 require_once __DIR__.'/helpers.php';
 
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\CreateScimTokenAction;
-use JayI\Roster\Enums\UserStatus;
-use JayI\Roster\Models\AuditEntry;
-use JayI\Roster\Models\ScimUser;
-use JayI\Roster\Models\SsoConnection;
-use JayI\Roster\Models\SsoIdentity;
+use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Scim\Actions\CreateScimTokenAction;
+use JayI\Roster\Domains\Scim\Models\ScimUserModel;
+use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
+use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
+use JayI\Roster\Domains\User\Enums\UserStatus;
 use JayI\Roster\Support\Users;
 use Workbench\App\Models\User;
 
@@ -38,8 +38,8 @@ it('provisions a new member from Okta', function (): void {
     $user = User::query()->where('email', 'ada@acme.test')->sole();
 
     expect($this->acme->membershipFor($user)?->source->value)->toBe('scim')
-        ->and(ScimUser::query()->sole()->id)->toBe($response->json('id'))
-        ->and(ScimUser::query()->sole()->created_by_scim)->toBeTrue();
+        ->and(ScimUserModel::query()->sole()->id)->toBe($response->json('id'))
+        ->and(ScimUserModel::query()->sole()->created_by_scim)->toBeTrue();
 });
 
 it('gets, lists and filters users the way identity providers probe', function (): void {
@@ -63,8 +63,8 @@ it('links an existing account on the organization\'s domain', function (): void 
 
     scim('POST', '/Users', oktaUser())->assertCreated();
 
-    expect(ScimUser::query()->sole()->user_id)->toBe($ada->getKey())
-        ->and(ScimUser::query()->sole()->created_by_scim)->toBeFalse();
+    expect(ScimUserModel::query()->sole()->user_id)->toBe($ada->getKey())
+        ->and(ScimUserModel::query()->sole()->created_by_scim)->toBeFalse();
 });
 
 it('refuses emails outside the organization\'s domains', function (): void {
@@ -72,7 +72,7 @@ it('refuses emails outside the organization\'s domains', function (): void {
 
     scim('POST', '/Users', oktaUser('victim@gmail.test'))->assertStatus(400)->assertJsonPath('scimType', 'invalidValue');
 
-    expect(ScimUser::query()->count())->toBe(0);
+    expect(ScimUserModel::query()->count())->toBe(0);
 });
 
 it('refuses duplicates', function (): void {
@@ -154,28 +154,28 @@ it('patches names and emails by path', function (): void {
 });
 
 it('links the SSO identity from externalId when the token names a connection', function (): void {
-    $connection = SsoConnection::factory()->create(['organization_id' => $this->acme->id, 'slug' => 'acme-okta']);
+    $connection = SsoConnectionModel::factory()->create(['organization_id' => $this->acme->id, 'slug' => 'acme-okta']);
     [, $this->scimToken] = [null, app(CreateScimTokenAction::class)->execute($this->acme, ['name' => 'Okta SSO', 'sso_connection' => 'acme-okta'])->plain];
 
     createAda();
 
-    expect(SsoIdentity::query()->sole()->only(['connection_id', 'subject']))->toBe(['connection_id' => $connection->id, 'subject' => '00u1okta']);
+    expect(SsoIdentityModel::query()->sole()->only(['connection_id', 'subject']))->toBe(['connection_id' => $connection->id, 'subject' => '00u1okta']);
 });
 
 it('writes nothing for a PATCH that only echoes the current view', function (): void {
     $id = (string) scim('POST', '/Users', ['userName' => 'grace@acme.test', 'name' => ['formatted' => 'Grace Hopper']])->json('id');
-    $before = AuditEntry::query()->count();
+    $before = AuditEntryModel::query()->count();
 
     scim('PATCH', '/Users/'.$id, patchOps([['op' => 'replace', 'path' => 'externalId', 'value' => null]]))->assertOk();
 
-    expect(AuditEntry::query()->count())->toBe($before)
-        ->and(AuditEntry::query()->where('action', 'profile.updated')->exists())->toBeFalse();
+    expect(AuditEntryModel::query()->count())->toBe($before)
+        ->and(AuditEntryModel::query()->where('action', 'profile.updated')->exists())->toBeFalse();
 });
 
 it('audits SCIM changes with the token that made them', function (): void {
     createAda();
 
-    $entry = AuditEntry::query()->where('action', 'user.created')->sole();
+    $entry = AuditEntryModel::query()->where('action', 'user.created')->sole();
 
     expect($entry->surface)->toBe('scim')
         ->and($entry->context['scim_token']['name'])->toBe('Okta');

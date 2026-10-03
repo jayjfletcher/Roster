@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use InvalidArgumentException;
-use JayI\Roster\Enums\UserStatus;
-use JayI\Roster\Models\Profile;
+use JayI\Roster\Domains\User\Enums\UserStatus;
+use JayI\Roster\Domains\User\Models\ProfileModel;
 
 /**
  * The host application's user model, as configured in `roster.users`.
@@ -178,12 +178,12 @@ final class Users
     /**
      * The user's profile, created on first access.
      */
-    public function profile(Model $user): Profile
+    public function profile(Model $user): ProfileModel
     {
         $profile = $user->relationLoaded('rosterProfile') ? $user->getRelation('rosterProfile') : null;
 
-        if (! $profile instanceof Profile) {
-            $profile = Profile::query()->firstOrCreate(['user_id' => $user->getKey()]);
+        if (! $profile instanceof ProfileModel) {
+            $profile = ProfileModel::query()->firstOrCreate(['user_id' => $user->getKey()]);
             $user->setRelation('rosterProfile', $profile);
         }
 
@@ -193,17 +193,17 @@ final class Users
     /**
      * The user's profile row, without creating one.
      */
-    public function profileIfExists(Model $user): ?Profile
+    public function profileIfExists(Model $user): ?ProfileModel
     {
         if (! $user->relationLoaded('rosterProfile')) {
             // Remembered on the model, a missing profile included, so status
             // and context lookups query once per user.
-            $user->setRelation('rosterProfile', Profile::query()->where('user_id', $user->getKey())->first());
+            $user->setRelation('rosterProfile', ProfileModel::query()->where('user_id', $user->getKey())->first());
         }
 
         $profile = $user->getRelation('rosterProfile');
 
-        return $profile instanceof Profile ? $profile : null;
+        return $profile instanceof ProfileModel ? $profile : null;
     }
 
     /**

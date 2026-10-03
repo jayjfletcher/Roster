@@ -5,18 +5,18 @@ declare(strict_types=1);
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\AddTeamMemberAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Actions\CreateUserAction;
-use JayI\Roster\Actions\DeleteUserAction;
-use JayI\Roster\Actions\JoinOrganizationsByDomainAction;
-use JayI\Roster\Actions\ListMembersAction;
-use JayI\Roster\Actions\PurgeUserAction;
-use JayI\Roster\Actions\RestoreUserAction;
-use JayI\Roster\Actions\SwitchContextAction;
-use JayI\Roster\Enums\MembershipSource;
-use JayI\Roster\Models\Organization;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Actions\JoinOrganizationsByDomainAction;
+use JayI\Roster\Domains\Organization\Actions\ListMembersAction;
+use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
+use JayI\Roster\Domains\Organization\Enums\MembershipSource;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use JayI\Roster\Domains\User\Actions\CreateUserAction;
+use JayI\Roster\Domains\User\Actions\DeleteUserAction;
+use JayI\Roster\Domains\User\Actions\PurgeUserAction;
+use JayI\Roster\Domains\User\Actions\RestoreUserAction;
 use JayI\Roster\Roster;
 use Workbench\App\Models\User;
 
@@ -67,7 +67,7 @@ it('joins auto-join organizations on email verification', function (): void {
     $ada->markEmailAsVerified();
     event(new Verified($ada));
 
-    $acme = Organization::query()->where('slug', 'acme')->sole();
+    $acme = OrganizationModel::query()->where('slug', 'acme')->sole();
 
     expect($acme->membershipFor($ada)?->source)->toBe(MembershipSource::Domain);
 
@@ -81,7 +81,7 @@ it('creates a personal organization when configured', function (): void {
 
     $ada = app(CreateUserAction::class)->execute(['name' => 'Ada', 'email' => 'ada@example.com']);
 
-    $personal = Organization::query()->sole();
+    $personal = OrganizationModel::query()->sole();
 
     expect($personal->personal)->toBeTrue()
         ->and($personal->isOwnedBy($ada))->toBeTrue()
@@ -91,11 +91,11 @@ it('creates a personal organization when configured', function (): void {
     // restoring brings both back.
     app(DeleteUserAction::class)->execute($ada);
 
-    expect(Organization::query()->count())->toBe(0)->and(Organization::onlyTrashed()->count())->toBe(1);
+    expect(OrganizationModel::query()->count())->toBe(0)->and(OrganizationModel::onlyTrashed()->count())->toBe(1);
 
     app(RestoreUserAction::class)->execute(User::withTrashed()->sole());
 
-    expect(Organization::query()->count())->toBe(1);
+    expect(OrganizationModel::query()->count())->toBe(1);
 });
 
 it('refuses to delete a user who owns a shared organization', function (): void {

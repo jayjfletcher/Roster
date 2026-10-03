@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\SuspendUserAction;
+use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
+use JayI\Roster\Domains\User\Actions\SuspendUserAction;
 use JayI\Roster\Facades\Roster;
-use JayI\Roster\Models\AuditEntry;
-use JayI\Roster\Models\RoleAssignment;
 
 it('lets global viewers read everything, including IPs', function (): void {
     $viewer = user();
-    RoleAssignment::query()->create(['role_id' => roleWith(['roster.audit.view'])->id, 'user_id' => $viewer->getKey()]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['roster.audit.view'])->id, 'user_id' => $viewer->getKey()]);
     organization(attributes: ['name' => 'Acme']);
 
     $this->actingAs($viewer)
@@ -41,8 +41,8 @@ it('lets organization admins read only their organization', function (): void {
 
     expect($organizations)->toBe(['acme']);
 
-    $globexEntry = AuditEntry::query()->where('action', 'organization.created')->where('subject_label', 'Globex')->sole();
-    $acmeEntry = AuditEntry::query()->where('action', 'organization.created')->where('subject_label', 'Acme')->sole();
+    $globexEntry = AuditEntryModel::query()->where('action', 'organization.created')->where('subject_label', 'Globex')->sole();
+    $acmeEntry = AuditEntryModel::query()->where('action', 'organization.created')->where('subject_label', 'Acme')->sole();
 
     $this->getJson(route('roster.audit.show', $acmeEntry->id))->assertOk();
     $this->getJson(route('roster.audit.show', $globexEntry->id))->assertForbidden();
@@ -51,7 +51,7 @@ it('lets organization admins read only their organization', function (): void {
 it('lets users read entries about themselves', function (): void {
     $ada = user();
     app(SuspendUserAction::class)->execute($ada);
-    $entry = AuditEntry::query()->where('action', 'user.suspended')->sole();
+    $entry = AuditEntryModel::query()->where('action', 'user.suspended')->sole();
     $this->actingAs($ada);
 
     $this->getJson(route('roster.audit.index', ['user' => $ada->getRouteKey()]))->assertOk()->assertJsonPath('meta.total', 1);

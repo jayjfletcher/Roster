@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace JayI\Roster\Domains\Sso\Http\Requests;
+
+use Illuminate\Http\JsonResponse;
+use JayI\Roster\Domains\Sso\Actions\UpdateSsoConnectionAction;
+use JayI\Roster\Domains\Sso\Resources\SsoConnectionResource;
+
+final class UpdateSsoConnectionRequest extends SsoConnectionRequest
+{
+    protected function ability(): string
+    {
+        return 'roster.sso.manage';
+    }
+
+    public function rules(): array
+    {
+        return UpdateSsoConnectionAction::rules($this->connection());
+    }
+
+    public function persist(): JsonResponse
+    {
+        return (new SsoConnectionResource(app(UpdateSsoConnectionAction::class)->execute($this->connection(), $this->validated())))->response();
+    }
+}

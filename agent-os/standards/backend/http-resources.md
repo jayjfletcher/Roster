@@ -1,6 +1,6 @@
 # HTTP Resources
 
-All payloads — HTTP and MCP — serialize through `src/Http/Resources`:
+All payloads — HTTP and MCP — serialize through the model's domain `Resources/` (`src/Domains/{Domain}/Resources`), beside `Models/`:
 
 ```php
 /**

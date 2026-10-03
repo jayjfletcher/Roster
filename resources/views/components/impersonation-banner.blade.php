@@ -1,4 +1,4 @@
-@php($impersonation = $rosterImpersonation ?? app(\JayI\Roster\Impersonation\ImpersonationContext::class)->active())
+@php($impersonation = $rosterImpersonation ?? app(\JayI\Roster\Domains\Impersonation\Services\ImpersonationContext::class)->active())
 
 @if ($impersonation)
     @php($directory = app(\JayI\Roster\Support\Users::class))

@@ -6,19 +6,19 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\ApproveUserAction;
-use JayI\Roster\Actions\CreateUserAction;
-use JayI\Roster\Actions\ReactivateUserAction;
-use JayI\Roster\Actions\RejectUserAction;
-use JayI\Roster\Actions\SuspendUserAction;
-use JayI\Roster\Actions\UpdateOrganizationAction;
-use JayI\Roster\Enums\UserStatus;
-use JayI\Roster\Mcp\Tools\RejectUserTool;
-use JayI\Roster\Models\AuditEntry;
-use JayI\Roster\Models\Membership;
-use JayI\Roster\Notifications\UserApprovedNotification;
-use JayI\Roster\Notifications\UserAwaitingApprovalNotification;
-use JayI\Roster\Notifications\UserRejectedNotification;
+use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use JayI\Roster\Domains\Organization\Actions\UpdateOrganizationAction;
+use JayI\Roster\Domains\Organization\Models\MembershipModel;
+use JayI\Roster\Domains\User\Actions\ApproveUserAction;
+use JayI\Roster\Domains\User\Actions\CreateUserAction;
+use JayI\Roster\Domains\User\Actions\ReactivateUserAction;
+use JayI\Roster\Domains\User\Actions\RejectUserAction;
+use JayI\Roster\Domains\User\Actions\SuspendUserAction;
+use JayI\Roster\Domains\User\Enums\UserStatus;
+use JayI\Roster\Domains\User\Mcp\Tools\RejectUserTool;
+use JayI\Roster\Domains\User\Notifications\UserApprovedNotification;
+use JayI\Roster\Domains\User\Notifications\UserAwaitingApprovalNotification;
+use JayI\Roster\Domains\User\Notifications\UserRejectedNotification;
 use JayI\Roster\Support\Users;
 use Workbench\App\Models\User;
 
@@ -48,7 +48,7 @@ it('approves a pending user and tells them', function (): void {
 
     expect(app(Users::class)->status($user))->toBe(UserStatus::Active);
     Notification::assertSentOnDemand(UserApprovedNotification::class, fn ($n, $c, $notifiable): bool => $notifiable->routes['mail'] === 'pat@example.com');
-    expect(AuditEntry::query()->where('action', 'user.approved')->sole()->changes)->toMatchArray(['profile.status' => ['pending', 'active']]);
+    expect(AuditEntryModel::query()->where('action', 'user.approved')->sole()->changes)->toMatchArray(['profile.status' => ['pending', 'active']]);
 });
 
 it('rejects a pending user by deactivating them with the reason', function (): void {
@@ -150,7 +150,7 @@ it('activates pending users straight from the users list and an organization\'s 
     $acme = organization(attributes: ['name' => 'Acme']);
     $listed = pendingUser(['email' => 'listed@example.com']);
     $member = pendingUser(['email' => 'member@example.com']);
-    Membership::query()->create(['organization_id' => $acme->id, 'user_id' => $member->getKey()]);
+    MembershipModel::query()->create(['organization_id' => $acme->id, 'user_id' => $member->getKey()]);
 
     $this->get(route('atrium.roster.users.index'))->assertSee('data-testid="activate-user"', false);
     $this->from(route('atrium.roster.users.index'))

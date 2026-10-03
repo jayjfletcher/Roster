@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Access\Permissions;
-use JayI\Roster\Actions\CreateOrganizationAction;
+use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Permission\Models\PermissionModel;
+use JayI\Roster\Domains\Permission\Services\Permissions;
+use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
+use JayI\Roster\Domains\Role\Models\RoleModel;
+use JayI\Roster\Domains\Team\Models\TeamModel;
 use JayI\Roster\Mcp\RosterServer;
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Models\Permission;
-use JayI\Roster\Models\Role;
-use JayI\Roster\Models\RoleAssignment;
-use JayI\Roster\Models\Team;
 use JayI\Roster\Tests\AtriumFeaturesTestCase;
 use JayI\Roster\Tests\AuditOffTestCase;
 use JayI\Roster\Tests\AuthorizationTestCase;
@@ -105,11 +105,11 @@ function user(array $attributes = []): User
 /**
  * Give a user a role by slug: global, in an organization, or on a team.
  */
-function grant(User $user, string $slug, ?Organization $organization = null, ?Team $team = null): void
+function grant(User $user, string $slug, ?OrganizationModel $organization = null, ?TeamModel $team = null): void
 {
-    $role = Role::query()->where('slug', $slug)->firstOrFail();
+    $role = RoleModel::query()->where('slug', $slug)->firstOrFail();
 
-    RoleAssignment::query()->create([
+    RoleAssignmentModel::query()->create([
         'role_id' => $role->getKey(),
         'user_id' => $user->getKey(),
         'organization_id' => $organization?->getKey() ?? $team?->organization_id,
@@ -124,15 +124,15 @@ function grant(User $user, string $slug, ?Organization $organization = null, ?Te
  *
  * @param  array<int, string>  $permissions
  */
-function roleWith(array $permissions, string $scope = 'global'): Role
+function roleWith(array $permissions, string $scope = 'global'): RoleModel
 {
-    $role = Role::factory()->create(['scope' => $scope]);
-    $role->permissions()->sync(Permission::query()->whereIn('name', $permissions)->pluck('id'));
+    $role = RoleModel::factory()->create(['scope' => $scope]);
+    $role->permissions()->sync(PermissionModel::query()->whereIn('name', $permissions)->pluck('id'));
 
     return $role;
 }
 
-function organization(?User $owner = null, array $attributes = []): Organization
+function organization(?User $owner = null, array $attributes = []): OrganizationModel
 {
     return app(CreateOrganizationAction::class)->execute(['name' => $attributes['name'] ?? 'Acme'] + $attributes, $owner ?? user());
 }
@@ -168,13 +168,17 @@ function parityGaps(): array
 
     $actions = array_map(
         fn (string $path): string => basename($path, '.php'),
-        (array) glob($root.'/src/Actions/*.php'),
+        (array) glob($root.'/src/Domains/*/Actions/*.php'),
     );
 
     $surfaces = [
-        'http' => $root.'/src/Http/Requests/*.php',
-        'mcp' => $root.'/src/Mcp/Requests/*.php',
-        'ui' => [$root.'/src/Http/Ui/*.php', $root.'/src/Http/Web/*.php'],
+        'http' => $root.'/src/Domains/*/Http/Requests/*.php',
+        'mcp' => $root.'/src/Domains/*/Mcp/Requests/*.php',
+        'ui' => [
+            $root.'/src/Atrium/Http/Controllers/*.php',
+            $root.'/src/Domains/*/Http/Controllers/*WebController.php',
+            $root.'/src/Domains/*/Http/Controllers/TransferFileController.php',
+        ],
     ];
 
     $gaps = [];

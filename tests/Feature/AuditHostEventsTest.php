@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\CreateUserAction;
-use JayI\Roster\Actions\RecordAuditEventAction;
-use JayI\Roster\Audit\AuditLog;
+use JayI\Roster\Domains\Audit\Actions\RecordAuditEventAction;
+use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use JayI\Roster\Domains\Audit\Services\AuditLog;
+use JayI\Roster\Domains\User\Actions\CreateUserAction;
 use JayI\Roster\Facades\Roster;
-use JayI\Roster\Models\AuditEntry;
 
 it('records app events with a model subject through the fluent API', function (): void {
     $ada = user(['name' => 'Ada']);
@@ -74,7 +74,7 @@ it('chains app events with roster entries', function (): void {
     $create('b@example.com');
 
     expect(app(AuditLog::class)->verify())->toBeNull()
-        ->and(AuditEntry::query()->pluck('source')->unique()->sort()->values()->all())->toBe(['app', 'roster']);
+        ->and(AuditEntryModel::query()->pluck('source')->unique()->sort()->values()->all())->toBe(['app', 'roster']);
 });
 
 it('filters by source', function (): void {

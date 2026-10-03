@@ -69,7 +69,7 @@
                         </x-atrium::table.cell>
                         <x-atrium::table.cell>
                             <div class="flex justify-end gap-2">
-                                @if ($organization->trashed() && \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.organizations.delete', $organization))
+                                @if ($organization->trashed() && \JayI\Roster\Atrium\ScreenAccess::allows('roster.organizations.delete', $organization))
                                     <form method="POST" action="{{ route('atrium.roster.organizations.restore', $organization) }}">
                                         @csrf
                                         <x-atrium::icon-button icon="arrow-uturn-left" :label="__('roster::roster.restore')" variant="primary" type="submit" size="sm" data-testid="restore-organization" />

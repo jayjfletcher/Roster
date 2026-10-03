@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Mcp\Tools\CreateUserTool;
-use JayI\Roster\Mcp\Tools\DeactivateUserTool;
-use JayI\Roster\Mcp\Tools\DeleteUserTool;
-use JayI\Roster\Mcp\Tools\ListUsersTool;
-use JayI\Roster\Mcp\Tools\ReactivateUserTool;
-use JayI\Roster\Mcp\Tools\ShowUserTool;
-use JayI\Roster\Mcp\Tools\SuspendUserTool;
-use JayI\Roster\Mcp\Tools\UpdateProfileTool;
-use JayI\Roster\Mcp\Tools\UpdateUserTool;
+use JayI\Roster\Domains\User\Mcp\Tools\CreateUserTool;
+use JayI\Roster\Domains\User\Mcp\Tools\DeactivateUserTool;
+use JayI\Roster\Domains\User\Mcp\Tools\DeleteUserTool;
+use JayI\Roster\Domains\User\Mcp\Tools\ListUsersTool;
+use JayI\Roster\Domains\User\Mcp\Tools\ReactivateUserTool;
+use JayI\Roster\Domains\User\Mcp\Tools\ShowUserTool;
+use JayI\Roster\Domains\User\Mcp\Tools\SuspendUserTool;
+use JayI\Roster\Domains\User\Mcp\Tools\UpdateProfileTool;
+use JayI\Roster\Domains\User\Mcp\Tools\UpdateUserTool;
 use Workbench\App\Models\User;
 
 /**

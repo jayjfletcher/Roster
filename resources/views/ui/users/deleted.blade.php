@@ -14,8 +14,8 @@
             'purgeUrl' => route('atrium.roster.users.purge', $user->getRouteKey()),
             'warning' => __('roster::roster.purge_user_warning'),
             'confirm' => __('roster::roster.delete_user_confirm'),
-            'canRestore' => \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.users.delete'),
-            'canPurge' => \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.users.purge'),
+            'canRestore' => \JayI\Roster\Atrium\ScreenAccess::allows('roster.users.delete'),
+            'canPurge' => \JayI\Roster\Atrium\ScreenAccess::allows('roster.users.purge'),
         ])
     </div>
 </x-atrium::layout>

@@ -3,34 +3,34 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Notification;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Mcp\Tools\AcceptInvitationTool;
-use JayI\Roster\Mcp\Tools\AddMemberTool;
-use JayI\Roster\Mcp\Tools\AddTeamMemberTool;
-use JayI\Roster\Mcp\Tools\CreateInvitationTool;
-use JayI\Roster\Mcp\Tools\CreateOrganizationTool;
-use JayI\Roster\Mcp\Tools\CreateTeamTool;
-use JayI\Roster\Mcp\Tools\DeclineInvitationTool;
-use JayI\Roster\Mcp\Tools\DeleteOrganizationTool;
-use JayI\Roster\Mcp\Tools\DeleteTeamTool;
-use JayI\Roster\Mcp\Tools\JoinByDomainTool;
-use JayI\Roster\Mcp\Tools\ListInvitationsTool;
-use JayI\Roster\Mcp\Tools\ListMembersTool;
-use JayI\Roster\Mcp\Tools\ListOrganizationsTool;
-use JayI\Roster\Mcp\Tools\ListTeamsTool;
-use JayI\Roster\Mcp\Tools\RemoveMemberTool;
-use JayI\Roster\Mcp\Tools\RemoveTeamMemberTool;
-use JayI\Roster\Mcp\Tools\RevokeInvitationTool;
-use JayI\Roster\Mcp\Tools\ShowOrganizationTool;
-use JayI\Roster\Mcp\Tools\ShowTeamTool;
-use JayI\Roster\Mcp\Tools\SwitchContextTool;
-use JayI\Roster\Mcp\Tools\TransferOwnershipTool;
-use JayI\Roster\Mcp\Tools\UpdateOrganizationTool;
-use JayI\Roster\Mcp\Tools\UpdateTeamTool;
-use JayI\Roster\Models\Invitation;
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Notifications\InvitationNotification;
+use JayI\Roster\Domains\Invitation\Mcp\Tools\AcceptInvitationTool;
+use JayI\Roster\Domains\Invitation\Mcp\Tools\CreateInvitationTool;
+use JayI\Roster\Domains\Invitation\Mcp\Tools\DeclineInvitationTool;
+use JayI\Roster\Domains\Invitation\Mcp\Tools\ListInvitationsTool;
+use JayI\Roster\Domains\Invitation\Mcp\Tools\RevokeInvitationTool;
+use JayI\Roster\Domains\Invitation\Models\InvitationModel;
+use JayI\Roster\Domains\Invitation\Notifications\InvitationNotification;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Mcp\Tools\AddMemberTool;
+use JayI\Roster\Domains\Organization\Mcp\Tools\CreateOrganizationTool;
+use JayI\Roster\Domains\Organization\Mcp\Tools\DeleteOrganizationTool;
+use JayI\Roster\Domains\Organization\Mcp\Tools\JoinByDomainTool;
+use JayI\Roster\Domains\Organization\Mcp\Tools\ListMembersTool;
+use JayI\Roster\Domains\Organization\Mcp\Tools\ListOrganizationsTool;
+use JayI\Roster\Domains\Organization\Mcp\Tools\RemoveMemberTool;
+use JayI\Roster\Domains\Organization\Mcp\Tools\ShowOrganizationTool;
+use JayI\Roster\Domains\Organization\Mcp\Tools\SwitchContextTool;
+use JayI\Roster\Domains\Organization\Mcp\Tools\TransferOwnershipTool;
+use JayI\Roster\Domains\Organization\Mcp\Tools\UpdateOrganizationTool;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use JayI\Roster\Domains\Team\Mcp\Tools\AddTeamMemberTool;
+use JayI\Roster\Domains\Team\Mcp\Tools\CreateTeamTool;
+use JayI\Roster\Domains\Team\Mcp\Tools\DeleteTeamTool;
+use JayI\Roster\Domains\Team\Mcp\Tools\ListTeamsTool;
+use JayI\Roster\Domains\Team\Mcp\Tools\RemoveTeamMemberTool;
+use JayI\Roster\Domains\Team\Mcp\Tools\ShowTeamTool;
+use JayI\Roster\Domains\Team\Mcp\Tools\UpdateTeamTool;
 
 function httpData(string $route, array $parameters = []): array
 {
@@ -91,7 +91,7 @@ it('manages an organization with parity to the http payload', function (): void 
 
     mcpTool(DeleteOrganizationTool::class, ['organization' => 'acme'])->assertOk();
 
-    expect(Organization::query()->count())->toBe(0);
+    expect(OrganizationModel::query()->count())->toBe(0);
 
     mcpTool(ShowOrganizationTool::class, ['organization' => 'acme'])->assertHasErrors(['Not found.']);
 });
@@ -146,7 +146,7 @@ it('runs the invitation lifecycle', function (): void {
     $this->actingAs(user(['email' => 'eve@example.com']));
     mcpTool(DeclineInvitationTool::class, ['token' => $tokens['eve@example.com']])->assertOk();
 
-    $grace = Invitation::query()->create([
+    $grace = InvitationModel::query()->create([
         'organization_id' => $organization->getKey(),
         'email' => 'grace@example.com',
         'token_hash' => hash('sha256', 'x'),
@@ -155,7 +155,7 @@ it('runs the invitation lifecycle', function (): void {
 
     mcpTool(RevokeInvitationTool::class, ['organization' => $organization->slug, 'invitation' => $grace->id])->assertOk();
 
-    expect(Invitation::query()->get()->map(fn (Invitation $invitation): string => $invitation->status()->value)->sort()->values()->all())
+    expect(InvitationModel::query()->get()->map(fn (InvitationModel $invitation): string => $invitation->status()->value)->sort()->values()->all())
         ->toBe(['accepted', 'declined', 'revoked']);
 });
 

@@ -7,10 +7,10 @@ namespace JayI\Roster\Mcp;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Validator;
-use JayI\Roster\Access\Authorizer;
-use JayI\Roster\Audit\Surface;
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Models\Team;
+use JayI\Roster\Domains\Audit\Services\Surface;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Permission\Services\Authorizer;
+use JayI\Roster\Domains\Team\Models\TeamModel;
 use Laravel\Mcp\Request as McpRequest;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -118,7 +118,7 @@ abstract class Request extends McpRequest
     /**
      * The organization or team the permission is checked in; null for global.
      */
-    protected function scope(): Organization|Team|null
+    protected function scope(): OrganizationModel|TeamModel|null
     {
         return null;
     }

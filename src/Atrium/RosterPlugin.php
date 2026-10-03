@@ -15,24 +15,24 @@ use JayI\Atrium\Domains\Search\Data\SearchResult;
 use JayI\Atrium\Domains\Search\Data\SearchSource;
 use JayI\Atrium\Domains\Widgets\Data\WidgetDefinition;
 use JayI\Atrium\Support\Icons;
-use JayI\Roster\Access\Authorizer;
-use JayI\Roster\Enums\TransferType;
-use JayI\Roster\Enums\UserStatus;
-use JayI\Roster\Http\Ui\AuditUiController;
-use JayI\Roster\Http\Ui\ImpersonationUiController;
-use JayI\Roster\Http\Ui\InvitationUiController;
-use JayI\Roster\Http\Ui\OrganizationUiController;
-use JayI\Roster\Http\Ui\PermissionUiController;
-use JayI\Roster\Http\Ui\RoleUiController;
-use JayI\Roster\Http\Ui\ScimUiController;
-use JayI\Roster\Http\Ui\SsoUiController;
-use JayI\Roster\Http\Ui\TeamUiController;
-use JayI\Roster\Http\Ui\TransferUiController;
-use JayI\Roster\Http\Ui\UserUiController;
-use JayI\Roster\Models\Invitation;
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Models\Profile;
-use JayI\Roster\Models\Team;
+use JayI\Roster\Atrium\Http\Controllers\AuditUiController;
+use JayI\Roster\Atrium\Http\Controllers\ImpersonationUiController;
+use JayI\Roster\Atrium\Http\Controllers\InvitationUiController;
+use JayI\Roster\Atrium\Http\Controllers\OrganizationUiController;
+use JayI\Roster\Atrium\Http\Controllers\PermissionUiController;
+use JayI\Roster\Atrium\Http\Controllers\RoleUiController;
+use JayI\Roster\Atrium\Http\Controllers\ScimUiController;
+use JayI\Roster\Atrium\Http\Controllers\SsoUiController;
+use JayI\Roster\Atrium\Http\Controllers\TeamUiController;
+use JayI\Roster\Atrium\Http\Controllers\TransferUiController;
+use JayI\Roster\Atrium\Http\Controllers\UserUiController;
+use JayI\Roster\Domains\Invitation\Models\InvitationModel;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Permission\Services\Authorizer;
+use JayI\Roster\Domains\Team\Models\TeamModel;
+use JayI\Roster\Domains\Transfer\Enums\TransferType;
+use JayI\Roster\Domains\User\Enums\UserStatus;
+use JayI\Roster\Domains\User\Models\ProfileModel;
 use JayI\Roster\Support\Users;
 use Throwable;
 
@@ -246,9 +246,9 @@ class RosterPlugin extends Plugin
                 ->authorize(fn (Request $request): bool => $this->may($request, 'roster.organizations.view'))
                 // One query for all three counts.
                 ->resolve(fn (): array => array_map('intval', (array) DB::query()
-                    ->selectSub(Organization::query()->toBase()->selectRaw('count(*)'), 'organizations')
-                    ->selectSub(Team::query()->toBase()->selectRaw('count(*)'), 'teams')
-                    ->selectSub(Invitation::query()->pending()->toBase()->selectRaw('count(*)'), 'pending')
+                    ->selectSub(OrganizationModel::query()->toBase()->selectRaw('count(*)'), 'organizations')
+                    ->selectSub(TeamModel::query()->toBase()->selectRaw('count(*)'), 'teams')
+                    ->selectSub(InvitationModel::query()->pending()->toBase()->selectRaw('count(*)'), 'pending')
                     ->first())),
         ];
     }
@@ -292,7 +292,7 @@ class RosterPlugin extends Plugin
                 ->label(__('roster::roster.organizations'))
                 ->description('Organizations (tenants, customers, accounts), by name or slug.')
                 ->authorize(static fn (Request $request): bool => self::allows($request, 'roster.organizations.view') || self::organizationsFor($request->user()) !== [])
-                ->using(static fn (string $query): array => Organization::query()
+                ->using(static fn (string $query): array => OrganizationModel::query()
                     // Only the organizations the searcher may view, when not all of them.
                     ->when(self::organizationsFor(auth()->user()), fn (Builder $builder, array $within): Builder => $builder->whereIn('id', $within))
                     ->where(fn (Builder $builder): Builder => $builder
@@ -301,7 +301,7 @@ class RosterPlugin extends Plugin
                     ->orderBy('name')
                     ->limit(self::searchLimit())
                     ->get()
-                    ->map(fn (Organization $organization): SearchResult => SearchResult::make(
+                    ->map(fn (OrganizationModel $organization): SearchResult => SearchResult::make(
                         $organization->name,
                         route('atrium.roster.organizations.show', $organization),
                     )->subtitle($organization->slug)->group(__('roster::roster.organizations')))
@@ -367,7 +367,7 @@ class RosterPlugin extends Plugin
     {
         $total = app(Users::class)->query()->count();
 
-        $counts = Profile::query()
+        $counts = ProfileModel::query()
             ->where('status', '!=', UserStatus::Active)
             ->selectRaw('status, count(*) as aggregate')
             ->groupBy('status')

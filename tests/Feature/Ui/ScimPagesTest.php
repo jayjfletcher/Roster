@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Models\ScimToken;
+use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
 
 it('issues, shows once and revokes tokens from the organization page', function (): void {
     $this->actingAs(user());
@@ -15,7 +15,7 @@ it('issues, shows once and revokes tokens from the organization page', function 
     $page = $this->get(route('atrium.roster.organizations.show', ['acme', 'tab' => 'scim']))->assertOk()->assertSee('scim_');
     $this->get(route('atrium.roster.organizations.show', ['acme', 'tab' => 'scim']))->assertOk()->assertDontSee('data-testid="scim-token"', false);
 
-    $this->delete(route('atrium.roster.scim-tokens.revoke', ScimToken::query()->sole()->id))->assertRedirect();
+    $this->delete(route('atrium.roster.scim-tokens.revoke', ScimTokenModel::query()->sole()->id))->assertRedirect();
 
-    expect(ScimToken::query()->sole()->revoked_at)->not->toBeNull();
+    expect(ScimTokenModel::query()->sole()->revoked_at)->not->toBeNull();
 });

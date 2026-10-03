@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__.'/helpers.php';
 
-use JayI\Roster\Models\ScimUser;
+use JayI\Roster\Domains\Scim\Models\ScimUserModel;
 
 beforeEach(function (): void {
     [$this->acme, $this->scimToken] = scimOrg();
@@ -61,7 +61,7 @@ it('runs bulk requests with bulkId references', function (): void {
 
     expect(collect($response->json('Operations'))->pluck('status')->all())->toBe(['201', '201', '200']);
 
-    scim('GET', '/Groups')->assertJsonPath('Resources.0.members.0.value', ScimUser::query()->sole()->id);
+    scim('GET', '/Groups')->assertJsonPath('Resources.0.members.0.value', ScimUserModel::query()->sole()->id);
 });
 
 it('stops bulk work after failOnErrors', function (): void {
@@ -75,7 +75,7 @@ it('stops bulk work after failOnErrors', function (): void {
 
     expect($response->json('Operations'))->toHaveCount(1)
         ->and($response->json('Operations.0.status'))->toBe('400')
-        ->and(ScimUser::query()->count())->toBe(0);
+        ->and(ScimUserModel::query()->count())->toBe(0);
 });
 
 it('limits bulk size', function (): void {

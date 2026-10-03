@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace JayI\Roster\Transfers\Flows\Actions;
 
 use JayI\Impex\Domains\Flow\Support\ResumableAction;
-use JayI\Roster\Models\Transfer;
-use JayI\Roster\Transfers\Csv\Writer;
-use JayI\Roster\Transfers\Transfers;
+use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use JayI\Roster\Domains\Transfer\Services\Transfers;
+use JayI\Roster\Domains\Transfer\Support\Csv\Writer;
 
 /**
  * Write the export in chunks, yielding when the step's time runs short and
@@ -17,7 +17,7 @@ final class BuildExport extends ResumableAction
 {
     public function execute(string $transfer): mixed
     {
-        $model = Transfer::query()->findOrFail($transfer);
+        $model = TransferModel::query()->findOrFail($transfer);
         $transfers = app(Transfers::class);
         $exporter = $transfers->exporter($model);
         $disk = $transfers->disk();

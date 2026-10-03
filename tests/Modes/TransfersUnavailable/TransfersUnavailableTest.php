@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Actions\StartImportAction;
-use JayI\Roster\Transfers\TransfersUnavailableException;
+use JayI\Roster\Domains\Transfer\Actions\StartImportAction;
+use JayI\Roster\Domains\Transfer\Exceptions\TransfersUnavailableException;
 
 it('explains which package to install', function (): void {
     app(StartImportAction::class)->execute(['type' => 'import_users', 'content' => "email\na@b.test"], user());

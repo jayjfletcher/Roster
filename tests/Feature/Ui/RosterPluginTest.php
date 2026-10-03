@@ -9,9 +9,9 @@ use JayI\Atrium\Domains\Widgets\Data\WidgetDefinition;
 use JayI\Atrium\Domains\Widgets\Services\WidgetRegistry;
 use JayI\Roster\Atrium\Badges;
 use JayI\Roster\Atrium\RosterPlugin;
-use JayI\Roster\Enums\InvitationStatus;
-use JayI\Roster\Enums\TransferStatus;
-use JayI\Roster\Enums\UserStatus;
+use JayI\Roster\Domains\Invitation\Enums\InvitationStatus;
+use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
+use JayI\Roster\Domains\User\Enums\UserStatus;
 
 it('registers itself with atrium', function (): void {
     expect(app(PluginRegistry::class)->has('roster'))->toBeTrue();

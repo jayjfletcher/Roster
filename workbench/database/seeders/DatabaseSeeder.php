@@ -5,17 +5,17 @@ namespace Workbench\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\AddTeamMemberAction;
-use JayI\Roster\Actions\AssignRoleAction;
-use JayI\Roster\Actions\CreateInvitationAction;
-use JayI\Roster\Actions\CreateOrganizationAction;
-use JayI\Roster\Actions\CreatePermissionAction;
-use JayI\Roster\Actions\CreateRoleAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Actions\CreateUserAction;
-use JayI\Roster\Actions\SuspendUserAction;
-use JayI\Roster\Models\Role;
+use JayI\Roster\Domains\Invitation\Actions\CreateInvitationAction;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
+use JayI\Roster\Domains\Permission\Actions\CreatePermissionAction;
+use JayI\Roster\Domains\Role\Actions\AssignRoleAction;
+use JayI\Roster\Domains\Role\Actions\CreateRoleAction;
+use JayI\Roster\Domains\Role\Models\RoleModel;
+use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use JayI\Roster\Domains\User\Actions\CreateUserAction;
+use JayI\Roster\Domains\User\Actions\SuspendUserAction;
 use Workbench\Database\Factories\UserFactory;
 
 /**
@@ -51,7 +51,7 @@ class DatabaseSeeder extends Seeder
 
         app(AddTeamMemberAction::class)->execute($engineering, ['user' => $grace->getRouteKey()]);
         app(AssignRoleAction::class)->execute($grace, [
-            'role' => Role::query()->where('slug', 'lead')->value('id'),
+            'role' => RoleModel::query()->where('slug', 'lead')->value('id'),
             'organization' => $acme->slug,
             'team' => $engineering->slug,
         ]);

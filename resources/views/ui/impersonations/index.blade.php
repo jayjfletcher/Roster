@@ -35,7 +35,7 @@
                         </x-atrium::table.cell>
                         <x-atrium::table.cell>
                             {{-- Your own impersonation, or anyone's with the permission in its organization. --}}
-                            @if (! $impersonation->ended_at && \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.users.impersonate', $impersonation->organization, (string) $impersonation->impersonator_id === (string) auth()->id() ? auth()->user() : null))
+                            @if (! $impersonation->ended_at && \JayI\Roster\Atrium\ScreenAccess::allows('roster.users.impersonate', $impersonation->organization, (string) $impersonation->impersonator_id === (string) auth()->id() ? auth()->user() : null))
                                 <form method="POST" action="{{ route('atrium.roster.impersonations.stop', $impersonation->id) }}" class="flex justify-end">
                                     @csrf
                                     @method('DELETE')

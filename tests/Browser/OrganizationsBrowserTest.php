@@ -5,8 +5,8 @@ declare(strict_types=1);
 require_once __DIR__.'/helpers.php';
 
 use Illuminate\Support\Facades\Notification;
-use JayI\Roster\Models\Invitation;
-use JayI\Roster\Models\Organization;
+use JayI\Roster\Domains\Invitation\Models\InvitationModel;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
 
 beforeEach(fn () => signInAsSuperAdmin());
 
@@ -28,8 +28,8 @@ it('creates an organization, adds a team and sends an invitation', function (): 
         ->assertSee('Invitation sent.')
         ->assertSee('new@example.com');
 
-    expect(Organization::query()->sole()->teams()->count())->toBe(1)
-        ->and(Invitation::query()->sole()->email)->toBe('new@example.com');
+    expect(OrganizationModel::query()->sole()->teams()->count())->toBe(1)
+        ->and(InvitationModel::query()->sole()->email)->toBe('new@example.com');
 });
 
 it('links an organization to an external record and finds it by account number', function (): void {
@@ -58,5 +58,5 @@ it('deletes an organization from the danger zone after confirming', function ():
         ->click('@delete-organization')
         ->assertSee('Organization deleted.');
 
-    expect(Organization::query()->where('slug', 'doomed-co')->exists())->toBeFalse();
+    expect(OrganizationModel::query()->where('slug', 'doomed-co')->exists())->toBeFalse();
 });

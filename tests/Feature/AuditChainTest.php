@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\DB;
-use JayI\Roster\Audit\AuditLog;
-use JayI\Roster\Exceptions\AuditLogIsAppendOnlyException;
+use JayI\Roster\Domains\Audit\Exceptions\AuditLogIsAppendOnlyException;
+use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use JayI\Roster\Domains\Audit\Services\AuditLog;
 use JayI\Roster\Facades\Roster;
-use JayI\Roster\Models\AuditEntry;
 
 function threeEntries(): void
 {
@@ -17,7 +17,7 @@ function threeEntries(): void
 
 it('links each entry to the one before', function (): void {
     threeEntries();
-    [$first, $second, $third] = AuditEntry::query()->orderBy('id')->get()->all();
+    [$first, $second, $third] = AuditEntryModel::query()->orderBy('id')->get()->all();
 
     expect($first->previous_hash)->toBeNull()
         ->and($second->previous_hash)->toBe($first->hash)
@@ -27,7 +27,7 @@ it('links each entry to the one before', function (): void {
 
 it('finds an entry altered in the database', function (): void {
     threeEntries();
-    $second = AuditEntry::query()->orderBy('id')->skip(1)->firstOrFail();
+    $second = AuditEntryModel::query()->orderBy('id')->skip(1)->firstOrFail();
 
     DB::table('roster_audit_entries')->where('id', $second->id)->update(['context' => json_encode(['n' => 'forged'])]);
 
@@ -36,7 +36,7 @@ it('finds an entry altered in the database', function (): void {
 
 it('finds an entry removed from the middle', function (): void {
     threeEntries();
-    $ids = AuditEntry::query()->orderBy('id')->pluck('id')->all();
+    $ids = AuditEntryModel::query()->orderBy('id')->pluck('id')->all();
 
     DB::table('roster_audit_entries')->where('id', $ids[1])->delete();
 
@@ -45,7 +45,7 @@ it('finds an entry removed from the middle', function (): void {
 
 it('refuses to update or delete entries through Eloquent', function (string $operation): void {
     Roster::audit('a.one')->record();
-    $entry = AuditEntry::query()->sole();
+    $entry = AuditEntryModel::query()->sole();
 
     $operation === 'update' ? $entry->update(['action' => 'a.two']) : $entry->delete();
 })->with(['update', 'delete'])->throws(AuditLogIsAppendOnlyException::class);
@@ -58,7 +58,7 @@ it('prunes old entries and verifies from the oldest one left', function (): void
 
     $this->artisan('roster:prune-audit')->assertSuccessful();
 
-    expect(AuditEntry::query()->pluck('action')->all())->toBe(['a.recent'])
+    expect(AuditEntryModel::query()->pluck('action')->all())->toBe(['a.recent'])
         ->and(app(AuditLog::class)->verify())->toBeNull();
 
     $this->artisan('roster:prune-audit', ['--days' => 0])->assertSuccessful();
@@ -72,7 +72,7 @@ it('keeps everything when retention is unlimited', function (): void {
 
     $this->artisan('roster:prune-audit')->assertSuccessful();
 
-    expect(AuditEntry::query()->count())->toBe(1);
+    expect(AuditEntryModel::query()->count())->toBe(1);
 });
 
 it('reports the chain from the command', function (): void {
@@ -80,7 +80,7 @@ it('reports the chain from the command', function (): void {
 
     $this->artisan('roster:verify-audit')->assertSuccessful();
 
-    DB::table('roster_audit_entries')->where('id', AuditEntry::query()->max('id'))->update(['action' => 'forged.entry']);
+    DB::table('roster_audit_entries')->where('id', AuditEntryModel::query()->max('id'))->update(['action' => 'forged.entry']);
 
     $this->artisan('roster:verify-audit')->assertFailed();
 });
@@ -118,5 +118,5 @@ it('prunes in batches', function (): void {
     Roster::audit('a.new')->record();
 
     expect(app(AuditLog::class)->prune(365))->toBe(1005)
-        ->and(AuditEntry::query()->count())->toBe(1);
+        ->and(AuditEntryModel::query()->count())->toBe(1);
 });

@@ -14,8 +14,8 @@
             'purgeUrl' => route('atrium.roster.organizations.purge', $organization),
             'warning' => __('roster::roster.delete_organization_warning'),
             'confirm' => __('roster::roster.delete_organization_confirm'),
-            'canRestore' => \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.organizations.delete', $organization),
-            'canPurge' => \JayI\Roster\Http\Ui\ScreenAccess::allows('roster.organizations.purge', $organization),
+            'canRestore' => \JayI\Roster\Atrium\ScreenAccess::allows('roster.organizations.delete', $organization),
+            'canPurge' => \JayI\Roster\Atrium\ScreenAccess::allows('roster.organizations.purge', $organization),
         ])
     </div>
 </x-atrium::layout>

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__.'/helpers.php';
 
-use JayI\Roster\Actions\CreateScimTokenAction;
-use JayI\Roster\Actions\RevokeScimTokenAction;
-use JayI\Roster\Models\ScimToken;
+use JayI\Roster\Domains\Scim\Actions\CreateScimTokenAction;
+use JayI\Roster\Domains\Scim\Actions\RevokeScimTokenAction;
+use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
 
 beforeEach(function (): void {
     [, $this->scimToken] = scimOrg();
@@ -15,7 +15,7 @@ beforeEach(function (): void {
 it('accepts a valid token and stamps its use', function (): void {
     scim('GET', '/Users')->assertOk()->assertHeader('Content-Type', 'application/scim+json');
 
-    expect(ScimToken::query()->sole()->last_used_at)->not->toBeNull();
+    expect(ScimTokenModel::query()->sole()->last_used_at)->not->toBeNull();
 });
 
 it('refuses missing, wrong, revoked, expired and other-organization tokens', function (string $case): void {
@@ -23,12 +23,12 @@ it('refuses missing, wrong, revoked, expired and other-organization tokens', fun
         'missing' => '',
         'wrong' => 'scim_nope',
         'revoked' => (function (): string {
-            app(RevokeScimTokenAction::class)->execute(ScimToken::query()->sole());
+            app(RevokeScimTokenAction::class)->execute(ScimTokenModel::query()->sole());
 
             return $this->scimToken;
         })(),
         'expired' => (function (): string {
-            ScimToken::query()->update(['expires_at' => now()->subDay()]);
+            ScimTokenModel::query()->update(['expires_at' => now()->subDay()]);
 
             return $this->scimToken;
         })(),

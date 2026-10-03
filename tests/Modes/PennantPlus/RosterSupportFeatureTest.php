@@ -6,8 +6,8 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use JayI\Atrium\Domains\Navigation\Data\NavItem;
 use JayI\Atrium\Domains\Navigation\Services\NavigationRegistry;
+use JayI\Roster\Atrium\Features\RosterSupportFeature;
 use JayI\Roster\Atrium\RosterPlugin;
-use JayI\Roster\Features\RosterSupportFeature;
 use Laravel\Pennant\Feature;
 
 /**
@@ -66,4 +66,16 @@ it('uses a subclass named in the config instead', function (): void {
     Feature::for(null)->activate(OffRosterSupportFeature::class);
 
     expect(navigationFor(user()))->toContain('Users');
+});
+
+it('keeps the stored name it had before it moved', function (): void {
+    // Values stored before the class moved from JayI\Roster\Features.
+    Feature::for(null)->deactivate('JayI\\Roster\\Features\\RosterSupportFeature');
+
+    expect(Feature::for(null)->active(RosterSupportFeature::class))->toBeFalse()
+        ->and(navigationFor(user()))->not->toContain('Users');
+
+    Feature::define(OffRosterSupportFeature::class);
+
+    expect(Feature::defined())->toContain('JayI\\Roster\\Features\\RosterSupportFeature', OffRosterSupportFeature::class);
 });

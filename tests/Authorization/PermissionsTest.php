@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Access\Permissions;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\AddTeamMemberAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Actions\RemoveMemberAction;
-use JayI\Roster\Actions\RemoveTeamMemberAction;
-use JayI\Roster\Models\Role;
-use JayI\Roster\Models\RoleAssignment;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Actions\RemoveMemberAction;
+use JayI\Roster\Domains\Permission\Services\Permissions;
+use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
+use JayI\Roster\Domains\Role\Models\RoleModel;
+use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use JayI\Roster\Domains\Team\Actions\RemoveTeamMemberAction;
 
 function permissions(): Permissions
 {
@@ -22,7 +22,7 @@ function permissions(): Permissions
 it('seeds the built-in permissions and roles', function (): void {
     expect(permissions()->knows('roster.users.view'))->toBeTrue()
         ->and(permissions()->knows('atrium.view'))->toBeTrue()
-        ->and(Role::query()->where('system', true)->pluck('slug')->sort()->values()->all())
+        ->and(RoleModel::query()->where('system', true)->pluck('slug')->sort()->values()->all())
         ->toBe(['admin', 'lead', 'member', 'super-admin']);
 });
 
@@ -33,7 +33,7 @@ it('unions global, organization and team roles by scope', function (): void {
     $ops = app(CreateTeamAction::class)->execute($acme, ['name' => 'Ops']);
     app(AddTeamMemberAction::class)->execute($ops, ['user' => $ada->getRouteKey()]);
     grant($ada, 'lead', team: $ops);
-    RoleAssignment::query()->create(['role_id' => roleWith(['roster.users.view'])->id, 'user_id' => $ada->getKey()]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['roster.users.view'])->id, 'user_id' => $ada->getKey()]);
 
     $perms = permissions();
 
@@ -87,12 +87,12 @@ it('revokes scoped roles when a member leaves', function (): void {
 
     app(RemoveTeamMemberAction::class)->execute($ops, $ada);
 
-    expect(RoleAssignment::query()->whereNotNull('team_id')->count())->toBe(0)
-        ->and(RoleAssignment::query()->where('user_id', $ada->getKey())->count())->toBe(1);
+    expect(RoleAssignmentModel::query()->whereNotNull('team_id')->count())->toBe(0)
+        ->and(RoleAssignmentModel::query()->where('user_id', $ada->getKey())->count())->toBe(1);
 
     app(RemoveMemberAction::class)->execute($acme, $ada);
 
-    expect(RoleAssignment::query()->where('user_id', $ada->getKey())->count())->toBe(0);
+    expect(RoleAssignmentModel::query()->where('user_id', $ada->getKey())->count())->toBe(0);
 });
 
 it('assigns no default role when disabled', function (): void {
@@ -102,5 +102,5 @@ it('assigns no default role when disabled', function (): void {
 
     app(AddMemberAction::class)->execute($acme, ['user' => $ada->getRouteKey()]);
 
-    expect(RoleAssignment::query()->where('user_id', $ada->getKey())->count())->toBe(0);
+    expect(RoleAssignmentModel::query()->where('user_id', $ada->getKey())->count())->toBe(0);
 });

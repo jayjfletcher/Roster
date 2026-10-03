@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\EnterImpersonationAction;
-use JayI\Roster\Actions\ListImpersonationsAction;
-use JayI\Roster\Actions\StartImpersonationAction;
-use JayI\Roster\Actions\StopImpersonationAction;
-use JayI\Roster\Actions\SuspendUserAction;
-use JayI\Roster\Impersonation\StartedImpersonation;
-use JayI\Roster\Models\Impersonation;
-use JayI\Roster\Models\RoleAssignment;
+use JayI\Roster\Domains\Impersonation\Actions\EnterImpersonationAction;
+use JayI\Roster\Domains\Impersonation\Actions\ListImpersonationsAction;
+use JayI\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
+use JayI\Roster\Domains\Impersonation\Actions\StopImpersonationAction;
+use JayI\Roster\Domains\Impersonation\Data\StartedImpersonation;
+use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
+use JayI\Roster\Domains\User\Actions\SuspendUserAction;
 
 function startImpersonating($target, $actor, array $data = []): StartedImpersonation
 {
@@ -60,11 +60,11 @@ it('refuses super-admins unless you are one', function (): void {
 
 it('refuses anyone with permissions you lack', function (): void {
     $actor = user();
-    RoleAssignment::query()->create(['role_id' => roleWith(['roster.users.impersonate', 'roster.users.view'])->id, 'user_id' => $actor->getKey()]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['roster.users.impersonate', 'roster.users.view'])->id, 'user_id' => $actor->getKey()]);
     $strong = user();
-    RoleAssignment::query()->create(['role_id' => roleWith(['roster.users.delete'])->id, 'user_id' => $strong->getKey()]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['roster.users.delete'])->id, 'user_id' => $strong->getKey()]);
     $weak = user();
-    RoleAssignment::query()->create(['role_id' => roleWith(['roster.users.view'])->id, 'user_id' => $weak->getKey()]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['roster.users.view'])->id, 'user_id' => $weak->getKey()]);
 
     expect(fn () => startImpersonating($strong, $actor))->toThrow(ValidationException::class)
         ->and(startImpersonating($weak, $actor)->impersonation->exists)->toBeTrue();
@@ -120,8 +120,8 @@ it('stops impersonations idempotently and lists them', function (): void {
     $ada = user();
     $started = startImpersonating($ada, $admin);
 
-    $stopped = app(StopImpersonationAction::class)->execute($started->impersonation, ['why' => Impersonation::ENDED_FORCED]);
-    $again = app(StopImpersonationAction::class)->execute($stopped, ['why' => Impersonation::ENDED_STOPPED]);
+    $stopped = app(StopImpersonationAction::class)->execute($started->impersonation, ['why' => ImpersonationModel::ENDED_FORCED]);
+    $again = app(StopImpersonationAction::class)->execute($stopped, ['why' => ImpersonationModel::ENDED_STOPPED]);
 
     expect($again->end_reason)->toBe('forced')
         ->and(app(ListImpersonationsAction::class)->execute(['user' => $ada->getRouteKey()])->total())->toBe(1)

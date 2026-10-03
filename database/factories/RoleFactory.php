@@ -6,15 +6,15 @@ namespace JayI\Roster\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use JayI\Roster\Enums\RoleScope;
-use JayI\Roster\Models\Role;
+use JayI\Roster\Domains\Role\Enums\RoleScope;
+use JayI\Roster\Domains\Role\Models\RoleModel;
 
 /**
- * @extends Factory<Role>
+ * @extends Factory<RoleModel>
  */
 final class RoleFactory extends Factory
 {
-    protected $model = Role::class;
+    protected $model = RoleModel::class;
 
     /**
      * @return array<string, mixed>

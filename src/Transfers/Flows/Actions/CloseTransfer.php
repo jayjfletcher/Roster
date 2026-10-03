@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Transfers\Flows\Actions;
 
-use JayI\Roster\Enums\TransferStatus;
-use JayI\Roster\Events\Action\TransferFinishedActionEvent;
-use JayI\Roster\Models\Transfer;
-use JayI\Roster\Transfers\PlanCache;
+use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
+use JayI\Roster\Domains\Transfer\Events\TransferFinishedActionEvent;
+use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use JayI\Roster\Domains\Transfer\Services\PlanCache;
 
 /**
  * An import that was cancelled, or never confirmed in time.
@@ -19,7 +19,7 @@ final class CloseTransfer
      */
     public function execute(string $transfer, string $reason): array
     {
-        $model = Transfer::query()->findOrFail($transfer);
+        $model = TransferModel::query()->findOrFail($transfer);
 
         if (! $model->status->isFinished()) {
             $model->update([

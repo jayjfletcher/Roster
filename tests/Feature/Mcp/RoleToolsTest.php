@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Mcp\Tools\AssignRoleTool;
-use JayI\Roster\Mcp\Tools\CreatePermissionTool;
-use JayI\Roster\Mcp\Tools\CreateRoleTool;
-use JayI\Roster\Mcp\Tools\DeletePermissionTool;
-use JayI\Roster\Mcp\Tools\DeleteRoleTool;
-use JayI\Roster\Mcp\Tools\ListPermissionsTool;
-use JayI\Roster\Mcp\Tools\ListRoleAssignmentsTool;
-use JayI\Roster\Mcp\Tools\ListRolesTool;
-use JayI\Roster\Mcp\Tools\ListUserPermissionsTool;
-use JayI\Roster\Mcp\Tools\RevokeRoleTool;
-use JayI\Roster\Mcp\Tools\ShowRoleTool;
-use JayI\Roster\Mcp\Tools\UpdatePermissionTool;
-use JayI\Roster\Mcp\Tools\UpdateRoleTool;
-use JayI\Roster\Models\Role;
-use JayI\Roster\Models\RoleAssignment;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Permission\Mcp\Tools\CreatePermissionTool;
+use JayI\Roster\Domains\Permission\Mcp\Tools\DeletePermissionTool;
+use JayI\Roster\Domains\Permission\Mcp\Tools\ListPermissionsTool;
+use JayI\Roster\Domains\Permission\Mcp\Tools\ListUserPermissionsTool;
+use JayI\Roster\Domains\Permission\Mcp\Tools\UpdatePermissionTool;
+use JayI\Roster\Domains\Role\Mcp\Tools\AssignRoleTool;
+use JayI\Roster\Domains\Role\Mcp\Tools\CreateRoleTool;
+use JayI\Roster\Domains\Role\Mcp\Tools\DeleteRoleTool;
+use JayI\Roster\Domains\Role\Mcp\Tools\ListRoleAssignmentsTool;
+use JayI\Roster\Domains\Role\Mcp\Tools\ListRolesTool;
+use JayI\Roster\Domains\Role\Mcp\Tools\RevokeRoleTool;
+use JayI\Roster\Domains\Role\Mcp\Tools\ShowRoleTool;
+use JayI\Roster\Domains\Role\Mcp\Tools\UpdateRoleTool;
+use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
+use JayI\Roster\Domains\Role\Models\RoleModel;
 
 it('manages permissions with parity to the http payload', function (): void {
     mcpTool(CreatePermissionTool::class, ['name' => 'invoices.edit'])->assertOk();
@@ -35,7 +35,7 @@ it('manages permissions with parity to the http payload', function (): void {
 
 it('manages roles with parity to the http payload', function (): void {
     mcpTool(CreateRoleTool::class, ['name' => 'Auditor', 'scope' => 'global', 'permissions' => ['roster.users.view']])->assertOk();
-    $role = Role::query()->where('slug', 'auditor')->sole();
+    $role = RoleModel::query()->where('slug', 'auditor')->sole();
     $http = fn (): array => test()->getJson(route('roster.roles.show', $role->id))->json();
 
     mcpTool(ShowRoleTool::class, ['role' => $role->id])->assertOk()->assertStructuredContent($http());
@@ -54,7 +54,7 @@ it('assigns, lists and revokes roles', function (): void {
     $acme = organization(attributes: ['name' => 'Acme']);
     $ada = user();
     app(AddMemberAction::class)->execute($acme, ['user' => $ada->getRouteKey()]);
-    $admin = Role::query()->where('slug', 'admin')->sole();
+    $admin = RoleModel::query()->where('slug', 'admin')->sole();
 
     mcpTool(AssignRoleTool::class, ['user' => $ada->getRouteKey(), 'role' => $admin->id, 'organization' => 'acme'])->assertOk();
 
@@ -68,6 +68,6 @@ it('assigns, lists and revokes roles', function (): void {
         ->assertOk()
         ->assertStructuredContent(test()->getJson(route('roster.users.permissions', [$ada->getRouteKey(), 'organization' => 'acme']))->json());
 
-    $assignment = RoleAssignment::query()->where('role_id', $admin->id)->sole();
+    $assignment = RoleAssignmentModel::query()->where('role_id', $admin->id)->sole();
     mcpTool(RevokeRoleTool::class, ['user' => $ada->getRouteKey(), 'assignment' => $assignment->id])->assertOk()->assertSee('Role revoked.');
 });

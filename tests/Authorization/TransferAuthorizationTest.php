@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\ConfirmImportAction;
-use JayI\Roster\Actions\StartExportAction;
-use JayI\Roster\Actions\StartImportAction;
-use JayI\Roster\Enums\TransferStatus;
-use JayI\Roster\Models\Permission;
-use JayI\Roster\Models\Role;
-use JayI\Roster\Models\RoleAssignment;
-use JayI\Roster\Models\Transfer;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Permission\Models\PermissionModel;
+use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
+use JayI\Roster\Domains\Role\Models\RoleModel;
+use JayI\Roster\Domains\Transfer\Actions\ConfirmImportAction;
+use JayI\Roster\Domains\Transfer\Actions\StartExportAction;
+use JayI\Roster\Domains\Transfer\Actions\StartImportAction;
+use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
+use JayI\Roster\Domains\Transfer\Models\TransferModel;
 use Workbench\App\Models\User;
 
 beforeEach(function (): void {
@@ -38,11 +38,11 @@ it('lets an organization admin import members there, but not elsewhere', functio
 });
 
 it('refuses roles the importer cannot assign', function (): void {
-    $custom = Role::factory()->create(['scope' => 'organization', 'slug' => 'auditor']);
-    $custom->permissions()->sync(Permission::query()->where('name', 'roster.audit.view')->pluck('id'));
+    $custom = RoleModel::factory()->create(['scope' => 'organization', 'slug' => 'auditor']);
+    $custom->permissions()->sync(PermissionModel::query()->where('name', 'roster.audit.view')->pluck('id'));
     $lead = user();
     app(AddMemberAction::class)->execute($this->acme, ['user' => $lead->getRouteKey()]);
-    RoleAssignment::query()->create(['role_id' => roleWith(['roster.members.manage', 'roster.members.view'], 'organization')->id, 'user_id' => $lead->getKey(), 'organization_id' => $this->acme->id]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['roster.members.manage', 'roster.members.view'], 'organization')->id, 'user_id' => $lead->getKey(), 'organization_id' => $this->acme->id]);
 
     $transfer = app(StartImportAction::class)->execute(['type' => 'import_members', 'organization' => 'acme', 'content' => "email,role\nnew@acme.test,auditor"], $lead);
 
@@ -53,7 +53,7 @@ it('refuses roles the importer cannot assign', function (): void {
 it('turns rows outside the organization\'s domains into errors without invitation rights', function (): void {
     $manager = user();
     app(AddMemberAction::class)->execute($this->acme, ['user' => $manager->getRouteKey()]);
-    RoleAssignment::query()->create(['role_id' => roleWith(['roster.members.manage'], 'organization')->id, 'user_id' => $manager->getKey(), 'organization_id' => $this->acme->id]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['roster.members.manage'], 'organization')->id, 'user_id' => $manager->getKey(), 'organization_id' => $this->acme->id]);
 
     $transfer = app(StartImportAction::class)->execute(['type' => 'import_members', 'organization' => 'acme', 'content' => "email\nfriend@example.com"], $manager);
 
@@ -63,7 +63,7 @@ it('turns rows outside the organization\'s domains into errors without invitatio
 it('checks the confirmer\'s permission again at confirm', function (): void {
     $transfer = app(StartImportAction::class)->execute(['type' => 'import_members', 'organization' => 'acme', 'content' => "email\nnew@acme.test"], $this->admin);
 
-    RoleAssignment::query()->where('user_id', $this->admin->getKey())->delete();
+    RoleAssignmentModel::query()->where('user_id', $this->admin->getKey())->delete();
 
     expect(fn () => app(ConfirmImportAction::class)->execute($transfer, $this->admin))->toThrow(ValidationException::class);
     expect($transfer->refresh()->status)->toBe(TransferStatus::AwaitingConfirmation)
@@ -99,8 +99,8 @@ it('hands MCP a short-lived signed download link', function (): void {
 
 it('lists only your own transfers without a broader permission', function (): void {
     $mine = user();
-    Transfer::factory()->create(['requested_by' => $mine->getKey()]);
-    Transfer::factory()->create(['requested_by' => $this->admin->getKey()]);
+    TransferModel::factory()->create(['requested_by' => $mine->getKey()]);
+    TransferModel::factory()->create(['requested_by' => $this->admin->getKey()]);
 
     $this->actingAs($mine)->getJson(route('roster.transfers.index'))->assertOk()->assertJsonCount(1, 'data');
     $this->actingAs($mine)->getJson(route('roster.transfers.index', ['organization' => 'acme']))->assertForbidden();

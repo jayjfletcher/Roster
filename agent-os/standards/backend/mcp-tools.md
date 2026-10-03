@@ -1,6 +1,6 @@
 # MCP Tools
 
-Tools are declarative shells. All logic lives in `src/Mcp/Requests/*McpRequest.php`:
+Tools are declarative shells. All logic lives in `src/Domains/{Domain}/Mcp/Requests/*McpRequest.php`, beside the tools in `Mcp/Tools`:
 
 ```php
 #[Description('Create a Roster prompt. ...')]

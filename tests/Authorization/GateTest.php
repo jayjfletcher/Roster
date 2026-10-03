@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
-use JayI\Roster\Access\Permissions;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\CreatePermissionAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Actions\SwitchContextAction;
-use JayI\Roster\Models\RoleAssignment;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
+use JayI\Roster\Domains\Permission\Actions\CreatePermissionAction;
+use JayI\Roster\Domains\Permission\Services\Permissions;
+use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
 
 it('answers can() for roster permissions in the given scope', function (): void {
     app(CreatePermissionAction::class)->execute(['name' => 'invoices.edit']);
@@ -19,7 +19,7 @@ it('answers can() for roster permissions in the given scope', function (): void 
     $globex = organization(attributes: ['name' => 'Globex']);
     $ada = user();
     app(AddMemberAction::class)->execute($acme, ['user' => $ada->getRouteKey()]);
-    RoleAssignment::query()->create(['role_id' => $role->id, 'user_id' => $ada->getKey(), 'organization_id' => $acme->id]);
+    RoleAssignmentModel::query()->create(['role_id' => $role->id, 'user_id' => $ada->getKey(), 'organization_id' => $acme->id]);
 
     expect($ada->can('invoices.edit', $acme))->toBeTrue()
         ->and($ada->can('invoices.edit', $globex))->toBeFalse()
@@ -70,7 +70,7 @@ it('defines the atrium gate from atrium.view when the app has not', function ():
 
     expect(Gate::forUser($ada)->allows('viewAtrium'))->toBeFalse();
 
-    RoleAssignment::query()->create(['role_id' => roleWith(['atrium.view'])->id, 'user_id' => $ada->getKey()]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['atrium.view'])->id, 'user_id' => $ada->getKey()]);
     app(Permissions::class)->flush();
 
     expect(Gate::forUser($ada)->allows('viewAtrium'))->toBeTrue();

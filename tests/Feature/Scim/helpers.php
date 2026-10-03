@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 use Illuminate\Testing\TestResponse;
-use JayI\Roster\Actions\CreateScimTokenAction;
-use JayI\Roster\Models\Organization;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Scim\Actions\CreateScimTokenAction;
 
 /**
  * Acme (owning acme.test) with a SCIM token; returns [organization, token].
  *
- * @return array{0: Organization, 1: string}
+ * @return array{0: OrganizationModel, 1: string}
  */
 function scimOrg(array $token = []): array
 {

@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace JayI\Roster\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JayI\Roster\Enums\TransferStatus;
-use JayI\Roster\Enums\TransferType;
-use JayI\Roster\Models\Transfer;
+use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
+use JayI\Roster\Domains\Transfer\Enums\TransferType;
+use JayI\Roster\Domains\Transfer\Models\TransferModel;
 
 /**
- * @extends Factory<Transfer>
+ * @extends Factory<TransferModel>
  */
 final class TransferFactory extends Factory
 {
-    protected $model = Transfer::class;
+    protected $model = TransferModel::class;
 
     /**
      * @return array<string, mixed>

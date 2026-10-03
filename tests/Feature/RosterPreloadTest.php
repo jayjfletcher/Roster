@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\AddTeamMemberAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Actions\RemoveMemberAction;
-use JayI\Roster\Actions\SwitchContextAction;
-use JayI\Roster\Models\Profile;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Actions\RemoveMemberAction;
+use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
+use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use JayI\Roster\Domains\User\Models\ProfileModel;
 use JayI\Roster\Roster;
 
 it('preloads the same current organization and team as resolving one user at a time', function (): void {
@@ -37,7 +37,7 @@ it('preloads the same current organization and team as resolving one user at a t
     app(AddMemberAction::class)->execute($acme, ['user' => $u->getRouteKey()]);
     app(AddMemberAction::class)->execute($globex, ['user' => $u->getRouteKey()]);
     app(AddTeamMemberAction::class)->execute($sales, ['user' => $u->getRouteKey()]);
-    Profile::query()->where('user_id', $u->getKey())->update(['current_organization_id' => $acme->id, 'current_team_id' => $sales->id]);
+    ProfileModel::query()->where('user_id', $u->getKey())->update(['current_organization_id' => $acme->id, 'current_team_id' => $sales->id]);
 
     $expected = [];
 

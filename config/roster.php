@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use JayI\Roster\Features\RosterSupportFeature;
+use JayI\Roster\Atrium\Features\RosterSupportFeature;
 
 return [
 
@@ -13,10 +13,10 @@ return [
     | Roster manages the host application's users rather than owning them.
     |
     | model:    The Eloquent user model. Three modes are supported:
-    |           - your own model using the JayI\Roster\Concerns\HasRoster trait
+    |           - your own model using the JayI\Roster\Domains\User\Concerns\HasRoster trait
     |           - your own model without the trait (Roster registers the
     |             `rosterProfile` relation on it dynamically)
-    |           - JayI\Roster\Models\User, for apps without a users table of
+    |           - JayI\Roster\Domains\User\Models\UserModel, for apps without a users table of
     |             their own; publish its migration with the
     |             `roster-users-migration` tag
     | key_type: The user model's primary key type - `int`, `ulid` or `uuid`.

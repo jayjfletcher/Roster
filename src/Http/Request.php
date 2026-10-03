@@ -7,9 +7,9 @@ namespace JayI\Roster\Http;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
-use JayI\Roster\Access\Authorizer;
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Models\Team;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Permission\Services\Authorizer;
+use JayI\Roster\Domains\Team\Models\TeamModel;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -72,7 +72,7 @@ abstract class Request extends FormRequest
     /**
      * The organization or team the permission is checked in; null for global.
      */
-    protected function scope(): Organization|Team|null
+    protected function scope(): OrganizationModel|TeamModel|null
     {
         return null;
     }

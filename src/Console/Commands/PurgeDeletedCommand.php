@@ -8,9 +8,9 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\PurgeOrganizationAction;
-use JayI\Roster\Actions\PurgeUserAction;
-use JayI\Roster\Models\Organization;
+use JayI\Roster\Domains\Organization\Actions\PurgeOrganizationAction;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\User\Actions\PurgeUserAction;
 use JayI\Roster\Support\Users;
 
 final class PurgeDeletedCommand extends Command
@@ -46,7 +46,7 @@ final class PurgeDeletedCommand extends Command
             });
         }
 
-        Organization::onlyTrashed()->where('deleted_at', '<=', $cutoff)->where('personal', false)->each(function (Organization $organization) use (&$purged): void {
+        OrganizationModel::onlyTrashed()->where('deleted_at', '<=', $cutoff)->where('personal', false)->each(function (OrganizationModel $organization) use (&$purged): void {
             app(PurgeOrganizationAction::class)->execute($organization);
             $purged['organizations']++;
         });

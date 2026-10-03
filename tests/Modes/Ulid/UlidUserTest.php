@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Actions\CreateUserAction;
-use JayI\Roster\Actions\SuspendUserAction;
-use JayI\Roster\Enums\UserStatus;
+use JayI\Roster\Domains\User\Actions\CreateUserAction;
+use JayI\Roster\Domains\User\Actions\SuspendUserAction;
+use JayI\Roster\Domains\User\Enums\UserStatus;
 use JayI\Roster\Tests\Fixtures\UlidUser;
 
 beforeEach(function (): void {

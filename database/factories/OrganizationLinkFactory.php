@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace JayI\Roster\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JayI\Roster\Models\OrganizationLink;
+use JayI\Roster\Domains\Organization\Models\OrganizationLinkModel;
 
 /**
- * @extends Factory<OrganizationLink>
+ * @extends Factory<OrganizationLinkModel>
  */
 final class OrganizationLinkFactory extends Factory
 {
-    protected $model = OrganizationLink::class;
+    protected $model = OrganizationLinkModel::class;
 
     /**
      * @return array<string, mixed>

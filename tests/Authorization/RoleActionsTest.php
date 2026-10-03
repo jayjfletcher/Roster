@@ -3,22 +3,22 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\AddTeamMemberAction;
-use JayI\Roster\Actions\AssignRoleAction;
-use JayI\Roster\Actions\CreatePermissionAction;
-use JayI\Roster\Actions\CreateRoleAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Actions\DeletePermissionAction;
-use JayI\Roster\Actions\DeleteRoleAction;
-use JayI\Roster\Actions\ListRolesAction;
-use JayI\Roster\Actions\ListUserPermissionsAction;
-use JayI\Roster\Actions\RevokeRoleAction;
-use JayI\Roster\Actions\UpdatePermissionAction;
-use JayI\Roster\Actions\UpdateRoleAction;
-use JayI\Roster\Models\Permission;
-use JayI\Roster\Models\Role;
-use JayI\Roster\Models\RoleAssignment;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Permission\Actions\CreatePermissionAction;
+use JayI\Roster\Domains\Permission\Actions\DeletePermissionAction;
+use JayI\Roster\Domains\Permission\Actions\ListUserPermissionsAction;
+use JayI\Roster\Domains\Permission\Actions\UpdatePermissionAction;
+use JayI\Roster\Domains\Permission\Models\PermissionModel;
+use JayI\Roster\Domains\Role\Actions\AssignRoleAction;
+use JayI\Roster\Domains\Role\Actions\CreateRoleAction;
+use JayI\Roster\Domains\Role\Actions\DeleteRoleAction;
+use JayI\Roster\Domains\Role\Actions\ListRolesAction;
+use JayI\Roster\Domains\Role\Actions\RevokeRoleAction;
+use JayI\Roster\Domains\Role\Actions\UpdateRoleAction;
+use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
+use JayI\Roster\Domains\Role\Models\RoleModel;
+use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
 
 it('manages app permissions but keeps built-ins', function (): void {
     $permission = app(CreatePermissionAction::class)->execute(['name' => 'invoices.edit', 'description' => 'Edit invoices']);
@@ -28,7 +28,7 @@ it('manages app permissions but keeps built-ins', function (): void {
 
     app(DeletePermissionAction::class)->execute($permission);
 
-    expect(fn () => app(DeletePermissionAction::class)->execute(Permission::query()->where('name', 'atrium.view')->sole()))
+    expect(fn () => app(DeletePermissionAction::class)->execute(PermissionModel::query()->where('name', 'atrium.view')->sole()))
         ->toThrow(ValidationException::class);
     expect(validator(['name' => 'Not Valid'], CreatePermissionAction::rules())->fails())->toBeTrue();
 });
@@ -45,7 +45,7 @@ it('creates shared and organization roles', function (): void {
         ->and(fn () => app(CreateRoleAction::class)->execute(['name' => 'Billing', 'scope' => 'organization']))->toThrow(ValidationException::class)
         ->and(fn () => app(CreateRoleAction::class)->execute(['name' => 'X', 'scope' => 'global', 'organization' => 'acme']))->toThrow(ValidationException::class);
 
-    $slugs = fn (array $filters): array => collect(app(ListRolesAction::class)->execute($filters)->items())->map(fn (Role $role): string => $role->slug.($role->organization_id ? '@own' : ''))->all();
+    $slugs = fn (array $filters): array => collect(app(ListRolesAction::class)->execute($filters)->items())->map(fn (RoleModel $role): string => $role->slug.($role->organization_id ? '@own' : ''))->all();
 
     expect($slugs(['scope' => 'organization']))->not->toContain('billing@own')
         ->and($slugs(['scope' => 'organization', 'organization' => 'acme']))->toContain('billing', 'billing@own');
@@ -53,14 +53,14 @@ it('creates shared and organization roles', function (): void {
 
 it('stops actors granting permissions they lack', function (): void {
     $actor = user();
-    RoleAssignment::query()->create(['role_id' => roleWith(['roster.roles.manage', 'roster.users.view'])->id, 'user_id' => $actor->getKey()]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['roster.roles.manage', 'roster.users.view'])->id, 'user_id' => $actor->getKey()]);
 
     app(CreateRoleAction::class)->execute(['name' => 'Viewer', 'scope' => 'global', 'permissions' => ['roster.users.view']], $actor);
 
     expect(fn () => app(CreateRoleAction::class)->execute(['name' => 'Deleter', 'scope' => 'global', 'permissions' => ['roster.users.delete']], $actor))
         ->toThrow(ValidationException::class);
 
-    $role = Role::query()->where('slug', 'viewer')->sole();
+    $role = RoleModel::query()->where('slug', 'viewer')->sole();
 
     expect(fn () => app(UpdateRoleAction::class)->execute($role, ['permissions' => ['roster.users.view', 'roster.users.delete']], $actor))
         ->toThrow(ValidationException::class);
@@ -72,11 +72,11 @@ it('stops actors granting permissions they lack', function (): void {
 it('assigns roles only in their scope', function (): void {
     $acme = organization(attributes: ['name' => 'Acme']);
     $ada = user();
-    $member = Role::query()->where('slug', 'member')->sole();
-    $lead = Role::query()->where('slug', 'lead')->sole();
-    $super = Role::query()->where('slug', 'super-admin')->sole();
+    $member = RoleModel::query()->where('slug', 'member')->sole();
+    $lead = RoleModel::query()->where('slug', 'lead')->sole();
+    $super = RoleModel::query()->where('slug', 'super-admin')->sole();
 
-    $assign = fn (Role $role, array $scope = []) => app(AssignRoleAction::class)->execute($ada, ['role' => $role->id] + $scope);
+    $assign = fn (RoleModel $role, array $scope = []) => app(AssignRoleAction::class)->execute($ada, ['role' => $role->id] + $scope);
 
     expect(fn () => $assign($member))->toThrow(ValidationException::class)
         ->and(fn () => $assign($member, ['organization' => 'acme']))->toThrow(ValidationException::class);
@@ -101,9 +101,9 @@ it('assigns roles only in their scope', function (): void {
 });
 
 it('keeps super roles for super-admins', function (): void {
-    $super = Role::query()->where('slug', 'super-admin')->sole();
+    $super = RoleModel::query()->where('slug', 'super-admin')->sole();
     $actor = user();
-    RoleAssignment::query()->create(['role_id' => roleWith(['roster.roles.assign'])->id, 'user_id' => $actor->getKey()]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['roster.roles.assign'])->id, 'user_id' => $actor->getKey()]);
     $ada = user();
 
     expect(fn () => app(AssignRoleAction::class)->execute($ada, ['role' => $super->id], $actor))->toThrow(ValidationException::class);
@@ -112,13 +112,13 @@ it('keeps super roles for super-admins', function (): void {
 
     $assignment = app(AssignRoleAction::class)->execute($ada, ['role' => $super->id], $actor);
     $other = user();
-    RoleAssignment::query()->create(['role_id' => roleWith(['roster.roles.assign'])->id, 'user_id' => $other->getKey()]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['roster.roles.assign'])->id, 'user_id' => $other->getKey()]);
 
     expect(fn () => app(RevokeRoleAction::class)->execute($assignment, $other))->toThrow(ValidationException::class);
 
     app(RevokeRoleAction::class)->execute($assignment, $actor);
 
-    expect(RoleAssignment::query()->whereKey($assignment->id)->exists())->toBeFalse();
+    expect(RoleAssignmentModel::query()->whereKey($assignment->id)->exists())->toBeFalse();
 });
 
 it('deletes custom roles but not built-ins', function (): void {
@@ -126,7 +126,7 @@ it('deletes custom roles but not built-ins', function (): void {
 
     app(DeleteRoleAction::class)->execute($role);
 
-    expect(fn () => app(DeleteRoleAction::class)->execute(Role::query()->where('slug', 'admin')->sole()))->toThrow(ValidationException::class);
+    expect(fn () => app(DeleteRoleAction::class)->execute(RoleModel::query()->where('slug', 'admin')->sole()))->toThrow(ValidationException::class);
 });
 
 it('reports effective permissions', function (): void {

@@ -3,37 +3,37 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Notification;
-use JayI\Roster\Actions\AcceptInvitationAction;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\AddTeamMemberAction;
-use JayI\Roster\Actions\AssignRoleAction;
-use JayI\Roster\Actions\CreateInvitationAction;
-use JayI\Roster\Actions\CreateRoleAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Actions\CreateUserAction;
-use JayI\Roster\Actions\DeleteUserAction;
-use JayI\Roster\Actions\ListUsersAction;
-use JayI\Roster\Actions\RemoveMemberAction;
-use JayI\Roster\Actions\RevokeRoleAction;
-use JayI\Roster\Actions\ShowUserAction;
-use JayI\Roster\Actions\SuspendUserAction;
-use JayI\Roster\Actions\UpdateOrganizationAction;
-use JayI\Roster\Actions\UpdateProfileAction;
-use JayI\Roster\Actions\UpdateRoleAction;
-use JayI\Roster\Actions\UpdateUserAction;
-use JayI\Roster\Mcp\Tools\SuspendUserTool;
-use JayI\Roster\Models\AuditEntry;
-use JayI\Roster\Notifications\InvitationNotification;
+use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use JayI\Roster\Domains\Invitation\Actions\AcceptInvitationAction;
+use JayI\Roster\Domains\Invitation\Actions\CreateInvitationAction;
+use JayI\Roster\Domains\Invitation\Notifications\InvitationNotification;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Actions\RemoveMemberAction;
+use JayI\Roster\Domains\Organization\Actions\UpdateOrganizationAction;
+use JayI\Roster\Domains\Role\Actions\AssignRoleAction;
+use JayI\Roster\Domains\Role\Actions\CreateRoleAction;
+use JayI\Roster\Domains\Role\Actions\RevokeRoleAction;
+use JayI\Roster\Domains\Role\Actions\UpdateRoleAction;
+use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use JayI\Roster\Domains\User\Actions\CreateUserAction;
+use JayI\Roster\Domains\User\Actions\DeleteUserAction;
+use JayI\Roster\Domains\User\Actions\ListUsersAction;
+use JayI\Roster\Domains\User\Actions\ShowUserAction;
+use JayI\Roster\Domains\User\Actions\SuspendUserAction;
+use JayI\Roster\Domains\User\Actions\UpdateProfileAction;
+use JayI\Roster\Domains\User\Actions\UpdateUserAction;
+use JayI\Roster\Domains\User\Mcp\Tools\SuspendUserTool;
 
-function lastEntry(): AuditEntry
+function lastEntry(): AuditEntryModel
 {
-    return AuditEntry::query()->orderByDesc('id')->firstOrFail();
+    return AuditEntryModel::query()->orderByDesc('id')->firstOrFail();
 }
 
 it('records a created user with every field as new and the password redacted', function (): void {
     $ada = app(CreateUserAction::class)->execute(['name' => 'Ada', 'email' => 'ada@example.com', 'password' => 'secret-password']);
 
-    $entry = AuditEntry::query()->where('action', 'user.created')->sole();
+    $entry = AuditEntryModel::query()->where('action', 'user.created')->sole();
 
     expect($entry->source)->toBe('roster')
         ->and($entry->subject_type)->toBe($ada->getMorphClass())
@@ -120,8 +120,8 @@ it('records invitations and their acceptance', function (): void {
 
     app(AcceptInvitationAction::class)->execute(['token' => $token], user(['email' => 'ada@example.com']));
 
-    expect(AuditEntry::query()->where('action', 'invitation.accepted')->exists())->toBeTrue()
-        ->and(json_encode(AuditEntry::query()->get()->toArray()))->not->toContain($token);
+    expect(AuditEntryModel::query()->where('action', 'invitation.accepted')->exists())->toBeTrue()
+        ->and(json_encode(AuditEntryModel::query()->get()->toArray()))->not->toContain($token);
 });
 
 it('records role changes and assignments', function (): void {
@@ -144,12 +144,12 @@ it('records role changes and assignments', function (): void {
 
 it('does not record reads', function (): void {
     $ada = user();
-    $before = AuditEntry::query()->count();
+    $before = AuditEntryModel::query()->count();
 
     app(ListUsersAction::class)->execute();
     app(ShowUserAction::class)->execute($ada);
 
-    expect(AuditEntry::query()->count())->toBe($before);
+    expect(AuditEntryModel::query()->count())->toBe($before);
 });
 
 it('captures the actor and surface', function (): void {

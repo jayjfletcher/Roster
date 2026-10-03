@@ -7,27 +7,27 @@ use JayI\Atrium\Domains\Navigation\Data\NavItem;
 use JayI\Atrium\Domains\Navigation\Services\NavigationRegistry;
 use JayI\Atrium\Domains\Search\Data\SearchResult;
 use JayI\Atrium\Domains\Search\Services\SearchRegistry;
-use JayI\Roster\Access\Permissions;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Mcp\Tools\ListOrganizationsTool;
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Models\Role;
-use JayI\Roster\Models\RoleAssignment;
-use JayI\Roster\Models\Transfer;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Mcp\Tools\ListOrganizationsTool;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Permission\Services\Permissions;
+use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
+use JayI\Roster\Domains\Role\Models\RoleModel;
+use JayI\Roster\Domains\Transfer\Models\TransferModel;
 use Workbench\App\Models\User;
 
 /**
  * Acme and Globex, each with its own role, and an admin of Acme only.
  *
- * @return array{acme: Organization, globex: Organization, admin: User}
+ * @return array{acme: OrganizationModel, globex: OrganizationModel, admin: User}
  */
 function twoOrganizations(): array
 {
     $acme = organization(attributes: ['name' => 'Acme']);
     $globex = organization(attributes: ['name' => 'Globex']);
 
-    Role::factory()->create(['scope' => 'organization', 'organization_id' => $acme->id, 'name' => 'Acme billing', 'slug' => 'acme-billing']);
-    Role::factory()->create(['scope' => 'organization', 'organization_id' => $globex->id, 'name' => 'Globex billing', 'slug' => 'globex-billing']);
+    RoleModel::factory()->create(['scope' => 'organization', 'organization_id' => $acme->id, 'name' => 'Acme billing', 'slug' => 'acme-billing']);
+    RoleModel::factory()->create(['scope' => 'organization', 'organization_id' => $globex->id, 'name' => 'Globex billing', 'slug' => 'globex-billing']);
 
     $admin = user();
     app(AddMemberAction::class)->execute($acme, ['user' => $admin->getRouteKey()]);
@@ -118,9 +118,9 @@ it('lists their own transfers and their organizations transfers', function (): v
     ['acme' => $acme, 'globex' => $globex, 'admin' => $admin] = twoOrganizations();
     openAtriumFor($admin);
 
-    $ownId = Transfer::factory()->create(['type' => 'export_users', 'requested_by' => $admin->getKey(), 'organization_id' => null])->id;
-    $acmeId = Transfer::factory()->create(['type' => 'export_members', 'requested_by' => user()->getKey(), 'organization_id' => $acme->id])->id;
-    $globexId = Transfer::factory()->create(['type' => 'export_members', 'requested_by' => user()->getKey(), 'organization_id' => $globex->id])->id;
+    $ownId = TransferModel::factory()->create(['type' => 'export_users', 'requested_by' => $admin->getKey(), 'organization_id' => null])->id;
+    $acmeId = TransferModel::factory()->create(['type' => 'export_members', 'requested_by' => user()->getKey(), 'organization_id' => $acme->id])->id;
+    $globexId = TransferModel::factory()->create(['type' => 'export_members', 'requested_by' => user()->getKey(), 'organization_id' => $globex->id])->id;
 
     $ids = collect($this->actingAs($admin)->getJson(route('roster.transfers.index'))->assertOk()->json('data'))->pluck('id')->all();
 
@@ -146,6 +146,6 @@ it('searches only the organizations the searcher may view', function (): void {
  */
 function openAtriumFor(User $user): void
 {
-    RoleAssignment::query()->create(['role_id' => roleWith(['atrium.view'])->id, 'user_id' => $user->getKey()]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['atrium.view'])->id, 'user_id' => $user->getKey()]);
     app(Permissions::class)->flush();
 }

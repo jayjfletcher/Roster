@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Notification;
-use JayI\Roster\Notifications\InvitationNotification;
+use JayI\Roster\Domains\Invitation\Notifications\InvitationNotification;
 
 beforeEach(function (): void {
     Notification::fake();

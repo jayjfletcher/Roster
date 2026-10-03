@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\CreateOrganizationAction;
-use JayI\Roster\Actions\CreateUserAction;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
+use JayI\Roster\Domains\User\Actions\CreateUserAction;
 use JayI\Roster\Roster;
 
 beforeEach(function (): void {

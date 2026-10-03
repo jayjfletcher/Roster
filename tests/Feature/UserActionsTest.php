@@ -5,18 +5,18 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Actions\CreateUserAction;
-use JayI\Roster\Actions\DeleteUserAction;
-use JayI\Roster\Actions\ListUsersAction;
-use JayI\Roster\Actions\PurgeUserAction;
-use JayI\Roster\Actions\RestoreUserAction;
-use JayI\Roster\Actions\ShowUserAction;
-use JayI\Roster\Actions\UpdateUserAction;
 use JayI\Roster\Contracts\ActionFinishedEvent;
 use JayI\Roster\Contracts\ActionStartingEvent;
-use JayI\Roster\Events\Action\UserCreatedActionEvent;
-use JayI\Roster\Events\Action\UserCreatingActionEvent;
-use JayI\Roster\Models\Profile;
+use JayI\Roster\Domains\User\Actions\CreateUserAction;
+use JayI\Roster\Domains\User\Actions\DeleteUserAction;
+use JayI\Roster\Domains\User\Actions\ListUsersAction;
+use JayI\Roster\Domains\User\Actions\PurgeUserAction;
+use JayI\Roster\Domains\User\Actions\RestoreUserAction;
+use JayI\Roster\Domains\User\Actions\ShowUserAction;
+use JayI\Roster\Domains\User\Actions\UpdateUserAction;
+use JayI\Roster\Domains\User\Events\UserCreatedActionEvent;
+use JayI\Roster\Domains\User\Events\UserCreatingActionEvent;
+use JayI\Roster\Domains\User\Models\ProfileModel;
 use Workbench\App\Models\User;
 
 it('creates a user with a profile', function (): void {
@@ -91,7 +91,7 @@ it('soft-deletes a user, keeping their profile for a restore', function (): void
 
     expect(User::query()->count())->toBe(0)
         ->and(User::withTrashed()->count())->toBe(1)
-        ->and(Profile::query()->count())->toBe(1);
+        ->and(ProfileModel::query()->count())->toBe(1);
 
     app(RestoreUserAction::class)->execute(User::withTrashed()->sole());
     expect(User::query()->count())->toBe(1);
@@ -105,7 +105,7 @@ it('purges a deleted user and their profile', function (): void {
     app(PurgeUserAction::class)->execute(User::withTrashed()->sole());
 
     expect(User::withTrashed()->count())->toBe(0)
-        ->and(Profile::query()->count())->toBe(0);
+        ->and(ProfileModel::query()->count())->toBe(0);
 });
 
 it('refuses to delete yourself', function (): void {
@@ -119,8 +119,8 @@ it('lists users with search and status filters', function (): void {
     $grace = user(['name' => 'Grace Hopper']);
     $alan = user(['name' => 'Alan Turing']);
 
-    Profile::factory()->suspended()->create(['user_id' => $grace->getKey(), 'display_name' => 'Grace']);
-    Profile::factory()->create(['user_id' => $alan->getKey(), 'display_name' => 'Prof']);
+    ProfileModel::factory()->suspended()->create(['user_id' => $grace->getKey(), 'display_name' => 'Grace']);
+    ProfileModel::factory()->create(['user_id' => $alan->getKey(), 'display_name' => 'Prof']);
 
     $list = fn (array $filters): array => collect(app(ListUsersAction::class)->execute($filters)->items())
         ->map(fn (User $user): mixed => $user->getKey())

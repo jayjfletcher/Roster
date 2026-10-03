@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace JayI\Roster\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JayI\Roster\Models\Impersonation;
+use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
 
 /**
- * @extends Factory<Impersonation>
+ * @extends Factory<ImpersonationModel>
  */
 final class ImpersonationFactory extends Factory
 {
-    protected $model = Impersonation::class;
+    protected $model = ImpersonationModel::class;
 
     /**
      * @return array<string, mixed>

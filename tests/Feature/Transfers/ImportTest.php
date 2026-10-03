@@ -6,20 +6,20 @@ use Illuminate\Validation\ValidationException;
 use JayI\Impex\Domains\Run\Events\RunFailed;
 use JayI\Impex\Domains\Run\Models\RunModel;
 use JayI\Impex\Testing\Flows;
-use JayI\Roster\Actions\CancelTransferAction;
-use JayI\Roster\Actions\ConfirmImportAction;
-use JayI\Roster\Actions\StartImportAction;
-use JayI\Roster\Actions\SyncOrganizationAction;
-use JayI\Roster\Enums\TransferStatus;
-use JayI\Roster\Models\AuditEntry;
-use JayI\Roster\Models\Invitation;
-use JayI\Roster\Models\Membership;
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Models\Team;
-use JayI\Roster\Models\Transfer;
+use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use JayI\Roster\Domains\Invitation\Models\InvitationModel;
+use JayI\Roster\Domains\Organization\Actions\SyncOrganizationAction;
+use JayI\Roster\Domains\Organization\Models\MembershipModel;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Team\Models\TeamModel;
+use JayI\Roster\Domains\Transfer\Actions\CancelTransferAction;
+use JayI\Roster\Domains\Transfer\Actions\ConfirmImportAction;
+use JayI\Roster\Domains\Transfer\Actions\StartImportAction;
+use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
+use JayI\Roster\Domains\Transfer\Models\TransferModel;
 use Workbench\App\Models\User;
 
-function startImport(string $type, string $csv, ?User $actor = null, ?string $organization = null): Transfer
+function startImport(string $type, string $csv, ?User $actor = null, ?string $organization = null): TransferModel
 {
     return app(StartImportAction::class)->execute(array_filter([
         'type' => $type,
@@ -31,7 +31,7 @@ function startImport(string $type, string $csv, ?User $actor = null, ?string $or
 beforeEach(function (): void {
     $this->owner = user(['email' => 'owner@acme.test']);
     $this->acme = organization($this->owner, ['name' => 'Acme', 'domains' => ['acme.test']]);
-    Team::factory()->create(['organization_id' => $this->acme->id, 'name' => 'Sales', 'slug' => 'sales']);
+    TeamModel::factory()->create(['organization_id' => $this->acme->id, 'name' => 'Sales', 'slug' => 'sales']);
 });
 
 it('previews a members import without changing anything', function (): void {
@@ -51,8 +51,8 @@ it('previews a members import without changing anything', function (): void {
         ->and(collect($transfer->rows())->pluck('action')->all())->toBe(['link', 'create', 'invite', 'error', 'skip'])
         ->and($transfer->summary())->toMatchArray(['link' => 1, 'create' => 1, 'invite' => 1, 'error' => 1, 'skip' => 1])
         ->and(User::query()->where('email', 'new@acme.test')->exists())->toBeFalse()
-        ->and(Membership::query()->count())->toBe(1)
-        ->and(Invitation::query()->count())->toBe(0);
+        ->and(MembershipModel::query()->count())->toBe(1)
+        ->and(InvitationModel::query()->count())->toBe(0);
 });
 
 it('applies a confirmed members import row by row, as the confirmer', function (): void {
@@ -72,11 +72,11 @@ it('applies a confirmed members import row by row, as the confirmer', function (
 
     expect($transfer->status)->toBe(TransferStatus::Completed)
         ->and(collect($transfer->rows())->pluck('result')->all())->toBe(['link', 'create', 'invite', 'error'])
-        ->and(Membership::query()->where('organization_id', $this->acme->id)->where('user_id', $new->id)->exists())->toBeTrue()
-        ->and(Invitation::query()->where('email', 'friend@example.com')->exists())->toBeTrue()
-        ->and(Team::query()->where('slug', 'sales')->firstOrFail()->seats()->count())->toBe(1);
+        ->and(MembershipModel::query()->where('organization_id', $this->acme->id)->where('user_id', $new->id)->exists())->toBeTrue()
+        ->and(InvitationModel::query()->where('email', 'friend@example.com')->exists())->toBeTrue()
+        ->and(TeamModel::query()->where('slug', 'sales')->firstOrFail()->seats()->count())->toBe(1);
 
-    $entry = AuditEntry::query()->where('action', 'member.added')->where('surface', 'import')->latest('id')->firstOrFail();
+    $entry = AuditEntryModel::query()->where('action', 'member.added')->where('surface', 'import')->latest('id')->firstOrFail();
 
     expect((string) $entry->actor_id)->toBe((string) $this->owner->id)
         ->and($entry->context['transfer'])->toBe(['id' => $transfer->id, 'type' => 'import_members']);
@@ -104,7 +104,7 @@ it('creates and fills teams from existing members', function (): void {
 
     app(ConfirmImportAction::class)->execute($transfer, $this->owner);
 
-    expect(Team::query()->where('slug', 'support')->firstOrFail()->seats()->count())->toBe(1);
+    expect(TeamModel::query()->where('slug', 'support')->firstOrFail()->seats()->count())->toBe(1);
 });
 
 it('cancels an import awaiting confirmation with nothing applied', function (): void {
@@ -137,8 +137,8 @@ it('never applies a row twice when the engine redelivers steps', function (): vo
     Flows::redeliverSteps(RunModel::query()->findOrFail($transfer->impex_run_id));
 
     expect(User::query()->where('email', 'new@acme.test')->count())->toBe(1)
-        ->and(Invitation::query()->count())->toBe(1)
-        ->and(AuditEntry::query()->where('action', 'user.created')->where('surface', 'import')->count())->toBe(1);
+        ->and(InvitationModel::query()->count())->toBe(1)
+        ->and(AuditEntryModel::query()->where('action', 'user.created')->where('surface', 'import')->count())->toBe(1);
 });
 
 it('marks the transfer failed when its run fails', function (): void {
@@ -163,13 +163,13 @@ it('imports organizations from an external system', function (): void {
 
     expect(collect($transfer->rows())->pluck('action')->all())->toBe(['skip', 'create', 'update', 'error', 'error'])
         ->and($transfer->rows()[4]['reasons'][0])->toBe('No user has the owner email ghost@nowhere.test.')
-        ->and(Organization::query()->where('slug', 'initrode')->exists())->toBeFalse();
+        ->and(OrganizationModel::query()->where('slug', 'initrode')->exists())->toBeFalse();
 
     app(ConfirmImportAction::class)->execute($transfer, $this->owner);
 
-    $initrode = Organization::query()->where('slug', 'initrode')->firstOrFail();
+    $initrode = OrganizationModel::query()->where('slug', 'initrode')->firstOrFail();
 
     expect($initrode->isOwnedBy($this->owner))->toBeTrue()
         ->and($initrode->domains()->pluck('domain')->sort()->values()->all())->toBe(['initrode.example', 'initrode.test'])
-        ->and(Organization::query()->where('slug', 'initech')->value('name'))->toBe('Initech Corp');
+        ->and(OrganizationModel::query()->where('slug', 'initech')->value('name'))->toBe('Initech Corp');
 });

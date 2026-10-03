@@ -1,4 +1,4 @@
-@use(JayI\Roster\Enums\TransferStatus)
+@use(JayI\Roster\Domains\Transfer\Enums\TransferStatus)
 @inject('directory', 'JayI\Roster\Support\Users')
 
 <x-atrium::layout :title="$transfer->type->label()">

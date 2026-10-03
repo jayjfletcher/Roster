@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Http\UploadedFile;
-use JayI\Roster\Enums\TransferStatus;
-use JayI\Roster\Models\Transfer;
+use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
+use JayI\Roster\Domains\Transfer\Models\TransferModel;
 use Workbench\App\Models\User;
 
 beforeEach(function (): void {
@@ -18,7 +18,7 @@ it('uploads, previews and confirms an import', function (): void {
     $file = UploadedFile::fake()->createWithContent('m.csv', "email\nnew@acme.test\n");
     $response = $this->post(route('atrium.roster.transfers.import'), ['type' => 'import_members', 'organization' => 'acme', 'file' => $file]);
 
-    $transfer = Transfer::query()->sole();
+    $transfer = TransferModel::query()->sole();
     $response->assertRedirect(route('atrium.roster.transfers.show', $transfer->id));
 
     $this->get(route('atrium.roster.transfers.show', $transfer->id))->assertOk()->assertSee('Awaiting confirmation')->assertSee('Confirm import');
@@ -31,7 +31,7 @@ it('uploads, previews and confirms an import', function (): void {
 
 it('exports and downloads, and links from organizations and users', function (): void {
     $this->post(route('atrium.roster.transfers.export'), ['type' => 'export_members', 'organization' => 'acme'])->assertRedirect();
-    $transfer = Transfer::query()->sole();
+    $transfer = TransferModel::query()->sole();
 
     $this->get(route('atrium.roster.transfers.show', $transfer->id))->assertOk()->assertSee('Download CSV');
     $this->get(route('atrium.roster.transfers.download', $transfer->id))->assertOk();
@@ -42,7 +42,7 @@ it('exports and downloads, and links from organizations and users', function ():
 
 it('cancels from the page', function (): void {
     $this->post(route('atrium.roster.transfers.import'), ['type' => 'import_users', 'file' => UploadedFile::fake()->createWithContent('u.csv', "email\na@b.test")]);
-    $transfer = Transfer::query()->sole();
+    $transfer = TransferModel::query()->sole();
 
     $this->delete(route('atrium.roster.transfers.cancel', $transfer->id))->assertRedirect();
 

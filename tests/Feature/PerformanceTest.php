@@ -5,17 +5,17 @@ declare(strict_types=1);
 require_once __DIR__.'/Scim/helpers.php';
 
 use Illuminate\Support\Facades\DB;
-use JayI\Roster\Actions\AddMemberAction;
-use JayI\Roster\Actions\AddTeamMemberAction;
-use JayI\Roster\Actions\ConfirmImportAction;
-use JayI\Roster\Actions\CreateScimTokenAction;
-use JayI\Roster\Actions\CreateTeamAction;
-use JayI\Roster\Actions\StartExportAction;
-use JayI\Roster\Actions\StartImportAction;
-use JayI\Roster\Actions\SwitchContextAction;
-use JayI\Roster\Actions\SyncOrganizationsAction;
-use JayI\Roster\Models\Organization;
-use JayI\Roster\Models\Transfer;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
+use JayI\Roster\Domains\Organization\Actions\SyncOrganizationsAction;
+use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use JayI\Roster\Domains\Scim\Actions\CreateScimTokenAction;
+use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use JayI\Roster\Domains\Transfer\Actions\ConfirmImportAction;
+use JayI\Roster\Domains\Transfer\Actions\StartExportAction;
+use JayI\Roster\Domains\Transfer\Actions\StartImportAction;
+use JayI\Roster\Domains\Transfer\Models\TransferModel;
 use Workbench\App\Models\User;
 
 /*
@@ -40,7 +40,7 @@ function queries(Closure $callback): int
  * Acme (on acme.test) with team Ops and `$count` members seated on it, each
  * with Acme/Ops as their current context.
  *
- * @return array{0: User, 1: Organization}
+ * @return array{0: User, 1: OrganizationModel}
  */
 function crowd(int $count): array
 {
@@ -89,7 +89,7 @@ it('renders each organization tab in a fixed number of queries', function (strin
 
 it('lists transfers in a fixed number of queries', function (int $size): void {
     $owner = user();
-    Transfer::factory()->count($size)->create(['requested_by' => $owner->getKey(), 'output_path' => 'missing.csv']);
+    TransferModel::factory()->count($size)->create(['requested_by' => $owner->getKey(), 'output_path' => 'missing.csv']);
     $this->actingAs($owner);
 
     expect(queries(fn () => $this->getJson(route('roster.transfers.index'))->assertOk()))->toBeLessThanOrEqual(6);
@@ -113,7 +113,7 @@ it('previews imports with at most a couple of queries per row', function (): voi
 
 it('applies imports with a bounded number of queries per row', function (): void {
     [$owner] = crowd(0);
-    $import = fn (int $rows, string $prefix): Transfer => app(StartImportAction::class)->execute([
+    $import = fn (int $rows, string $prefix): TransferModel => app(StartImportAction::class)->execute([
         'type' => 'import_members',
         'organization' => 'acme',
         'content' => "email,name,teams\n".implode("\n", array_map(fn (int $i): string => "{$prefix}{$i}@acme.test,New {$i},ops", range(1, $rows))),

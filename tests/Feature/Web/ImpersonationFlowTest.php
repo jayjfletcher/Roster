@@ -5,9 +5,9 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Actions\StartImpersonationAction;
-use JayI\Roster\Actions\StopImpersonationAction;
-use JayI\Roster\Models\Impersonation;
+use JayI\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
+use JayI\Roster\Domains\Impersonation\Actions\StopImpersonationAction;
+use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
 
 beforeEach(function (): void {
     Route::middleware('web')->get('roster-test/whoami', fn (): string => (string) Auth::id().'|'.view('roster::components.impersonation-banner')->render());
@@ -61,7 +61,7 @@ it('returns the impersonator when time runs out', function (): void {
 it('returns the impersonator when ended elsewhere', function (): void {
     $this->get($this->started->url);
 
-    app(StopImpersonationAction::class)->execute($this->started->impersonation->refresh(), ['why' => Impersonation::ENDED_FORCED]);
+    app(StopImpersonationAction::class)->execute($this->started->impersonation->refresh(), ['why' => ImpersonationModel::ENDED_FORCED]);
 
     $this->get('roster-test/banner');
 

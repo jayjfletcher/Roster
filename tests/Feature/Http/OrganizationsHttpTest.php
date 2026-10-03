@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Actions\AddMemberAction;
+use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
 
 it('creates, shows, updates and deletes an organization', function (): void {
     $owner = user();

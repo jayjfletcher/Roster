@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Actions\CreateUserAction;
-use JayI\Roster\Mcp\Tools\ListAuditEntriesTool;
-use JayI\Roster\Mcp\Tools\RecordAuditEventTool;
-use JayI\Roster\Mcp\Tools\ShowAuditEntryTool;
-use JayI\Roster\Models\AuditEntry;
+use JayI\Roster\Domains\Audit\Mcp\Tools\ListAuditEntriesTool;
+use JayI\Roster\Domains\Audit\Mcp\Tools\RecordAuditEventTool;
+use JayI\Roster\Domains\Audit\Mcp\Tools\ShowAuditEntryTool;
+use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use JayI\Roster\Domains\User\Actions\CreateUserAction;
 
 it('lists, shows and records with parity to the http payload', function (): void {
     app(CreateUserAction::class)->execute(['name' => 'Ada', 'email' => 'ada@example.com']);
@@ -18,7 +18,7 @@ it('lists, shows and records with parity to the http payload', function (): void
         'meta' => ['current_page' => 1, 'last_page' => 1, 'per_page' => 25, 'total' => 1],
     ]);
 
-    $entry = AuditEntry::query()->where('action', 'user.created')->sole();
+    $entry = AuditEntryModel::query()->where('action', 'user.created')->sole();
 
     mcpTool(ShowAuditEntryTool::class, ['entry' => $entry->id])
         ->assertOk()
@@ -26,5 +26,5 @@ it('lists, shows and records with parity to the http payload', function (): void
 
     mcpTool(RecordAuditEventTool::class, ['action' => 'invoice.paid', 'subject_label' => 'INV-1'])->assertOk()->assertSee('invoice.paid');
 
-    expect(AuditEntry::query()->where('source', 'app')->sole()->surface)->toBe('mcp');
+    expect(AuditEntryModel::query()->where('source', 'app')->sole()->surface)->toBe('mcp');
 });

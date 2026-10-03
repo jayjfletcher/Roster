@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Models\SsoConnection;
+use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
 
 it('creates, edits and deletes a connection from the organization page', function (): void {
     $this->actingAs(user());
@@ -14,7 +14,7 @@ it('creates, edits and deletes a connection from the organization page', functio
         'name' => 'Okta', 'protocol' => 'oidc', 'issuer' => 'https://idp.test', 'client_id' => 'a', 'client_secret' => 'b', 'jit' => '1', 'enabled' => '1',
     ])->assertRedirect();
 
-    $connection = SsoConnection::query()->sole();
+    $connection = SsoConnectionModel::query()->sole();
 
     $this->get(route('atrium.roster.sso.show', $connection->slug))->assertOk()->assertSee(route('roster.sso.callback', $connection->slug));
 
@@ -25,12 +25,12 @@ it('creates, edits and deletes a connection from the organization page', functio
         ->and($connection->setting('client_secret'))->toBe('b');
 
     $this->delete(route('atrium.roster.sso.destroy', $connection->slug))->assertRedirect();
-    expect(SsoConnection::query()->count())->toBe(0);
+    expect(SsoConnectionModel::query()->count())->toBe(0);
 });
 
 it('shows only the connection\'s own protocol settings when editing', function (string $protocol, array $shown, array $hidden): void {
     $this->actingAs(user());
-    $connection = SsoConnection::factory()->create([
+    $connection = SsoConnectionModel::factory()->create([
         'organization_id' => organization(attributes: ['name' => 'Acme'])->id,
         'protocol' => $protocol,
     ]);

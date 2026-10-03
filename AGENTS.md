@@ -10,6 +10,20 @@ This repository is a Laravel package. Keep the package focused, idiomatic, and e
 - Prefer explicit Laravel package code over helper abstractions unless the extension point is real.
 - Keep tests focused on observable package behavior through public APIs, service provider wiring, commands, routes, published resources, and documentation promises.
 
+## Architecture
+
+- Code lives in domain modules under `src/Domains/{Domain}` (User, Organization, Team, Invitation, Role, Permission, Audit, Impersonation, Sso, Scim, Transfer), mirroring the `mono` domain-module standard. Each domain has a `{Domain}ServiceProvider` (extending `JayI\Roster\Support\ServiceProvider`) registered by `src/Domains/DomainServiceProvider.php`, its JSON API routes in `routes.php` (loaded with `loadApiRoutesFrom()`), any browser routes in `web.php` (`scim.php` for the SCIM protocol), and only the subdirectories it uses.
+- Models are named `{Entity}Model`; their pre-domain class names (`JayI\Roster\Models\{Entity}`) are kept as morph aliases in each domain provider, so audit subject types and other stored values keep the same string. The audit hash chain depends on it.
+- Cross-domain code stays outside the domains: `Roster`, the facade, `RosterServiceProvider`, `Contracts/`, `Http\Request`, `Http\Controllers\TrashController`, `Console\Commands\PurgeDeletedCommand`, `Mcp\Request`/`Tool`/`RosterServer` and the `Mcp\Concerns` schema traits, `Support/` (`Users`, `Scopes`, `Slugs`, `UserKey`, `Concerns\ResolvesScopes`), `Cortex/`, and `Atrium/` (dashboard screens, `ScreenAccess`, `RosterSupportFeature`).
+- The Impex flows (`Transfers\Flows\*`) keep their pre-domain class names: Impex stores them on every run and batch and replays in-flight imports by them.
+
+## Architecture
+
+- Code lives in domain modules under `src/Domains/{Domain}` (User, Organization, Team, Invitation, Role, Permission, Audit, Impersonation, Sso, Scim, Transfer), mirroring the `mono` domain-module standard. Each domain has a `{Domain}ServiceProvider` (extending `JayI\Roster\Support\ServiceProvider`) registered by `src/Domains/DomainServiceProvider.php`, its JSON API routes in `routes.php` (loaded with `loadApiRoutesFrom()`), any browser routes in `web.php` (`scim.php` for the SCIM protocol), and only the subdirectories it uses.
+- Models are named `{Entity}Model`; their pre-domain class names (`JayI\Roster\Models\{Entity}`) are kept as morph aliases in each domain provider, so audit subject types and other stored values keep the same string. The audit hash chain depends on it.
+- Cross-domain code stays outside the domains: `Roster`, the facade, `RosterServiceProvider`, `Contracts/`, `Http\Request`, `Http\Controllers\TrashController`, `Console\Commands\PurgeDeletedCommand`, `Mcp\Request`/`Tool`/`RosterServer` and the `Mcp\Concerns` schema traits, `Support/` (`Users`, `Scopes`, `Slugs`, `UserKey`, `Concerns\ResolvesScopes`), `Cortex/`, and `Atrium/` (dashboard screens, `ScreenAccess`, `RosterSupportFeature`).
+- The Impex flows (`Transfers\Flows\*`) keep their pre-domain class names: Impex stores them on every run and batch and replays in-flight imports by them.
+
 ## Quick Commands
 
 - Full validation: `composer test`

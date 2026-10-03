@@ -6,7 +6,7 @@ require_once __DIR__.'/fixtures.php';
 
 use Illuminate\Http\Request;
 use JayI\Roster\Atrium\RosterPlugin;
-use JayI\Roster\Models\RoleAssignment;
+use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
 
 /**
  * Atrium screens: [method, name, parameters].
@@ -63,7 +63,7 @@ it('keeps atrium closed without atrium.view', function (): void {
 it('forbids each screen to an atrium user without the permission', function (string $method, string $name, Closure $parameters): void {
     $world = authorizationWorld();
     $viewer = user();
-    RoleAssignment::query()->create(['role_id' => roleWith(['atrium.view'])->id, 'user_id' => $viewer->getKey()]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['atrium.view'])->id, 'user_id' => $viewer->getKey()]);
 
     $this->actingAs($viewer)->call($method, route($name, $parameters($world)))->assertForbidden();
 })->with(fn (): array => array_diff_key(screens(), array_flip(OPEN_TO_SIGNED_IN)));
@@ -78,7 +78,7 @@ it('opens each screen to a super-admin', function (string $method, string $name,
 
 it('hides navigation the user cannot use', function (): void {
     $viewer = user();
-    RoleAssignment::query()->create(['role_id' => roleWith(['atrium.view', 'roster.users.view'])->id, 'user_id' => $viewer->getKey()]);
+    RoleAssignmentModel::query()->create(['role_id' => roleWith(['atrium.view', 'roster.users.view'])->id, 'user_id' => $viewer->getKey()]);
 
     $request = Request::create('/');
     $request->setUserResolver(fn () => $viewer);

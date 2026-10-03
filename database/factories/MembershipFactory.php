@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace JayI\Roster\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JayI\Roster\Enums\MembershipSource;
-use JayI\Roster\Models\Membership;
+use JayI\Roster\Domains\Organization\Enums\MembershipSource;
+use JayI\Roster\Domains\Organization\Models\MembershipModel;
 
 /**
- * @extends Factory<Membership>
+ * @extends Factory<MembershipModel>
  */
 final class MembershipFactory extends Factory
 {
-    protected $model = Membership::class;
+    protected $model = MembershipModel::class;
 
     /**
      * @return array<string, mixed>

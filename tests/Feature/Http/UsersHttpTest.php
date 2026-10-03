@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Models\Profile;
+use JayI\Roster\Domains\User\Models\ProfileModel;
 
 it('lists users', function (): void {
     user(['name' => 'Ada']);
@@ -101,5 +101,5 @@ it('deletes a user', function (): void {
     $this->deleteJson(route('roster.users.destroy', $user->getRouteKey()))->assertNoContent();
     $this->deleteJson(route('roster.users.purge', $user->getRouteKey()))->assertNoContent();
 
-    expect(Profile::query()->count())->toBe(0);
+    expect(ProfileModel::query()->count())->toBe(0);
 });

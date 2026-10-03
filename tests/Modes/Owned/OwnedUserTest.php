@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\ServiceProvider;
-use JayI\Roster\Actions\CreateUserAction;
-use JayI\Roster\Models\User;
+use JayI\Roster\Domains\User\Actions\CreateUserAction;
+use JayI\Roster\Domains\User\Models\UserModel;
 use JayI\Roster\Support\Users;
 
 beforeEach(function (): void {
-    config()->set('roster.users.model', User::class);
+    config()->set('roster.users.model', UserModel::class);
 });
 
 it('manages users through the roster-owned model', function (): void {
     $user = app(CreateUserAction::class)->execute(['name' => 'Ada', 'email' => 'ada@example.com']);
 
-    expect($user)->toBeInstanceOf(User::class)
-        ->and(app(Users::class)->model())->toBe(User::class)
+    expect($user)->toBeInstanceOf(UserModel::class)
+        ->and(app(Users::class)->model())->toBe(UserModel::class)
         ->and($user->roster()->exists)->toBeTrue()
         ->and($user->isRosterActive())->toBeTrue();
 });
