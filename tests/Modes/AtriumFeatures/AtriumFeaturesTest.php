@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Illuminate\Http\Request;
+use JayI\Atrium\Domains\Navigation\Data\NavItem;
+use JayI\Atrium\Domains\Navigation\Services\NavigationRegistry;
+use JayI\Atrium\Domains\Plugins\Services\PluginRegistry;
 use JayI\Atrium\Facades\Atrium;
-use JayI\Atrium\Navigation\NavigationRegistry;
-use JayI\Atrium\Navigation\NavItem;
-use JayI\Atrium\Plugins\PluginRegistry;
 use JayI\Roster\Atrium\RosterPlugin;
 use JayI\Roster\Tests\Fixtures\Features\OrphanFeature;
 

@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Impex\Events\RunFailed;
-use JayI\Impex\Models\Run;
+use JayI\Impex\Domains\Run\Events\RunFailed;
+use JayI\Impex\Domains\Run\Models\RunModel;
 use JayI\Impex\Testing\Flows;
 use JayI\Roster\Actions\CancelTransferAction;
 use JayI\Roster\Actions\ConfirmImportAction;
@@ -134,7 +134,7 @@ it('never applies a row twice when the engine redelivers steps', function (): vo
     $transfer = startImport('import_members', "email,teams\nnew@acme.test,sales\nfriend@example.com,", $this->owner, 'acme');
     app(ConfirmImportAction::class)->execute($transfer, $this->owner);
 
-    Flows::redeliverSteps(Run::query()->findOrFail($transfer->impex_run_id));
+    Flows::redeliverSteps(RunModel::query()->findOrFail($transfer->impex_run_id));
 
     expect(User::query()->where('email', 'new@acme.test')->count())->toBe(1)
         ->and(Invitation::query()->count())->toBe(1)

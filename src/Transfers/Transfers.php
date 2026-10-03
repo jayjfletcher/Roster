@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use JayI\Impex\Domains\Batch\Models\BatchModel;
 use JayI\Impex\Impex;
-use JayI\Impex\Models\Batch;
 use JayI\Roster\Enums\TransferStatus;
 use JayI\Roster\Enums\TransferType;
 use JayI\Roster\Models\Organization;
@@ -90,9 +90,9 @@ class Transfers
 
         $batch = $transfer->relationLoaded('impexBatch')
             ? $transfer->getRelation('impexBatch')
-            : Batch::query()->where('run_id', $transfer->impex_run_id)->latest()->first();
+            : BatchModel::query()->where('run_id', $transfer->impex_run_id)->latest()->first();
 
-        if (! $batch instanceof Batch) {
+        if (! $batch instanceof BatchModel) {
             return null;
         }
 
@@ -112,7 +112,7 @@ class Transfers
             return;
         }
 
-        $batches = Batch::query()
+        $batches = BatchModel::query()
             ->whereIn('run_id', $transfers->pluck('impex_run_id')->all())
             ->orderBy('created_at')
             ->get()

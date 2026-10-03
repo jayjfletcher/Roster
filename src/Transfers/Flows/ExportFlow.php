@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Transfers\Flows;
 
-use JayI\Impex\Flows\Flow;
+use JayI\Impex\Domains\Flow\Support\Flow;
 use JayI\Roster\Transfers\Flows\Actions\BuildExport;
 use JayI\Roster\Transfers\Flows\Actions\FinishExport;
 

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Transfers\Flows;
 
-use JayI\Impex\Contracts\BatchSource;
-use JayI\Impex\Runtime\BatchChunk;
-use JayI\Impex\Runtime\BatchChunkItem;
+use JayI\Impex\Domains\Batch\Contracts\BatchSource;
+use JayI\Impex\Domains\Batch\Data\BatchChunk;
+use JayI\Impex\Domains\Batch\Data\BatchChunkItem;
 use JayI\Roster\Models\Transfer;
 use JayI\Roster\Transfers\Csv\Reader;
 use JayI\Roster\Transfers\Transfers;

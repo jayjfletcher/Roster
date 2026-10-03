@@ -6,8 +6,8 @@ namespace JayI\Roster\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
+use JayI\Impex\Domains\Run\Models\RunModel;
 use JayI\Impex\Impex;
-use JayI\Impex\Models\Run;
 use JayI\Roster\Access\Authorizer;
 use JayI\Roster\Enums\TransferStatus;
 use JayI\Roster\Events\Action\TransferConfirmedActionEvent;
@@ -52,7 +52,7 @@ final class ConfirmImportAction
             'requested_by' => $actor?->getKey() ?? $transfer->requested_by,
         ]);
 
-        $run = Run::query()->findOrFail($transfer->impex_run_id);
+        $run = RunModel::query()->findOrFail($transfer->impex_run_id);
         app(Impex::class)->signal($run, 'confirm', ['confirmed' => true]);
 
         $transfer = $transfer->refresh();

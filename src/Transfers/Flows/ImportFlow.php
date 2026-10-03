@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace JayI\Roster\Transfers\Flows;
 
 use Illuminate\Support\Carbon;
-use JayI\Impex\Flows\Flow;
+use JayI\Impex\Domains\Flow\Support\Flow;
 use JayI\Roster\Transfers\Flows\Actions\ApplyImportRow;
 use JayI\Roster\Transfers\Flows\Actions\CloseTransfer;
 use JayI\Roster\Transfers\Flows\Actions\FinishImport;

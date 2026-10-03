@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Transfers\Flows\Actions;
 
-use JayI\Impex\Flows\ResumableAction;
+use JayI\Impex\Domains\Flow\Support\ResumableAction;
 use JayI\Roster\Models\Transfer;
 use JayI\Roster\Transfers\Csv\Writer;
 use JayI\Roster\Transfers\Transfers;

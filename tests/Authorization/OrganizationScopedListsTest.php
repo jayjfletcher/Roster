@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Illuminate\Http\Request;
-use JayI\Atrium\Navigation\NavigationRegistry;
-use JayI\Atrium\Navigation\NavItem;
-use JayI\Atrium\Search\SearchRegistry;
-use JayI\Atrium\Search\SearchResult;
+use JayI\Atrium\Domains\Navigation\Data\NavItem;
+use JayI\Atrium\Domains\Navigation\Services\NavigationRegistry;
+use JayI\Atrium\Domains\Search\Data\SearchResult;
+use JayI\Atrium\Domains\Search\Services\SearchRegistry;
 use JayI\Roster\Access\Permissions;
 use JayI\Roster\Actions\AddMemberAction;
 use JayI\Roster\Mcp\Tools\ListOrganizationsTool;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
-use JayI\Atrium\Navigation\NavigationRegistry;
-use JayI\Atrium\Navigation\NavItem;
+use JayI\Atrium\Domains\Navigation\Data\NavItem;
+use JayI\Atrium\Domains\Navigation\Services\NavigationRegistry;
 use JayI\Roster\Atrium\RosterPlugin;
 use JayI\Roster\Features\RosterSupportFeature;
 use Laravel\Pennant\Feature;

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace JayI\Roster\Actions;
 
 use Illuminate\Validation\ValidationException;
+use JayI\Impex\Domains\Run\Models\RunModel;
 use JayI\Impex\Impex;
-use JayI\Impex\Models\Run;
 use JayI\Roster\Enums\TransferStatus;
 use JayI\Roster\Events\Action\TransferCancelledActionEvent;
 use JayI\Roster\Events\Action\TransferCancellingActionEvent;
@@ -39,12 +39,12 @@ final class CancelTransferAction
 
         TransferCancellingActionEvent::dispatch($transfer);
 
-        $run = Run::query()->find($transfer->impex_run_id);
+        $run = RunModel::query()->find($transfer->impex_run_id);
         $impex = app(Impex::class);
 
-        if ($run instanceof Run && $transfer->status === TransferStatus::AwaitingConfirmation) {
+        if ($run instanceof RunModel && $transfer->status === TransferStatus::AwaitingConfirmation) {
             $impex->signal($run, 'confirm', ['confirmed' => false, 'reason' => 'cancelled']);
-        } elseif ($run instanceof Run) {
+        } elseif ($run instanceof RunModel) {
             $impex->cancel($run, 'Cancelled in Roster.');
         }
 
