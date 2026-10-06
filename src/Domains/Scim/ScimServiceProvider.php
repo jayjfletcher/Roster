@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Domains\Scim;
 
+use JayI\Foundation\Support\ServiceProvider;
 use JayI\Roster\Domains\Scim\Models\ScimGroupModel;
 use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
 use JayI\Roster\Domains\Scim\Models\ScimUserModel;
 use JayI\Roster\Domains\Scim\Services\ScimContext;
-use JayI\Roster\Support\ServiceProvider;
 
 /**
  * SCIM 2.0 provisioning and the tokens that authenticate it.

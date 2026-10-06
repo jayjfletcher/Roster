@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Domains\Audit\Services;
 
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use JayI\Foundation\Support\Surface as SharedSurface;
 
 /**
- * Which surface the current change came through: `http`, `mcp`, `atrium`,
- * `web`, `cli` or `code`.
+ * Which surface the current change came through: `http`, `mcp`, `cortex`,
+ * `atrium`, `scim`, `web`, `cli` or `code`.
+ *
+ * Reads jayi/foundation's surface, so calls the shared MCP request base and
+ * Cortex mark are recorded as theirs. AuditServiceProvider names the routes
+ * Roster serves outside its JSON API (`scim`, `web`). Stays until the audit
+ * log moves to jayi/keen.
  */
-final class Surface
+final readonly class Surface
 {
-    private ?string $forced = null;
-
-    public function __construct(private readonly Application $app) {}
+    public function __construct(private SharedSurface $surface) {}
 
     /**
      * Mark everything recorded inside the callback as coming from `$surface`.
@@ -28,32 +31,12 @@ final class Surface
      */
     public function using(string $surface, callable $callback): mixed
     {
-        $previous = $this->forced;
-        $this->forced = $surface;
-
-        try {
-            return $callback();
-        } finally {
-            $this->forced = $previous;
-        }
+        return $this->surface->using($surface, $callback);
     }
 
     public function current(): string
     {
-        if ($this->forced !== null) {
-            return $this->forced;
-        }
-
-        $name = $this->request()?->route()?->getName();
-
-        return match (true) {
-            is_string($name) && str_starts_with($name, 'atrium.') => 'atrium',
-            is_string($name) && str_starts_with($name, 'roster.scim.') => 'scim',
-            is_string($name) && (str_starts_with($name, 'roster.invitations.page') || $name === 'roster.invitations.show' || str_starts_with($name, 'roster.impersonation.')) => 'web',
-            is_string($name) && str_starts_with($name, 'roster.') => 'http',
-            $this->app->runningInConsole() => 'cli',
-            default => 'code',
-        };
+        return $this->surface->current();
     }
 
     /**
@@ -62,15 +45,11 @@ final class Surface
      */
     public function actor(): ?Model
     {
-        $user = $this->app->make('auth')->user();
-
-        return $user instanceof Model ? $user : null;
+        return $this->surface->actor();
     }
 
     public function request(): ?Request
     {
-        $request = $this->app->bound('request') ? $this->app->make('request') : null;
-
-        return $request instanceof Request ? $request : null;
+        return $this->surface->request();
     }
 }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Domains\Role;
 
+use JayI\Foundation\Support\ServiceProvider;
 use JayI\Roster\Domains\Role\Console\Commands\GrantSuperAdminCommand;
 use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
 use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Support\ServiceProvider;
 
 /**
  * Roles and the role assignments that grant them to users.

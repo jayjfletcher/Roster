@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Domains\Invitation;
 
+use JayI\Foundation\Support\ServiceProvider;
 use JayI\Roster\Domains\Invitation\Models\InvitationModel;
-use JayI\Roster\Support\ServiceProvider;
 
 /**
  * Email invitations to an organization, and the page they link to.

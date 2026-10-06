@@ -6,7 +6,8 @@ use JayI\Cortex\Domains\McpServer\Actions\CreateMcpInstructionVersionAction;
 use JayI\Cortex\Domains\McpServer\Services\McpServerRegistry;
 use JayI\Cortex\Domains\Tool\Actions\CreateToolDescriptionVersionAction;
 use JayI\Cortex\Domains\Tool\Services\ToolRegistry;
-use JayI\Roster\Cortex\CortexIntegration;
+use JayI\Foundation\Cortex\CortexIntegration;
+use JayI\Foundation\Packages\PackageRegistry;
 use JayI\Roster\Domains\User\Mcp\Tools\ListUsersTool;
 use JayI\Roster\Mcp\RosterServer;
 use Laravel\Ai\Contracts\Tool as AgentTool;
@@ -72,7 +73,7 @@ it('lets an agent call a tool as the signed-in user, with Roster permissions app
 });
 
 it('stays out of Cortex when turned off', function (): void {
-    $integration = app(CortexIntegration::class);
+    $integration = CortexIntegration::for(app(PackageRegistry::class)->get('roster'));
 
     expect($integration->active())->toBeTrue();
 

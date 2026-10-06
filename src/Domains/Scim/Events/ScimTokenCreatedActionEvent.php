@@ -6,7 +6,7 @@ namespace JayI\Roster\Domains\Scim\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use JayI\Roster\Contracts\ActionFinishedEvent;
+use JayI\Foundation\Contracts\ActionFinishedEvent;
 use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
 
 /**

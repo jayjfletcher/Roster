@@ -1,6 +1,6 @@
 # Route Conventions
 
-Each domain keeps its API routes in `src/Domains/{Domain}/routes.php`, loaded by its provider through `loadApiRoutesFrom()` (`JayI\Roster\Support\ServiceProvider`) inside one shared group:
+Each domain keeps its API routes in `src/Domains/{Domain}/routes.php`, loaded by its provider through `loadApiRoutesFrom()` (`JayI\Foundation\Support\ServiceProvider`) inside one shared group:
 
 ```php
 Route::prefix($prefix)->middleware($middleware)->name('roster.')->group(...);

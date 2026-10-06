@@ -6,8 +6,9 @@ namespace JayI\Roster\Domains\Audit\Services;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use JayI\Roster\Contracts\ActionFinishedEvent;
-use JayI\Roster\Contracts\ActionStartingEvent;
+use JayI\Foundation\Contracts\ActionFinishedEvent;
+use JayI\Foundation\Contracts\ActionStartingEvent;
+use JayI\Foundation\Packages\PackageRegistry;
 use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
 use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
 use JayI\Roster\Domains\Impersonation\Services\ImpersonationContext;
@@ -25,6 +26,10 @@ use ReflectionProperty;
 
 /**
  * Turns Roster's Action events into audit entries.
+ *
+ * The event contracts are jayi/foundation's, shared by every package of the
+ * suite, so events from other packages are ignored: this log records Roster
+ * alone until the audit log moves to jayi/keen.
  *
  * The starting event snapshots the models an Action is about to touch; the
  * finished event diffs them against their new state and appends the entry.
@@ -49,7 +54,7 @@ final class AuditRecorder
 
     public function starting(ActionStartingEvent $event): void
     {
-        if ($this->isRead($event)) {
+        if (! $this->ownsEvent($event) || $this->isRead($event)) {
             return;
         }
 
@@ -76,7 +81,7 @@ final class AuditRecorder
 
     public function finished(ActionFinishedEvent $event): void
     {
-        if ($this->isRead($event)) {
+        if (! $this->ownsEvent($event) || $this->isRead($event)) {
             return;
         }
 
@@ -137,6 +142,14 @@ final class AuditRecorder
             $model instanceof TransferModel => $model->type->label(),
             default => (string) ($model->getAttribute('name') ?? $model->getKey()),
         };
+    }
+
+    /**
+     * Whether the event is one of Roster's own, not another package's.
+     */
+    private function ownsEvent(object $event): bool
+    {
+        return app(PackageRegistry::class)->for($event)?->key === 'roster';
     }
 
     private function isRead(object $event): bool

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JayI\Roster\Domains\Transfer;
 
 use Illuminate\Contracts\Events\Dispatcher;
+use JayI\Foundation\Support\ServiceProvider;
 use JayI\Impex\Domains\Flow\Services\FlowRegistry;
 use JayI\Impex\Domains\Run\Events\RunFailed;
 use JayI\Roster\Domains\Transfer\Console\Commands\PruneTransfersCommand;
@@ -14,7 +15,6 @@ use JayI\Roster\Domains\Transfer\Models\TransferRowModel;
 use JayI\Roster\Domains\Transfer\Services\PlanCache;
 use JayI\Roster\Domains\Transfer\Services\TransferContext;
 use JayI\Roster\Domains\Transfer\Services\Transfers;
-use JayI\Roster\Support\ServiceProvider;
 use JayI\Roster\Transfers\Flows\ExportFlow;
 use JayI\Roster\Transfers\Flows\ImportFlow;
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JayI\Roster;
 
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Eloquent\Model;
@@ -14,15 +15,15 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\ServiceProvider;
 use JayI\Atrium\Facades\Atrium;
+use JayI\Foundation\Packages\Package;
+use JayI\Foundation\Support\PackageServiceProvider;
 use JayI\Roster\Atrium\ScreenAccess;
 use JayI\Roster\Console\Commands\PurgeDeletedCommand;
-use JayI\Roster\Cortex\CortexIntegration;
 use JayI\Roster\Domains\DomainServiceProvider;
+use JayI\Roster\Domains\Permission\Services\Authorizer;
 use JayI\Roster\Mcp\RosterServer;
 use JayI\Roster\Support\Users;
-use Laravel\Mcp\Facades\Mcp;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -30,15 +31,34 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * the MCP server, Cortex, the rate limiter and the Atrium extras. Each domain
  * under `Domains/` registers its own bindings, routes, listeners, commands
  * and morph aliases through its provider, listed in DomainServiceProvider.
+ *
+ * Roster describes itself to jayi/foundation in `definition()`, so the shared
+ * base classes find its config, routes and MCP server by namespace.
  */
-class RosterServiceProvider extends ServiceProvider
+class RosterServiceProvider extends PackageServiceProvider
 {
+    /**
+     * Roster checks every call by default: `roster.authorization` is on
+     * unless an application turns it off. The shared history route and tool
+     * need `roster.audit.view` globally, as Roster's own audit log does.
+     */
+    protected function definition(): Package
+    {
+        return Package::make('roster', __NAMESPACE__)
+            ->label('Roster')
+            ->server(RosterServer::class)
+            ->authorization()
+            ->authorizeHistory(fn (?Authenticatable $user): bool => $this->app->make(Authorizer::class)
+                ->check($user instanceof Model ? $user : null, 'roster.audit.view'));
+    }
+
     /**
      * Register any application services.
      */
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/roster.php', 'roster');
+        $this->registerPackage();
 
         $this->app->scoped(Roster::class);
         $this->app->singleton(Users::class);
@@ -52,7 +72,7 @@ class RosterServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Cortex is optional: agents get the Roster tools only when it is loaded.
-        $this->app->make(CortexIntegration::class)->register();
+        $this->registerCortex();
 
         $this->registerRateLimiter();
         $this->registerNotFoundResponses();
@@ -70,6 +90,7 @@ class RosterServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'roster');
 
         $this->registerMcpServer();
+        $this->loadHistoryRoutes();
 
         if (! $this->app->runningInConsole()) {
             return;
@@ -146,26 +167,5 @@ class RosterServiceProvider extends ServiceProvider
                 return new JsonResponse(['message' => __('roster::roster.not_found')], 404);
             });
         });
-    }
-
-    private function registerMcpServer(): void
-    {
-        if (! class_exists(Mcp::class)) {
-            return;
-        }
-
-        $config = $this->app->make(Repository::class);
-
-        if ($config->get('roster.mcp.web.enabled') === true) {
-            /** @var array<int, string> $middleware */
-            $middleware = $config->get('roster.mcp.web.middleware', []);
-
-            Mcp::web((string) $config->get('roster.mcp.web.route'), RosterServer::class)
-                ->middleware($middleware);
-        }
-
-        if ($config->get('roster.mcp.local.enabled') === true) {
-            Mcp::local((string) $config->get('roster.mcp.local.handle'), RosterServer::class);
-        }
     }
 }

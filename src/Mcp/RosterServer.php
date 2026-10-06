@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Mcp;
 
-use JayI\Roster\Cortex\CortexIntegration;
+use JayI\Foundation\Mcp\Server;
 use JayI\Roster\Domains\Audit\Mcp\Tools\ListAuditEntriesTool;
 use JayI\Roster\Domains\Audit\Mcp\Tools\RecordAuditEventTool;
 use JayI\Roster\Domains\Audit\Mcp\Tools\ShowAuditEntryTool;
@@ -83,11 +83,10 @@ use JayI\Roster\Domains\User\Mcp\Tools\ShowUserTool;
 use JayI\Roster\Domains\User\Mcp\Tools\SuspendUserTool;
 use JayI\Roster\Domains\User\Mcp\Tools\UpdateProfileTool;
 use JayI\Roster\Domains\User\Mcp\Tools\UpdateUserTool;
-use Laravel\Mcp\Server;
+use JayI\Roster\Mcp\Tools\ListRosterHistoryTool;
 use Laravel\Mcp\Server\Attributes\Instructions;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Version;
-use Laravel\Mcp\Server\ServerContext;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\ToolSearch;
 
@@ -218,6 +217,7 @@ final class RosterServer extends Server
         ListAuditEntriesTool::class,
         ShowAuditEntryTool::class,
         RecordAuditEventTool::class,
+        ListRosterHistoryTool::class,
 
         // CSV import and export
         ShowImportTemplateTool::class,
@@ -235,20 +235,4 @@ final class RosterServer extends Server
     protected array $tools = [
         ToolSearch::class => self::TOOLS,
     ];
-
-    /**
-     * Serve Cortex's published instructions override, when Cortex is
-     * installed and one is published, in place of the ones declared above.
-     */
-    public function createContext(): ServerContext
-    {
-        $context = parent::createContext();
-        $override = app(CortexIntegration::class)->instructions();
-
-        if ($override !== null) {
-            $context->instructions = $override;
-        }
-
-        return $context;
-    }
 }

@@ -6,10 +6,10 @@ namespace JayI\Roster\Domains\Sso;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use JayI\Foundation\Support\ServiceProvider;
 use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
 use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
 use JayI\Roster\Domains\Sso\Services\Sso;
-use JayI\Roster\Support\ServiceProvider;
 
 /**
  * Single sign-on connections (OIDC, SAML, Entra ID) and linked identities.

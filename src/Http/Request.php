@@ -6,23 +6,23 @@ namespace JayI\Roster\Http;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Http\FormRequest;
+use JayI\Foundation\Http\Requests\Request as BaseRequest;
 use JayI\Roster\Domains\Organization\Models\OrganizationModel;
 use JayI\Roster\Domains\Permission\Services\Authorizer;
 use JayI\Roster\Domains\Team\Models\TeamModel;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Base HTTP request.
+ * Base HTTP request for Roster, on jayi/foundation's shared request.
  *
  * Validation rules come from the Action the request wraps, and `persist()`
  * calls that same Action. The MCP surface does the same, so both speak to one
  * implementation rather than two that drift.
  *
- * Every request names the permission its Action needs and the organization
- * or team it applies to; the Authorizer checks it against the signed-in user.
+ * Roster authorizes through its own permissions rather than the Gate: every
+ * request names the permission its Action needs and the organization or team
+ * it applies to, and Roster's Authorizer checks it against the signed-in user.
  */
-abstract class Request extends FormRequest
+abstract class Request extends BaseRequest
 {
     public function authorize(): bool
     {
@@ -98,21 +98,8 @@ abstract class Request extends FormRequest
     }
 
     /**
-     * @return array<string, mixed>
-     */
-    public function rules(): array
-    {
-        return [];
-    }
-
-    /**
-     * Execute the request's use case and build the response.
-     */
-    abstract public function persist(): Response;
-
-    /**
      * The authenticated user, passed to Actions that guard against acting on
-     * yourself.
+     * yourself - also with `roster.authorization` off, unlike the shared base.
      */
     protected function actor(): ?Model
     {

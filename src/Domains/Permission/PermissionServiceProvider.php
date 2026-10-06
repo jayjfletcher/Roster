@@ -8,7 +8,8 @@ use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Contracts\ActionFinishedEvent;
+use JayI\Foundation\Contracts\ActionFinishedEvent;
+use JayI\Foundation\Support\ServiceProvider;
 use JayI\Roster\Domains\Impersonation\Services\ImpersonationContext;
 use JayI\Roster\Domains\Organization\Models\OrganizationModel;
 use JayI\Roster\Domains\Permission\Console\Commands\SyncPermissionsCommand;
@@ -17,7 +18,6 @@ use JayI\Roster\Domains\Permission\Services\Authorizer;
 use JayI\Roster\Domains\Permission\Services\Permissions;
 use JayI\Roster\Domains\Team\Models\TeamModel;
 use JayI\Roster\Roster;
-use JayI\Roster\Support\ServiceProvider;
 
 /**
  * Permissions, how they are checked, and Roster's place in Laravel's Gate.

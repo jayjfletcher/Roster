@@ -10,7 +10,7 @@ use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
 it('covers every roster API route', function (): void {
     $names = collect(Route::getRoutes()->getRoutesByName())
         ->keys()
-        ->filter(fn (string $name): bool => str_starts_with($name, 'roster.') && ! str_starts_with($name, 'roster.invitations.') && ! str_starts_with($name, 'roster.impersonation.') && ! str_starts_with($name, 'roster.sso.') && ! str_starts_with($name, 'roster.scim.') && $name !== 'roster.transfers.file')
+        ->filter(fn (string $name): bool => str_starts_with($name, 'roster.') && ! str_starts_with($name, 'roster.invitations.') && ! str_starts_with($name, 'roster.impersonation.') && ! str_starts_with($name, 'roster.sso.') && ! str_starts_with($name, 'roster.scim.') && $name !== 'roster.transfers.file' && $name !== 'roster.history.index')
         ->map(fn (string $name): string => substr($name, 7))
         ->sort()
         ->values()
@@ -86,4 +86,15 @@ it('lets a team lead manage their team only', function (): void {
 
     $this->patchJson(route('roster.organizations.teams.update', ['acme', 'ops']), ['name' => 'Ops 2'])->assertOk();
     $this->postJson(route('roster.organizations.teams.store', 'acme'), ['name' => 'Other'])->assertForbidden();
+});
+
+it('needs roster.audit.view for the shared history route', function (): void {
+    // Served by jayi/foundation, which answers 403 to guests rather than 401.
+    $this->getJson(route('roster.history.index'))->assertForbidden();
+
+    $this->actingAs($viewer = user())->getJson(route('roster.history.index'))->assertForbidden();
+
+    grant($viewer, 'super-admin');
+
+    $this->getJson(route('roster.history.index'))->assertNotFound();
 });

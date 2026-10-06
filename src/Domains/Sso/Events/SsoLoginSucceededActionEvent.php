@@ -7,7 +7,7 @@ namespace JayI\Roster\Domains\Sso\Events;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use JayI\Roster\Contracts\ActionFinishedEvent;
+use JayI\Foundation\Contracts\ActionFinishedEvent;
 use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
 
 /**

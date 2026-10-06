@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace JayI\Roster\Domains\Invitation\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use JayI\Foundation\Mcp\Tool;
 use JayI\Roster\Domains\Invitation\Mcp\Requests\AcceptInvitationMcpRequest;
-use JayI\Roster\Mcp\Tool;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;

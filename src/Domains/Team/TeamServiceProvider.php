@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Domains\Team;
 
+use JayI\Foundation\Support\ServiceProvider;
 use JayI\Roster\Domains\Team\Models\TeamMemberModel;
 use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Support\ServiceProvider;
 
 /**
  * Teams inside an organization and their members.

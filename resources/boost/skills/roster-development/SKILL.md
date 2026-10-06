@@ -67,7 +67,7 @@ php artisan migrate
 
 ### 6. Audit log
 
-- Roster records every change automatically. Read it via `ListAuditEntriesAction`, `GET /roster/audit` or Atrium; access needs `roster.audit.view` (global, per organization, or about yourself).
+- Roster records every change automatically. Read it via `ListAuditEntriesAction`, `GET /roster/audit` or Atrium; access needs `roster.audit.view` (global, per organization, or about yourself). Only Roster's own Action events are recorded. The shared `GET /roster/history` route and `list-roster-history-tool` (from jayi/foundation, global `roster.audit.view`) read jayi/keen's log and answer "not installed" until it is.
 - Record the app's own events with `Roster::audit('invoice.paid')->on($model)->in($organization)->with([...])->changes([...])->record();` (facade `JayI\Roster\Facades\Roster`). Action names are dot-separated lower case.
 - Add app secrets to `roster.audit.redact`. Schedule `roster:prune-audit`; run `roster:verify-audit` to check for tampering.
 
@@ -125,7 +125,7 @@ php artisan migrate
   - Pass `'status' => 'pending'` to `CreateUserAction`.
   - Set an organization's `provisioned_status` for its SSO and SCIM accounts.
   - Accept with `ApproveUserAction`, or turn down with `RejectUserAction` (which deactivates).
-- Events: `JayI\Roster\Domains\{Domain}\Events\*ActionEvent`; listen to `JayI\Roster\Contracts\ActionStartingEvent` / `ActionFinishedEvent` to see every action.
+- Events: `JayI\Roster\Domains\{Domain}\Events\*ActionEvent`; listen to `JayI\Foundation\Contracts\ActionStartingEvent` / `ActionFinishedEvent` (shared by every jayi package; Roster's events are under `JayI\Roster\`) to see every action. Finished events fire after the transaction commits.
 - HTTP routes are named `roster.users.*`, `roster.organizations.*`, `roster.invitations.*`; `{user}` is the user model's route key, organizations and teams use slugs.
 - Atrium: Users at `atrium.roster.users.index`, Organizations at `atrium.roster.organizations.index`. Access uses Atrium's `viewAtrium` gate. Lists of organizations, roles, impersonations, transfers and audit entries, asked without an `organization`, open to users holding the permission in any organization and hold only what falls within those (`Authorizer::organizationsWith()`); Atrium's navigation follows. Pages show only the controls the viewer may use and organization tabs need their own permission; published views use `@rosterCan($permission, $scope, $self)`, the same check the screens make. Hide it with `atrium.disabled => ['roster']`, or by feature flag through `roster.atrium.features` (navigation, widgets and search hide and pages 404 while a feature is off; Atrium's feature resolver, e.g. jayi/pennantplus, decides). The default is `JayI\Roster\Atrium\Features\RosterSupportFeature`, a PennantPlus `OnLayeredFeature` checked globally only; subclass it to change its default, and it is skipped when jayi/pennantplus is not installed.
 

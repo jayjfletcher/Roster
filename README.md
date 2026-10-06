@@ -40,6 +40,8 @@ Set `roster.users.key_type` (`int`, `ulid` or `uuid`) to match your user model's
 
 The views and translations can be published with `roster-views` and `roster-lang`.
 
+Roster stands on [`jayi/foundation`](https://github.com/jayjfletcher/Foundation), the shared runtime of the jayi package suite, which Composer installs with it. Roster's Action events implement Foundation's `ActionStartingEvent` and `ActionFinishedEvent` contracts, so one listener hears every package of the suite.
+
 ## Choosing a user mode
 
 Roster manages whatever model `roster.users.model` points at (default `App\Models\User`).
@@ -210,7 +212,7 @@ If your app hasn't defined Atrium's `viewAtrium` gate, Roster defines it as the 
 Every change Roster makes is recorded: users, profiles and status, organizations, members, teams, invitations, roles, permissions and assignments. Reads are not recorded. Each entry holds:
 
 - who did it (or "system"), the action (`user.suspended`), and what it happened to
-- the organization it belongs to, and the surface it came through (`http`, `mcp`, `atrium`, `web`, `cli`, `code`) with IP and user agent
+- the organization it belongs to, and the surface it came through (`http`, `mcp`, `cortex`, `atrium`, `web`, `scim`, `cli`, `code`) with IP and user agent
 - the field changes as `{"field": [old, new]}`, including profile fields (`profile.status`), role permission lists and organization domains
 
 Passwords, remember tokens and invitation tokens are always written as `[redacted]`. Add your own field names to `roster.audit.redact`.
@@ -241,6 +243,8 @@ App entries carry `source: app`; Roster's own carry `source: roster`. The API (`
 - anyone can read entries about themselves or made by them (`?user={your id}`)
 
 Atrium has an Audit log page, an Activity card on each user and an Activity tab on each organization. Filter by `action` (exact, or a prefix such as `user.`), `source`, `subject_type`, `since` and `until`.
+
+Only Roster's own Action events are recorded here: the event contracts are shared with the rest of the jayi suite, and other packages' events are ignored. Roster also serves the suite-wide history endpoint (`GET /roster/history`) and `list-roster-history-tool` from `jayi/foundation`. They need `roster.audit.view` held globally, and read the shared audit log of [`jayi/keen`](https://github.com/jayjfletcher/Keen); until it is installed they answer that no audit log is installed (404 over HTTP).
 
 ### Retention and tamper evidence
 
@@ -589,6 +593,7 @@ Suspended and deactivated users get a 403, and so do users awaiting approval (wi
 | DELETE | `/roster/impersonations/{impersonation}` | `roster.impersonations.destroy` |
 | GET, POST | `/roster/audit` | `roster.audit.index`, `.store` |
 | GET | `/roster/audit/{entry}` | `roster.audit.show` |
+| GET | `/roster/history` | `roster.history.index` (the shared jayi/keen history; 404 until it is installed) |
 | POST | `/roster/imports` | `roster.imports.store` (multipart `file`, or `content`) |
 | GET | `/roster/imports/templates/{type}` | `roster.imports.templates.show` (CSV template; any signed-in user) |
 | POST | `/roster/imports/{transfer}/confirm` | `roster.imports.confirm` |
@@ -611,7 +616,7 @@ MCP tools (all behind Laravel MCP's tool search):
 | Single sign-on | `list-sso-connections-tool`, `show-sso-connection-tool`, `create-sso-connection-tool`, `update-sso-connection-tool`, `delete-sso-connection-tool`, `list-sso-identities-tool`, `unlink-sso-identity-tool` |
 | SCIM | `list-scim-tokens-tool`, `create-scim-token-tool`, `revoke-scim-token-tool` |
 | Impersonation | `start-impersonation-tool`, `list-impersonations-tool`, `stop-impersonation-tool` |
-| Audit | `list-audit-entries-tool`, `show-audit-entry-tool`, `record-audit-event-tool` |
+| Audit | `list-audit-entries-tool`, `show-audit-entry-tool`, `record-audit-event-tool`, `list-roster-history-tool` |
 | CSV import and export | `show-import-template-tool`, `start-import-tool`, `confirm-import-tool`, `start-export-tool`, `list-transfers-tool`, `show-transfer-tool`, `cancel-transfer-tool` |
 | Roles | `list-permissions-tool`, `create-permission-tool`, `update-permission-tool`, `delete-permission-tool`, `list-roles-tool`, `show-role-tool`, `create-role-tool`, `update-role-tool`, `delete-role-tool`, `list-role-assignments-tool`, `assign-role-tool`, `revoke-role-tool`, `list-user-permissions-tool` |
 

@@ -7,6 +7,7 @@ require_once __DIR__.'/fixtures.php';
 use JayI\Roster\Domains\Invitation\Mcp\Tools\AcceptInvitationTool;
 use JayI\Roster\Domains\Invitation\Mcp\Tools\DeclineInvitationTool;
 use JayI\Roster\Mcp\RosterServer;
+use JayI\Roster\Mcp\Tools\ListRosterHistoryTool;
 
 /**
  * Arguments that name existing records for every tool.
@@ -82,4 +83,16 @@ it('lets a super-admin past authorization on every tool', function (string $tool
 it('needs a signed-in invitee to answer invitations', function (): void {
     mcpTool(AcceptInvitationTool::class, ['token' => 'x'])->assertHasErrors(['Unauthorized.']);
     mcpTool(DeclineInvitationTool::class, ['token' => 'x'])->assertHasErrors(['Unauthorized.']);
+});
+
+it('needs roster.audit.view for the history tool', function (): void {
+    mcpTool(ListRosterHistoryTool::class)->assertHasErrors(['Unauthorized.']);
+
+    $this->actingAs($viewer = user());
+
+    mcpTool(ListRosterHistoryTool::class)->assertHasErrors(['Unauthorized.']);
+
+    grant($viewer, 'super-admin');
+
+    mcpTool(ListRosterHistoryTool::class)->assertHasErrors(['No audit log is installed']);
 });

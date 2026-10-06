@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JayI\Roster\Tests;
 
-use Illuminate\Database\DatabaseTransactionsManager;
+use Illuminate\Foundation\Testing\DatabaseTransactionsManager;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
 use JayI\Atrium\AtriumServiceProvider;

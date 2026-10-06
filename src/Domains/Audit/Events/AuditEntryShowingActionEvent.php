@@ -6,7 +6,7 @@ namespace JayI\Roster\Domains\Audit\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use JayI\Roster\Contracts\ActionStartingEvent;
+use JayI\Foundation\Contracts\ActionStartingEvent;
 use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
 
 /**

@@ -7,7 +7,7 @@ namespace JayI\Roster\Domains\Team\Events;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use JayI\Roster\Contracts\ActionFinishedEvent;
+use JayI\Foundation\Contracts\ActionFinishedEvent;
 use JayI\Roster\Domains\Team\Models\TeamModel;
 
 /**

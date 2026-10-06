@@ -9,6 +9,7 @@ use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Router;
+use JayI\Foundation\Support\ServiceProvider;
 use JayI\Roster\Domains\Organization\Models\MembershipModel;
 use JayI\Roster\Domains\Organization\Models\OrganizationModel;
 use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
@@ -16,7 +17,6 @@ use JayI\Roster\Domains\User\Http\Middleware\EnsureUserIsActive;
 use JayI\Roster\Domains\User\Listeners\ApplyRegistrationStatus;
 use JayI\Roster\Domains\User\Models\ProfileModel;
 use JayI\Roster\Domains\User\Models\UserModel;
-use JayI\Roster\Support\ServiceProvider;
 
 /**
  * Users and their profiles, status and approval.

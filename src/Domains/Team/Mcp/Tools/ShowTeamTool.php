@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace JayI\Roster\Domains\Team\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use JayI\Foundation\Mcp\Tool;
 use JayI\Roster\Domains\Team\Mcp\Requests\ShowTeamMcpRequest;
 use JayI\Roster\Mcp\Concerns\DescribesTeam;
-use JayI\Roster\Mcp\Tool;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;

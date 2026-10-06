@@ -8,11 +8,11 @@ use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Routing\Router;
+use JayI\Foundation\Support\ServiceProvider;
 use JayI\Roster\Domains\Impersonation\Http\Middleware\SyncImpersonation;
 use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
 use JayI\Roster\Domains\Impersonation\Services\ImpersonationContext;
 use JayI\Roster\Domains\Impersonation\Services\Impersonator;
-use JayI\Roster\Support\ServiceProvider;
 
 /**
  * Signing in as another user, and the way back.
