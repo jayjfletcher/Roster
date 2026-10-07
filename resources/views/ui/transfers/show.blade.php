@@ -12,25 +12,21 @@
     </x-atrium::page-header>
 
     <div class="mt-5 flex flex-col gap-4">
-        @include('roster::ui.partials.status')
+        @include('roster::impersonation-banner', ['bannerClass' => 'rounded-radius'])
+        <x-atrium::flash />
 
         <x-atrium::card>
-            <dl class="grid grid-cols-3 gap-2 text-sm">
-                <dt class="opacity-70">{{ __('roster::roster.status') }}</dt>
-                <dd class="col-span-2"><x-roster::status :status="$transfer->status" data-testid="transfer-status" /></dd>
-                <dt class="opacity-70">{{ __('roster::roster.requested_by') }}</dt>
-                <dd class="col-span-2">{{ $transfer->requester ? ($directory->name($transfer->requester) ?? $directory->email($transfer->requester)) : __('roster::roster.none') }}</dd>
-                <dt class="opacity-70">{{ __('roster::roster.rows') }}</dt>
-                <dd class="col-span-2">{{ $transfer->row_count }}</dd>
+            <x-atrium::description-list>
+                <x-atrium::description-list.item :term="__('roster::roster.status')">@include('roster::ui.partials.status-dot', ['status' => $transfer->status, 'testid' => 'transfer-status', 'variant' => null, 'label' => null])</x-atrium::description-list.item>
+                <x-atrium::description-list.item :term="__('roster::roster.requested_by')">{{ $transfer->requester ? ($directory->name($transfer->requester) ?? $directory->email($transfer->requester)) : __('roster::roster.none') }}</x-atrium::description-list.item>
+                <x-atrium::description-list.item :term="__('roster::roster.rows')">{{ $transfer->row_count }}</x-atrium::description-list.item>
                 @if ($transfer->expires_at && $transfer->status === TransferStatus::AwaitingConfirmation)
-                    <dt class="opacity-70">{{ __('roster::roster.confirm_by') }}</dt>
-                    <dd class="col-span-2">{{ $transfer->expires_at->toDayDateTimeString() }}</dd>
+                    <x-atrium::description-list.item :term="__('roster::roster.confirm_by')">{{ $transfer->expires_at->toDayDateTimeString() }}</x-atrium::description-list.item>
                 @endif
                 @if ($transfer->finished_at)
-                    <dt class="opacity-70">{{ __('roster::roster.finished') }}</dt>
-                    <dd class="col-span-2">{{ $transfer->finished_at->toDayDateTimeString() }}</dd>
+                    <x-atrium::description-list.item :term="__('roster::roster.finished')">{{ $transfer->finished_at->toDayDateTimeString() }}</x-atrium::description-list.item>
                 @endif
-            </dl>
+            </x-atrium::description-list>
 
             @if ($transfer->report['error'] ?? null)
                 <x-atrium::alert variant="danger" class="mt-4">{{ $transfer->report['error'] }}</x-atrium::alert>

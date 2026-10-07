@@ -7,9 +7,9 @@ namespace JayI\Roster\Atrium\Http\Controllers;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use JayI\Foundation\Audit\Contracts\AuditTrail;
 use JayI\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
 use JayI\Roster\Atrium\ScreenAccess;
-use JayI\Roster\Domains\Audit\Actions\ListAuditEntriesAction;
 use JayI\Roster\Domains\Invitation\Actions\ListInvitationsAction;
 use JayI\Roster\Domains\Invitation\Enums\InvitationStatus;
 use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
@@ -42,7 +42,9 @@ final class OrganizationUiController
     use AuthorizesScreens;
 
     /**
-     * Each tab and the permission, in the organization, that opens it.
+     * Each tab and the permission, in the organization, that opens it. The
+     * activity tab shows the organization's history from the audit log, so
+     * it is offered only while one (jayi/keen) is installed.
      */
     private const array TABS = [
         'members' => 'roster.members.view',
@@ -110,7 +112,8 @@ final class OrganizationUiController
         $model = app(ShowOrganizationAction::class)->execute($model);
 
         // Only the tabs the viewer may open here; asking for another is refused.
-        $tabs = array_keys(array_filter(self::TABS, fn (string $permission): bool => ScreenAccess::allows($permission, $model)));
+        $tabs = array_keys(array_filter(self::TABS, fn (string $permission, string $tab): bool => ($tab !== 'activity' || app(AuditTrail::class)->available())
+            && ScreenAccess::allows($permission, $model), ARRAY_FILTER_USE_BOTH));
         $requested = $request->query('tab');
 
         if (is_string($requested) && array_key_exists($requested, self::TABS)) {
@@ -143,7 +146,6 @@ final class OrganizationUiController
                     'roles' => app(ListRolesAction::class)->execute(['organization' => $model, 'per_page' => 100]),
                     'assignments' => app(ListRoleAssignmentsAction::class)->execute(['organization' => $model] + $page)->withQueryString(),
                 ],
-                'activity' => ['activity' => app(ListAuditEntriesAction::class)->execute(['organization' => $model] + $page)->withQueryString()],
                 'sso' => ['ssoConnections' => app(ListSsoConnectionsAction::class)->execute(['organization' => $model] + $page)->withQueryString()],
                 'scim' => [
                     'scimTokens' => app(ListScimTokensAction::class)->execute($model, $page)->withQueryString(),

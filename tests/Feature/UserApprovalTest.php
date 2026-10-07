@@ -6,7 +6,6 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
 use JayI\Roster\Domains\Organization\Actions\UpdateOrganizationAction;
 use JayI\Roster\Domains\Organization\Models\MembershipModel;
 use JayI\Roster\Domains\User\Actions\ApproveUserAction;
@@ -48,7 +47,6 @@ it('approves a pending user and tells them', function (): void {
 
     expect(app(Users::class)->status($user))->toBe(UserStatus::Active);
     Notification::assertSentOnDemand(UserApprovedNotification::class, fn ($n, $c, $notifiable): bool => $notifiable->routes['mail'] === 'pat@example.com');
-    expect(AuditEntryModel::query()->where('action', 'user.approved')->sole()->changes)->toMatchArray(['profile.status' => ['pending', 'active']]);
 });
 
 it('rejects a pending user by deactivating them with the reason', function (): void {

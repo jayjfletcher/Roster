@@ -5,7 +5,7 @@
         @foreach ($counts as $status => $count)
             <a class="flex items-center gap-2 rounded-radius border border-outline px-3 py-2 transition hover:bg-surface-alt dark:border-outline-dark dark:hover:bg-surface-dark-alt"
                href="{{ route('atrium.roster.users.index', ['status' => $status]) }}">
-                <x-roster::status :status="UserStatus::from($status)" />
+                @include('roster::ui.partials.status-dot', ['status' => UserStatus::from($status), 'variant' => null, 'label' => null, 'testid' => null])
                 <span class="text-sm font-semibold tabular-nums">{{ $count }}</span>
             </a>
         @endforeach

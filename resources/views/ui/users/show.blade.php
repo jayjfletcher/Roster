@@ -6,13 +6,14 @@
 <x-atrium::layout :title="$title">
     <x-atrium::page-header :title="$title" :description="$directory->email($user)">
         <x-slot:actions>
-            <x-roster::status :status="$status" data-testid="user-status" />
+            @include('roster::ui.partials.status-dot', ['status' => $status, 'testid' => 'user-status', 'variant' => null, 'label' => null])
         </x-slot:actions>
     </x-atrium::page-header>
 
     <div class="mt-5 grid gap-4 lg:grid-cols-2">
-        <div class="lg:col-span-2">
-            @include('roster::ui.partials.status')
+        <div class="flex flex-col gap-4 lg:col-span-2">
+            @include('roster::impersonation-banner', ['bannerClass' => 'rounded-radius'])
+            <x-atrium::flash />
         </div>
 
         @rosterCan('roster.users.update')
@@ -56,17 +57,17 @@
                 <div class="flex flex-wrap items-start gap-3">
                     <form method="POST" action="{{ route('atrium.roster.users.approve', $user->getRouteKey()) }}">
                         @csrf
-                        <div class="roster-actions">
+                        <x-atrium::form.actions>
                             <x-atrium::icon-button icon="check" :label="__('roster::roster.approve')" variant="primary" type="submit" data-testid="approve-user" />
-                        </div>
+                        </x-atrium::form.actions>
                     </form>
 
                     <form method="POST" action="{{ route('atrium.roster.users.reject', $user->getRouteKey()) }}" class="flex items-start gap-2">
                         @csrf
                         <x-atrium::form.input name="reason" id="reject-reason" :label="__('roster::roster.reason')" wrapper="w-64" />
-                        <div class="roster-actions">
+                        <x-atrium::form.actions>
                             <x-atrium::icon-button icon="x-mark" :label="__('roster::roster.reject')" type="submit" variant="danger" data-testid="reject-user" />
-                        </div>
+                        </x-atrium::form.actions>
                     </form>
                 </div>
             </x-atrium::card>
@@ -93,9 +94,9 @@
                     wrapper="w-56"
                     required />
                 <x-atrium::form.input name="reason" id="status-reason" :label="__('roster::roster.reason')" :hint="__('roster::roster.status_reason_hint')" wrapper="w-80" />
-                <div class="roster-actions">
+                <x-atrium::form.actions>
                     <x-atrium::icon-button icon="arrow-path" :label="__('roster::roster.update_status')" type="submit" variant="secondary" data-testid="change-status" />
-                </div>
+                </x-atrium::form.actions>
             </form>
         </x-atrium::card>
         @endrosterCan
@@ -135,9 +136,9 @@
                         :options="$memberships->flatMap(fn ($m) => $m->teams->mapWithKeys(fn ($t) => [$t->slug => $m->organization?->name.' / '.$t->name]))"
                         :selected="$currentTeam?->slug"
                         wrapper="w-56" />
-                    <div class="roster-actions">
+                    <x-atrium::form.actions>
                         <x-atrium::icon-button icon="arrows-right-left" :label="__('roster::roster.switch')" variant="primary" type="submit" data-testid="switch-context" />
-                    </div>
+                    </x-atrium::form.actions>
                 </form>
                 @endrosterCan
             @endif
@@ -202,9 +203,9 @@
                     :placeholder="__('roster::roster.no_team')"
                     :options="$assignIn->flatMap(fn ($m) => $m->teams->mapWithKeys(fn ($t) => [$t->slug => $m->organization?->name.' / '.$t->name]))"
                     wrapper="w-56" />
-                <div class="roster-actions">
+                <x-atrium::form.actions>
                     <x-atrium::icon-button icon="shield-check" :label="__('roster::roster.assign')" variant="primary" type="submit" data-testid="assign-role" />
-                </div>
+                </x-atrium::form.actions>
             </form>
             @endif
 
@@ -216,10 +217,7 @@
         @endrosterCan
 
         @rosterCan('roster.audit.view', null, $user)
-        <x-atrium::card :title="__('roster::roster.activity')" class="lg:col-span-2" data-testid="activity-card">
-            @include('roster::ui.audit.partials.entries', ['entries' => $activity])
-            <x-atrium::icon-button icon="arrow-right" :label="__('roster::roster.view_all')" class="mt-3" variant="ghost" :href="route('atrium.roster.audit.index', ['user' => $user->getRouteKey()])" />
-        </x-atrium::card>
+        <x-atrium::audit-trail source="roster" :subject="$user" class="lg:col-span-2" />
         @endrosterCan
 
         @rosterCan('roster.users.impersonate')
@@ -227,9 +225,9 @@
                 <form method="POST" action="{{ route('atrium.roster.users.impersonate', $user->getRouteKey()) }}" class="flex flex-wrap items-start gap-2">
                     @csrf
                     <x-atrium::form.input name="reason" id="impersonation-reason" :label="__('roster::roster.reason')" :hint="__('roster::roster.impersonation_reason_hint')" wrapper="w-80" required />
-                    <div class="roster-actions">
+                    <x-atrium::form.actions>
                         <x-atrium::icon-button icon="eye" :label="__('roster::roster.impersonate')" type="submit" variant="warning" data-testid="impersonate-user" />
-                    </div>
+                    </x-atrium::form.actions>
                 </form>
             </x-atrium::card>
         @endrosterCan

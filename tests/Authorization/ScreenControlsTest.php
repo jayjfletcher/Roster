@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__.'/fixtures.php';
 
+use JayI\Foundation\Audit\Contracts\AuditTrail;
+use JayI\Foundation\Audit\Data\AuditFilter;
+use JayI\Foundation\Audit\Data\AuditPage;
 use JayI\Roster\Domains\Organization\Models\OrganizationModel;
 use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
 use Workbench\App\Models\User;
@@ -49,7 +52,6 @@ it('shows a user page without the controls the viewer may not use', function ():
         ->assertDontSee(testId('switch-context'), false)
         ->assertDontSee(testId('domain-join'), false)
         ->assertDontSee(testId('roles-card'), false)
-        ->assertDontSee(testId('activity-card'), false)
         ->assertDontSee(testId('impersonate-card'), false)
         ->assertDontSee(testId('unlink-sso-identity'), false)
         ->assertDontSee(testId('danger-zone'), false);
@@ -68,7 +70,6 @@ it('shows each user page control with its permission', function (array $permissi
     'status' => [['roster.users.manage-status'], 'change-status'],
     'domain join' => [['roster.users.update'], 'domain-join'],
     'roles' => [['roster.roles.view'], 'roles-card'],
-    'activity' => [['roster.audit.view'], 'activity-card'],
     'impersonate' => [['roster.users.impersonate'], 'impersonate-card'],
     'delete' => [['roster.users.delete'], 'danger-zone'],
 ]);
@@ -98,7 +99,7 @@ it('offers role assignment only in the organizations the viewer may assign in', 
         ->assertDontSee('<option value="">'.__('roster::roster.scope_global').'</option>', false);
 });
 
-it('shows a user their own profile, roles and activity but not admin controls', function (): void {
+it('shows a user their own profile and roles but not admin controls', function (): void {
     $viewer = viewer(['roster.users.view']);
 
     $this->actingAs($viewer)
@@ -106,7 +107,6 @@ it('shows a user their own profile, roles and activity but not admin controls', 
         ->assertOk()
         ->assertSee(testId('save-profile'), false)
         ->assertSee(testId('roles-card'), false)
-        ->assertSee(testId('activity-card'), false)
         ->assertDontSee(testId('save-account'), false)
         ->assertDontSee(testId('impersonate-card'), false)
         ->assertDontSee(testId('danger-zone'), false);
@@ -189,7 +189,6 @@ it('offers only the imports and exports the viewer may start', function (): void
         ->assertDontSee(testId('import-card'), false)
         ->assertSee(testId('export-card'), false)
         ->assertSee('value="export_users"', false)
-        ->assertDontSee('value="export_audit"', false)
         ->assertDontSee('value="export_organizations"', false);
 
     $this->actingAs(viewer(['roster.users.view', 'roster.users.create']))
@@ -219,13 +218,22 @@ it('shows roles and permissions read only to those who may not manage them', fun
         ->assertDontSee('name="description"', false);
 });
 
-it('hides the audit note form without roster.audit.record', function (): void {
-    $this->actingAs(viewer(['roster.audit.view']))
-        ->get(route('atrium.roster.audit.index'))
-        ->assertOk()
-        ->assertDontSee(testId('record-note-card'), false);
+it('shows a record\'s history only to those who may read the audit log', function (): void {
+    app()->instance(AuditTrail::class, new class implements AuditTrail
+    {
+        public function available(): bool
+        {
+            return true;
+        }
 
-    $this->actingAs(viewer(['roster.audit.view', 'roster.audit.record']))
-        ->get(route('atrium.roster.audit.index'))
-        ->assertSee(testId('record-note-card'), false);
+        public function entries(AuditFilter $filter): AuditPage
+        {
+            return new AuditPage;
+        }
+    });
+    $world = authorizationWorld();
+    $page = route('atrium.roster.users.show', $world['target']->getRouteKey());
+
+    $this->actingAs(viewer(['roster.users.view']))->get($page)->assertOk()->assertDontSee(testId('audit-trail'), false);
+    $this->actingAs(viewer(['roster.users.view', 'roster.audit.view']))->get($page)->assertOk()->assertSee(testId('audit-trail'), false);
 });

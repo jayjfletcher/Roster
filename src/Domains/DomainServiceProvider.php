@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace JayI\Roster\Domains;
 
 use Illuminate\Support\ServiceProvider;
-use JayI\Roster\Domains\Audit\AuditServiceProvider;
 use JayI\Roster\Domains\Impersonation\ImpersonationServiceProvider;
 use JayI\Roster\Domains\Invitation\InvitationServiceProvider;
 use JayI\Roster\Domains\Organization\OrganizationServiceProvider;
@@ -22,9 +21,6 @@ class DomainServiceProvider extends ServiceProvider
     /**
      * The domain service providers.
      *
-     * Permission comes before Audit on purpose: its listener clears the
-     * request's remembered permissions before the audit entry is recorded.
-     *
      * @var array<int, class-string<ServiceProvider>>
      */
     private array $providers = [
@@ -34,7 +30,6 @@ class DomainServiceProvider extends ServiceProvider
         InvitationServiceProvider::class,
         RoleServiceProvider::class,
         PermissionServiceProvider::class,
-        AuditServiceProvider::class,
         ImpersonationServiceProvider::class,
         SsoServiceProvider::class,
         ScimServiceProvider::class,

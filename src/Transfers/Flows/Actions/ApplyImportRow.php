@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Audit\Services\Surface;
+use JayI\Foundation\Support\Surface;
 use JayI\Roster\Domains\Transfer\Models\TransferModel;
 use JayI\Roster\Domains\Transfer\Models\TransferRowModel;
 use JayI\Roster\Domains\Transfer\Services\PlanCache;

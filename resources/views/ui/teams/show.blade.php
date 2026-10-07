@@ -6,8 +6,9 @@
     </x-atrium::page-header>
 
     <div class="mt-5 grid gap-4 lg:grid-cols-2">
-        <div class="lg:col-span-2">
-            @include('roster::ui.partials.status')
+        <div class="flex flex-col gap-4 lg:col-span-2">
+            @include('roster::impersonation-banner', ['bannerClass' => 'rounded-radius'])
+            <x-atrium::flash />
         </div>
 
         <x-atrium::card :title="__('roster::roster.members')">
@@ -40,9 +41,9 @@
                     :label="__('roster::roster.add_member')"
                     :options="collect($candidates->items())->filter(fn ($m) => $m->user)->mapWithKeys(fn ($m) => [$m->user->getRouteKey() => $directory->name($m->user) ?? $directory->email($m->user)])"
                     wrapper="w-64" />
-                <div class="roster-actions">
+                <x-atrium::form.actions>
                     <x-atrium::icon-button icon="user-plus" :label="__('roster::roster.add_member')" variant="primary" type="submit" data-testid="add-team-member" />
-                </div>
+                </x-atrium::form.actions>
             </form>
             @endrosterCan
         </x-atrium::card>
@@ -67,6 +68,10 @@
             </form>
             @endrosterCan
         </x-atrium::card>
+        @endrosterCan
+
+        @rosterCan('roster.audit.view', $team)
+        <x-atrium::audit-trail source="roster" :subject="$team" class="lg:col-span-2" />
         @endrosterCan
     </div>
 </x-atrium::layout>

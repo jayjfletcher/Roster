@@ -67,7 +67,7 @@ it('shows organization admins the navigation their organization permissions open
     openAtriumFor($admin);
 
     expect(rosterNavFor($admin))
-        ->toContain('Organizations', 'Roles', 'Imports & exports', 'Audit log')
+        ->toContain('Organizations', 'Roles', 'Imports & exports')
         ->not->toContain('Users', 'Permissions', 'Impersonations');
 });
 
@@ -75,7 +75,7 @@ it('hides organization navigation from users without any organization permission
     $member = user();
     openAtriumFor($member);
 
-    expect(rosterNavFor($member))->not->toContain('Organizations', 'Roles', 'Audit log');
+    expect(rosterNavFor($member))->not->toContain('Organizations', 'Roles');
 });
 
 it('lists only their own organizations to organization admins, on every surface', function (): void {

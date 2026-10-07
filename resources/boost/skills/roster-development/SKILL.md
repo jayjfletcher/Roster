@@ -4,7 +4,7 @@ description: >
   Configure and apply the Roster package in Laravel applications: user CRUD,
   profiles, suspend/deactivate/reactivate, organizations, teams, invitations,
   domain auto-join, current org/team context, roles and permissions through
-  Laravel's Gate, audit log, impersonation, SSO, SCIM, CSV import/export,
+  Laravel's Gate, audit history (through jayi/keen), impersonation, SSO, SCIM, CSV import/export,
   the roster.active and roster.organization middleware, and Roster's HTTP
   API, MCP server and Atrium screens.
 license: MIT
@@ -67,9 +67,10 @@ php artisan migrate
 
 ### 6. Audit log
 
-- Roster records every change automatically. Read it via `ListAuditEntriesAction`, `GET /roster/audit` or Atrium; access needs `roster.audit.view` (global, per organization, or about yourself). Only Roster's own Action events are recorded. The shared `GET /roster/history` route and `list-roster-history-tool` (from jayi/foundation, global `roster.audit.view`) read jayi/keen's log and answer "not installed" until it is.
-- Record the app's own events with `Roster::audit('invoice.paid')->on($model)->in($organization)->with([...])->changes([...])->record();` (facade `JayI\Roster\Facades\Roster`). Action names are dot-separated lower case.
-- Add app secrets to `roster.audit.redact`. Schedule `roster:prune-audit`; run `roster:verify-audit` to check for tampering.
+- Roster keeps no audit log of its own. Install jayi/keen (`composer require jayi/keen`, `php artisan migrate`) and every Roster change is recorded there, labelled, diffed (profile fields, role permissions, organization domains), scoped to its organization, and with the impersonator, import or SCIM token in its context. Roster registers this through jayi/foundation's `AuditHooks` whether or not Keen is installed.
+- Read it in Keen (its API, MCP tools and Atrium section), on each Roster user, team and role page and the organization Activity tab (`<x-atrium::audit-trail source="roster" :subject="$model" />`, `roster.audit.view` in scope), or through `GET /roster/history` and `list-roster-history-tool` (global `roster.audit.view`). Roster defines the `viewAuditLog` Gate ability as global `roster.audit.view` unless the app defines it.
+- Record the app's own events with `Keen::record('invoice.paid')->on($model)->in($organization)->with([...])->save();` (facade `JayI\Keen\Facades\Keen`). `Roster::audit()` is deprecated: it delegates to Keen and throws `AuditLogNotInstalledException` without it.
+- Upgrading from Roster's own log: run `php artisan keen:import-roster` once; the `roster_audit_*` tables are kept for it. Add app secrets to `keen.redact`.
 
 ### 7. Organizations from external systems
 
@@ -89,12 +90,12 @@ php artisan migrate
 
 - Issue a token with `CreateScimTokenAction($organization, ['name' => 'Okta', 'sso_connection' => $slug?])`; `$issued->plain` is the only copy. The provider's base URL is `url('scim/v2/'.$organization->slug)`.
 - The organization must own its email domains (`domains`), or SCIM refuses its users.
-- SCIM changes run through Roster's Actions: listen to the normal Action events, and find them in the audit log under surface `scim`.
+- SCIM changes run through Roster's Actions: listen to the normal Action events, and find them in Keen's audit log under surface `scim`.
 
 ### 10. Impersonation
 
 - Grant `roster.users.impersonate` explicitly. Start with `StartImpersonationAction($user, ['reason' => ...], actor: $admin)` and redirect the impersonator's browser to `$started->url`.
-- Add `<x-roster::impersonation-banner />` to the app layout. List app abilities that must never run while impersonating in `roster.impersonation.blocked` (wildcards allowed).
+- Add `@include('roster::impersonation-banner')` to the app layout (Atrium's standalone banner, styled inline). List app abilities that must never run while impersonating in `roster.impersonation.blocked` (wildcards allowed).
 - Use `app(JayI\Roster\Domains\Impersonation\Services\ImpersonationContext::class)->active()` to detect an impersonated request.
 
 ### 11. CSV import and export
@@ -102,7 +103,7 @@ php artisan migrate
 - Requires `jayi/impex`: `composer require jayi/impex`, `php artisan vendor:publish --tag="impex-migrations"`, migrate, and run a queue worker and the scheduler. Schedule `roster:prune-transfers`.
 - Start with `StartImportAction(['type' => 'import_members'|'import_users'|'import_teams', 'organization' => slug, 'file' => $upload /* or 'content' => $csv */], $user)`. It only previews: read `$transfer->rows()` (`action` is create/link/invite/update/skip/error).
 - Apply with `ConfirmImportAction($transfer, $user)`. Rows run as that user, with their permissions checked again. Cancel with `CancelTransferAction`.
-- Export with `StartExportAction(['type' => 'export_members'|'export_users'|'export_audit', 'organization' => slug, 'filters' => [...]], $user)`, then serve the file through `route('roster.transfers.download', $transfer->id)` or Atrium.
+- Export with `StartExportAction(['type' => 'export_members'|'export_users'|'export_organizations', 'organization' => slug, 'filters' => [...]], $user)`, then serve the file through `route('roster.transfers.download', $transfer->id)` or Atrium.
 - Get a starting file with `ShowImportTemplateAction(TransferType::ImportMembers)` (or `GET /roster/imports/templates/{type}`); rows starting with `#` are ignored. Customize with `php artisan vendor:publish --tag="roster-import-templates"`.
 - Columns: members `email,name,display_name,teams,role`; users `email,name,display_name`; teams `name,slug,members`; organizations `source,external_id,name,account_number,slug,domains,owner`.
 - Without Impex, these Actions throw `JayI\Roster\Domains\Transfer\Exceptions\TransfersUnavailableException`.
@@ -114,7 +115,7 @@ php artisan migrate
 
 ## Rules, References, and Templates
 
-- Config: `config/roster.php` (users, authorization, super_admins, roles, audit, impersonation, sso, scim, transfers, organizations, invitations, routes, mcp).
+- Config: `config/roster.php` (users, authorization, super_admins, roles, impersonation, sso, scim, transfers, organizations, invitations, routes, mcp).
 - Statuses: `JayI\Roster\Domains\User\Enums\UserStatus` (`Active`, `Pending`, `Suspended`, `Deactivated`). A user with no profile row is `Active`.
 - Deletes are soft:
   - Add `SoftDeletes` (and a `deleted_at` column) to the user model so deleted users can be restored; without it, users are deleted permanently.
@@ -127,7 +128,7 @@ php artisan migrate
   - Accept with `ApproveUserAction`, or turn down with `RejectUserAction` (which deactivates).
 - Events: `JayI\Roster\Domains\{Domain}\Events\*ActionEvent`; listen to `JayI\Foundation\Contracts\ActionStartingEvent` / `ActionFinishedEvent` (shared by every jayi package; Roster's events are under `JayI\Roster\`) to see every action. Finished events fire after the transaction commits.
 - HTTP routes are named `roster.users.*`, `roster.organizations.*`, `roster.invitations.*`; `{user}` is the user model's route key, organizations and teams use slugs.
-- Atrium: Users at `atrium.roster.users.index`, Organizations at `atrium.roster.organizations.index`. Access uses Atrium's `viewAtrium` gate. Lists of organizations, roles, impersonations, transfers and audit entries, asked without an `organization`, open to users holding the permission in any organization and hold only what falls within those (`Authorizer::organizationsWith()`); Atrium's navigation follows. Pages show only the controls the viewer may use and organization tabs need their own permission; published views use `@rosterCan($permission, $scope, $self)`, the same check the screens make. Hide it with `atrium.disabled => ['roster']`, or by feature flag through `roster.atrium.features` (navigation, widgets and search hide and pages 404 while a feature is off; Atrium's feature resolver, e.g. jayi/pennantplus, decides). The default is `JayI\Roster\Atrium\Features\RosterSupportFeature`, a PennantPlus `OnLayeredFeature` checked globally only; subclass it to change its default, and it is skipped when jayi/pennantplus is not installed.
+- Atrium: Users at `atrium.roster.users.index`, Organizations at `atrium.roster.organizations.index`. Access uses Atrium's `viewAtrium` gate. Lists of organizations, roles, impersonations and transfers, asked without an `organization`, open to users holding the permission in any organization and hold only what falls within those (`Authorizer::organizationsWith()`); Atrium's navigation follows. Pages show only the controls the viewer may use and organization tabs need their own permission; published views use `@rosterCan($permission, $scope, $self)`, the same check the screens make. Hide it with `atrium.disabled => ['roster']`, or by feature flag through `roster.atrium.features` (navigation, widgets and search hide and pages 404 while a feature is off; Atrium's feature resolver, e.g. jayi/pennantplus, decides). The default is `JayI\Roster\Atrium\Features\RosterSupportFeature`, a PennantPlus `OnLayeredFeature` checked globally only; subclass it to change its default, and it is skipped when jayi/pennantplus is not installed.
 
 ## Examples
 
@@ -175,8 +176,9 @@ In app tests, assert with `expect($user->rosterStatus())->toBe(UserStatus::Suspe
 - Enabling `roster.routes` or `roster.mcp.web` without authentication middleware; permission checks need a signed-in user.
 - Setting `roster.authorization` to false in production.
 - Running Cortex agents with no signed-in user and expecting Roster tools to work; they are refused.
-- Updating or deleting `roster_audit_entries` rows: the model refuses, and raw SQL edits are caught by `roster:verify-audit`.
-- Putting secrets in `Roster::audit()->with()` without listing their keys in `roster.audit.redact`.
+- Expecting an audit trail without jayi/keen installed; Roster records nothing on its own.
+- Putting secrets in `Keen::record()->with()` without listing their keys in `keen.redact`.
+- Styling Roster's views with `<style>`, `style=` or classes outside Atrium's safelist; publish and use Atrium components instead.
 - Logging users in as someone else with `Auth::login()` for support. Use impersonation, which is time-limited, blocked from sensitive abilities, and audited.
 - Emailing or posting impersonation links. They only work in the impersonator's own browser.
 - Using multi-tenant Entra authorities (`common`, `organizations`) or the Entra `mail` attribute for identity. Roster refuses both.

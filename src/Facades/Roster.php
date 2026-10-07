@@ -7,7 +7,7 @@ namespace JayI\Roster\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \JayI\Roster\Domains\Audit\Data\PendingAuditEntry audit(string $action)
+ * @method static \JayI\Keen\Domains\Audit\Data\PendingAuditEntry audit(string $action) Deprecated: use `Keen::record()` from jayi/keen.
  * @method static \JayI\Roster\Domains\Organization\Models\OrganizationModel|null organization(\Illuminate\Database\Eloquent\Model $user)
  * @method static \JayI\Roster\Domains\Team\Models\TeamModel|null team(\Illuminate\Database\Eloquent\Model $user)
  *

@@ -34,6 +34,10 @@ backend:
   slug-references:
     description: Records referenced by slug; host users by route key
 
+frontend:
+  atrium-views:
+    description: Atrium components and safelisted utilities only; no Roster CSS, components or inline styles
+
 database:
   migrations:
     description: Fixed 2026_01_01 date + sequence, one file per feature, ULID keys

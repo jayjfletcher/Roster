@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
 use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
 use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
 use JayI\Roster\Domains\Organization\Actions\LinkOrganizationAction;
@@ -110,9 +109,6 @@ it('syncs a batch record by record', function (): void {
         ->and($results[1]['errors'])->toHaveKey('domains.0')
         ->and($results[3]['errors'])->toHaveKey('source')
         ->and(OrganizationLinkModel::query()->count())->toBe(1);
-
-    expect(AuditEntryModel::query()->where('action', 'organizations.synced')->sole()->context['summary'])
-        ->toBe(['created' => 1, 'error' => 2, 'unchanged' => 1]);
 });
 
 it('links, relinks and unlinks by hand', function (): void {
@@ -129,8 +125,7 @@ it('links, relinks and unlinks by hand', function (): void {
 
     app(UnlinkOrganizationAction::class)->execute($acme, 'erp');
 
-    expect($acme->links()->count())->toBe(0)
-        ->and(AuditEntryModel::query()->where('action', 'organization.unlinked')->sole()->context)->toMatchArray(['source' => 'erp']);
+    expect($acme->links()->count())->toBe(0);
 });
 
 it('finds organizations by their external records', function (): void {

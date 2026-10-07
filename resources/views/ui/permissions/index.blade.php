@@ -4,7 +4,8 @@
     @php($manage = \JayI\Roster\Atrium\ScreenAccess::allows('roster.roles.manage'))
 
     <div class="mt-5 flex flex-col gap-4">
-        @include('roster::ui.partials.status')
+        @include('roster::impersonation-banner', ['bannerClass' => 'rounded-radius'])
+        <x-atrium::flash />
 
         @if ($manage)
         <x-atrium::card :title="__('roster::roster.new_permission')" data-testid="new-permission-card">
@@ -12,9 +13,9 @@
                 @csrf
                 <x-atrium::form.input name="name" :label="__('roster::roster.name')" :hint="__('roster::roster.permission_name_hint')" wrapper="w-64" required />
                 <x-atrium::form.input name="description" :label="__('roster::roster.description')" wrapper="w-80" />
-                <div class="roster-actions">
+                <x-atrium::form.actions>
                     <x-atrium::icon-button icon="plus" :label="__('roster::roster.create')" variant="primary" type="submit" data-testid="create-permission" />
-                </div>
+                </x-atrium::form.actions>
             </form>
         </x-atrium::card>
         @endif

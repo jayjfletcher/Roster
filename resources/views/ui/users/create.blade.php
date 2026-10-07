@@ -2,7 +2,8 @@
     <x-atrium::page-header :title="__('roster::roster.new_user')" />
 
     <div class="mt-5 flex max-w-2xl flex-col gap-4">
-        @include('roster::ui.partials.status')
+        @include('roster::impersonation-banner', ['bannerClass' => 'rounded-radius'])
+        <x-atrium::flash />
 
         <x-atrium::card>
             <form method="POST" action="{{ route('atrium.roster.users.store') }}" class="flex flex-col gap-4">

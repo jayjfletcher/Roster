@@ -49,8 +49,7 @@ final class BuiltInRoles
         'roster.sso.view' => "View an organization's single sign-on connections.",
         'roster.sso.manage' => 'Configure single sign-on connections.',
         'roster.scim.manage' => 'Issue and revoke SCIM provisioning tokens.',
-        'roster.audit.view' => 'Read the audit log.',
-        'roster.audit.record' => "Record the app's own events in the audit log.",
+        'roster.audit.view' => "Read Roster's history in the audit log.",
         'atrium.view' => 'Open the Atrium dashboard.',
     ];
 

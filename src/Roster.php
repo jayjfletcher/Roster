@@ -6,14 +6,15 @@ namespace JayI\Roster;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\Audit\Data\PendingAuditEntry;
-use JayI\Roster\Domains\Audit\Services\Surface;
+use JayI\Keen\Domains\Audit\Data\PendingAuditEntry;
+use JayI\Keen\Facades\Keen;
 use JayI\Roster\Domains\Organization\Models\MembershipModel;
 use JayI\Roster\Domains\Organization\Models\OrganizationModel;
 use JayI\Roster\Domains\Permission\Services\Permissions;
 use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
 use JayI\Roster\Domains\Team\Models\TeamMemberModel;
 use JayI\Roster\Domains\Team\Models\TeamModel;
+use JayI\Roster\Exceptions\AuditLogNotInstalledException;
 use JayI\Roster\Support\Users;
 
 /**
@@ -78,12 +79,20 @@ class Roster
     }
 
     /**
-     * Start one of the app's own audit entries, recorded as the signed-in
-     * user unless `by()` says otherwise.
+     * Start one of the app's own audit entries in the suite-wide audit log,
+     * recorded as the signed-in user unless `by()` says otherwise.
+     *
+     * @deprecated Use `Keen::record()` from jayi/keen, which this delegates to.
+     *
+     * @throws AuditLogNotInstalledException When jayi/keen is not installed.
      */
     public function audit(string $action): PendingAuditEntry
     {
-        return new PendingAuditEntry($action, app(Surface::class)->actor());
+        if (! class_exists(Keen::class)) {
+            throw AuditLogNotInstalledException::make();
+        }
+
+        return Keen::record($action);
     }
 
     /**

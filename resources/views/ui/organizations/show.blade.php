@@ -9,7 +9,8 @@
     </x-atrium::page-header>
 
     <div class="mt-5 flex flex-col gap-4">
-        @include('roster::ui.partials.status')
+        @include('roster::impersonation-banner', ['bannerClass' => 'rounded-radius'])
+        <x-atrium::flash />
 
         <nav class="flex flex-wrap gap-2" aria-label="{{ $organization->name }}">
             @php($tabIcons = ['members' => 'users', 'teams' => 'user-group', 'invitations' => 'envelope', 'roles' => 'shield-check', 'sso' => 'arrow-right-end-on-rectangle', 'scim' => 'server-stack', 'activity' => 'clipboard-document-list', 'settings' => 'cog'])
@@ -34,9 +35,9 @@
                 <form method="POST" action="{{ route('atrium.roster.organizations.members.store', $organization) }}" class="flex items-start gap-2">
                     @csrf
                     <x-atrium::form.input name="user" :label="__('roster::roster.user')" :hint="__('roster::roster.user_key_hint')" wrapper="w-64" required />
-                    <div class="roster-actions">
+                    <x-atrium::form.actions>
                         <x-atrium::icon-button icon="user-plus" :label="__('roster::roster.add_member')" variant="primary" type="submit" data-testid="add-member" />
-                    </div>
+                    </x-atrium::form.actions>
                 </form>
             </x-atrium::card>
             @endrosterCan
@@ -108,9 +109,9 @@
                     @csrf
                     <x-atrium::form.input name="name" :label="__('roster::roster.name')" wrapper="w-64" required />
                     <x-atrium::form.input name="slug" :label="__('roster::roster.slug')" :hint="__('roster::roster.slug_hint')" wrapper="w-64" />
-                    <div class="roster-actions">
+                    <x-atrium::form.actions>
                         <x-atrium::icon-button icon="plus" :label="__('roster::roster.create')" variant="primary" type="submit" data-testid="create-team" />
-                    </div>
+                    </x-atrium::form.actions>
                 </form>
             </x-atrium::card>
             @endrosterCan
@@ -176,7 +177,7 @@
                     @foreach ($invitations as $invitation)
                         <x-atrium::table.row>
                             <x-atrium::table.cell>{{ $invitation->email }}</x-atrium::table.cell>
-                            <x-atrium::table.cell><x-roster::status :status="$invitation->status()" data-testid="invitation-status" /></x-atrium::table.cell>
+                            <x-atrium::table.cell>@include('roster::ui.partials.status-dot', ['status' => $invitation->status(), 'testid' => 'invitation-status', 'variant' => null, 'label' => null])</x-atrium::table.cell>
                             <x-atrium::table.cell>{{ $invitation->expires_at->diffForHumans() }}</x-atrium::table.cell>
                             <x-atrium::table.cell>
                                 @if ($invitation->status() === $pending && \JayI\Roster\Atrium\ScreenAccess::allows('roster.invitations.manage', $organization))
@@ -303,15 +304,13 @@
                         :placeholder="__('roster::roster.none')"
                         :options="$ssoConnections->mapWithKeys(fn ($c) => [$c->slug => $c->name])"
                         wrapper="w-56" />
-                    <div class="roster-actions">
+                    <x-atrium::form.actions>
                         <x-atrium::icon-button icon="plus" :label="__('roster::roster.create')" variant="primary" type="submit" data-testid="create-scim-token" />
-                    </div>
+                    </x-atrium::form.actions>
                 </form>
             </x-atrium::card>
         @elseif ($tab === 'activity')
-            @include('roster::ui.audit.partials.entries', ['entries' => $activity])
-            <x-atrium::pagination :paginator="$activity" />
-            <x-atrium::icon-button icon="arrow-right" :label="__('roster::roster.view_all')" variant="ghost" :href="route('atrium.roster.audit.index', ['organization' => $organization->slug])" />
+            <x-atrium::audit-trail source="roster" :subject="$organization" />
         @elseif ($tab === 'roles')
             <x-atrium::card :title="__('roster::roster.assignments')">
                 @if ($assignments->isEmpty())
@@ -410,9 +409,9 @@
                     <x-atrium::form.input name="source" id="link-source" :label="__('roster::roster.external_source')" :hint="__('roster::roster.external_source_hint')" wrapper="w-40" required />
                     <x-atrium::form.input name="external_id" id="link-external-id" :label="__('roster::roster.external_id')" wrapper="w-56" required />
                     <x-atrium::form.input name="account_number" id="link-account-number" :label="__('roster::roster.account_number')" wrapper="w-48" />
-                    <div class="roster-actions">
+                    <x-atrium::form.actions>
                         <x-atrium::icon-button icon="link" :label="__('roster::roster.link')" variant="primary" type="submit" data-testid="link-organization" />
-                    </div>
+                    </x-atrium::form.actions>
                 </form>
                 @endrosterCan
             </x-atrium::card>

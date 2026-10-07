@@ -23,7 +23,7 @@ final class ListTransfersTool extends Tool
     {
         return [
             'organization' => $schema->string()->description('An organization slug.'),
-            'type' => $schema->string()->description('import_members, import_users, import_teams, export_members, export_users or export_audit.'),
+            'type' => $schema->string()->description('import_members, import_users, import_teams, export_members, export_users or export_organizations.'),
             'status' => $schema->string()->description('validating, awaiting_confirmation, running, completed, failed, cancelled or expired.'),
             'per_page' => $schema->integer()->description('Results per page, 1-100. Defaults to 25.')->min(1)->max(100),
             'page' => $schema->integer()->description('Page number, from 1.')->min(1),

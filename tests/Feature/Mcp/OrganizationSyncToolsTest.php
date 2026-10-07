@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
 use JayI\Roster\Domains\Organization\Mcp\Tools\LinkOrganizationTool;
 use JayI\Roster\Domains\Organization\Mcp\Tools\ListOrganizationsTool;
 use JayI\Roster\Domains\Organization\Mcp\Tools\SyncOrganizationsTool;
@@ -23,6 +22,4 @@ it('syncs, finds, links and unlinks organizations', function (): void {
 
     mcpTool(LinkOrganizationTool::class, ['organization' => 'initech', 'source' => 'crm', 'external_id' => '0015g'])->assertOk()->assertSee('0015g');
     mcpTool(UnlinkOrganizationTool::class, ['organization' => 'initech', 'source' => 'crm'])->assertOk()->assertDontSee('0015g');
-
-    expect(AuditEntryModel::query()->where('action', 'organization.synced')->first()?->surface)->toBe('mcp');
 });

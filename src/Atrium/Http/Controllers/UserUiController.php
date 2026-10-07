@@ -10,7 +10,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use JayI\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
-use JayI\Roster\Domains\Audit\Actions\ListAuditEntriesAction;
 use JayI\Roster\Domains\Organization\Actions\JoinOrganizationsByDomainAction;
 use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
 use JayI\Roster\Domains\Organization\Models\MembershipModel;
@@ -115,7 +114,6 @@ final class UserUiController
             'assignments' => app(ListRoleAssignmentsAction::class)->execute(['user' => $model, 'per_page' => 100]),
             'effective' => app(ListUserPermissionsAction::class)->execute($model),
             'assignableRoles' => RoleModel::query()->with('organization')->orderBy('scope')->orderBy('name')->get(),
-            'activity' => app(ListAuditEntriesAction::class)->execute(['user' => $model, 'per_page' => 10]),
             'ssoIdentities' => app(ListSsoIdentitiesAction::class)->execute(['user' => $model, 'per_page' => 50]),
         ]);
     }

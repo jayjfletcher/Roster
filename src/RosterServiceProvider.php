@@ -14,15 +14,19 @@ use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
-use JayI\Atrium\Facades\Atrium;
+use JayI\Foundation\Audit\AuditHooks;
+use JayI\Foundation\Audit\History;
 use JayI\Foundation\Packages\Package;
 use JayI\Foundation\Support\PackageServiceProvider;
+use JayI\Foundation\Support\Surface;
 use JayI\Roster\Atrium\ScreenAccess;
 use JayI\Roster\Console\Commands\PurgeDeletedCommand;
 use JayI\Roster\Domains\DomainServiceProvider;
 use JayI\Roster\Domains\Permission\Services\Authorizer;
 use JayI\Roster\Mcp\RosterServer;
+use JayI\Roster\Support\Audit;
 use JayI\Roster\Support\Users;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -40,7 +44,7 @@ class RosterServiceProvider extends PackageServiceProvider
     /**
      * Roster checks every call by default: `roster.authorization` is on
      * unless an application turns it off. The shared history route and tool
-     * need `roster.audit.view` globally, as Roster's own audit log does.
+     * need `roster.audit.view` globally.
      */
     protected function definition(): Package
     {
@@ -64,6 +68,8 @@ class RosterServiceProvider extends PackageServiceProvider
         $this->app->singleton(Users::class);
 
         $this->app->register(DomainServiceProvider::class);
+
+        $this->registerSurfaces();
     }
 
     /**
@@ -78,10 +84,6 @@ class RosterServiceProvider extends PackageServiceProvider
         $this->registerNotFoundResponses();
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'roster');
-        Blade::anonymousComponentPath(__DIR__.'/../resources/views/components', 'roster');
-
-        // Utilities Roster's screens use that Atrium's stylesheet lacks.
-        Atrium::css((string) file_get_contents(__DIR__.'/../resources/css/atrium.css'), 'roster');
 
         // @rosterCan('roster.users.update', $scope, $self) ... @endrosterCan:
         // the screens' own check, so a control shows only when its action is allowed.
@@ -91,6 +93,7 @@ class RosterServiceProvider extends PackageServiceProvider
 
         $this->registerMcpServer();
         $this->loadHistoryRoutes();
+        $this->registerAudit();
 
         if (! $this->app->runningInConsole()) {
             return;
@@ -124,6 +127,41 @@ class RosterServiceProvider extends PackageServiceProvider
         $this->publishesMigrations([
             __DIR__.'/../database/migrations/users' => database_path('migrations'),
         ], 'roster-users-migration');
+    }
+
+    /**
+     * Roster's routes outside its JSON API: SCIM, and the signed pages a
+     * person opens from an email. The shared surface is scoped, so name them
+     * each time it is resolved.
+     */
+    private function registerSurfaces(): void
+    {
+        $this->app->afterResolving(Surface::class, function (Surface $surface): void {
+            $surface->route('roster.scim.', 'scim')
+                ->route('roster.invitations.page', 'web')
+                ->route('roster.invitations.show', 'web')
+                ->route('roster.impersonation.', 'web');
+        });
+    }
+
+    /**
+     * Teach the suite-wide audit log (jayi/keen) about Roster's models and
+     * events, whether or not it is installed. Reading the whole log needs
+     * Roster's global `roster.audit.view` unless the application defines
+     * `viewAuditLog` itself; checked once the application has booted, so a
+     * definition in its own providers wins.
+     */
+    private function registerAudit(): void
+    {
+        $this->app->make(Audit::class)->register($this->app->make(AuditHooks::class));
+
+        $this->app->booted(function (): void {
+            if (Gate::has(History::ABILITY)) {
+                return;
+            }
+
+            Gate::define(History::ABILITY, fn (Model $user, mixed ...$arguments): bool => $this->app->make(Authorizer::class)->check($user, 'roster.audit.view'));
+        });
     }
 
     /**

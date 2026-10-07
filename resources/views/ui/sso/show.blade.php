@@ -8,16 +8,17 @@
     </x-atrium::page-header>
 
     <div class="mt-5 flex flex-col gap-4">
-        @include('roster::ui.partials.status')
+        @include('roster::impersonation-banner', ['bannerClass' => 'rounded-radius'])
+        <x-atrium::flash />
 
         <x-atrium::card :title="__('roster::roster.sso')">
-            <dl class="grid grid-cols-3 gap-2 text-sm">
-                <dt class="opacity-70">{{ __('roster::roster.callback_url') }}</dt><dd class="col-span-2 break-all font-mono text-xs" data-testid="callback-url">{{ $resource['callback_url'] ?? __('roster::roster.none') }}</dd>
+            <x-atrium::description-list>
+                <x-atrium::description-list.item :term="__('roster::roster.callback_url')" class="break-all font-mono text-xs" data-testid="callback-url">{{ $resource['callback_url'] ?? __('roster::roster.none') }}</x-atrium::description-list.item>
                 @if ($resource['metadata_url'])
-                    <dt class="opacity-70">{{ __('roster::roster.metadata_url') }}</dt><dd class="col-span-2 break-all font-mono text-xs">{{ $resource['metadata_url'] }}</dd>
+                    <x-atrium::description-list.item :term="__('roster::roster.metadata_url')" class="break-all font-mono text-xs">{{ $resource['metadata_url'] }}</x-atrium::description-list.item>
                 @endif
-                <dt class="opacity-70">{{ __('roster::roster.sso_identities') }}</dt><dd class="col-span-2">{{ $connection->identities_count }}</dd>
-            </dl>
+                <x-atrium::description-list.item :term="__('roster::roster.sso_identities')">{{ $connection->identities_count }}</x-atrium::description-list.item>
+            </x-atrium::description-list>
             @if ($resource['sign_in_url'])
                 <x-atrium::icon-button icon="arrow-top-right-on-square" :label="__('roster::roster.test_sign_in')" class="mt-3" variant="ghost" :href="$resource['sign_in_url']" />
             @endif

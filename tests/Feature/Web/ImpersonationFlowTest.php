@@ -10,8 +10,8 @@ use JayI\Roster\Domains\Impersonation\Actions\StopImpersonationAction;
 use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
 
 beforeEach(function (): void {
-    Route::middleware('web')->get('roster-test/whoami', fn (): string => (string) Auth::id().'|'.view('roster::components.impersonation-banner')->render());
-    Route::middleware('web')->get('roster-test/banner', fn () => Blade::render('<x-roster::impersonation-banner />'));
+    Route::middleware('web')->get('roster-test/whoami', fn (): string => (string) Auth::id().'|'.view('roster::impersonation-banner')->render());
+    Route::middleware('web')->get('roster-test/banner', fn () => Blade::render("@include('roster::impersonation-banner')"));
     app('router')->getRoutes()->refreshNameLookups();
 
     $this->admin = user(['name' => 'Admin']);
@@ -27,6 +27,7 @@ it('becomes the user, shows the banner, and returns', function (): void {
 
     $this->get('roster-test/banner')
         ->assertOk()
+        ->assertSee('data-testid="impersonation-banner"', false)
         ->assertSee('You are acting as Ada (signed in as Admin).')
         ->assertSee('Return to my account');
 

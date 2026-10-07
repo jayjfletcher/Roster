@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 require_once __DIR__.'/helpers.php';
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
 use JayI\Roster\Domains\Sso\Actions\SsoLoginAction;
 use JayI\Roster\Domains\Sso\Data\IdentityClaims;
+use JayI\Roster\Domains\Sso\Events\SsoLoginFailedActionEvent;
+use JayI\Roster\Domains\Sso\Events\SsoLoginSucceededActionEvent;
 use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
 use JayI\Roster\Domains\User\Actions\ApproveUserAction;
 use JayI\Roster\Domains\User\Actions\SuspendUserAction;
@@ -19,6 +21,7 @@ function claims(string $email = 'ada@acme.test', string $subject = 'sub-1'): Ide
 }
 
 it('creates an account just in time for the organization\'s domains', function (): void {
+    Event::fake([SsoLoginSucceededActionEvent::class]);
     $connection = acmeWithSso();
 
     [$user, $method] = app(SsoLoginAction::class)->execute($connection, claims());
@@ -27,8 +30,9 @@ it('creates an account just in time for the organization\'s domains', function (
         ->and($user->getAttribute('email'))->toBe('ada@acme.test')
         ->and($user->getAttribute('email_verified_at'))->not->toBeNull()
         ->and($connection->organization->membershipFor($user))->not->toBeNull()
-        ->and(SsoIdentityModel::query()->sole()->subject)->toBe('sub-1')
-        ->and(AuditEntryModel::query()->where('action', 'sso_login.succeeded')->sole()->context['method'])->toBe('jit');
+        ->and(SsoIdentityModel::query()->sole()->subject)->toBe('sub-1');
+
+    Event::assertDispatched(SsoLoginSucceededActionEvent::class, fn (SsoLoginSucceededActionEvent $event): bool => $event->method === 'jit');
 });
 
 it('matches returning users by subject, even after an email change', function (): void {
@@ -57,6 +61,7 @@ it('refuses emails outside the organization\'s domains', function (): void {
 })->throws(ValidationException::class);
 
 it('records refused sign-ins', function (): void {
+    Event::fake([SsoLoginFailedActionEvent::class]);
     $connection = acmeWithSso();
 
     try {
@@ -64,10 +69,7 @@ it('records refused sign-ins', function (): void {
     } catch (ValidationException) {
     }
 
-    $entry = AuditEntryModel::query()->where('action', 'sso_login.failed')->sole();
-
-    expect($entry->context['reason'])->toBe('untrusted_email')
-        ->and($entry->context['email'])->toBe('eve@gmail.test');
+    Event::assertDispatched(SsoLoginFailedActionEvent::class, fn (SsoLoginFailedActionEvent $event): bool => $event->reason === 'untrusted_email' && $event->email === 'eve@gmail.test');
 });
 
 it('refuses new accounts when just-in-time is off', function (): void {
@@ -106,8 +108,7 @@ it('keeps a just-in-time account the organization wants approved, and refuses it
 
     expect($ada->rosterStatus()->value)->toBe('pending')
         ->and($connection->organization->membershipFor($ada))->not->toBeNull()
-        ->and(SsoIdentityModel::query()->sole()->user_id)->toBe($ada->id)
-        ->and(AuditEntryModel::query()->where('action', 'sso_login.failed')->sole()->context['reason'])->toBe('pending');
+        ->and(SsoIdentityModel::query()->sole()->user_id)->toBe($ada->id);
 
     app(ApproveUserAction::class)->execute($ada);
 

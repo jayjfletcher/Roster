@@ -4,7 +4,8 @@
     <x-atrium::page-header :title="__('roster::roster.impersonations')" />
 
     <div class="mt-5 flex flex-col gap-4">
-        @include('roster::ui.partials.status')
+        @include('roster::impersonation-banner', ['bannerClass' => 'rounded-radius'])
+        <x-atrium::flash />
 
         @if ($impersonations->isEmpty())
             <x-atrium::empty-state :title="__('roster::roster.no_impersonations')" />
@@ -26,7 +27,7 @@
                         <x-atrium::table.cell>{{ $impersonation->reason }}</x-atrium::table.cell>
                         <x-atrium::table.cell>
                             @if ($impersonation->isActive())
-                                <x-roster::status variant="warning" :label="__('roster::roster.impersonation_active')" />
+                                @include('roster::ui.partials.status-dot', ['variant' => 'warning', 'label' => __('roster::roster.impersonation_active'), 'status' => null, 'testid' => null])
                             @elseif ($impersonation->ended_at)
                                 {{ $impersonation->end_reason }} · {{ $impersonation->ended_at->diffForHumans() }}
                             @else

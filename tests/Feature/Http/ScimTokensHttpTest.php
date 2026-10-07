@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
 use JayI\Roster\Domains\Scim\Mcp\Tools\CreateScimTokenTool;
 use JayI\Roster\Domains\Scim\Mcp\Tools\ListScimTokensTool;
 use JayI\Roster\Domains\Scim\Mcp\Tools\RevokeScimTokenTool;
@@ -28,7 +27,4 @@ it('issues a token once, lists without it, and revokes', function (): void {
 
     $this->deleteJson(route('roster.scim-tokens.destroy', ScimTokenModel::query()->where('name', 'Okta')->sole()->id))->assertOk()->assertJsonPath('data.usable', false);
     mcpTool(RevokeScimTokenTool::class, ['token' => ScimTokenModel::query()->where('name', 'Entra')->sole()->id])->assertOk();
-
-    expect(AuditEntryModel::query()->where('action', 'scim_token.created')->count())->toBe(2)
-        ->and(json_encode(AuditEntryModel::query()->get()->toArray()))->not->toContain($token);
 });

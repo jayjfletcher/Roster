@@ -140,6 +140,8 @@ abstract class TestCase extends Orchestra
             dirname(__DIR__).'/database/migrations',
             // Impex's migrations are publish-only; jayi/impex is a dev dependency.
             dirname(__DIR__).'/vendor/jayi/impex/database/migrations',
+            // jayi/keen is a dev dependency; KeenTestCase boots it.
+            dirname(__DIR__).'/vendor/jayi/keen/database/migrations',
         ];
     }
 

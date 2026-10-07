@@ -6,7 +6,8 @@
     </x-atrium::page-header>
 
     <div class="mt-5 flex flex-col gap-4">
-        @include('roster::ui.partials.status')
+        @include('roster::impersonation-banner', ['bannerClass' => 'rounded-radius'])
+        <x-atrium::flash />
 
         <x-atrium::card>
             @if ($role->super)
@@ -48,5 +49,9 @@
                 <x-atrium::icon-button icon="trash" :label="__('roster::roster.delete')" type="submit" variant="danger" data-testid="delete-role" />
             </form>
         @endif
+
+        @rosterCan('roster.audit.view', $role->organization)
+        <x-atrium::audit-trail source="roster" :subject="$role" />
+        @endrosterCan
     </div>
 </x-atrium::layout>

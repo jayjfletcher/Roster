@@ -16,7 +16,6 @@ use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
 use JayI\Roster\Domains\Transfer\Enums\TransferType;
 use JayI\Roster\Domains\Transfer\Exceptions\TransfersUnavailableException;
 use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Services\Exporters\AuditExporter;
 use JayI\Roster\Domains\Transfer\Services\Exporters\Exporter;
 use JayI\Roster\Domains\Transfer\Services\Exporters\MembersExporter;
 use JayI\Roster\Domains\Transfer\Services\Exporters\OrganizationsExporter;
@@ -66,7 +65,6 @@ class Transfers
         return match ($transfer->type) {
             TransferType::ExportMembers => app(MembersExporter::class),
             TransferType::ExportUsers => app(UsersExporter::class),
-            TransferType::ExportAudit => app(AuditExporter::class),
             TransferType::ExportOrganizations => app(OrganizationsExporter::class),
             default => throw new LogicException("[{$transfer->type->value}] is not an export."),
         };
@@ -181,11 +179,10 @@ class Transfers
 
     /**
      * The organization a transfer's permission is checked in: the
-     * organization for organization-wide types (and an organization's audit
-     * log), otherwise none (global).
+     * organization for organization-wide types, otherwise none (global).
      */
     public static function scope(TransferType $type, ?OrganizationModel $organization): ?OrganizationModel
     {
-        return $type->needsOrganization() || $type === TransferType::ExportAudit ? $organization : null;
+        return $type->needsOrganization() ? $organization : null;
     }
 }

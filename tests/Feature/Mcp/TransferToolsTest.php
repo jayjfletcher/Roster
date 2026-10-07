@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
 use JayI\Roster\Domains\Transfer\Mcp\Tools\CancelTransferTool;
 use JayI\Roster\Domains\Transfer\Mcp\Tools\ConfirmImportTool;
 use JayI\Roster\Domains\Transfer\Mcp\Tools\ListTransfersTool;
@@ -25,8 +24,6 @@ it('imports from csv text and confirms', function (): void {
     mcpTool(ShowTransferTool::class, ['transfer' => $transfer->id])->assertOk()->assertSee('"action":"create"', false);
     mcpTool(ConfirmImportTool::class, ['transfer' => $transfer->id])->assertOk()->assertSee('completed');
     mcpTool(ListTransfersTool::class)->assertOk()->assertSee($transfer->id);
-
-    expect(AuditEntryModel::query()->where('action', 'transfer.confirmed')->sole()->surface)->toBe('mcp');
 });
 
 it('returns a signed download link for a finished export', function (): void {

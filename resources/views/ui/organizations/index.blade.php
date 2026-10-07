@@ -9,7 +9,8 @@
     </x-atrium::page-header>
 
     <div class="mt-5 flex flex-col gap-4">
-        @include('roster::ui.partials.status')
+        @include('roster::impersonation-banner', ['bannerClass' => 'rounded-radius'])
+        <x-atrium::flash />
 
         <x-atrium::card>
             <form method="GET" action="{{ route('atrium.roster.organizations.index') }}" class="flex flex-wrap items-start gap-3">
@@ -26,10 +27,10 @@
                     wrapper="w-40"
                     data-testid="show-filter" />
 
-                <div class="roster-actions">
+                <x-atrium::form.actions>
                     <x-atrium::icon-button icon="funnel" :label="__('roster::roster.filter')" variant="primary" type="submit" />
                     <x-atrium::icon-button icon="x-mark" :label="__('roster::roster.clear')" variant="ghost" :href="route('atrium.roster.organizations.index')" />
-                </div>
+                </x-atrium::form.actions>
             </form>
         </x-atrium::card>
 

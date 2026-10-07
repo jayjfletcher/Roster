@@ -85,31 +85,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Audit Log
-    |--------------------------------------------------------------------------
-    |
-    | enabled:        Record every Roster change - who did what, to whom, in
-    |                 which organization, through which surface, with the
-    |                 before and after values.
-    | retention_days: `php artisan roster:prune-audit` deletes older entries;
-    |                 schedule it. Null keeps entries forever.
-    | redact:         Extra field names never written to the log. Passwords,
-    |                 remember tokens and invitation tokens are always
-    |                 redacted.
-    |
-    | The log is append-only and hash-chained: `php artisan roster:verify-audit`
-    | reports the first entry that was altered after it was written.
-    |
-    */
-
-    'audit' => [
-        'enabled' => true,
-        'retention_days' => 365,
-        'redact' => [],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Deleting
     |--------------------------------------------------------------------------
     |
@@ -158,7 +133,6 @@ return [
             'roster.users.delete',
             'roster.roles.manage',
             'roster.roles.assign',
-            'roster.audit.record',
         ],
         'redirect' => '/',
         'return_to' => null,
@@ -229,8 +203,8 @@ return [
     | CSV Import and Export
     |--------------------------------------------------------------------------
     |
-    | Bulk imports (members, users, teams) and exports (members, users, audit
-    | log), run as Impex flows. Requires the optional package jayi/impex with
+    | Bulk imports (members, users, teams, organizations) and exports (members,
+    | users, organizations), run as Impex flows. Requires the optional package jayi/impex with
     | its migrations published, a queue worker and the scheduler.
     |
     | disk:                 Where uploads and exports are kept. SECURITY: use

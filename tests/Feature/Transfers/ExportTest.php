@@ -8,7 +8,6 @@ use JayI\Roster\Domains\Transfer\Actions\StartImportAction;
 use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
 use JayI\Roster\Domains\Transfer\Models\TransferModel;
 use JayI\Roster\Domains\Transfer\Services\Transfers;
-use JayI\Roster\Facades\Roster;
 
 function exported(TransferModel $transfer): array
 {
@@ -40,21 +39,6 @@ it('exports every user', function (): void {
 
     expect($transfer->row_count)->toBe(2)
         ->and(array_column(array_slice(exported($transfer), 1), 1))->toContain('ada@example.com', 'owner@acme.test');
-});
-
-it('exports only an organization\'s audit entries when scoped', function (): void {
-    $other = organization(user(), ['name' => 'Globex']);
-    Roster::audit('invoice.paid')->in($this->acme)->record();
-    Roster::audit('invoice.paid')->in($other)->record();
-
-    $transfer = app(StartExportAction::class)->execute([
-        'type' => 'export_audit',
-        'organization' => 'acme',
-        'filters' => ['action' => 'invoice.paid'],
-    ], $this->owner)->refresh();
-
-    expect($transfer->row_count)->toBe(1)
-        ->and($transfer->organization_id)->toBe($this->acme->id);
 });
 
 it('writes large exports across yields without losing rows', function (): void {

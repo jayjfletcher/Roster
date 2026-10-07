@@ -5,10 +5,8 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
 use JayI\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
 use JayI\Roster\Domains\Permission\Services\Authorizer;
-use JayI\Roster\Domains\User\Actions\SuspendUserAction;
 use JayI\Roster\Domains\User\Actions\UpdateUserAction;
 
 beforeEach(function (): void {
@@ -44,23 +42,4 @@ it('locks the impersonated account email and password', function (): void {
 
     // Other fields, and other accounts, are fine.
     expect(app(UpdateUserAction::class)->execute($this->ada, ['name' => 'Ada L'])->getAttribute('name'))->toBe('Ada L');
-});
-
-it('audits who was really acting', function (): void {
-    app(SuspendUserAction::class)->execute(user(['name' => 'Grace']));
-
-    $entry = AuditEntryModel::query()->where('action', 'user.suspended')->sole();
-
-    expect((string) $entry->actor_id)->toBe((string) $this->ada->getKey())
-        ->and($entry->context['impersonator'])->toBe(['id' => (string) $this->admin->getKey(), 'label' => 'Admin']);
-
-    $started = AuditEntryModel::query()->where('action', 'impersonation.started')->sole();
-
-    expect($started->subject_label)->toBe('Ada')
-        ->and($started->context['impersonation']['reason'])->toBe('Ticket 42')
-        ->and(AuditEntryModel::query()->where('action', 'impersonation.entered')->exists())->toBeTrue();
-
-    $this->post(route('roster.impersonation.leave'));
-
-    expect(AuditEntryModel::query()->where('action', 'impersonation.stopped')->sole()->context['impersonation']['ended'])->toBe('stopped');
 });

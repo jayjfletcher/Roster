@@ -4,7 +4,8 @@
     <x-atrium::page-header :title="__('roster::roster.transfers')" :description="$organization?->name" />
 
     <div class="mt-5 flex flex-col gap-4">
-        @include('roster::ui.partials.status')
+        @include('roster::impersonation-banner', ['bannerClass' => 'rounded-radius'])
+        <x-atrium::flash />
 
         @unless ($available)
             <x-atrium::alert variant="warning" :title="__('roster::roster.transfers_unavailable')">
@@ -26,9 +27,9 @@
                             :label="__('roster::roster.template')"
                             :options="$imports->mapWithKeys(fn ($type) => [$type->value => $type->label()])"
                             wrapper="w-56" />
-                        <div class="roster-actions">
+                        <x-atrium::form.actions>
                             <x-atrium::icon-button icon="arrow-down-tray" :label="__('roster::roster.download_template')" type="submit" variant="secondary" data-testid="download-template" />
-                        </div>
+                        </x-atrium::form.actions>
                     </form>
 
                     <form method="POST" action="{{ route('atrium.roster.transfers.import') }}" enctype="multipart/form-data" class="flex flex-col gap-3">
@@ -61,15 +62,8 @@
                             :options="$exports->mapWithKeys(fn ($type) => [$type->value => $type->label()])"
                             x-model="type"
                             required />
-                        <div x-show="['export_members', 'export_audit'].includes(type)" data-export-field="organization">
+                        <div x-show="type === 'export_members'" data-export-field="organization">
                             <x-atrium::form.input name="organization" id="export-organization" :label="__('roster::roster.organization')" :value="$organization?->slug" :hint="__('roster::roster.export_organization_hint')" />
-                        </div>
-                        <div x-show="type === 'export_audit'" x-cloak class="flex flex-col gap-3" data-export-field="audit">
-                            <x-atrium::form.input name="filters[action]" id="export-action" :label="__('roster::roster.action')" :hint="__('roster::roster.audit_action_hint')" />
-                            <div class="grid gap-3 sm:grid-cols-2">
-                                <x-atrium::form.input name="filters[since]" id="export-since" type="date" :label="__('roster::roster.since')" />
-                                <x-atrium::form.input name="filters[until]" id="export-until" type="date" :label="__('roster::roster.until')" />
-                            </div>
                         </div>
                         <div x-show="type === 'export_organizations'" x-cloak data-export-field="external_source">
                             <x-atrium::form.input name="filters[external_source]" id="export-external-source" :label="__('roster::roster.external_source')" :hint="__('roster::roster.external_source_filter_hint')" />
@@ -104,7 +98,7 @@
                         </x-atrium::table.cell>
                         <x-atrium::table.cell>{{ $transfer->organization?->name ?? __('roster::roster.none') }}</x-atrium::table.cell>
                         <x-atrium::table.cell>{{ $transfer->requester ? ($directory->name($transfer->requester) ?? $directory->email($transfer->requester)) : __('roster::roster.none') }}</x-atrium::table.cell>
-                        <x-atrium::table.cell><x-roster::status :status="$transfer->status" /></x-atrium::table.cell>
+                        <x-atrium::table.cell>@include('roster::ui.partials.status-dot', ['status' => $transfer->status, 'variant' => null, 'label' => null, 'testid' => null])</x-atrium::table.cell>
                         <x-atrium::table.cell>{{ $transfer->row_count }}</x-atrium::table.cell>
                         <x-atrium::table.cell>{{ $transfer->created_at?->diffForHumans() }}</x-atrium::table.cell>
                     </x-atrium::table.row>

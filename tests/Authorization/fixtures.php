@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
 use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
 use JayI\Roster\Domains\Invitation\Models\InvitationModel;
 use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
@@ -36,8 +35,6 @@ function authorizationWorld(): array
     $role = RoleModel::factory()->create(['scope' => 'global', 'slug' => 'custom']);
     $assignment = RoleAssignmentModel::query()->create(['role_id' => $role->id, 'user_id' => $target->getKey()]);
 
-    $entry = AuditEntryModel::query()->orderBy('id')->firstOrFail();
-
     $impersonation = ImpersonationModel::factory()->create(['impersonator_id' => user()->getKey(), 'user_id' => $target->getKey()]);
 
     $connection = SsoConnectionModel::factory()->create(['organization_id' => $acme->id, 'slug' => 'acme-okta']);
@@ -54,7 +51,7 @@ function authorizationWorld(): array
         'requested_by' => user()->getKey(),
     ]);
 
-    return compact('acme', 'target', 'ops', 'invitation', 'role', 'assignment', 'entry', 'impersonation', 'connection', 'identity', 'scimToken', 'transfer');
+    return compact('acme', 'target', 'ops', 'invitation', 'role', 'assignment', 'impersonation', 'connection', 'identity', 'scimToken', 'transfer');
 }
 
 /**
@@ -141,9 +138,6 @@ function apiRoutes(): array
         'users.impersonate' => ['POST', 'roster.users.impersonate', $user, ['reason' => 'Ticket 1']],
         'impersonations.index' => ['GET', 'roster.impersonations.index', $none, []],
         'impersonations.destroy' => ['DELETE', 'roster.impersonations.destroy', fn (array $w): array => [$w['impersonation']->id], []],
-        'audit.index' => ['GET', 'roster.audit.index', $none, []],
-        'audit.store' => ['POST', 'roster.audit.store', $none, ['action' => 'invoice.paid']],
-        'audit.show' => ['GET', 'roster.audit.show', fn (array $w): array => [$w['entry']->id], []],
         'imports.store' => ['POST', 'roster.imports.store', $none, ['type' => 'import_members', 'organization' => 'acme', 'content' => "email\nx@example.com"]],
         'imports.templates.show' => ['GET', 'roster.imports.templates.show', fn (): array => ['import_members'], []],
         'imports.confirm' => ['POST', 'roster.imports.confirm', fn (array $w): array => [$w['transfer']->id], []],

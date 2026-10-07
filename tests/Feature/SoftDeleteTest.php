@@ -7,7 +7,6 @@ require_once __DIR__.'/Sso/helpers.php';
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
 use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
 use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
 use JayI\Roster\Domains\Organization\Actions\DeleteOrganizationAction;
@@ -64,7 +63,7 @@ it('turns a deleted organization off everywhere until it is restored', function 
     $this->getJson('/scim/v2/acme/Users', ['Authorization' => 'Bearer '.$token])->assertOk();
 });
 
-it('only purges deleted records, and audits it', function (): void {
+it('only purges deleted records', function (): void {
     $acme = organization(attributes: ['name' => 'Acme']);
     $ada = user();
 
@@ -74,7 +73,7 @@ it('only purges deleted records, and audits it', function (): void {
     app(DeleteOrganizationAction::class)->execute($acme);
     app(PurgeOrganizationAction::class)->execute(OrganizationModel::withTrashed()->sole());
 
-    expect(AuditEntryModel::query()->where('action', 'organization.purged')->exists())->toBeTrue();
+    expect(OrganizationModel::withTrashed()->count())->toBe(0);
 });
 
 it('purges records deleted longer ago than the retention period', function (): void {

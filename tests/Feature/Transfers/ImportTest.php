@@ -6,7 +6,6 @@ use Illuminate\Validation\ValidationException;
 use JayI\Impex\Domains\Run\Events\RunFailed;
 use JayI\Impex\Domains\Run\Models\RunModel;
 use JayI\Impex\Testing\Flows;
-use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
 use JayI\Roster\Domains\Invitation\Models\InvitationModel;
 use JayI\Roster\Domains\Organization\Actions\SyncOrganizationAction;
 use JayI\Roster\Domains\Organization\Models\MembershipModel;
@@ -75,11 +74,6 @@ it('applies a confirmed members import row by row, as the confirmer', function (
         ->and(MembershipModel::query()->where('organization_id', $this->acme->id)->where('user_id', $new->id)->exists())->toBeTrue()
         ->and(InvitationModel::query()->where('email', 'friend@example.com')->exists())->toBeTrue()
         ->and(TeamModel::query()->where('slug', 'sales')->firstOrFail()->seats()->count())->toBe(1);
-
-    $entry = AuditEntryModel::query()->where('action', 'member.added')->where('surface', 'import')->latest('id')->firstOrFail();
-
-    expect((string) $entry->actor_id)->toBe((string) $this->owner->id)
-        ->and($entry->context['transfer'])->toBe(['id' => $transfer->id, 'type' => 'import_members']);
 });
 
 it('rejects a file with a password column', function (): void {
@@ -137,8 +131,7 @@ it('never applies a row twice when the engine redelivers steps', function (): vo
     Flows::redeliverSteps(RunModel::query()->findOrFail($transfer->impex_run_id));
 
     expect(User::query()->where('email', 'new@acme.test')->count())->toBe(1)
-        ->and(InvitationModel::query()->count())->toBe(1)
-        ->and(AuditEntryModel::query()->where('action', 'user.created')->where('surface', 'import')->count())->toBe(1);
+        ->and(InvitationModel::query()->count())->toBe(1);
 });
 
 it('marks the transfer failed when its run fails', function (): void {

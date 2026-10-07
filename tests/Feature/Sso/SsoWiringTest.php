@@ -7,7 +7,6 @@ require_once __DIR__.'/helpers.php';
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
 use JayI\Roster\Domains\Sso\Actions\CreateSsoConnectionAction;
 use JayI\Roster\Domains\Sso\Actions\UpdateSsoConnectionAction;
 use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
@@ -121,18 +120,14 @@ it('keeps secrets encrypted, hidden and redacted', function (): void {
     $raw = (string) DB::table('roster_sso_connections')->value('config');
 
     expect($raw)->not->toContain('top-secret')
-        ->and(json_encode((new SsoConnectionResource($connection))->resolve()))->not->toContain('top-secret')
-        ->and(json_encode(AuditEntryModel::query()->get()->toArray()))->not->toContain('top-secret');
+        ->and(json_encode((new SsoConnectionResource($connection))->resolve()))->not->toContain('top-secret');
 
-    // A blank secret keeps the old one; a new one replaces it and the change shows, redacted.
+    // A blank secret keeps the old one; a new one replaces it.
     app(UpdateSsoConnectionAction::class)->execute($connection, ['client_secret' => '']);
     expect($connection->refresh()->setting('client_secret'))->toBe('top-secret');
 
     app(UpdateSsoConnectionAction::class)->execute($connection, ['client_secret' => 'rotated']);
-    $entry = AuditEntryModel::query()->where('action', 'sso_connection.updated')->orderByDesc('id')->firstOrFail();
-
-    expect($entry->changes['config'][1]['client_secret'])->toBe('[redacted]')
-        ->and(json_encode($entry->toArray()))->not->toContain('rotated');
+    expect($connection->refresh()->setting('client_secret'))->toBe('rotated');
 });
 
 it('validates the settings each protocol needs', function (array $data): void {

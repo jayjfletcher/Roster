@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 require_once __DIR__.'/helpers.php';
 
-use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
+use Illuminate\Support\Facades\Event;
+use JayI\Foundation\Contracts\ActionFinishedEvent;
 use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
 use JayI\Roster\Domains\Scim\Actions\CreateScimTokenAction;
 use JayI\Roster\Domains\Scim\Models\ScimUserModel;
@@ -164,19 +165,12 @@ it('links the SSO identity from externalId when the token names a connection', f
 
 it('writes nothing for a PATCH that only echoes the current view', function (): void {
     $id = (string) scim('POST', '/Users', ['userName' => 'grace@acme.test', 'name' => ['formatted' => 'Grace Hopper']])->json('id');
-    $before = AuditEntryModel::query()->count();
+    $changes = 0;
+    Event::listen(ActionFinishedEvent::class, function () use (&$changes): void {
+        $changes++;
+    });
 
     scim('PATCH', '/Users/'.$id, patchOps([['op' => 'replace', 'path' => 'externalId', 'value' => null]]))->assertOk();
 
-    expect(AuditEntryModel::query()->count())->toBe($before)
-        ->and(AuditEntryModel::query()->where('action', 'profile.updated')->exists())->toBeFalse();
-});
-
-it('audits SCIM changes with the token that made them', function (): void {
-    createAda();
-
-    $entry = AuditEntryModel::query()->where('action', 'user.created')->sole();
-
-    expect($entry->surface)->toBe('scim')
-        ->and($entry->context['scim_token']['name'])->toBe('Okta');
+    expect($changes)->toBe(0);
 });

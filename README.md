@@ -17,8 +17,8 @@ Headless, Action-first user management for Laravel. Every operation is a single 
 - An active / suspended / deactivated lifecycle with a `roster.active` middleware
 - Organizations with teams, members, email invitations, optional domain auto-join, and a per-user current organization/team
 - Roles and permissions at global, organization and team scope, resolved through Laravel's Gate (`$user->can()`, `@can`)
-- An append-only, hash-chained audit log of every change, with an API for your app's own events
-- Impersonation through one-time links, with time limits, a banner, blocked abilities and a full audit trail
+- Every change recorded in the suite-wide audit log of [`jayi/keen`](https://github.com/jayjfletcher/Keen), when installed, with each record's history on its Atrium page
+- Impersonation through one-time links, with time limits, a banner, blocked abilities and a full audit trail (with jayi/keen)
 - Single sign-on per organization: OpenID Connect, SAML 2.0 and Microsoft Entra ID, with just-in-time accounts and optional enforcement
 - SCIM 2.0 provisioning per organization: identity providers create, update and deprovision members and teams
 
@@ -187,7 +187,7 @@ Built-in roles (re-sync with `php artisan roster:sync-permissions` after upgradi
 | Role | Scope | Grants |
 |---|---|---|
 | `super-admin` | global | everything |
-| `admin` | organization | every organization-scoped `roster.*` permission, including `roster.audit.view` and `roster.audit.record` |
+| `admin` | organization | every organization-scoped `roster.*` permission, including `roster.audit.view` |
 | `member` | organization | `roster.organizations.view`, `roster.members.view`, `roster.teams.view`; given to every new member (`roster.roles.default_member`) |
 | `lead` | team | `roster.teams.view`, `roster.teams.manage` |
 
@@ -205,57 +205,54 @@ With `roster.authorization` on (the default), every API route, MCP tool and Atri
 
 If your app hasn't defined Atrium's `viewAtrium` gate, Roster defines it as the `atrium.view` permission.
 
-**Organization admins.** A permission held only in some organizations (through an organization role, or by owning the organization) still opens the lists of organizations, roles, impersonations, transfers and the audit log. Asked without an `organization`, those lists hold only what falls within the user's organizations: their organizations, the shared roles plus those organizations' own, their entries, and so on. On every surface: Atrium, the API and MCP. Asking for another organization is still refused. In Atrium, the matching navigation items appear for them too; Users and Permissions stay global, as does the users search.
+**Organization admins.** A permission held only in some organizations (through an organization role, or by owning the organization) still opens the lists of organizations, roles, impersonations and transfers. Asked without an `organization`, those lists hold only what falls within the user's organizations: their organizations, the shared roles plus those organizations' own, and so on. On every surface: Atrium, the API and MCP. Asking for another organization is still refused. In Atrium, the matching navigation items appear for them too; Users and Permissions stay global, as does the users search.
 
 ## Audit log
 
-Every change Roster makes is recorded: users, profiles and status, organizations, members, teams, invitations, roles, permissions and assignments. Reads are not recorded. Each entry holds:
+Roster keeps no audit log of its own. Install [`jayi/keen`](https://github.com/jayjfletcher/Keen), the audit log of the jayi suite, and every change Roster makes is recorded there: users, profiles and status, organizations, members, teams, invitations, roles, permissions and assignments. Reads are not recorded.
 
-- who did it (or "system"), the action (`user.suspended`), and what it happened to
-- the organization it belongs to, and the surface it came through (`http`, `mcp`, `cortex`, `atrium`, `web`, `scim`, `cli`, `code`) with IP and user agent
-- the field changes as `{"field": [old, new]}`, including profile fields (`profile.status`), role permission lists and organization domains
-
-Passwords, remember tokens and invitation tokens are always written as `[redacted]`. Add your own field names to `roster.audit.redact`.
-
-### Your app's events
-
-Record your own events in the same log:
-
-```php
-use JayI\Roster\Facades\Roster;
-
-Roster::audit('invoice.paid')
-    ->on($invoice)                // any model (or subject_type/subject_id/subject_label via the API)
-    ->in($organization)           // so its admins can see it
-    ->with(['amount' => 4200])    // extra details
-    ->changes(['status' => ['open', 'paid']])
-    ->record();                   // actor defaults to the signed-in user
+```bash
+composer require jayi/keen
+php artisan migrate
 ```
 
-App entries carry `source: app`; Roster's own carry `source: roster`. The API (`POST /roster/audit`), the MCP tool and Atrium's "Record an entry" form always record `app`, so they can never forge Roster's entries. They need the `roster.audit.record` permission. Code calls are trusted and need none.
+Roster teaches Keen about its records through jayi/foundation's `AuditHooks`, whether or not Keen is installed:
+
+- **Labels:** users by name or email, organizations, teams and roles by name, invitations by email, role assignments by role, transfers by type.
+- **Field changes** include profile fields (`profile.status`), a role's permissions, an organization's domains, and the role, organization and team of an assignment.
+- **Subject:** an entry about a role assignment or an impersonation is about the user; otherwise about the event's `user`, when it has one.
+- **Scope:** the organization the change belongs to (a user's current organization for changes to the user alone), so Keen can be read per organization.
+- **Context:** `impersonator` while someone is impersonating, `transfer` for a change made by a CSV import, and `scim_token` for one made through SCIM.
+- **Surfaces:** SCIM routes are recorded as `scim`, and the signed invitation and impersonation pages as `web`.
+- **Redaction:** the users table's password column, on top of Keen's own list.
 
 ### Reading it
 
-`roster.audit.view` (included in the `admin` organization role) controls access:
+Each user, team and role page in Atrium, and the Activity tab of each organization, shows that record's history with `<x-atrium::audit-trail source="roster" :subject="$model" />`. They need `roster.audit.view` (included in the `admin` organization role) in that scope, and render nothing until Keen is installed. Keen's own **Audit log** section reads everything.
 
-- held globally: read everything, including IP addresses and user agents
-- held in an organization: read that organization's entries (`?organization=acme`)
-- anyone can read entries about themselves or made by them (`?user={your id}`)
+Roster also serves the suite-wide history endpoint (`GET /roster/history`) and `list-roster-history-tool`. They need `roster.audit.view` held globally, and answer that no audit log is installed (404 over HTTP) until Keen is.
 
-Atrium has an Audit log page, an Activity card on each user and an Activity tab on each organization. Filter by `action` (exact, or a prefix such as `user.`), `source`, `subject_type`, `since` and `until`.
+If your app hasn't defined the `viewAuditLog` Gate ability that Keen and every package's history ask, Roster defines it as the global `roster.audit.view` permission. Define your own to take over.
 
-Only Roster's own Action events are recorded here: the event contracts are shared with the rest of the jayi suite, and other packages' events are ignored. Roster also serves the suite-wide history endpoint (`GET /roster/history`) and `list-roster-history-tool` from `jayi/foundation`. They need `roster.audit.view` held globally, and read the shared audit log of [`jayi/keen`](https://github.com/jayjfletcher/Keen); until it is installed they answer that no audit log is installed (404 over HTTP).
+### Your app's events
 
-### Retention and tamper evidence
+Record them with Keen:
 
-The log is append-only: entries can't be updated or deleted through Eloquent. Each entry stores a hash of its content plus the previous entry's hash, so altering or removing a stored row breaks the chain.
+```php
+use JayI\Keen\Facades\Keen;
 
-```bash
-php artisan roster:verify-audit   # exits non-zero and names the first altered entry
-php artisan roster:prune-audit    # deletes entries older than roster.audit.retention_days (365; null keeps all)
+Keen::record('invoice.paid')->on($invoice)->in($organization)->with(['amount' => 4200])->save();
 ```
 
-Schedule the prune, e.g. `Schedule::command('roster:prune-audit')->daily();`. After pruning, verification starts from the oldest remaining entry. Turn the whole log off with `roster.audit.enabled`.
+`Roster::audit()` is deprecated: it hands over to `Keen::record()` and throws when Keen is not installed.
+
+### Moving from Roster's own log
+
+Earlier versions kept their own audit log in the `roster_audit_entries` table. Its migration stays, so existing data is kept. Copy it into Keen once, in order and onto Keen's hash chain:
+
+```bash
+php artisan keen:import-roster
+```
 
 ## Single sign-on
 
@@ -287,7 +284,7 @@ Send people to `/roster/sso?email=ada@acme.com`, which finds their organization'
 2. **An existing account with the same email** is linked automatically, but **only if the organization owns that email's domain**. Anyone else can link from their account while signed in (`POST /roster/sso/{connection}/link`).
 3. **Otherwise, a new account is created** (`jit`, on by default), again only for the organization's own domains, with the email marked verified.
 
-The user becomes a member of the organization. Suspended or deactivated users are refused. Every sign-in and refusal is in the audit log (`sso_login.succeeded` / `sso_login.failed`).
+The user becomes a member of the organization. Suspended or deactivated users are refused. With Keen installed, every sign-in and refusal is in the audit log (`sso_login.succeeded` / `sso_login.failed`).
 
 **Security notes**
 
@@ -335,7 +332,7 @@ $result->organization->links;       // [OrganizationLink{source: erp, external_i
 - **Exporting:** the `export_organizations` CSV uses the same columns as the import, so you can export, edit and re-import. Atrium's Organizations page links to Imports & exports.
 - **In bulk:** `SyncOrganizationsAction` (`POST /roster/organizations/sync`) takes up to `roster.organizations.sync_batch` (500) records. Each record succeeds or fails on its own, and the response lists `created` / `updated` / `unchanged` / `error` (with messages) per record, in order. For files, use the `import_organizations` CSV import.
 - **Permission:** the sync Actions and the CSV import need the global `roster.organizations.sync` permission. Give an integration user just that, plus `roster.organizations.view` if it needs to look organizations up. Linking and unlinking by hand need `roster.organizations.update` in the organization.
-- **Audit:** each sync records `organization.synced` with the source, id and outcome, next to the usual `organization.created` / `organization.updated` entries. A batch also records `organizations.synced` with its counts.
+- **Audit:** with Keen installed, each sync records `organization.synced` with the source, id and outcome, next to the usual `organization.created` / `organization.updated` entries. A batch also records `organizations.synced` with its counts.
 
 ## SCIM provisioning
 
@@ -367,7 +364,7 @@ Tokens are shown **once**, stored only as a hash, can expire, can be revoked, an
 
 **Linking to SSO.** When you issue a token, you can name one of the organization's SSO connections. The provider's `externalId` then becomes that connection's SSO subject, so a provisioned user's first SSO sign-in lands on their account. Map Okta's user ID or Entra's objectId to `externalId`.
 
-**Audit.** Every SCIM change runs through Roster's Actions and is recorded with surface `scim` and the name of the token that made it.
+**Audit.** Every SCIM change runs through Roster's Actions, so with Keen installed it is recorded with surface `scim` and the name of the token that made it.
 
 ## Impersonation
 
@@ -394,18 +391,18 @@ In Atrium, use the **Impersonate** card on a user's page. Over the API and MCP, 
 **The banner.** Show it in your own layout:
 
 ```blade
-<x-roster::impersonation-banner />
+@include('roster::impersonation-banner')
 ```
 
-It names who you're acting as and who you really are, shows the time left, and has a "Return to my account" button. Roster's Atrium pages already include it.
+It names who you're acting as and who you really are, shows the time left, and has a "Return to my account" button. It is Atrium's banner in standalone mode, styled inline, so it needs nothing from Atrium's stylesheet on your own pages. Pass `['bannerClass' => '...']` to add classes. Roster's Atrium pages already include it. (It was the `<x-roster::impersonation-banner />` component before Roster dropped its component namespace.)
 
-**Audit.** Everything done while impersonating is recorded as the impersonated user, with `context.impersonator` naming the real person. Starting, entering and ending each get their own entry, with the reason.
+**Audit.** With Keen installed, everything done while impersonating is recorded as the impersonated user, with `context.impersonator` naming the real person. Starting, entering and ending each get their own entry.
 
 The `roster.impersonation` middleware, which ends expired or revoked sessions, is added to the `web` group automatically. Set `roster.impersonation.middleware_group` to null to add it yourself.
 
 ## CSV import and export
 
-Bulk-add members, users and teams from a CSV, and export members, users or the audit log. Imports and exports run in the background as [`jayi/impex`](https://github.com/jayjfletcher/Impex) flows, so Impex is needed for this feature:
+Bulk-add members, users and teams from a CSV, and export members, users or organizations. Imports and exports run in the background as [`jayi/impex`](https://github.com/jayjfletcher/Impex) flows, so Impex is needed for this feature:
 
 ```bash
 composer require jayi/impex
@@ -436,7 +433,6 @@ The preview's rows come back a page at a time (`rows_page`, 100 per page) from `
 | `import_organizations` | `source`, `external_id` required; `name` (required for new ones), `account_number`, `slug`, `domains`, `owner` (an email). Blank cells leave a field as it is | `roster.organizations.sync` |
 | `export_members` | email, name, display name, status, teams, roles, owner, source, joined | `roster.members.view` in the organization |
 | `export_users` | id, email, name, display name, status, created | `roster.users.view` |
-| `export_audit` | the audit log, optionally one organization's, with `filters` (`source`, `action`, `since`, `until`) | `roster.audit.view` (globally, or in the organization) |
 | `export_organizations` | the `import_organizations` columns, one row per external record (unlinked organizations get one row with no source), so an edited file imports straight back; optional `filters.external_source` keeps one system's records | `roster.organizations.view` |
 
 **Templates.** Every import type has a CSV template: the header row, plus commented example rows. Rows whose first cell starts with `#` are ignored, so an untouched template imports nothing; it's refused as having no rows. Download them in Atrium (the template picker on Imports & exports), from `GET /roster/imports/templates/{type}`, or with `show-import-template-tool`. Any signed-in user may download them, since they hold no data. To change them (for example to match your own wording or examples), publish them:
@@ -475,7 +471,7 @@ $export = app(StartExportAction::class)->execute(['type' => 'export_members', 'o
 - **Formula injection:** exported cells starting with `=`, `+`, `-`, `@`, a tab or a carriage return get a leading `'`, so spreadsheets show them as text.
 - **Files** live on `roster.transfers.disk` (keep it private) under `roster/transfers/{id}`. They are only served through Roster's authorized download route, to whoever started the transfer or holds its permission in scope. MCP gets a signed link valid for 15 minutes. `roster:prune-transfers` deletes files older than `retention_days` (7).
 
-**Audit.** Every row is recorded as the person who confirmed, with surface `import` and `context.transfer` naming the import. Starting, confirming, cancelling and finishing each have their own entry.
+**Audit.** Every row is applied as the person who confirmed, so with Keen installed it is recorded as theirs, with surface `import` and `context.transfer` naming the import. Starting, confirming, cancelling and finishing each have their own entry.
 
 ## Deleting and restoring
 
@@ -591,8 +587,6 @@ Suspended and deactivated users get a 403, and so do users awaiting approval (wi
 | POST | `/roster/users/{user}/impersonate` | `roster.users.impersonate` |
 | GET | `/roster/impersonations` | `roster.impersonations.index` |
 | DELETE | `/roster/impersonations/{impersonation}` | `roster.impersonations.destroy` |
-| GET, POST | `/roster/audit` | `roster.audit.index`, `.store` |
-| GET | `/roster/audit/{entry}` | `roster.audit.show` |
 | GET | `/roster/history` | `roster.history.index` (the shared jayi/keen history; 404 until it is installed) |
 | POST | `/roster/imports` | `roster.imports.store` (multipart `file`, or `content`) |
 | GET | `/roster/imports/templates/{type}` | `roster.imports.templates.show` (CSV template; any signed-in user) |
@@ -616,7 +610,7 @@ MCP tools (all behind Laravel MCP's tool search):
 | Single sign-on | `list-sso-connections-tool`, `show-sso-connection-tool`, `create-sso-connection-tool`, `update-sso-connection-tool`, `delete-sso-connection-tool`, `list-sso-identities-tool`, `unlink-sso-identity-tool` |
 | SCIM | `list-scim-tokens-tool`, `create-scim-token-tool`, `revoke-scim-token-tool` |
 | Impersonation | `start-impersonation-tool`, `list-impersonations-tool`, `stop-impersonation-tool` |
-| Audit | `list-audit-entries-tool`, `show-audit-entry-tool`, `record-audit-event-tool`, `list-roster-history-tool` |
+| History | `list-roster-history-tool` (reads jayi/keen) |
 | CSV import and export | `show-import-template-tool`, `start-import-tool`, `confirm-import-tool`, `start-export-tool`, `list-transfers-tool`, `show-transfer-tool`, `cancel-transfer-tool` |
 | Roles | `list-permissions-tool`, `create-permission-tool`, `update-permission-tool`, `delete-permission-tool`, `list-roles-tool`, `show-role-tool`, `create-role-tool`, `update-role-tool`, `delete-role-tool`, `list-role-assignments-tool`, `assign-role-tool`, `revoke-role-tool`, `list-user-permissions-tool` |
 
@@ -639,6 +633,7 @@ Roster registers itself with Atrium automatically. It adds:
 - an **Organizations** section: members, ownership, teams, invitations, settings (domains, auto-join) and external records (link, unlink; filter the list by source, external id or account number)
 - **Roles** and **Permissions** sections, a Roles card on each user, and a Roles tab on each organization
 - **Impersonations** (active and history, end any) and an Impersonate card on each user
+- each user, team and role's history, and an Activity tab on each organization, read from jayi/keen when it is installed
 - an **SSO** tab on each organization (connections with their callback and metadata URLs) and SSO identities on each user
 - a **SCIM** tab on each organization (base URL, issue tokens that are shown once, revoke)
 - **Imports & exports**: upload a CSV, review the preview, confirm or cancel, follow progress, and download exports, also reached from each organization and from Users

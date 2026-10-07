@@ -15,7 +15,6 @@ use JayI\Atrium\Domains\Search\Data\SearchResult;
 use JayI\Atrium\Domains\Search\Data\SearchSource;
 use JayI\Atrium\Domains\Widgets\Data\WidgetDefinition;
 use JayI\Atrium\Support\Icons;
-use JayI\Roster\Atrium\Http\Controllers\AuditUiController;
 use JayI\Roster\Atrium\Http\Controllers\ImpersonationUiController;
 use JayI\Roster\Atrium\Http\Controllers\InvitationUiController;
 use JayI\Roster\Atrium\Http\Controllers\OrganizationUiController;
@@ -34,7 +33,6 @@ use JayI\Roster\Domains\Transfer\Enums\TransferType;
 use JayI\Roster\Domains\User\Enums\UserStatus;
 use JayI\Roster\Domains\User\Models\ProfileModel;
 use JayI\Roster\Support\Users;
-use Throwable;
 
 /**
  * Registers Roster inside the Atrium dashboard.
@@ -63,26 +61,7 @@ class RosterPlugin extends Plugin
      */
     public function features(): array
     {
-        $features = config('roster.atrium.features', []);
-
-        return array_values(array_filter(
-            is_array($features) ? $features : [],
-            fn (mixed $feature): bool => is_string($feature) && (! str_contains($feature, '\\') || self::loadable($feature)),
-        ));
-    }
-
-    /**
-     * Whether a feature class can be loaded. A class whose parent is missing -
-     * RosterSupportFeature without jayi/pennantplus - throws while loading
-     * rather than reporting that it doesn't exist.
-     */
-    private static function loadable(string $class): bool
-    {
-        try {
-            return class_exists($class);
-        } catch (Throwable) {
-            return false;
-        }
+        return $this->featuresFromConfig('roster.atrium.features');
     }
 
     public function navigation(): array
@@ -131,13 +110,6 @@ class RosterPlugin extends Plugin
                 ->group(__('roster::roster.label'))
                 ->sort(48)
                 ->authorize(fn (Request $request): bool => collect(TransferType::cases())->contains(fn (TransferType $type): bool => $this->mayAnywhere($request, $type->permission()))),
-
-            NavItem::make(__('roster::roster.audit_log'))
-                ->icon(Icons::svg('clipboard-document-list'))
-                ->route('atrium.roster.audit.index')
-                ->group(__('roster::roster.label'))
-                ->sort(50)
-                ->authorize(fn (Request $request): bool => $this->mayAnywhere($request, 'roster.audit.view')),
         ];
     }
 
@@ -220,10 +192,6 @@ class RosterPlugin extends Plugin
             Route::post('roster/transfers/{transfer}/confirm', [TransferUiController::class, 'confirm'])->name('transfers.confirm');
             Route::delete('roster/transfers/{transfer}', [TransferUiController::class, 'cancel'])->name('transfers.cancel');
             Route::get('roster/transfers/{transfer}/download', [TransferUiController::class, 'download'])->name('transfers.download');
-
-            Route::get('roster/audit', [AuditUiController::class, 'index'])->name('audit.index');
-            Route::post('roster/audit', [AuditUiController::class, 'store'])->name('audit.store');
-            Route::get('roster/audit/{entry}', [AuditUiController::class, 'show'])->whereNumber('entry')->name('audit.show');
         });
     }
 

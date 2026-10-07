@@ -66,7 +66,7 @@ it('validates the request', function (): void {
     $this->postJson(route('roster.imports.store'), ['type' => 'export_users', 'content' => 'x'])->assertJsonValidationErrors('type');
     $this->postJson(route('roster.imports.store'), ['type' => 'import_users'])->assertJsonValidationErrors('content');
     $this->postJson(route('roster.imports.store'), ['type' => 'import_members', 'content' => "email\na@b.test"])->assertJsonValidationErrors('organization');
-    $this->postJson(route('roster.exports.store'), ['type' => 'export_audit', 'filters' => ['source' => 'nope']])->assertJsonValidationErrors('filters.source');
+    $this->postJson(route('roster.exports.store'), ['type' => 'export_audit'])->assertJsonValidationErrors('type');
 
     expect(TransferModel::query()->count())->toBe(0);
 });

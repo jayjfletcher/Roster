@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use JayI\Impex\Impex;
-use JayI\Roster\Domains\Audit\Models\AuditEntryModel;
 use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
 use JayI\Roster\Domains\Transfer\Enums\TransferType;
 use JayI\Roster\Domains\Transfer\Events\TransferStartedActionEvent;
@@ -30,20 +29,15 @@ final class StartExportAction
     public static function rules(): array
     {
         return [
-            'type' => ['required', Rule::in([TransferType::ExportMembers->value, TransferType::ExportUsers->value, TransferType::ExportAudit->value, TransferType::ExportOrganizations->value])],
+            'type' => ['required', Rule::in([TransferType::ExportMembers->value, TransferType::ExportUsers->value, TransferType::ExportOrganizations->value])],
             'organization' => ['sometimes', 'nullable', 'string'],
             'filters' => ['sometimes', 'array'],
-            'filters.source' => ['sometimes', 'nullable', Rule::in([AuditEntryModel::SOURCE_ROSTER, AuditEntryModel::SOURCE_APP])],
-            'filters.action' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'filters.since' => ['sometimes', 'nullable', 'date'],
-            'filters.until' => ['sometimes', 'nullable', 'date'],
             'filters.external_source' => ['sometimes', 'nullable', 'string', 'max:64'],
         ];
     }
 
     /**
-     * Build a CSV export in the background. An audit export with an
-     * organization covers only that organization's entries.
+     * Build a CSV export in the background.
      *
      * @param  array<string, mixed>  $data
      */
@@ -66,7 +60,6 @@ final class StartExportAction
             'requested_by' => $actor->getKey(),
             'status' => TransferStatus::Running,
             'filters' => match ($type) {
-                TransferType::ExportAudit => array_diff_key((array) ($data['filters'] ?? []), ['external_source' => true]),
                 TransferType::ExportOrganizations => array_intersect_key((array) ($data['filters'] ?? []), ['external_source' => true]),
                 default => null,
             },

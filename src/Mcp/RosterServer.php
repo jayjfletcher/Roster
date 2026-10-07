@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace JayI\Roster\Mcp;
 
 use JayI\Foundation\Mcp\Server;
-use JayI\Roster\Domains\Audit\Mcp\Tools\ListAuditEntriesTool;
-use JayI\Roster\Domains\Audit\Mcp\Tools\RecordAuditEventTool;
-use JayI\Roster\Domains\Audit\Mcp\Tools\ShowAuditEntryTool;
 use JayI\Roster\Domains\Impersonation\Mcp\Tools\ListImpersonationsTool;
 use JayI\Roster\Domains\Impersonation\Mcp\Tools\StartImpersonationTool;
 use JayI\Roster\Domains\Impersonation\Mcp\Tools\StopImpersonationTool;
@@ -106,8 +103,7 @@ use Laravel\Mcp\Server\Tools\ToolSearch;
     'a scope are the union of their global, organization and team roles, and an organization\'s owner holds every '.
     'organization permission. Every tool needs a permission (e.g. roster.users.update) - list-user-permissions-tool '.
     'shows what a user holds. You can only grant permissions you hold yourself. '.
-    'Every change is recorded in an append-only audit log (list-audit-entries-tool); the application can record '.
-    'its own events there too (record-audit-event-tool). '.
+    'When the jayi/keen audit log is installed, every change is recorded there; list-roster-history-tool reads Roster\'s history. '.
     'Bulk changes go through CSV (show-import-template-tool gives each import type\'s columns): start-import-tool previews every row without changing anything, and only '.
     'confirm-import-tool applies it; start-export-tool builds a CSV whose download link show-transfer-tool returns. '.
     'Organizations kept in an external system (ERP, CRM) are synced by their id there with sync-organization-tool or '.
@@ -213,10 +209,7 @@ final class RosterServer extends Server
         ListImpersonationsTool::class,
         StopImpersonationTool::class,
 
-        // Audit log
-        ListAuditEntriesTool::class,
-        ShowAuditEntryTool::class,
-        RecordAuditEventTool::class,
+        // History, from the suite-wide audit log (jayi/keen)
         ListRosterHistoryTool::class,
 
         // CSV import and export

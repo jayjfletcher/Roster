@@ -6,7 +6,8 @@
     </x-atrium::page-header>
 
     <div class="mt-5 flex max-w-3xl flex-col gap-4">
-        @include('roster::ui.partials.status')
+        @include('roster::impersonation-banner', ['bannerClass' => 'rounded-radius'])
+        <x-atrium::flash />
 
         @include('roster::ui.partials.deleted', [
             'deletedAt' => $user->getAttribute('deleted_at'),
