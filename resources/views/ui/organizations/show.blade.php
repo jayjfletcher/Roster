@@ -310,7 +310,7 @@
                 </form>
             </x-atrium::card>
         @elseif ($tab === 'activity')
-            <x-atrium::audit-trail source="roster" :subject="$organization" />
+            <x-atrium::audit-trail source="roster" :scope="$organization" />
         @elseif ($tab === 'roles')
             <x-atrium::card :title="__('roster::roster.assignments')">
                 @if ($assignments->isEmpty())

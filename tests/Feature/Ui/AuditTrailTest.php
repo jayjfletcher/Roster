@@ -52,3 +52,32 @@ it('shows no history, and no activity tab, without an audit log', function (): v
     $this->get(route('atrium.roster.users.show', $ada->getRouteKey()))->assertOk()->assertDontSee('data-testid="audit-trail"', false);
     $this->get(route('atrium.roster.organizations.show', $acme))->assertOk()->assertDontSee('tab=activity', false);
 });
+
+it('shows everything scoped to an organization on its activity tab', function (): void {
+    $filters = new ArrayObject;
+
+    app()->instance(AuditTrail::class, new class($filters) implements AuditTrail
+    {
+        public function __construct(private ArrayObject $filters) {}
+
+        public function available(): bool
+        {
+            return true;
+        }
+
+        public function entries(AuditFilter $filter): AuditPage
+        {
+            $this->filters[] = $filter;
+
+            return new AuditPage;
+        }
+    });
+
+    $this->actingAs($ada = user(['name' => 'Ada']));
+    $acme = organization($ada);
+
+    $this->get(route('atrium.roster.organizations.show', [$acme, 'tab' => 'activity']))->assertOk();
+
+    expect($filters[0]->scopeId)->toBe((string) $acme->getKey())
+        ->and($filters[0]->subjectId)->toBeNull();
+});
