@@ -2,6 +2,10 @@
 
 ## [Unreleased](https://github.com/jayi/roster/compare/v0.1.0...1.x)
 
+### Added
+
+- An **Audit log** link in the package's sidebar group, opening its own audit log in Atrium (`/atrium/history/roster`), shown while an audit log (jayi/keen) is installed and to those who may read the package's history.
+
 ### Breaking
 
 - **The audit log moved to [`jayi/keen`](https://github.com/jayjfletcher/Keen)**, the suite-wide audit log; install it (`composer require jayi/keen`, suggested) to keep recording. Roster's audit domain is gone: `Domains\Audit` (`AuditRecorder`, `AuditLog`, `Snapshots`, `Surface`, `PendingAuditEntry`, `AuditEntryModel`, its actions, events, requests, resources and policy), the `/roster/audit` API routes, the `list-audit-entries-tool`, `show-audit-entry-tool` and `record-audit-event-tool` MCP tools, the Atrium Audit log screens and navigation item, the `roster:prune-audit` and `roster:verify-audit` commands (use `keen:prune` and `keen:verify`), the `roster.audit` config block (`keen.redact`, `keen.retention_days` and `keen.enabled` replace it), the `export_audit` transfer type and its `AuditExporter`, and the `roster.audit.record` permission. The `roster_audit_*` tables and their migration stay: copy existing entries into Keen once with `php artisan keen:import-roster`. Delete old transfers of type `export_audit` when upgrading, since Roster can no longer read them (their rows cascade): `DB::table('roster_transfers')->where('type', 'export_audit')->delete();`.

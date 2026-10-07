@@ -110,6 +110,9 @@ class RosterPlugin extends Plugin
                 ->group(__('roster::roster.label'))
                 ->sort(48)
                 ->authorize(fn (Request $request): bool => collect(TransferType::cases())->contains(fn (TransferType $type): bool => $this->mayAnywhere($request, $type->permission()))),
+
+            // The package's own audit log, while an audit log is installed.
+            $this->historyNavItem('roster')->group(__('roster::roster.label'))->sort(90),
         ];
     }
 
