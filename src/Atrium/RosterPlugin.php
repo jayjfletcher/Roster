@@ -20,6 +20,7 @@ use JayI\Roster\Atrium\Http\Controllers\ImpersonationUiController;
 use JayI\Roster\Atrium\Http\Controllers\InvitationUiController;
 use JayI\Roster\Atrium\Http\Controllers\OrganizationUiController;
 use JayI\Roster\Atrium\Http\Controllers\PermissionUiController;
+use JayI\Roster\Atrium\Http\Controllers\RedirectDomainUiController;
 use JayI\Roster\Atrium\Http\Controllers\RoleUiController;
 use JayI\Roster\Atrium\Http\Controllers\ScimUiController;
 use JayI\Roster\Atrium\Http\Controllers\SsoUiController;
@@ -138,6 +139,8 @@ class RosterPlugin extends Plugin
             Route::delete('roster/users/{user}', [UserUiController::class, 'destroy'])->name('users.destroy');
             Route::post('roster/users/{user}/restore', [UserUiController::class, 'restore'])->name('users.restore');
             Route::delete('roster/users/{user}/purge', [UserUiController::class, 'purge'])->name('users.purge');
+            Route::post('roster/users/{user}/redirect-domains', [RedirectDomainUiController::class, 'storeForUser'])->name('users.redirect-domains.store');
+            Route::delete('roster/users/{user}/redirect-domains/{domain}', [RedirectDomainUiController::class, 'destroyForUser'])->name('users.redirect-domains.destroy');
             Route::patch('roster/users/{user}/profile', [UserUiController::class, 'profile'])->name('users.profile');
             Route::post('roster/users/{user}/suspend', [UserUiController::class, 'suspend'])->name('users.suspend');
             Route::post('roster/users/{user}/deactivate', [UserUiController::class, 'deactivate'])->name('users.deactivate');
@@ -161,6 +164,8 @@ class RosterPlugin extends Plugin
             Route::post('roster/organizations/{organization}/links', [OrganizationUiController::class, 'link'])->name('organizations.links.store');
             Route::delete('roster/organizations/{organization}/links/{source}', [OrganizationUiController::class, 'unlink'])->name('organizations.links.destroy');
             Route::delete('roster/organizations/{organization}/members/{user}', [OrganizationUiController::class, 'removeMember'])->name('organizations.members.destroy');
+            Route::post('roster/organizations/{organization}/redirect-domains', [RedirectDomainUiController::class, 'storeForOrganization'])->name('organizations.redirect-domains.store');
+            Route::delete('roster/organizations/{organization}/redirect-domains/{domain}', [RedirectDomainUiController::class, 'destroyForOrganization'])->name('organizations.redirect-domains.destroy');
 
             Route::post('roster/organizations/{organization}/teams', [TeamUiController::class, 'store'])->name('teams.store');
             Route::get('roster/organizations/{organization}/teams/{team}', [TeamUiController::class, 'show'])->name('teams.show');

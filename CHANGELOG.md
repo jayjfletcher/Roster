@@ -4,6 +4,7 @@
 
 ### Added
 
+- **MCP redirect domains** per organization and per user, while jayi/cortex is installed: an organization's **MCP domains** tab (`roster.organizations.update`) and an **MCP redirect domains** card on the user page (`roster.users.update` to change) add and remove the origins MCP clients may register OAuth redirect URIs on. Cortex stores them and accepts them at registration, so new clients no longer need `MCP_REDIRECT_DOMAINS` changes. Requires a Cortex version with redirect domains.
 - The package's section in Atrium's sidebar rail has its own icon (`user-group`) and a fixed place in the rail.
 - An **Audit log** link in the package's sidebar group, opening its own audit log in Atrium (`/atrium/history/roster`), shown while an audit log (jayi/keen) is installed and to those who may read the package's history.
 

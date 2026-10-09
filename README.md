@@ -625,6 +625,15 @@ When [`jayi/cortex`](https://github.com/jayjfletcher/cortex) is installed, Roste
 - Agents act as the **signed-in user**, so Roster's permission checks apply. A run with no signed-in user is refused.
 - Limit what agents see with `roster.cortex.tools` (a list of tool names), or turn the integration off with `roster.cortex.enabled`.
 
+### MCP redirect domains
+
+MCP clients sign people in through OAuth, and laravel/mcp only accepts redirect URIs on allowed origins. With Cortex installed (and `cortex.redirect_domains.enabled` left on), Roster lets each organization and user keep their own instead of everyone sharing `MCP_REDIRECT_DOMAINS`:
+
+- An organization's **MCP domains** tab, for those holding `roster.organizations.update` in it.
+- An **MCP redirect domains** card on a user's page, listed to those who may view the user and editable with `roster.users.update`.
+
+Cortex stores the domains with the organization or user as owner and accepts them when a client registers. Registration is anonymous, so a domain added for one organization is allowed for every client; the owner decides who manages it. Without Cortex neither appears.
+
 ## Atrium dashboard
 
 Roster registers itself with Atrium automatically. It adds:

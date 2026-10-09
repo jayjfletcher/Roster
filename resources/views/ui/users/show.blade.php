@@ -251,6 +251,19 @@
             </x-atrium::card>
         @endif
 
+        @if ($redirectDomains !== null)
+            <x-atrium::card :title="__('roster::roster.redirect_domains')" class="lg:col-span-2" data-testid="redirect-domains-card">
+                <div class="flex flex-col gap-3">
+                    @include('roster::ui.partials.redirect-domains', [
+                        'domains' => $redirectDomains,
+                        'manage' => \JayI\Roster\Atrium\ScreenAccess::allows('roster.users.update'),
+                        'storeRoute' => route('atrium.roster.users.redirect-domains.store', $user->getRouteKey()),
+                        'destroyRoute' => fn ($domain) => route('atrium.roster.users.redirect-domains.destroy', [$user->getRouteKey(), $domain->id]),
+                    ])
+                </div>
+            </x-atrium::card>
+        @endif
+
         @rosterCan('roster.users.delete')
         <x-atrium::card :title="__('roster::roster.danger_zone')" class="lg:col-span-2" data-testid="danger-zone">
             @if ($directory->softDeletes())

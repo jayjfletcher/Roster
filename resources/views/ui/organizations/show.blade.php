@@ -13,7 +13,7 @@
         <x-atrium::flash />
 
         <nav class="flex flex-wrap gap-2" aria-label="{{ $organization->name }}">
-            @php($tabIcons = ['members' => 'users', 'teams' => 'user-group', 'invitations' => 'envelope', 'roles' => 'shield-check', 'sso' => 'arrow-right-end-on-rectangle', 'scim' => 'server-stack', 'activity' => 'clipboard-document-list', 'settings' => 'cog'])
+            @php($tabIcons = ['members' => 'users', 'teams' => 'user-group', 'invitations' => 'envelope', 'roles' => 'shield-check', 'sso' => 'arrow-right-end-on-rectangle', 'scim' => 'server-stack', 'mcp' => 'globe-alt', 'activity' => 'clipboard-document-list', 'settings' => 'cog'])
             @foreach ($tabs as $name)
                 <x-atrium::icon-button
                     :icon="$tabIcons[$name]"
@@ -309,6 +309,13 @@
                     </x-atrium::form.actions>
                 </form>
             </x-atrium::card>
+        @elseif ($tab === 'mcp')
+            @include('roster::ui.partials.redirect-domains', [
+                'domains' => $redirectDomains,
+                'manage' => true,
+                'storeRoute' => route('atrium.roster.organizations.redirect-domains.store', $organization),
+                'destroyRoute' => fn ($domain) => route('atrium.roster.organizations.redirect-domains.destroy', [$organization, $domain->id]),
+            ])
         @elseif ($tab === 'activity')
             <x-atrium::audit-trail source="roster" :scope="$organization" />
         @elseif ($tab === 'roles')

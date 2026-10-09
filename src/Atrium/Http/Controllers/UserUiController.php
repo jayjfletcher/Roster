@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use JayI\Cortex\Domains\RedirectDomain\Actions\ListRedirectDomainsAction;
 use JayI\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
+use JayI\Roster\Atrium\RedirectDomains;
 use JayI\Roster\Domains\Organization\Actions\JoinOrganizationsByDomainAction;
 use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
 use JayI\Roster\Domains\Organization\Models\MembershipModel;
@@ -115,6 +117,8 @@ final class UserUiController
             'effective' => app(ListUserPermissionsAction::class)->execute($model),
             'assignableRoles' => RoleModel::query()->with('organization')->orderBy('scope')->orderBy('name')->get(),
             'ssoIdentities' => app(ListSsoIdentitiesAction::class)->execute(['user' => $model, 'per_page' => 50]),
+            // The user's MCP redirect domains, while Cortex keeps them.
+            'redirectDomains' => RedirectDomains::available() ? app(ListRedirectDomainsAction::class)->execute($model) : null,
         ]);
     }
 

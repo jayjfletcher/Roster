@@ -7,8 +7,10 @@ namespace JayI\Roster\Atrium\Http\Controllers;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use JayI\Cortex\Domains\RedirectDomain\Actions\ListRedirectDomainsAction;
 use JayI\Foundation\Audit\Contracts\AuditTrail;
 use JayI\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
+use JayI\Roster\Atrium\RedirectDomains;
 use JayI\Roster\Atrium\ScreenAccess;
 use JayI\Roster\Domains\Invitation\Actions\ListInvitationsAction;
 use JayI\Roster\Domains\Invitation\Enums\InvitationStatus;
@@ -44,7 +46,8 @@ final class OrganizationUiController
     /**
      * Each tab and the permission, in the organization, that opens it. The
      * activity tab shows the organization's history from the audit log, so
-     * it is offered only while one (jayi/keen) is installed.
+     * it is offered only while one (jayi/keen) is installed; the MCP tab
+     * holds redirect domains Cortex keeps, so only while jayi/cortex is.
      */
     private const array TABS = [
         'members' => 'roster.members.view',
@@ -53,6 +56,7 @@ final class OrganizationUiController
         'roles' => 'roster.roles.view',
         'sso' => 'roster.sso.view',
         'scim' => 'roster.scim.manage',
+        'mcp' => 'roster.organizations.update',
         'activity' => 'roster.audit.view',
         'settings' => 'roster.organizations.view',
     ];
@@ -112,7 +116,7 @@ final class OrganizationUiController
         $model = app(ShowOrganizationAction::class)->execute($model);
 
         // Only the tabs the viewer may open here; asking for another is refused.
-        $tabs = array_keys(array_filter(self::TABS, fn (string $permission, string $tab): bool => ($tab !== 'activity' || app(AuditTrail::class)->available())
+        $tabs = array_keys(array_filter(self::TABS, fn (string $permission, string $tab): bool => $this->offers($tab)
             && ScreenAccess::allows($permission, $model), ARRAY_FILTER_USE_BOTH));
         $requested = $request->query('tab');
 
@@ -151,6 +155,7 @@ final class OrganizationUiController
                     'scimTokens' => app(ListScimTokensAction::class)->execute($model, $page)->withQueryString(),
                     'ssoConnections' => app(ListSsoConnectionsAction::class)->execute(['organization' => $model, 'per_page' => 100]),
                 ],
+                'mcp' => ['redirectDomains' => app(ListRedirectDomainsAction::class)->execute($model)],
                 default => [],
             },
         ]);
@@ -254,6 +259,19 @@ final class OrganizationUiController
         return redirect()
             ->route('atrium.roster.organizations.index', ['trashed' => 'only'])
             ->with('status', __('roster::roster.deleted_permanently'));
+    }
+
+    /**
+     * Whether a tab's package is installed: the audit log for activity,
+     * Cortex for MCP redirect domains.
+     */
+    private function offers(string $tab): bool
+    {
+        return match ($tab) {
+            'activity' => app(AuditTrail::class)->available(),
+            'mcp' => RedirectDomains::available(),
+            default => true,
+        };
     }
 
     private function find(string $slug): OrganizationModel

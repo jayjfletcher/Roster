@@ -22,6 +22,14 @@ class WorkbenchServiceProvider extends ServiceProvider
     {
         config([
             'auth.providers.users.model' => User::class,
+            // jayi/pennantplus's layered store: users who follow a feature's
+            // global value store nothing, as in a real application.
+            'pennant.default' => 'pennantplus',
+            'pennant.stores.pennantplus' => [
+                'driver' => 'pennantplus',
+                'connection' => null,
+                'table' => 'features',
+            ],
             'roster.users.model' => User::class,
             'roster.routes.enabled' => true,
             'roster.mcp.local.enabled' => true,
