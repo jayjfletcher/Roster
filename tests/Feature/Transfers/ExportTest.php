@@ -13,7 +13,7 @@ function exported(TransferModel $transfer): array
 {
     $csv = app(Transfers::class)->disk()->get((string) $transfer->output_path);
 
-    return array_map(str_getcsv(...), array_values(array_filter(explode("\n", (string) $csv))));
+    return array_map(static fn (string $line): array => str_getcsv($line, escape: ''), array_values(array_filter(explode("\n", (string) $csv))));
 }
 
 beforeEach(function (): void {

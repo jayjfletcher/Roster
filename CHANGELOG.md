@@ -12,6 +12,10 @@
 - The package's section in Atrium's sidebar rail has its own icon (`user-group`) and a fixed place in the rail.
 - An **Audit log** link in the package's sidebar group, opening its own audit log in Atrium (`/atrium/history/roster`), shown while an audit log (refactor-circus/keen) is installed and to those who may read the package's history.
 
+### Changed
+
+- Requires PHP 8.5 (`php: ^8.5`); CI and the browser tests run on PHP 8.5 only. Dependency floors raised to the current releases: laravel/framework ^13.35, orchestra/testbench ^11.3, pestphp/pest ^5.3.1, pestphp/pest-plugin-browser ^5.1.2 and larastan/larastan ^3.13; Playwright ^1.64.
+
 ### Breaking
 
 - **The audit log moved to [`refactor-circus/keen`](https://github.com/jayjfletcher/Keen)**, the suite-wide audit log; install it (`composer require refactor-circus/keen`, suggested) to keep recording. Roster's audit domain is gone: `Domains\Audit` (`AuditRecorder`, `AuditLog`, `Snapshots`, `Surface`, `PendingAuditEntry`, `AuditEntryModel`, its actions, events, requests, resources and policy), the `/roster/audit` API routes, the `list-audit-entries-tool`, `show-audit-entry-tool` and `record-audit-event-tool` MCP tools, the Atrium Audit log screens and navigation item, the `roster:prune-audit` and `roster:verify-audit` commands (use `keen:prune` and `keen:verify`), the `roster.audit` config block (`keen.redact`, `keen.retention_days` and `keen.enabled` replace it), the `export_audit` transfer type and its `AuditExporter`, and the `roster.audit.record` permission. The `roster_audit_*` tables and their migration stay: copy existing entries into Keen once with `php artisan keen:import-roster`. Delete old transfers of type `export_audit` when upgrading, since Roster can no longer read them (their rows cascade): `DB::table('roster_transfers')->where('type', 'export_audit')->delete();`.

@@ -9,7 +9,7 @@ Follows the same stack as the sibling packages `refactor-circus/atrium`, `refact
 
 ## Backend
 
-- PHP ^8.4
+- PHP ^8.5
 - Laravel ^13.15 (`laravel/framework`)
 - Laravel MCP (`laravel/mcp`) for MCP tool surface
 - Action classes as the single API, exposed via HTTP API, MCP, and Atrium

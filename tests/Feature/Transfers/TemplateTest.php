@@ -14,7 +14,7 @@ use Workbench\App\Models\User;
 $imports = array_values(array_filter(TransferType::cases(), fn (TransferType $type): bool => $type->isImport()));
 
 it('ships a template for every import type, with exactly its columns', function (TransferType $type): void {
-    $header = str_getcsv(strtok(app(ShowImportTemplateAction::class)->execute($type), "\n"));
+    $header = str_getcsv(strtok(app(ShowImportTemplateAction::class)->execute($type), "\n"), escape: '');
 
     expect($header)->toBe([...$type->columns()['required'], ...$type->columns()['optional']]);
 })->with($imports);
