@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Sso\Mcp\Requests;
 
-use JayI\Roster\Domains\Sso\Actions\DeleteSsoConnectionAction;
 use Laravel\Mcp\Response;
+use RefactorCircus\Roster\Domains\Sso\Actions\DeleteSsoConnectionAction;
 
 final class DeleteSsoConnectionMcpRequest extends SsoConnectionMcpRequest
 {

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Actions;
+namespace RefactorCircus\Roster\Domains\Role\Actions;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\Role\Enums\RoleScope;
-use JayI\Roster\Domains\Role\Events\RolesListedActionEvent;
-use JayI\Roster\Domains\Role\Events\RolesListingActionEvent;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Support\Concerns\ResolvesScopes;
+use RefactorCircus\Roster\Domains\Role\Enums\RoleScope;
+use RefactorCircus\Roster\Domains\Role\Events\RolesListedActionEvent;
+use RefactorCircus\Roster\Domains\Role\Events\RolesListingActionEvent;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Support\Concerns\ResolvesScopes;
 
 final class ListRolesAction
 {

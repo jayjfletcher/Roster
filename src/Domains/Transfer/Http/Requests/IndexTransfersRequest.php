@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Transfer\Http\Requests;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Permission\Services\Authorizer;
-use JayI\Roster\Domains\Transfer\Actions\ListTransfersAction;
-use JayI\Roster\Domains\Transfer\Resources\TransferResource;
-use JayI\Roster\Http\Request;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
+use RefactorCircus\Roster\Domains\Transfer\Actions\ListTransfersAction;
+use RefactorCircus\Roster\Domains\Transfer\Resources\TransferResource;
+use RefactorCircus\Roster\Http\Request;
 
 /**
  * Everyone may list their own transfers. An organization's transfers need

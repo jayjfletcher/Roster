@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Http\Requests;
+namespace RefactorCircus\Roster\Domains\User\Http\Requests;
 
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\User\Actions\DeleteUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\DeleteUserAction;
 
 final class DestroyUserRequest extends UserRequest
 {

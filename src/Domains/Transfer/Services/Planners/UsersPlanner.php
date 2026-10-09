@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Services\Planners;
+namespace RefactorCircus\Roster\Domains\Transfer\Services\Planners;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\User\Actions\CreateUserAction;
-use JayI\Roster\Domains\User\Actions\UpdateProfileAction;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\User\Actions\CreateUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\UpdateProfileAction;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * Plain accounts: `email, name, display_name`. Existing emails are skipped;

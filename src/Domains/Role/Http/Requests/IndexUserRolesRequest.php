@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Role\Http\Requests;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Role\Actions\ListRoleAssignmentsAction;
-use JayI\Roster\Domains\Role\Resources\RoleAssignmentResource;
-use JayI\Roster\Domains\User\Http\Requests\UserRequest;
+use RefactorCircus\Roster\Domains\Role\Actions\ListRoleAssignmentsAction;
+use RefactorCircus\Roster\Domains\Role\Resources\RoleAssignmentResource;
+use RefactorCircus\Roster\Domains\User\Http\Requests\UserRequest;
 
 final class IndexUserRolesRequest extends UserRequest
 {

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Organization\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Organization\Actions\ShowOrganizationAction;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Organization\Resources\OrganizationResource;
+use RefactorCircus\Roster\Domains\Organization\Actions\ShowOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Organization\Resources\OrganizationResource;
 
 final class ShowOrganizationRequest extends OrganizationRequest
 {

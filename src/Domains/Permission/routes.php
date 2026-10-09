@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Permission\Http\Controllers\PermissionController;
+use RefactorCircus\Roster\Domains\Permission\Http\Controllers\PermissionController;
 
 Route::get('permissions', [PermissionController::class, 'index'])->name('permissions.index');
 Route::post('permissions', [PermissionController::class, 'store'])->name('permissions.store');

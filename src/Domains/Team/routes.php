@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Team\Http\Controllers\TeamController;
-use JayI\Roster\Domains\Team\Http\Controllers\TeamMemberController;
+use RefactorCircus\Roster\Domains\Team\Http\Controllers\TeamController;
+use RefactorCircus\Roster\Domains\Team\Http\Controllers\TeamMemberController;
 
 Route::get('organizations/{organization}/teams', [TeamController::class, 'index'])->name('organizations.teams.index');
 Route::post('organizations/{organization}/teams', [TeamController::class, 'store'])->name('organizations.teams.store');

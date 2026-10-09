@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Services\Exporters;
+namespace RefactorCircus\Roster\Domains\Transfer\Services\Exporters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Support\Users;
 
 final class UsersExporter implements Exporter
 {

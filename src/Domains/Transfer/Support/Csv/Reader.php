@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Support\Csv;
+namespace RefactorCircus\Roster\Domains\Transfer\Support\Csv;
 
 use Generator;
 use Illuminate\Contracts\Filesystem\Filesystem;

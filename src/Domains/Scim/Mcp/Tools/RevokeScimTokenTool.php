@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Scim\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Scim\Mcp\Requests\RevokeScimTokenMcpRequest;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Scim\Mcp\Requests\RevokeScimTokenMcpRequest;
 
 #[Description('Revoke a SCIM token so it stops working immediately.')]
 final class RevokeScimTokenTool extends Tool

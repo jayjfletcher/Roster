@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Sso\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Sso\Actions\ShowSsoConnectionAction;
-use JayI\Roster\Domains\Sso\Resources\SsoConnectionResource;
+use RefactorCircus\Roster\Domains\Sso\Actions\ShowSsoConnectionAction;
+use RefactorCircus\Roster\Domains\Sso\Resources\SsoConnectionResource;
 
 final class ShowSsoConnectionRequest extends SsoConnectionRequest
 {

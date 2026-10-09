@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\File;
-use JayI\Roster\Domains\Transfer\Actions\ShowImportTemplateAction;
-use JayI\Roster\Domains\Transfer\Actions\StartImportAction;
-use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
-use JayI\Roster\Domains\Transfer\Enums\TransferType;
-use JayI\Roster\Domains\Transfer\Mcp\Tools\ShowImportTemplateTool;
-use JayI\Roster\RosterServiceProvider;
+use RefactorCircus\Roster\Domains\Transfer\Actions\ShowImportTemplateAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\StartImportAction;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferStatus;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferType;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Tools\ShowImportTemplateTool;
+use RefactorCircus\Roster\RosterServiceProvider;
 use Workbench\App\Models\User;
 
 $imports = array_values(array_filter(TransferType::cases(), fn (TransferType $type): bool => $type->isImport()));

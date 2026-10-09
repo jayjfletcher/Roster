@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Atrium\Http\Controllers\Concerns;
+namespace RefactorCircus\Roster\Atrium\Http\Controllers\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Atrium\ScreenAccess;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Atrium\ScreenAccess;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
 
 /**
  * The same permission checks the JSON API and MCP make, for Atrium screens.

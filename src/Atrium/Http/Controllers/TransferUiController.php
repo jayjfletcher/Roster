@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Atrium\Http\Controllers;
+namespace RefactorCircus\Roster\Atrium\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use JayI\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
-use JayI\Roster\Atrium\ScreenAccess;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Permission\Services\Authorizer;
-use JayI\Roster\Domains\Transfer\Actions\CancelTransferAction;
-use JayI\Roster\Domains\Transfer\Actions\ConfirmImportAction;
-use JayI\Roster\Domains\Transfer\Actions\ListTransfersAction;
-use JayI\Roster\Domains\Transfer\Actions\ShowImportTemplateAction;
-use JayI\Roster\Domains\Transfer\Actions\ShowTransferAction;
-use JayI\Roster\Domains\Transfer\Actions\StartExportAction;
-use JayI\Roster\Domains\Transfer\Actions\StartImportAction;
-use JayI\Roster\Domains\Transfer\Enums\TransferType;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Services\Transfers;
+use RefactorCircus\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
+use RefactorCircus\Roster\Atrium\ScreenAccess;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
+use RefactorCircus\Roster\Domains\Transfer\Actions\CancelTransferAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\ConfirmImportAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\ListTransfersAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\ShowImportTemplateAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\ShowTransferAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\StartExportAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\StartImportAction;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferType;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Services\Transfers;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 

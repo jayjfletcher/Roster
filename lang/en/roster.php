@@ -280,7 +280,7 @@ return [
     'import_confirmed' => 'Import confirmed. Rows are being applied.',
     'transfer_cancelled' => 'Cancelled.',
     'rows_applied' => ':done of :total rows applied',
-    'transfers_unavailable' => 'CSV import and export need jayi/impex.',
+    'transfers_unavailable' => 'CSV import and export need refactor-circus/impex.',
     'transfers_unavailable_hint' => 'Install it, publish and run its migrations, and run a queue worker and the scheduler.',
     'transfer_import_members' => 'Import members',
     'transfer_import_users' => 'Import users',

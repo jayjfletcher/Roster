@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Actions;
+namespace RefactorCircus\Roster\Domains\Organization\Actions;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\Organization\Events\OrganizationsListedActionEvent;
-use JayI\Roster\Domains\Organization\Events\OrganizationsListingActionEvent;
-use JayI\Roster\Domains\Organization\Models\MembershipModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Organization\Events\OrganizationsListedActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Events\OrganizationsListingActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Models\MembershipModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Support\Users;
 
 final class ListOrganizationsAction
 {

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Resources;
+namespace RefactorCircus\Roster\Domains\User\Resources;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * A user's identity alone, for nesting inside other payloads.

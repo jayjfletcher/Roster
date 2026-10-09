@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\ServiceProvider;
-use JayI\Roster\Domains\User\Actions\CreateUserAction;
-use JayI\Roster\Domains\User\Models\UserModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\User\Actions\CreateUserAction;
+use RefactorCircus\Roster\Domains\User\Models\UserModel;
+use RefactorCircus\Roster\Support\Users;
 
 beforeEach(function (): void {
     config()->set('roster.users.model', UserModel::class);

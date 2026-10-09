@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Sso\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Sso\Mcp\Requests\CreateSsoConnectionMcpRequest;
-use JayI\Roster\Mcp\Concerns\DescribesOrganization;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Sso\Mcp\Requests\CreateSsoConnectionMcpRequest;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesOrganization;
 
 #[Description('Connect an organization to its identity provider. protocol is oidc (issuer, client_id, client_secret), azure for Microsoft Entra ID (tenant, client_id, client_secret) or saml (metadata_url, or entity_id + sso_url + certificate). Returns the callback URL to register at the provider.')]
 final class CreateSsoConnectionTool extends Tool

@@ -2,29 +2,29 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Services;
+namespace RefactorCircus\Roster\Domains\Scim\Services;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Actions\RemoveMemberAction;
-use JayI\Roster\Domains\Organization\Concerns\ManagesMemberships;
-use JayI\Roster\Domains\Organization\Enums\MembershipSource;
-use JayI\Roster\Domains\Organization\Models\MembershipModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Scim\Exceptions\ScimException;
-use JayI\Roster\Domains\Scim\Models\ScimGroupModel;
-use JayI\Roster\Domains\Scim\Models\ScimUserModel;
-use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
-use JayI\Roster\Domains\User\Actions\CreateUserAction;
-use JayI\Roster\Domains\User\Actions\DeactivateUserAction;
-use JayI\Roster\Domains\User\Actions\ReactivateUserAction;
-use JayI\Roster\Domains\User\Actions\UpdateProfileAction;
-use JayI\Roster\Domains\User\Actions\UpdateUserAction;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Organization\Actions\RemoveMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Concerns\ManagesMemberships;
+use RefactorCircus\Roster\Domains\Organization\Enums\MembershipSource;
+use RefactorCircus\Roster\Domains\Organization\Models\MembershipModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Scim\Exceptions\ScimException;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimGroupModel;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimUserModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoIdentityModel;
+use RefactorCircus\Roster\Domains\User\Actions\CreateUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\DeactivateUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\ReactivateUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\UpdateProfileAction;
+use RefactorCircus\Roster\Domains\User\Actions\UpdateUserAction;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * SCIM Users for one organization, on top of Roster's Actions.

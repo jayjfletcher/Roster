@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Notifications;
+namespace RefactorCircus\Roster\Domains\User\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * Tells an approver that someone is waiting for their account to be

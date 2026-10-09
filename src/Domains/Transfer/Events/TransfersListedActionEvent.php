@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Events;
+namespace RefactorCircus\Roster\Domains\Transfer\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use JayI\Foundation\Contracts\ActionFinishedEvent;
+use RefactorCircus\Foundation\Contracts\ActionFinishedEvent;
 
 /**
  * Imports and exports have been listed.

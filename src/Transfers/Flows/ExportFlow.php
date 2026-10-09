@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Transfers\Flows;
+namespace RefactorCircus\Roster\Transfers\Flows;
 
-use JayI\Impex\Domains\Flow\Support\Flow;
-use JayI\Roster\Transfers\Flows\Actions\BuildExport;
-use JayI\Roster\Transfers\Flows\Actions\FinishExport;
+use RefactorCircus\Impex\Domains\Flow\Support\Flow;
+use RefactorCircus\Roster\Transfers\Flows\Actions\BuildExport;
+use RefactorCircus\Roster\Transfers\Flows\Actions\FinishExport;
 
 /**
  * Stream the export to a file (resumably), then mark it ready.

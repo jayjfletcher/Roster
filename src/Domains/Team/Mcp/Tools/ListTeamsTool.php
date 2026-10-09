@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Team\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Team\Mcp\Requests\ListTeamsMcpRequest;
-use JayI\Roster\Mcp\Concerns\DescribesOrganization;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Team\Mcp\Requests\ListTeamsMcpRequest;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesOrganization;
 
 #[Description('List an organization\'s teams by name, with member counts. Paginated.')]
 final class ListTeamsTool extends Tool

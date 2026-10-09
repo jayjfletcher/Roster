@@ -2,69 +2,48 @@
 
 declare(strict_types=1);
 
-use Illuminate\Database\Eloquent\Relations\Relation;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
-use JayI\Roster\Domains\Organization\Models\MembershipModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationDomainModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationLinkModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Domains\Scim\Models\ScimGroupModel;
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
-use JayI\Roster\Domains\Scim\Models\ScimUserModel;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
-use JayI\Roster\Domains\Team\Models\TeamMemberModel;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Models\TransferRowModel;
-use JayI\Roster\Domains\User\Models\ProfileModel;
-use JayI\Roster\Domains\User\Models\UserModel;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Organization\Models\MembershipModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationDomainModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationLinkModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimGroupModel;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimUserModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoIdentityModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamMemberModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferRowModel;
+use RefactorCircus\Roster\Domains\User\Models\ProfileModel;
+use RefactorCircus\Roster\Domains\User\Models\UserModel;
 
-/**
- * The class names Roster's models were stored under before they moved into
- * their domains, and the models they are now.
- *
- * @return array<string, array{0: string, 1: class-string}>
- */
-function rosterMorphAliases(): array
-{
-    $models = [
-        'Impersonation' => ImpersonationModel::class,
-        'Invitation' => InvitationModel::class,
-        'Membership' => MembershipModel::class,
-        'Organization' => OrganizationModel::class,
-        'OrganizationDomain' => OrganizationDomainModel::class,
-        'OrganizationLink' => OrganizationLinkModel::class,
-        'Permission' => PermissionModel::class,
-        'Profile' => ProfileModel::class,
-        'Role' => RoleModel::class,
-        'RoleAssignment' => RoleAssignmentModel::class,
-        'ScimGroup' => ScimGroupModel::class,
-        'ScimToken' => ScimTokenModel::class,
-        'ScimUser' => ScimUserModel::class,
-        'SsoConnection' => SsoConnectionModel::class,
-        'SsoIdentity' => SsoIdentityModel::class,
-        'Team' => TeamModel::class,
-        'TeamMember' => TeamMemberModel::class,
-        'Transfer' => TransferModel::class,
-        'TransferRow' => TransferRowModel::class,
-        'User' => UserModel::class,
-    ];
-
-    $cases = [];
-
-    foreach ($models as $name => $model) {
-        $cases[$name] = ['JayI\\Roster\\Models\\'.$name, $model];
-    }
-
-    return $cases;
-}
-
-it('resolves and writes each model under its pre-domain class name', function (string $stored, string $model): void {
-    expect(Relation::getMorphedModel($stored))->toBe($model)
-        ->and((new $model)->getMorphClass())->toBe($stored);
-})->with(rosterMorphAliases());
+it('stores each model under its own class name', function (string $model): void {
+    expect((new $model)->getMorphClass())->toBe($model);
+})->with([
+    ImpersonationModel::class,
+    InvitationModel::class,
+    MembershipModel::class,
+    OrganizationModel::class,
+    OrganizationDomainModel::class,
+    OrganizationLinkModel::class,
+    PermissionModel::class,
+    ProfileModel::class,
+    RoleModel::class,
+    RoleAssignmentModel::class,
+    ScimGroupModel::class,
+    ScimTokenModel::class,
+    ScimUserModel::class,
+    SsoConnectionModel::class,
+    SsoIdentityModel::class,
+    TeamModel::class,
+    TeamMemberModel::class,
+    TransferModel::class,
+    TransferRowModel::class,
+    UserModel::class,
+]);

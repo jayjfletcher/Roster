@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Actions;
+namespace RefactorCircus\Roster\Domains\Team\Actions;
 
 use Illuminate\Support\Facades\DB;
-use JayI\Roster\Domains\Team\Events\TeamDeletedActionEvent;
-use JayI\Roster\Domains\Team\Events\TeamDeletingActionEvent;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Domains\User\Models\ProfileModel;
+use RefactorCircus\Roster\Domains\Team\Events\TeamDeletedActionEvent;
+use RefactorCircus\Roster\Domains\Team\Events\TeamDeletingActionEvent;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\User\Models\ProfileModel;
 
 final class DeleteTeamAction
 {

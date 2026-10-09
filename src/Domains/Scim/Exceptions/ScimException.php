@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Exceptions;
+namespace RefactorCircus\Roster\Domains\Scim\Exceptions;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Scim\Services\Scim;
+use RefactorCircus\Roster\Domains\Scim\Services\Scim;
 use RuntimeException;
 
 /**

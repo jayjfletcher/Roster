@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation\Services;
+namespace RefactorCircus\Roster\Domains\Impersonation\Services;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
 
 /**
  * The impersonation the current session is in, if any.

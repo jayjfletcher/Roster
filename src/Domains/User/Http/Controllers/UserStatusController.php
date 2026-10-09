@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\User\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\User\Http\Requests\ApproveUserRequest;
-use JayI\Roster\Domains\User\Http\Requests\DeactivateUserRequest;
-use JayI\Roster\Domains\User\Http\Requests\ReactivateUserRequest;
-use JayI\Roster\Domains\User\Http\Requests\RejectUserRequest;
-use JayI\Roster\Domains\User\Http\Requests\SuspendUserRequest;
+use RefactorCircus\Roster\Domains\User\Http\Requests\ApproveUserRequest;
+use RefactorCircus\Roster\Domains\User\Http\Requests\DeactivateUserRequest;
+use RefactorCircus\Roster\Domains\User\Http\Requests\ReactivateUserRequest;
+use RefactorCircus\Roster\Domains\User\Http\Requests\RejectUserRequest;
+use RefactorCircus\Roster\Domains\User\Http\Requests\SuspendUserRequest;
 
 final class UserStatusController
 {

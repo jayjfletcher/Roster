@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Enums;
+namespace RefactorCircus\Roster\Domains\Transfer\Enums;
 
 enum TransferType: string
 {

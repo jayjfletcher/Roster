@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Organization\Mcp\Tools\LinkOrganizationTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\ListOrganizationsTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\SyncOrganizationsTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\SyncOrganizationTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\UnlinkOrganizationTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\LinkOrganizationTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\ListOrganizationsTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\SyncOrganizationsTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\SyncOrganizationTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\UnlinkOrganizationTool;
 
 it('syncs, finds, links and unlinks organizations', function (): void {
     mcpTool(SyncOrganizationTool::class, ['source' => 'erp', 'external_id' => 'C-1', 'name' => 'Initech', 'account_number' => 'A-42'])

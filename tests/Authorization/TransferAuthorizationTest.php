@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Domains\Transfer\Actions\ConfirmImportAction;
-use JayI\Roster\Domains\Transfer\Actions\StartExportAction;
-use JayI\Roster\Domains\Transfer\Actions\StartImportAction;
-use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Transfer\Actions\ConfirmImportAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\StartExportAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\StartImportAction;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferStatus;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
 use Workbench\App\Models\User;
 
 beforeEach(function (): void {

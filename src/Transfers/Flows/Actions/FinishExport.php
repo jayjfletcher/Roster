@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Transfers\Flows\Actions;
+namespace RefactorCircus\Roster\Transfers\Flows\Actions;
 
-use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
-use JayI\Roster\Domains\Transfer\Events\TransferFinishedActionEvent;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferStatus;
+use RefactorCircus\Roster\Domains\Transfer\Events\TransferFinishedActionEvent;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
 
 final class FinishExport
 {

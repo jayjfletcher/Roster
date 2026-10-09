@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Actions;
+namespace RefactorCircus\Roster\Domains\Organization\Actions;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Events\OrganizationLinkedActionEvent;
-use JayI\Roster\Domains\Organization\Events\OrganizationLinkingActionEvent;
-use JayI\Roster\Domains\Organization\Models\OrganizationLinkModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Organization\Events\OrganizationLinkedActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Events\OrganizationLinkingActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationLinkModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 final class LinkOrganizationAction
 {

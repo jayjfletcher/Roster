@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Permission\Http\Requests;
 
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Permission\Actions\DeletePermissionAction;
+use RefactorCircus\Roster\Domains\Permission\Actions\DeletePermissionAction;
 
 final class DestroyPermissionRequest extends PermissionRequest
 {

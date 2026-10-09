@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Sso\Http\Controllers\SsoController;
+use RefactorCircus\Roster\Domains\Sso\Http\Controllers\SsoController;
 
 Route::get('organizations/{organization}/sso-connections', [SsoController::class, 'index'])->name('organizations.sso-connections.index');
 Route::post('organizations/{organization}/sso-connections', [SsoController::class, 'store'])->name('organizations.sso-connections.store');

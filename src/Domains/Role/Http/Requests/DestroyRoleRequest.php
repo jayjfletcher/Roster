@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Role\Http\Requests;
 
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Role\Actions\DeleteRoleAction;
+use RefactorCircus\Roster\Domains\Role\Actions\DeleteRoleAction;
 
 final class DestroyRoleRequest extends RoleRequest
 {

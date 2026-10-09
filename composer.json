@@ -1,13 +1,13 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "jayi/roster",
+    "name": "refactor-circus/roster",
     "description": "User management",
     "keywords": [
         "laravel",
-        "jayi",
+        "refactor-circus",
         "roster"
     ],
-    "homepage": "https://github.com/jayjfletcher/roster",
+    "homepage": "https://github.com/Refactor-Circus/roster",
     "license": "MIT",
     "authors": [
         {
@@ -18,17 +18,17 @@
     ],
     "require": {
         "php": "^8.4",
-        "jayi/atrium": "dev-main",
-        "jayi/foundation": "dev-main",
+        "refactor-circus/atrium": "dev-main",
+        "refactor-circus/foundation": "dev-main",
         "laravel/framework": "^13.15",
         "laravel/mcp": "^1.0"
     },
     "require-dev": {
         "firebase/php-jwt": "^7.2",
-        "jayi/cortex": "dev-main",
-        "jayi/impex": "dev-main",
-        "jayi/keen": "dev-main",
-        "jayi/pennantplus": "dev-main",
+        "refactor-circus/cortex": "dev-main",
+        "refactor-circus/impex": "dev-main",
+        "refactor-circus/keen": "dev-main",
+        "refactor-circus/pennantplus": "dev-main",
         "larastan/larastan": "^3.12",
         "laravel/pao": "^1.0",
         "laravel/pint": "^1.29",
@@ -43,24 +43,24 @@
         "socialiteproviders/saml2": "^4.10"
     },
     "suggest": {
-        "jayi/cortex": "Let Cortex agents use the Roster tools and manage the MCP instructions and tool descriptions (dev-main).",
+        "refactor-circus/cortex": "Let Cortex agents use the Roster tools and manage the MCP instructions and tool descriptions (dev-main).",
         "laravel/socialite": "Required for SSO login (^5.31).",
         "socialiteproviders/saml2": "Required for SAML SSO connections (^4.10).",
         "firebase/php-jwt": "Required for OIDC SSO connections, to verify id_tokens (^7.2).",
         "socialiteproviders/microsoft-azure": "Required for Microsoft Entra ID (Azure) SSO connections (^5.2).",
-        "jayi/impex": "Required for CSV import and export (dev-main).",
-        "jayi/pennantplus": "Switch Roster in Atrium on and off with the RosterSupportFeature Pennant feature (dev-main).",
-        "jayi/keen": "Records Roster's changes in the suite-wide audit log (dev-main)."
+        "refactor-circus/impex": "Required for CSV import and export (dev-main).",
+        "refactor-circus/pennantplus": "Switch Roster in Atrium on and off with the RosterSupportFeature Pennant feature (dev-main).",
+        "refactor-circus/keen": "Records Roster's changes in the suite-wide audit log (dev-main)."
     },
     "autoload": {
         "psr-4": {
-            "JayI\\Roster\\": "src/",
-            "JayI\\Roster\\Database\\Factories\\": "database/factories/"
+            "RefactorCircus\\Roster\\": "src/",
+            "RefactorCircus\\Roster\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "JayI\\Roster\\Tests\\": "tests/",
+            "RefactorCircus\\Roster\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/",
             "Workbench\\Database\\Factories\\": "workbench/database/factories/",
             "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
@@ -114,15 +114,15 @@
     "extra": {
         "laravel": {
             "providers": [
-                "JayI\\Roster\\RosterServiceProvider"
+                "RefactorCircus\\Roster\\RosterServiceProvider"
             ],
             "aliases": {
-                "Roster": "JayI\\Roster\\Facades\\Roster"
+                "Roster": "RefactorCircus\\Roster\\Facades\\Roster"
             }
         },
         "atrium": {
             "plugins": [
-                "JayI\\Roster\\Atrium\\RosterPlugin"
+                "RefactorCircus\\Roster\\Atrium\\RosterPlugin"
             ]
         }
     },
@@ -138,27 +138,27 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/jayjfletcher/Atrium.git"
+            "url": "https://github.com/Refactor-Circus/Atrium.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/jayjfletcher/cortex.git"
+            "url": "https://github.com/Refactor-Circus/Cortex.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/jayjfletcher/Impex.git"
+            "url": "https://github.com/Refactor-Circus/Impex.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/jayjfletcher/PennantPlus.git"
+            "url": "https://github.com/Refactor-Circus/PennantPlus.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/jayjfletcher/Foundation.git"
+            "url": "https://github.com/Refactor-Circus/Foundation.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/jayjfletcher/Keen.git"
+            "url": "https://github.com/Refactor-Circus/Keen.git"
         }
     ]
 }

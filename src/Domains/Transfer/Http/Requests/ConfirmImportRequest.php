@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Transfer\Http\Requests;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Transfer\Actions\ConfirmImportAction;
-use JayI\Roster\Domains\Transfer\Resources\TransferResource;
+use RefactorCircus\Roster\Domains\Transfer\Actions\ConfirmImportAction;
+use RefactorCircus\Roster\Domains\Transfer\Resources\TransferResource;
 
 /**
  * Confirming applies the rows as the confirmer, so it always needs the

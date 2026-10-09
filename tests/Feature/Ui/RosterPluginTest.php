@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Atrium\Domains\Navigation\Data\NavItem;
-use JayI\Atrium\Domains\Plugins\Services\PluginRegistry;
-use JayI\Atrium\Domains\Widgets\Data\WidgetDefinition;
-use JayI\Atrium\Domains\Widgets\Services\WidgetRegistry;
-use JayI\Roster\Atrium\Badges;
-use JayI\Roster\Atrium\RosterPlugin;
-use JayI\Roster\Domains\Invitation\Enums\InvitationStatus;
-use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
-use JayI\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Atrium\Domains\Navigation\Data\NavItem;
+use RefactorCircus\Atrium\Domains\Plugins\Services\PluginRegistry;
+use RefactorCircus\Atrium\Domains\Widgets\Data\WidgetDefinition;
+use RefactorCircus\Atrium\Domains\Widgets\Services\WidgetRegistry;
+use RefactorCircus\Roster\Atrium\Badges;
+use RefactorCircus\Roster\Atrium\RosterPlugin;
+use RefactorCircus\Roster\Domains\Invitation\Enums\InvitationStatus;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferStatus;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
 
 it('registers itself with atrium', function (): void {
     expect(app(PluginRegistry::class)->has('roster'))->toBeTrue();

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Actions;
+namespace RefactorCircus\Roster\Domains\Transfer\Actions;
 
-use JayI\Roster\Domains\Transfer\Events\TransferShowingActionEvent;
-use JayI\Roster\Domains\Transfer\Events\TransferShownActionEvent;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Events\TransferShowingActionEvent;
+use RefactorCircus\Roster\Domains\Transfer\Events\TransferShownActionEvent;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
 
 final class ShowTransferAction
 {

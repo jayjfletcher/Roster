@@ -12,7 +12,7 @@
 - ✅ **Audit log** — record who changed users, roles, and memberships; activity feed; host app events; hash-chained.
 - ✅ **Impersonation** — admins impersonate users, scoped and logged.
 - ✅ **SSO / SCIM** — SAML/OIDC/Entra ID login and SCIM 2.0 provisioning per organization.
-- ✅ **CSV import/export** — bulk user/member import and export via `jayi/impex`.
+- ✅ **CSV import/export** — bulk user/member import and export via `refactor-circus/impex`.
 
 ## Phase 3: Integrations
 

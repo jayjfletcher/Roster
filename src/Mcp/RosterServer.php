@@ -2,90 +2,90 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Mcp;
+namespace RefactorCircus\Roster\Mcp;
 
-use JayI\Foundation\Mcp\Server;
-use JayI\Roster\Domains\Impersonation\Mcp\Tools\ListImpersonationsTool;
-use JayI\Roster\Domains\Impersonation\Mcp\Tools\StartImpersonationTool;
-use JayI\Roster\Domains\Impersonation\Mcp\Tools\StopImpersonationTool;
-use JayI\Roster\Domains\Invitation\Mcp\Tools\AcceptInvitationTool;
-use JayI\Roster\Domains\Invitation\Mcp\Tools\CreateInvitationTool;
-use JayI\Roster\Domains\Invitation\Mcp\Tools\DeclineInvitationTool;
-use JayI\Roster\Domains\Invitation\Mcp\Tools\ListInvitationsTool;
-use JayI\Roster\Domains\Invitation\Mcp\Tools\RevokeInvitationTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\AddMemberTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\CreateOrganizationTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\DeleteOrganizationTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\JoinByDomainTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\LinkOrganizationTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\ListMembersTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\ListOrganizationsTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\PurgeOrganizationTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\RemoveMemberTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\RestoreOrganizationTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\ShowOrganizationTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\SwitchContextTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\SyncOrganizationsTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\SyncOrganizationTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\TransferOwnershipTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\UnlinkOrganizationTool;
-use JayI\Roster\Domains\Organization\Mcp\Tools\UpdateOrganizationTool;
-use JayI\Roster\Domains\Permission\Mcp\Tools\CreatePermissionTool;
-use JayI\Roster\Domains\Permission\Mcp\Tools\DeletePermissionTool;
-use JayI\Roster\Domains\Permission\Mcp\Tools\ListPermissionsTool;
-use JayI\Roster\Domains\Permission\Mcp\Tools\ListUserPermissionsTool;
-use JayI\Roster\Domains\Permission\Mcp\Tools\UpdatePermissionTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\AssignRoleTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\CreateRoleTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\DeleteRoleTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\ListRoleAssignmentsTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\ListRolesTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\RevokeRoleTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\ShowRoleTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\UpdateRoleTool;
-use JayI\Roster\Domains\Scim\Mcp\Tools\CreateScimTokenTool;
-use JayI\Roster\Domains\Scim\Mcp\Tools\ListScimTokensTool;
-use JayI\Roster\Domains\Scim\Mcp\Tools\RevokeScimTokenTool;
-use JayI\Roster\Domains\Sso\Mcp\Tools\CreateSsoConnectionTool;
-use JayI\Roster\Domains\Sso\Mcp\Tools\DeleteSsoConnectionTool;
-use JayI\Roster\Domains\Sso\Mcp\Tools\ListSsoConnectionsTool;
-use JayI\Roster\Domains\Sso\Mcp\Tools\ListSsoIdentitiesTool;
-use JayI\Roster\Domains\Sso\Mcp\Tools\ShowSsoConnectionTool;
-use JayI\Roster\Domains\Sso\Mcp\Tools\UnlinkSsoIdentityTool;
-use JayI\Roster\Domains\Sso\Mcp\Tools\UpdateSsoConnectionTool;
-use JayI\Roster\Domains\Team\Mcp\Tools\AddTeamMemberTool;
-use JayI\Roster\Domains\Team\Mcp\Tools\CreateTeamTool;
-use JayI\Roster\Domains\Team\Mcp\Tools\DeleteTeamTool;
-use JayI\Roster\Domains\Team\Mcp\Tools\ListTeamsTool;
-use JayI\Roster\Domains\Team\Mcp\Tools\RemoveTeamMemberTool;
-use JayI\Roster\Domains\Team\Mcp\Tools\ShowTeamTool;
-use JayI\Roster\Domains\Team\Mcp\Tools\UpdateTeamTool;
-use JayI\Roster\Domains\Transfer\Mcp\Tools\CancelTransferTool;
-use JayI\Roster\Domains\Transfer\Mcp\Tools\ConfirmImportTool;
-use JayI\Roster\Domains\Transfer\Mcp\Tools\ListTransfersTool;
-use JayI\Roster\Domains\Transfer\Mcp\Tools\ShowImportTemplateTool;
-use JayI\Roster\Domains\Transfer\Mcp\Tools\ShowTransferTool;
-use JayI\Roster\Domains\Transfer\Mcp\Tools\StartExportTool;
-use JayI\Roster\Domains\Transfer\Mcp\Tools\StartImportTool;
-use JayI\Roster\Domains\User\Mcp\Tools\ApproveUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\CreateUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\DeactivateUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\DeleteUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\ListUsersTool;
-use JayI\Roster\Domains\User\Mcp\Tools\PurgeUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\ReactivateUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\RejectUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\RestoreUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\ShowUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\SuspendUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\UpdateProfileTool;
-use JayI\Roster\Domains\User\Mcp\Tools\UpdateUserTool;
-use JayI\Roster\Mcp\Tools\ListRosterHistoryTool;
 use Laravel\Mcp\Server\Attributes\Instructions;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Version;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\ToolSearch;
+use RefactorCircus\Foundation\Mcp\Server;
+use RefactorCircus\Roster\Domains\Impersonation\Mcp\Tools\ListImpersonationsTool;
+use RefactorCircus\Roster\Domains\Impersonation\Mcp\Tools\StartImpersonationTool;
+use RefactorCircus\Roster\Domains\Impersonation\Mcp\Tools\StopImpersonationTool;
+use RefactorCircus\Roster\Domains\Invitation\Mcp\Tools\AcceptInvitationTool;
+use RefactorCircus\Roster\Domains\Invitation\Mcp\Tools\CreateInvitationTool;
+use RefactorCircus\Roster\Domains\Invitation\Mcp\Tools\DeclineInvitationTool;
+use RefactorCircus\Roster\Domains\Invitation\Mcp\Tools\ListInvitationsTool;
+use RefactorCircus\Roster\Domains\Invitation\Mcp\Tools\RevokeInvitationTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\AddMemberTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\CreateOrganizationTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\DeleteOrganizationTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\JoinByDomainTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\LinkOrganizationTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\ListMembersTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\ListOrganizationsTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\PurgeOrganizationTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\RemoveMemberTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\RestoreOrganizationTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\ShowOrganizationTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\SwitchContextTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\SyncOrganizationsTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\SyncOrganizationTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\TransferOwnershipTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\UnlinkOrganizationTool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Tools\UpdateOrganizationTool;
+use RefactorCircus\Roster\Domains\Permission\Mcp\Tools\CreatePermissionTool;
+use RefactorCircus\Roster\Domains\Permission\Mcp\Tools\DeletePermissionTool;
+use RefactorCircus\Roster\Domains\Permission\Mcp\Tools\ListPermissionsTool;
+use RefactorCircus\Roster\Domains\Permission\Mcp\Tools\ListUserPermissionsTool;
+use RefactorCircus\Roster\Domains\Permission\Mcp\Tools\UpdatePermissionTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\AssignRoleTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\CreateRoleTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\DeleteRoleTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\ListRoleAssignmentsTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\ListRolesTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\RevokeRoleTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\ShowRoleTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\UpdateRoleTool;
+use RefactorCircus\Roster\Domains\Scim\Mcp\Tools\CreateScimTokenTool;
+use RefactorCircus\Roster\Domains\Scim\Mcp\Tools\ListScimTokensTool;
+use RefactorCircus\Roster\Domains\Scim\Mcp\Tools\RevokeScimTokenTool;
+use RefactorCircus\Roster\Domains\Sso\Mcp\Tools\CreateSsoConnectionTool;
+use RefactorCircus\Roster\Domains\Sso\Mcp\Tools\DeleteSsoConnectionTool;
+use RefactorCircus\Roster\Domains\Sso\Mcp\Tools\ListSsoConnectionsTool;
+use RefactorCircus\Roster\Domains\Sso\Mcp\Tools\ListSsoIdentitiesTool;
+use RefactorCircus\Roster\Domains\Sso\Mcp\Tools\ShowSsoConnectionTool;
+use RefactorCircus\Roster\Domains\Sso\Mcp\Tools\UnlinkSsoIdentityTool;
+use RefactorCircus\Roster\Domains\Sso\Mcp\Tools\UpdateSsoConnectionTool;
+use RefactorCircus\Roster\Domains\Team\Mcp\Tools\AddTeamMemberTool;
+use RefactorCircus\Roster\Domains\Team\Mcp\Tools\CreateTeamTool;
+use RefactorCircus\Roster\Domains\Team\Mcp\Tools\DeleteTeamTool;
+use RefactorCircus\Roster\Domains\Team\Mcp\Tools\ListTeamsTool;
+use RefactorCircus\Roster\Domains\Team\Mcp\Tools\RemoveTeamMemberTool;
+use RefactorCircus\Roster\Domains\Team\Mcp\Tools\ShowTeamTool;
+use RefactorCircus\Roster\Domains\Team\Mcp\Tools\UpdateTeamTool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Tools\CancelTransferTool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Tools\ConfirmImportTool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Tools\ListTransfersTool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Tools\ShowImportTemplateTool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Tools\ShowTransferTool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Tools\StartExportTool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Tools\StartImportTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\ApproveUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\CreateUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\DeactivateUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\DeleteUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\ListUsersTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\PurgeUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\ReactivateUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\RejectUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\RestoreUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\ShowUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\SuspendUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\UpdateProfileTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\UpdateUserTool;
+use RefactorCircus\Roster\Mcp\Tools\ListRosterHistoryTool;
 
 #[Name('Roster')]
 #[Version('1.0.0')]
@@ -103,7 +103,7 @@ use Laravel\Mcp\Server\Tools\ToolSearch;
     'a scope are the union of their global, organization and team roles, and an organization\'s owner holds every '.
     'organization permission. Every tool needs a permission (e.g. roster.users.update) - list-user-permissions-tool '.
     'shows what a user holds. You can only grant permissions you hold yourself. '.
-    'When the jayi/keen audit log is installed, every change is recorded there; list-roster-history-tool reads Roster\'s history. '.
+    'When the refactor-circus/keen audit log is installed, every change is recorded there; list-roster-history-tool reads Roster\'s history. '.
     'Bulk changes go through CSV (show-import-template-tool gives each import type\'s columns): start-import-tool previews every row without changing anything, and only '.
     'confirm-import-tool applies it; start-export-tool builds a CSV whose download link show-transfer-tool returns. '.
     'Organizations kept in an external system (ERP, CRM) are synced by their id there with sync-organization-tool or '.
@@ -209,7 +209,7 @@ final class RosterServer extends Server
         ListImpersonationsTool::class,
         StopImpersonationTool::class,
 
-        // History, from the suite-wide audit log (jayi/keen)
+        // History, from the suite-wide audit log (refactor-circus/keen)
         ListRosterHistoryTool::class,
 
         // CSV import and export

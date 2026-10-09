@@ -7,7 +7,7 @@ Deleting a user or an organization is permanent today. The user wants both to be
 ## Decisions (from shaping)
 
 - **Users** use Laravel's `SoftDeletes` on the user model.
-  - Roster's bundled `JayI\Roster\Models\User` gets the trait. Host apps add it to their own model, and the README says how.
+  - Roster's bundled `RefactorCircus\Roster\Models\User` gets the trait. Host apps add it to their own model, and the README says how.
   - Laravel then hides deleted users everywhere, including sign-in, because the Eloquent user provider ignores trashed users.
   - `DeleteUserAction` already keeps memberships, roles and the profile for soft-deletable models, so a restore brings everything back.
   - **A model without the trait** keeps today's permanent delete. The Danger zone warning then says it's permanent.

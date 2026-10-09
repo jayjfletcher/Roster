@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Models;
+namespace RefactorCircus\Roster\Domains\Invitation\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
-use JayI\Roster\Database\Factories\InvitationFactory;
-use JayI\Roster\Domains\Invitation\Enums\InvitationStatus;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Database\Factories\InvitationFactory;
+use RefactorCircus\Roster\Domains\Invitation\Enums\InvitationStatus;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 /**
  * An emailed invitation into an organization, optionally onto teams.

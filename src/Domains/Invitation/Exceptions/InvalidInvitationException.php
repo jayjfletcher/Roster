@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Exceptions;
+namespace RefactorCircus\Roster\Domains\Invitation\Exceptions;
 
 use RuntimeException;
 

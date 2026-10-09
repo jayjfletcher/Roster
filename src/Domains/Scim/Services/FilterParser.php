@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Services;
+namespace RefactorCircus\Roster\Domains\Scim\Services;
 
-use JayI\Roster\Domains\Scim\Exceptions\ScimException;
+use RefactorCircus\Roster\Domains\Scim\Exceptions\ScimException;
 
 /**
  * Parses the subset of SCIM filters Roster supports (RFC 7644 §3.4.2.2):

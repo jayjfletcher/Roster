@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Http\Requests;
+namespace RefactorCircus\Roster\Domains\User\Http\Requests;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\User\Actions\RestoreUserAction;
-use JayI\Roster\Domains\User\Resources\UserResource;
-use JayI\Roster\Http\Request;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\User\Actions\RestoreUserAction;
+use RefactorCircus\Roster\Domains\User\Resources\UserResource;
+use RefactorCircus\Roster\Http\Request;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * Works on deleted users too.

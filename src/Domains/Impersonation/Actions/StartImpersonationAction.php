@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation\Actions;
+namespace RefactorCircus\Roster\Domains\Impersonation\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Impersonation\Data\StartedImpersonation;
-use JayI\Roster\Domains\Impersonation\Events\ImpersonationStartedActionEvent;
-use JayI\Roster\Domains\Impersonation\Events\ImpersonationStartingActionEvent;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
-use JayI\Roster\Domains\Impersonation\Services\ImpersonationContext;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Permission\Services\Permissions;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Support\Concerns\ResolvesScopes;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Impersonation\Data\StartedImpersonation;
+use RefactorCircus\Roster\Domains\Impersonation\Events\ImpersonationStartedActionEvent;
+use RefactorCircus\Roster\Domains\Impersonation\Events\ImpersonationStartingActionEvent;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\Impersonation\Services\ImpersonationContext;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Permission\Services\Permissions;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Support\Concerns\ResolvesScopes;
+use RefactorCircus\Roster\Support\Users;
 
 final class StartImpersonationAction
 {

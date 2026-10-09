@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Services;
+namespace RefactorCircus\Roster\Domains\Scim\Services;
 
-use JayI\Roster\Domains\Scim\Exceptions\ScimException;
-use JayI\Roster\Domains\Scim\Models\ScimGroupModel;
-use JayI\Roster\Domains\Scim\Models\ScimUserModel;
+use RefactorCircus\Roster\Domains\Scim\Exceptions\ScimException;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimGroupModel;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimUserModel;
 
 /**
  * Runs a SCIM BulkRequest (RFC 7644 §3.7) through the Users and Groups

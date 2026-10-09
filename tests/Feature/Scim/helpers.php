@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Testing\TestResponse;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Scim\Actions\CreateScimTokenAction;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Scim\Actions\CreateScimTokenAction;
 
 /**
  * Acme (owning acme.test) with a SCIM token; returns [organization, token].

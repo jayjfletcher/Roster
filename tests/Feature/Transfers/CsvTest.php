@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Transfer\Support\Csv\Reader;
-use JayI\Roster\Domains\Transfer\Support\Csv\Writer;
+use RefactorCircus\Roster\Domains\Transfer\Support\Csv\Reader;
+use RefactorCircus\Roster\Domains\Transfer\Support\Csv\Writer;
 
 function reader(string $csv, array $columns = ['required' => ['email'], 'optional' => ['name']]): Reader
 {

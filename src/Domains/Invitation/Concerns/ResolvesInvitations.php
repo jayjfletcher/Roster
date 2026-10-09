@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Concerns;
+namespace RefactorCircus\Roster\Domains\Invitation\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Invitation\Enums\InvitationStatus;
-use JayI\Roster\Domains\Invitation\Exceptions\InvalidInvitationException;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
-use JayI\Roster\Domains\Invitation\Services\InvitationTokens;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Invitation\Enums\InvitationStatus;
+use RefactorCircus\Roster\Domains\Invitation\Exceptions\InvalidInvitationException;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Invitation\Services\InvitationTokens;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * Finds the pending invitation a token names, for the user answering it.

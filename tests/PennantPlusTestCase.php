@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Tests;
+namespace RefactorCircus\Roster\Tests;
 
-use JayI\PennantPlus\PennantPlusServiceProvider;
 use Laravel\Pennant\PennantServiceProvider;
+use RefactorCircus\PennantPlus\PennantPlusServiceProvider;
 
 /**
- * Roster booted with jayi/pennantplus answering Atrium's feature checks.
+ * Roster booted with refactor-circus/pennantplus answering Atrium's feature checks.
  */
 abstract class PennantPlusTestCase extends TestCase
 {

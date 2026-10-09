@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Actions;
+namespace RefactorCircus\Roster\Domains\Sso\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Sso\Data\IdentityClaims;
-use JayI\Roster\Domains\Sso\Events\SsoIdentityLinkedActionEvent;
-use JayI\Roster\Domains\Sso\Events\SsoIdentityLinkingActionEvent;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
+use RefactorCircus\Roster\Domains\Sso\Data\IdentityClaims;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoIdentityLinkedActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoIdentityLinkingActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoIdentityModel;
 
 final class LinkSsoIdentityAction
 {

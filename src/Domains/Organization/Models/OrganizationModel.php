@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Models;
+namespace RefactorCircus\Roster\Domains\Organization\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,10 +12,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
-use JayI\Roster\Database\Factories\OrganizationFactory;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Database\Factories\OrganizationFactory;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * The tenant: owns teams, memberships and invitations.

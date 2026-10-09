@@ -7,16 +7,16 @@ require_once __DIR__.'/helpers.php';
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Sso\Actions\CreateSsoConnectionAction;
-use JayI\Roster\Domains\Sso\Actions\UpdateSsoConnectionAction;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
-use JayI\Roster\Domains\Sso\Resources\SsoConnectionResource;
-use JayI\Roster\Domains\Sso\Services\Sso;
-use JayI\Roster\Domains\Sso\Support\NotSsoEnforced;
-use JayI\Roster\Roster;
 use Laravel\Socialite\Contracts\Provider;
 use Laravel\Socialite\Two\User as SocialiteUser;
+use RefactorCircus\Roster\Domains\Sso\Actions\CreateSsoConnectionAction;
+use RefactorCircus\Roster\Domains\Sso\Actions\UpdateSsoConnectionAction;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoIdentityModel;
+use RefactorCircus\Roster\Domains\Sso\Resources\SsoConnectionResource;
+use RefactorCircus\Roster\Domains\Sso\Services\Sso;
+use RefactorCircus\Roster\Domains\Sso\Support\NotSsoEnforced;
+use RefactorCircus\Roster\Roster;
 
 /**
  * Swap the identity provider for one that vouches for `$claims`.

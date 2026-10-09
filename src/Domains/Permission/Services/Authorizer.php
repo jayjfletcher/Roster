@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Services;
+namespace RefactorCircus\Roster\Domains\Permission\Services;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\Impersonation\Services\ImpersonationContext;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Impersonation\Services\ImpersonationContext;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
 
 /**
  * How Roster's own surfaces - the JSON API, MCP tools and Atrium screens -

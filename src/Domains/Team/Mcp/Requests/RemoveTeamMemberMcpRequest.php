@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Team\Mcp\Requests;
 
-use JayI\Roster\Domains\Team\Actions\RemoveTeamMemberAction;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Support\Users;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Team\Actions\RemoveTeamMemberAction;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Support\Users;
 
 final class RemoveTeamMemberMcpRequest extends TeamMcpRequest
 {

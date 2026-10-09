@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\User\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\User\Mcp\Requests\DeactivateUserMcpRequest;
-use JayI\Roster\Mcp\Concerns\DescribesUser;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\User\Mcp\Requests\DeactivateUserMcpRequest;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesUser;
 
 #[Description('Deactivate a user: the account is closed but kept, and can be reactivated. You cannot deactivate yourself.')]
 final class DeactivateUserTool extends Tool

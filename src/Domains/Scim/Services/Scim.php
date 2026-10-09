@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Services;
+namespace RefactorCircus\Roster\Domains\Scim\Services;
 
 use Illuminate\Http\JsonResponse;
 

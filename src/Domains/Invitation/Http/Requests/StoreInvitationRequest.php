@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Invitation\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Invitation\Actions\CreateInvitationAction;
-use JayI\Roster\Domains\Invitation\Resources\InvitationResource;
-use JayI\Roster\Domains\Organization\Http\Requests\OrganizationRequest;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Invitation\Actions\CreateInvitationAction;
+use RefactorCircus\Roster\Domains\Invitation\Resources\InvitationResource;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\OrganizationRequest;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 final class StoreInvitationRequest extends OrganizationRequest
 {

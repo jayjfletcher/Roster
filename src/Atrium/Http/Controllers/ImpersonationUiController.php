@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Atrium\Http\Controllers;
+namespace RefactorCircus\Roster\Atrium\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use JayI\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
-use JayI\Roster\Domains\Impersonation\Actions\ListImpersonationsAction;
-use JayI\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
-use JayI\Roster\Domains\Impersonation\Actions\StopImpersonationAction;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
-use JayI\Roster\Support\Scopes;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\ListImpersonationsAction;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\StopImpersonationAction;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Support\Scopes;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * Atrium: start impersonating from a user's page (straight through the

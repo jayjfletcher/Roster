@@ -5,17 +5,17 @@ namespace Workbench\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification;
-use JayI\Roster\Domains\Invitation\Actions\CreateInvitationAction;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
-use JayI\Roster\Domains\Permission\Actions\CreatePermissionAction;
-use JayI\Roster\Domains\Role\Actions\AssignRoleAction;
-use JayI\Roster\Domains\Role\Actions\CreateRoleAction;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
-use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
-use JayI\Roster\Domains\User\Actions\CreateUserAction;
-use JayI\Roster\Domains\User\Actions\SuspendUserAction;
+use RefactorCircus\Roster\Domains\Invitation\Actions\CreateInvitationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\CreateOrganizationAction;
+use RefactorCircus\Roster\Domains\Permission\Actions\CreatePermissionAction;
+use RefactorCircus\Roster\Domains\Role\Actions\AssignRoleAction;
+use RefactorCircus\Roster\Domains\Role\Actions\CreateRoleAction;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use RefactorCircus\Roster\Domains\Team\Actions\CreateTeamAction;
+use RefactorCircus\Roster\Domains\User\Actions\CreateUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\SuspendUserAction;
 use Workbench\Database\Factories\UserFactory;
 
 /**

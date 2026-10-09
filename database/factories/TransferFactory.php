@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Database\Factories;
+namespace RefactorCircus\Roster\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
-use JayI\Roster\Domains\Transfer\Enums\TransferType;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferStatus;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferType;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
 
 /**
  * @extends Factory<TransferModel>

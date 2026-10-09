@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Organization\Actions\ListMembersAction;
-use JayI\Roster\Domains\Organization\Actions\RemoveMemberAction;
-use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
-use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
-use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
-use JayI\Roster\Domains\Team\Models\TeamMemberModel;
-use JayI\Roster\Roster;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\ListMembersAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\RemoveMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\SwitchContextAction;
+use RefactorCircus\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use RefactorCircus\Roster\Domains\Team\Actions\CreateTeamAction;
+use RefactorCircus\Roster\Domains\Team\Models\TeamMemberModel;
+use RefactorCircus\Roster\Roster;
 
 it('adds and lists members', function (): void {
     $organization = organization();

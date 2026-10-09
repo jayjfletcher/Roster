@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Actions;
+namespace RefactorCircus\Roster\Domains\User\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\User\Concerns\ChangesStatus;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Domains\User\Events\UserApprovedActionEvent;
-use JayI\Roster\Domains\User\Events\UserApprovingActionEvent;
-use JayI\Roster\Domains\User\Services\Approvals;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\User\Concerns\ChangesStatus;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Domains\User\Events\UserApprovedActionEvent;
+use RefactorCircus\Roster\Domains\User\Events\UserApprovingActionEvent;
+use RefactorCircus\Roster\Domains\User\Services\Approvals;
+use RefactorCircus\Roster\Support\Users;
 
 final class ApproveUserAction
 {

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation\Resources;
+namespace RefactorCircus\Roster\Domains\Impersonation\Resources;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
-use JayI\Roster\Domains\User\Resources\UserSummaryResource;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\User\Resources\UserSummaryResource;
 
 /**
  * The link token is never serialized.

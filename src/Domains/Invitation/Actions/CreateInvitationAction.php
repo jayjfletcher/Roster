@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Actions;
+namespace RefactorCircus\Roster\Domains\Invitation\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Invitation\Events\InvitationCreatedActionEvent;
-use JayI\Roster\Domains\Invitation\Events\InvitationCreatingActionEvent;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
-use JayI\Roster\Domains\Invitation\Notifications\InvitationNotification;
-use JayI\Roster\Domains\Invitation\Services\InvitationTokens;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Invitation\Events\InvitationCreatedActionEvent;
+use RefactorCircus\Roster\Domains\Invitation\Events\InvitationCreatingActionEvent;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Invitation\Notifications\InvitationNotification;
+use RefactorCircus\Roster\Domains\Invitation\Services\InvitationTokens;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Support\Users;
 
 final class CreateInvitationAction
 {

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\User\Mcp\Tools\CreateUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\DeactivateUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\DeleteUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\ListUsersTool;
-use JayI\Roster\Domains\User\Mcp\Tools\ReactivateUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\ShowUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\SuspendUserTool;
-use JayI\Roster\Domains\User\Mcp\Tools\UpdateProfileTool;
-use JayI\Roster\Domains\User\Mcp\Tools\UpdateUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\CreateUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\DeactivateUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\DeleteUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\ListUsersTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\ReactivateUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\ShowUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\SuspendUserTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\UpdateProfileTool;
+use RefactorCircus\Roster\Domains\User\Mcp\Tools\UpdateUserTool;
 use Workbench\App\Models\User;
 
 /**

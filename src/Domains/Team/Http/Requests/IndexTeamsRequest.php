@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Team\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Organization\Http\Requests\OrganizationRequest;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Team\Actions\ListTeamsAction;
-use JayI\Roster\Domains\Team\Resources\TeamResource;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\OrganizationRequest;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Team\Actions\ListTeamsAction;
+use RefactorCircus\Roster\Domains\Team\Resources\TeamResource;
 
 final class IndexTeamsRequest extends OrganizationRequest
 {

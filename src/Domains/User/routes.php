@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\User\Http\Controllers\UserController;
-use JayI\Roster\Domains\User\Http\Controllers\UserProfileController;
-use JayI\Roster\Domains\User\Http\Controllers\UserStatusController;
-use JayI\Roster\Http\Controllers\TrashController;
+use RefactorCircus\Roster\Domains\User\Http\Controllers\UserController;
+use RefactorCircus\Roster\Domains\User\Http\Controllers\UserProfileController;
+use RefactorCircus\Roster\Domains\User\Http\Controllers\UserStatusController;
+use RefactorCircus\Roster\Http\Controllers\TrashController;
 
 Route::get('users', [UserController::class, 'index'])->name('users.index');
 Route::post('users', [UserController::class, 'store'])->name('users.store');

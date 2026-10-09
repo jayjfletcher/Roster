@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Actions;
+namespace RefactorCircus\Roster\Domains\Transfer\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
-use JayI\Impex\Domains\Run\Models\RunModel;
-use JayI\Impex\Impex;
-use JayI\Roster\Domains\Permission\Services\Authorizer;
-use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
-use JayI\Roster\Domains\Transfer\Events\TransferConfirmedActionEvent;
-use JayI\Roster\Domains\Transfer\Events\TransferConfirmingActionEvent;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Services\Transfers;
+use RefactorCircus\Impex\Domains\Run\Models\RunModel;
+use RefactorCircus\Impex\Impex;
+use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferStatus;
+use RefactorCircus\Roster\Domains\Transfer\Events\TransferConfirmedActionEvent;
+use RefactorCircus\Roster\Domains\Transfer\Events\TransferConfirmingActionEvent;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Services\Transfers;
 
 final class ConfirmImportAction
 {

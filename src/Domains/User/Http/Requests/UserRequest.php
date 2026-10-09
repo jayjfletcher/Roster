@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Http\Requests;
+namespace RefactorCircus\Roster\Domains\User\Http\Requests;
 
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Http\Request;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Http\Request;
+use RefactorCircus\Roster\Support\Users;
 
 abstract class UserRequest extends Request
 {

@@ -5,14 +5,14 @@ declare(strict_types=1);
 require_once __DIR__.'/helpers.php';
 
 use Illuminate\Support\Facades\Event;
-use JayI\Foundation\Contracts\ActionFinishedEvent;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Scim\Actions\CreateScimTokenAction;
-use JayI\Roster\Domains\Scim\Models\ScimUserModel;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Foundation\Contracts\ActionFinishedEvent;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Scim\Actions\CreateScimTokenAction;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimUserModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoIdentityModel;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Support\Users;
 use Workbench\App\Models\User;
 
 beforeEach(function (): void {

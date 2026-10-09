@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Actions;
+namespace RefactorCircus\Roster\Domains\Team\Actions;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Team\Events\TeamCreatedActionEvent;
-use JayI\Roster\Domains\Team\Events\TeamCreatingActionEvent;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Support\Slugs;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Team\Events\TeamCreatedActionEvent;
+use RefactorCircus\Roster\Domains\Team\Events\TeamCreatingActionEvent;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Support\Slugs;
 
 final class CreateTeamAction
 {

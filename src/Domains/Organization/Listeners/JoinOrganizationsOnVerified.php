@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Listeners;
+namespace RefactorCircus\Roster\Domains\Organization\Listeners;
 
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\Organization\Actions\JoinOrganizationsByDomainAction;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Organization\Actions\JoinOrganizationsByDomainAction;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * Runs domain auto-join the moment a user verifies their email.

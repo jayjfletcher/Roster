@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Events;
+namespace RefactorCircus\Roster\Domains\Scim\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use JayI\Foundation\Contracts\ActionFinishedEvent;
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Foundation\Contracts\ActionFinishedEvent;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
 
 /**
  * A SCIM token has been revoked.

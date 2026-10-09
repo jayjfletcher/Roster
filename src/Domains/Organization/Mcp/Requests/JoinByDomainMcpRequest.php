@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Organization\Mcp\Requests;
 
-use JayI\Roster\Domains\Organization\Actions\JoinOrganizationsByDomainAction;
-use JayI\Roster\Domains\Organization\Resources\OrganizationResource;
-use JayI\Roster\Domains\User\Mcp\Requests\UserMcpRequest;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Organization\Actions\JoinOrganizationsByDomainAction;
+use RefactorCircus\Roster\Domains\Organization\Resources\OrganizationResource;
+use RefactorCircus\Roster\Domains\User\Mcp\Requests\UserMcpRequest;
 
 final class JoinByDomainMcpRequest extends UserMcpRequest
 {

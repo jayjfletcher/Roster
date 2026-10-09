@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Invitation\Http\Controllers\InvitationWebController;
+use RefactorCircus\Roster\Domains\Invitation\Http\Controllers\InvitationWebController;
 
 // The page invitation emails link to. Always on, so links keep working when
 // the JSON API is disabled; `roster.invitations.middleware` must authenticate.

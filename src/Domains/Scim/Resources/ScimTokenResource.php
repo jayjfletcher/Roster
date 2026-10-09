@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Resources;
+namespace RefactorCircus\Roster\Domains\Scim\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
 
 /**
  * The token itself is never serialized; it is returned once, at issue.

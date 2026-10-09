@@ -1,4 +1,4 @@
-@use(JayI\Roster\Domains\User\Enums\UserStatus)
+@use(RefactorCircus\Roster\Domains\User\Enums\UserStatus)
 
 <x-atrium::card :title="__('roster::roster.widget_user_status')">
     <div class="flex flex-wrap gap-2">

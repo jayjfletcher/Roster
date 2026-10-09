@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__.'/helpers.php';
 
-use JayI\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
 use Workbench\App\Models\User;
 
 beforeEach(function (): void {

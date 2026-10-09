@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Invitation\Mcp\Requests;
 
-use JayI\Roster\Domains\Invitation\Actions\AcceptInvitationAction;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Invitation\Actions\AcceptInvitationAction;
 
 final class AcceptInvitationMcpRequest extends InvitationResponseMcpRequest
 {

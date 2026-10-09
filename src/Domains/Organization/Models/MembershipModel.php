@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Models;
+namespace RefactorCircus\Roster\Domains\Organization\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,10 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
-use JayI\Roster\Database\Factories\MembershipFactory;
-use JayI\Roster\Domains\Organization\Enums\MembershipSource;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Database\Factories\MembershipFactory;
+use RefactorCircus\Roster\Domains\Organization\Enums\MembershipSource;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * A user's membership of an organization.

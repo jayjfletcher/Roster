@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\User\Actions\SuspendUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\SuspendUserAction;
 
 beforeEach(function (): void {
     Route::middleware(['web', 'roster.active'])->get('roster-test/dashboard', fn (): string => 'ok');

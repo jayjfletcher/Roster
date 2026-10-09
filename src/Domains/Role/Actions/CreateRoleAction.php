@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Actions;
+namespace RefactorCircus\Roster\Domains\Role\Actions;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,14 +10,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
-use JayI\Roster\Domains\Permission\Services\Permissions;
-use JayI\Roster\Domains\Role\Concerns\GuardsEscalation;
-use JayI\Roster\Domains\Role\Enums\RoleScope;
-use JayI\Roster\Domains\Role\Events\RoleCreatedActionEvent;
-use JayI\Roster\Domains\Role\Events\RoleCreatingActionEvent;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Support\Concerns\ResolvesScopes;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Domains\Permission\Services\Permissions;
+use RefactorCircus\Roster\Domains\Role\Concerns\GuardsEscalation;
+use RefactorCircus\Roster\Domains\Role\Enums\RoleScope;
+use RefactorCircus\Roster\Domains\Role\Events\RoleCreatedActionEvent;
+use RefactorCircus\Roster\Domains\Role\Events\RoleCreatingActionEvent;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Support\Concerns\ResolvesScopes;
 
 final class CreateRoleAction
 {

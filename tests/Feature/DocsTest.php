@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Mcp\RosterServer;
+use RefactorCircus\Roster\Mcp\RosterServer;
 
 function readme(): string
 {

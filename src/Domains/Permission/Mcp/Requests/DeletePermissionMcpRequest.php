@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Permission\Mcp\Requests;
 
-use JayI\Roster\Domains\Permission\Actions\DeletePermissionAction;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
-use JayI\Roster\Mcp\Request;
 use Laravel\Mcp\Response;
+use RefactorCircus\Roster\Domains\Permission\Actions\DeletePermissionAction;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Mcp\Request;
 
 final class DeletePermissionMcpRequest extends Request
 {

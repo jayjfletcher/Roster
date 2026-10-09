@@ -1,10 +1,10 @@
 # Tech Stack
 
-Follows the same stack as the sibling packages `jayi/atrium`, `jayi/impex`, and `jayi/cortex`.
+Follows the same stack as the sibling packages `refactor-circus/atrium`, `refactor-circus/impex`, and `refactor-circus/cortex`.
 
 ## Frontend
 
-- Atrium dashboard plugin (`jayi/atrium`) for admin screens
+- Atrium dashboard plugin (`refactor-circus/atrium`) for admin screens
 - Blade + Alpine.js 3, Tailwind CSS 4 (Atrium conventions)
 
 ## Backend
@@ -22,4 +22,4 @@ Follows the same stack as the sibling packages `jayi/atrium`, `jayi/impex`, and 
 
 - Testing: Pest 5 (+ Laravel, type-coverage plugins; browser plugin + Playwright where UI tested), Orchestra Testbench 11, workbench app
 - Quality: Larastan, Laravel Pint, Laravel PAO
-- Ecosystem: `jayi/impex` (import/export, post-launch), `jayi/cortex` (dev integration)
+- Ecosystem: `refactor-circus/impex` (import/export, post-launch), `refactor-circus/cortex` (dev integration)

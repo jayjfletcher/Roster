@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Services\Exporters;
+namespace RefactorCircus\Roster\Domains\Transfer\Services\Exporters;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use JayI\Roster\Domains\Organization\Models\MembershipModel;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Organization\Models\MembershipModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Support\Users;
 use RuntimeException;
 
 final class MembersExporter implements Exporter

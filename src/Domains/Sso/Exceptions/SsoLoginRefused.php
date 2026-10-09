@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Exceptions;
+namespace RefactorCircus\Roster\Domains\Sso\Exceptions;
 
 use RuntimeException;
 

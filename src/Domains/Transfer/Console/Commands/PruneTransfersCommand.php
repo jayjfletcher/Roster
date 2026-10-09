@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Console\Commands;
+namespace RefactorCircus\Roster\Domains\Transfer\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Services\Transfers;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Services\Transfers;
 
 final class PruneTransfersCommand extends Command
 {

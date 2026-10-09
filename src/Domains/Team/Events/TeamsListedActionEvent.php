@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Events;
+namespace RefactorCircus\Roster\Domains\Team\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use JayI\Foundation\Contracts\ActionFinishedEvent;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Foundation\Contracts\ActionFinishedEvent;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 /**
  * An organization's teams have been listed.

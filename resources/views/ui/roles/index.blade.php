@@ -53,7 +53,7 @@
         <x-atrium::pagination :paginator="$roles" />
 
         {{-- New roles in the filtered organization, or globally without a filter. --}}
-        @rosterCan('roster.roles.manage', \JayI\Roster\Support\Scopes::fromInput($filters['organization'] ?? null))
+        @rosterCan('roster.roles.manage', \RefactorCircus\Roster\Support\Scopes::fromInput($filters['organization'] ?? null))
         <x-atrium::card :title="__('roster::roster.new_role')" data-testid="new-role-card">
             <form method="POST" action="{{ route('atrium.roster.roles.store') }}" class="flex max-w-3xl flex-col gap-4">
                 @csrf

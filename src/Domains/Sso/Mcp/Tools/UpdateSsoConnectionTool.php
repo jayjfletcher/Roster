@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Sso\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Sso\Mcp\Requests\UpdateSsoConnectionMcpRequest;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Sso\Mcp\Requests\UpdateSsoConnectionMcpRequest;
 
 #[Description('Change an SSO connection. The protocol cannot change; omit client_secret to keep it.')]
 final class UpdateSsoConnectionTool extends Tool

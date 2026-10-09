@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Organization\Mcp\Requests;
 
-use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Organization\Actions\CreateOrganizationAction;
 
 final class CreateOrganizationMcpRequest extends OrganizationMcpRequest
 {

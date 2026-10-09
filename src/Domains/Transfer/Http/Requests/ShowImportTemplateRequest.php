@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Transfer\Http\Requests;
 
-use JayI\Roster\Domains\Permission\Services\Authorizer;
-use JayI\Roster\Domains\Transfer\Actions\ShowImportTemplateAction;
-use JayI\Roster\Domains\Transfer\Enums\TransferType;
-use JayI\Roster\Http\Request;
+use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
+use RefactorCircus\Roster\Domains\Transfer\Actions\ShowImportTemplateAction;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferType;
+use RefactorCircus\Roster\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

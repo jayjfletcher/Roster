@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Organization\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Organization\Mcp\Requests\UpdateOrganizationMcpRequest;
-use JayI\Roster\Mcp\Concerns\DescribesOrganization;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Requests\UpdateOrganizationMcpRequest;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesOrganization;
 
 #[Description('Update an organization\'s name, slug, auto-join setting or domains. Only the fields given change.')]
 final class UpdateOrganizationTool extends Tool

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Organization\Actions\RemoveMemberAction;
-use JayI\Roster\Domains\Permission\Services\Permissions;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
-use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
-use JayI\Roster\Domains\Team\Actions\RemoveTeamMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\RemoveMemberAction;
+use RefactorCircus\Roster\Domains\Permission\Services\Permissions;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use RefactorCircus\Roster\Domains\Team\Actions\CreateTeamAction;
+use RefactorCircus\Roster\Domains\Team\Actions\RemoveTeamMemberAction;
 
 function permissions(): Permissions
 {

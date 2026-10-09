@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Organization\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Organization\Mcp\Requests\RestoreOrganizationMcpRequest;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Requests\RestoreOrganizationMcpRequest;
 
 #[Description('Restore a deleted organization with everything it kept; its slug and domains stayed reserved.')]
 final class RestoreOrganizationTool extends Tool

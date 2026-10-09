@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Transfer\Http\Controllers\TransferController;
+use RefactorCircus\Roster\Domains\Transfer\Http\Controllers\TransferController;
 
 Route::post('imports', [TransferController::class, 'import'])->name('imports.store');
 Route::get('imports/templates/{type}', [TransferController::class, 'template'])->name('imports.templates.show');

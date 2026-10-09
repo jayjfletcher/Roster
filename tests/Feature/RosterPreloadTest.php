@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Organization\Actions\RemoveMemberAction;
-use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
-use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
-use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
-use JayI\Roster\Domains\User\Models\ProfileModel;
-use JayI\Roster\Roster;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\RemoveMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\SwitchContextAction;
+use RefactorCircus\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use RefactorCircus\Roster\Domains\Team\Actions\CreateTeamAction;
+use RefactorCircus\Roster\Domains\User\Models\ProfileModel;
+use RefactorCircus\Roster\Roster;
 
 it('preloads the same current organization and team as resolving one user at a time', function (): void {
     $acme = organization(attributes: ['name' => 'Acme']);

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Services;
+namespace RefactorCircus\Roster\Domains\Sso\Services;
 
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
-use JayI\Roster\Domains\Sso\Data\IdentityClaims;
-use JayI\Roster\Domains\Sso\Exceptions\SsoUnavailableException;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
 use Laravel\Socialite\Contracts\Provider;
 use Laravel\Socialite\Contracts\User;
 use Laravel\Socialite\SocialiteServiceProvider;
+use RefactorCircus\Roster\Domains\Sso\Data\IdentityClaims;
+use RefactorCircus\Roster\Domains\Sso\Exceptions\SsoUnavailableException;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
 use SocialiteProviders\Azure\Provider as AzureProvider;
 use SocialiteProviders\Manager\Config;
 use SocialiteProviders\Saml2\Provider as Saml2Provider;

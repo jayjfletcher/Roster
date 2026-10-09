@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Support;
+namespace RefactorCircus\Roster\Support;
 
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
-use JayI\Foundation\Audit\AuditHooks;
-use JayI\Foundation\Packages\PackageRegistry;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
-use JayI\Roster\Domains\Impersonation\Services\ImpersonationContext;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Domains\Scim\Services\ScimContext;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Services\TransferContext;
-use JayI\Roster\Domains\User\Models\ProfileModel;
-use JayI\Roster\Roster;
+use RefactorCircus\Foundation\Audit\AuditHooks;
+use RefactorCircus\Foundation\Packages\PackageRegistry;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\Impersonation\Services\ImpersonationContext;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Scim\Services\ScimContext;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Services\TransferContext;
+use RefactorCircus\Roster\Domains\User\Models\ProfileModel;
+use RefactorCircus\Roster\Roster;
 
 /**
- * What Roster teaches the suite-wide audit log (jayi/keen) about its models
- * and events, through jayi/foundation's AuditHooks.
+ * What Roster teaches the suite-wide audit log (refactor-circus/keen) about its models
+ * and events, through refactor-circus/foundation's AuditHooks.
  *
  * Registered whether or not Keen is installed; the hooks cost nothing until
  * it records. Subjects and scopes are picked for Roster's own events only;

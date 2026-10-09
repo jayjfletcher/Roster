@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Tests;
+namespace RefactorCircus\Roster\Tests;
 
-use JayI\Roster\Domains\Sso\Services\Sso;
+use RefactorCircus\Roster\Domains\Sso\Services\Sso;
 
 /**
  * Roster as installed without the optional SSO packages.

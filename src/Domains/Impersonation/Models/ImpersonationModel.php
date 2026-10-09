@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation\Models;
+namespace RefactorCircus\Roster\Domains\Impersonation\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
-use JayI\Roster\Database\Factories\ImpersonationFactory;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Database\Factories\ImpersonationFactory;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * One impersonation: requested (link issued), started (link used), ended.

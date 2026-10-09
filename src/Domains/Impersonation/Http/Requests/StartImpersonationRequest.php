@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Impersonation\Http\Requests;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
-use JayI\Roster\Domains\Impersonation\Resources\ImpersonationResource;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Domains\User\Http\Requests\UserRequest;
-use JayI\Roster\Support\Scopes;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
+use RefactorCircus\Roster\Domains\Impersonation\Resources\ImpersonationResource;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\User\Http\Requests\UserRequest;
+use RefactorCircus\Roster\Support\Scopes;
 
 final class StartImpersonationRequest extends UserRequest
 {

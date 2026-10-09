@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Resources;
+namespace RefactorCircus\Roster\Domains\Team\Resources;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use JayI\Roster\Domains\Organization\Models\MembershipModel;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Domains\User\Resources\UserSummaryResource;
+use RefactorCircus\Roster\Domains\Organization\Models\MembershipModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\User\Resources\UserSummaryResource;
 
 /**
  * @mixin TeamModel

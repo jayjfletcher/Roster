@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Enums;
+namespace RefactorCircus\Roster\Domains\Invitation\Enums;
 
 enum InvitationStatus: string
 {

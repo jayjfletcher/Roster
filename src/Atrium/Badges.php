@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Atrium;
+namespace RefactorCircus\Roster\Atrium;
 
-use JayI\Roster\Domains\Invitation\Enums\InvitationStatus;
-use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
-use JayI\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Domains\Invitation\Enums\InvitationStatus;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferStatus;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
 
 /**
  * Atrium badge variants for Roster's enums.

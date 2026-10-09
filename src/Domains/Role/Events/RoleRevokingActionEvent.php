@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Events;
+namespace RefactorCircus\Roster\Domains\Role\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use JayI\Foundation\Contracts\ActionStartingEvent;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Foundation\Contracts\ActionStartingEvent;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
 
 /**
  * A role assignment is about to be revoked.

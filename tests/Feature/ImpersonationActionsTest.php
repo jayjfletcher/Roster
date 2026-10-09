@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Impersonation\Actions\EnterImpersonationAction;
-use JayI\Roster\Domains\Impersonation\Actions\ListImpersonationsAction;
-use JayI\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
-use JayI\Roster\Domains\Impersonation\Actions\StopImpersonationAction;
-use JayI\Roster\Domains\Impersonation\Data\StartedImpersonation;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\User\Actions\SuspendUserAction;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\EnterImpersonationAction;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\ListImpersonationsAction;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\StopImpersonationAction;
+use RefactorCircus\Roster\Domains\Impersonation\Data\StartedImpersonation;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\User\Actions\SuspendUserAction;
 
 function startImpersonating($target, $actor, array $data = []): StartedImpersonation
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Resources;
+namespace RefactorCircus\Roster\Domains\Permission\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
 
 /**
  * @mixin PermissionModel

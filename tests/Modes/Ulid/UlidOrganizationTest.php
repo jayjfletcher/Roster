@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
-use JayI\Roster\Domains\User\Actions\CreateUserAction;
-use JayI\Roster\Roster;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\CreateOrganizationAction;
+use RefactorCircus\Roster\Domains\User\Actions\CreateUserAction;
+use RefactorCircus\Roster\Roster;
 
 beforeEach(function (): void {
     config()->set('roster.users.columns', ['name' => 'full_name', 'email' => 'email_address', 'password' => 'secret']);

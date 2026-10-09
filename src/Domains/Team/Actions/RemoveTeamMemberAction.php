@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Actions;
+namespace RefactorCircus\Roster\Domains\Team\Actions;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Concerns\ManagesMemberships;
-use JayI\Roster\Domains\Team\Events\TeamMemberRemovedActionEvent;
-use JayI\Roster\Domains\Team\Events\TeamMemberRemovingActionEvent;
-use JayI\Roster\Domains\Team\Models\TeamMemberModel;
-use JayI\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Organization\Concerns\ManagesMemberships;
+use RefactorCircus\Roster\Domains\Team\Events\TeamMemberRemovedActionEvent;
+use RefactorCircus\Roster\Domains\Team\Events\TeamMemberRemovingActionEvent;
+use RefactorCircus\Roster\Domains\Team\Models\TeamMemberModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
 
 final class RemoveTeamMemberAction
 {

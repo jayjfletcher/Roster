@@ -5,9 +5,9 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
-use JayI\Roster\Domains\Impersonation\Actions\StopImpersonationAction;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\StopImpersonationAction;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
 
 beforeEach(function (): void {
     Route::middleware('web')->get('roster-test/whoami', fn (): string => (string) Auth::id().'|'.view('roster::impersonation-banner')->render());

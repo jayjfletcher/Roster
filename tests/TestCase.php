@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Tests;
+namespace RefactorCircus\Roster\Tests;
 
 use Illuminate\Foundation\Testing\DatabaseTransactionsManager;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
-use JayI\Atrium\AtriumServiceProvider;
-use JayI\Impex\ImpexServiceProvider;
-use JayI\Roster\Atrium\RosterPlugin;
-use JayI\Roster\RosterServiceProvider;
 use Laravel\Mcp\Server\McpServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
+use RefactorCircus\Atrium\AtriumServiceProvider;
+use RefactorCircus\Impex\ImpexServiceProvider;
+use RefactorCircus\Roster\Atrium\RosterPlugin;
+use RefactorCircus\Roster\RosterServiceProvider;
 use Workbench\App\Models\User;
 
 use function Orchestra\Testbench\default_migration_path;
@@ -63,7 +63,7 @@ abstract class TestCase extends Orchestra
 
     protected function defineEnvironment($app): void
     {
-        // jayi/cortex is a dev dependency, so Atrium discovers its plugin here
+        // refactor-circus/cortex is a dev dependency, so Atrium discovers its plugin here
         // without its migrations; its navigation would query missing tables.
         $app['config']->set('atrium.disabled', ['cortex']);
 
@@ -138,10 +138,10 @@ abstract class TestCase extends Orchestra
             default_migration_path(),
             dirname(__DIR__).'/workbench/database/migrations',
             dirname(__DIR__).'/database/migrations',
-            // Impex's migrations are publish-only; jayi/impex is a dev dependency.
-            dirname(__DIR__).'/vendor/jayi/impex/database/migrations',
-            // jayi/keen is a dev dependency; KeenTestCase boots it.
-            dirname(__DIR__).'/vendor/jayi/keen/database/migrations',
+            // Impex's migrations are publish-only; refactor-circus/impex is a dev dependency.
+            dirname(__DIR__).'/vendor/refactor-circus/impex/database/migrations',
+            // refactor-circus/keen is a dev dependency; KeenTestCase boots it.
+            dirname(__DIR__).'/vendor/refactor-circus/keen/database/migrations',
         ];
     }
 

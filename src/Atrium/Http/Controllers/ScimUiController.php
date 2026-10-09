@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Atrium\Http\Controllers;
+namespace RefactorCircus\Roster\Atrium\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use JayI\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Scim\Actions\CreateScimTokenAction;
-use JayI\Roster\Domains\Scim\Actions\RevokeScimTokenAction;
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Scim\Actions\CreateScimTokenAction;
+use RefactorCircus\Roster\Domains\Scim\Actions\RevokeScimTokenAction;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
 
 /**
  * Atrium: issue and revoke an organization's SCIM tokens.

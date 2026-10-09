@@ -3,18 +3,18 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\LinkOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\ListOrganizationsAction;
-use JayI\Roster\Domains\Organization\Actions\RemoveMemberAction;
-use JayI\Roster\Domains\Organization\Actions\SyncOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\SyncOrganizationsAction;
-use JayI\Roster\Domains\Organization\Actions\TransferOwnershipAction;
-use JayI\Roster\Domains\Organization\Actions\UnlinkOrganizationAction;
-use JayI\Roster\Domains\Organization\Data\OrganizationSyncResult;
-use JayI\Roster\Domains\Organization\Models\OrganizationLinkModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\CreateOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\LinkOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\ListOrganizationsAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\RemoveMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\SyncOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\SyncOrganizationsAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\TransferOwnershipAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\UnlinkOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Data\OrganizationSyncResult;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationLinkModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 function sync(array $record): OrganizationSyncResult
 {

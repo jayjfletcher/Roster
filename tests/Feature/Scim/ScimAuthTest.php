@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__.'/helpers.php';
 
-use JayI\Roster\Domains\Scim\Actions\CreateScimTokenAction;
-use JayI\Roster\Domains\Scim\Actions\RevokeScimTokenAction;
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Roster\Domains\Scim\Actions\CreateScimTokenAction;
+use RefactorCircus\Roster\Domains\Scim\Actions\RevokeScimTokenAction;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
 
 beforeEach(function (): void {
     [, $this->scimToken] = scimOrg();

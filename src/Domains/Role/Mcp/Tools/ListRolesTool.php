@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Role\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Role\Mcp\Requests\ListRolesMcpRequest;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Requests\ListRolesMcpRequest;
 
 #[Description('List roles. With organization, the roles usable there (shared ones plus its own). Filter by scope. Paginated.')]
 final class ListRolesTool extends Tool

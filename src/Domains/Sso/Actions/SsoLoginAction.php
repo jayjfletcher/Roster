@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Actions;
+namespace RefactorCircus\Roster\Domains\Sso\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Concerns\ManagesMemberships;
-use JayI\Roster\Domains\Organization\Enums\MembershipSource;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Sso\Data\IdentityClaims;
-use JayI\Roster\Domains\Sso\Events\SsoLoginFailedActionEvent;
-use JayI\Roster\Domains\Sso\Events\SsoLoginStartingActionEvent;
-use JayI\Roster\Domains\Sso\Events\SsoLoginSucceededActionEvent;
-use JayI\Roster\Domains\Sso\Exceptions\SsoLoginRefused;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
-use JayI\Roster\Domains\User\Actions\CreateUserAction;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Organization\Concerns\ManagesMemberships;
+use RefactorCircus\Roster\Domains\Organization\Enums\MembershipSource;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Sso\Data\IdentityClaims;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoLoginFailedActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoLoginStartingActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoLoginSucceededActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Exceptions\SsoLoginRefused;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoIdentityModel;
+use RefactorCircus\Roster\Domains\User\Actions\CreateUserAction;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Support\Users;
 
 final class SsoLoginAction
 {

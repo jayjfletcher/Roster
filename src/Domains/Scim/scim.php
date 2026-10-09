@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Scim\Http\Controllers\ScimController;
-use JayI\Roster\Domains\Scim\Http\Middleware\AuthenticateScimToken;
+use RefactorCircus\Roster\Domains\Scim\Http\Controllers\ScimController;
+use RefactorCircus\Roster\Domains\Scim\Http\Middleware\AuthenticateScimToken;
 
 if (config('roster.scim.enabled') !== true) {
     return;

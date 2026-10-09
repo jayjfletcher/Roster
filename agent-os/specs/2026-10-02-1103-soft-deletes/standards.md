@@ -105,7 +105,7 @@ final class StorePromptRequest extends Request
 }
 ```
 
-- Extend `JayI\Roster\Http\Request` (abstract persist() enforces the shape)
+- Extend `RefactorCircus\Roster\Http\Request` (abstract persist() enforces the shape)
 - One request class per operation; controllers stay identical across models and mirror the MCP request layer 1:1
 - `rules()` always delegates to the action's static rules — never inline
 - Status codes: 201 create, 200 default, 204 (Response) for deletes
@@ -469,7 +469,7 @@ arch('it will not use dd(), ddd(), env(), or exit()')
     ->each->not->toBeUsed();
 
 arch('the package source declares strict types')
-    ->expect('JayI\Roster')
+    ->expect('RefactorCircus\Roster')
     ->toUseStrictTypes();
 ```
 
@@ -482,7 +482,7 @@ arch('the package source declares strict types')
 ## testing/testcase-environment
 
 
-All tests extend `JayI\Roster\Tests\TestCase` (Orchestra Testbench), bound in `Pest.php` via `uses(TestCase::class)->in(__DIR__)`.
+All tests extend `RefactorCircus\Roster\Tests\TestCase` (Orchestra Testbench), bound in `Pest.php` via `uses(TestCase::class)->in(__DIR__)`.
 
 Pinned environment — don't undo these:
 

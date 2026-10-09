@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Scim\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Organization\Http\Requests\OrganizationRequest;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Scim\Actions\CreateScimTokenAction;
-use JayI\Roster\Domains\Scim\Resources\ScimTokenResource;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\OrganizationRequest;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Scim\Actions\CreateScimTokenAction;
+use RefactorCircus\Roster\Domains\Scim\Resources\ScimTokenResource;
 
 final class StoreScimTokenRequest extends OrganizationRequest
 {

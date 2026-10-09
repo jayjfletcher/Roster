@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Transfer\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Transfer\Mcp\Requests\StartExportMcpRequest;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Requests\StartExportMcpRequest;
 
 #[Description('Export members (of an organization), users or organizations (in the import_organizations columns, so an edited file imports back) as CSV in the background. Check progress with show-transfer-tool, which returns a short-lived download_url when it is ready.')]
 final class StartExportTool extends Tool

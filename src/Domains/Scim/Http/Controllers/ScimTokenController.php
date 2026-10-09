@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Scim\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Scim\Http\Requests\IndexScimTokensRequest;
-use JayI\Roster\Domains\Scim\Http\Requests\RevokeScimTokenRequest;
-use JayI\Roster\Domains\Scim\Http\Requests\StoreScimTokenRequest;
+use RefactorCircus\Roster\Domains\Scim\Http\Requests\IndexScimTokensRequest;
+use RefactorCircus\Roster\Domains\Scim\Http\Requests\RevokeScimTokenRequest;
+use RefactorCircus\Roster\Domains\Scim\Http\Requests\StoreScimTokenRequest;
 
 final class ScimTokenController
 {

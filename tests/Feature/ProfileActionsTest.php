@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\User\Actions\DeactivateUserAction;
-use JayI\Roster\Domains\User\Actions\ReactivateUserAction;
-use JayI\Roster\Domains\User\Actions\SuspendUserAction;
-use JayI\Roster\Domains\User\Actions\UpdateProfileAction;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Domains\User\Models\ProfileModel;
+use RefactorCircus\Roster\Domains\User\Actions\DeactivateUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\ReactivateUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\SuspendUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\UpdateProfileAction;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Domains\User\Models\ProfileModel;
 
 it('creates a profile lazily on first update', function (): void {
     $user = user();

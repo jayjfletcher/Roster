@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Events;
+namespace RefactorCircus\Roster\Domains\Sso\Events;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use JayI\Foundation\Contracts\ActionFinishedEvent;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Foundation\Contracts\ActionFinishedEvent;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
 
 /**
  * Someone signed in through SSO.

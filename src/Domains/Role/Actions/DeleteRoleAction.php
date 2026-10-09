@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Actions;
+namespace RefactorCircus\Roster\Domains\Role\Actions;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Permission\Services\Permissions;
-use JayI\Roster\Domains\Role\Events\RoleDeletedActionEvent;
-use JayI\Roster\Domains\Role\Events\RoleDeletingActionEvent;
-use JayI\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Permission\Services\Permissions;
+use RefactorCircus\Roster\Domains\Role\Events\RoleDeletedActionEvent;
+use RefactorCircus\Roster\Domains\Role\Events\RoleDeletingActionEvent;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
 
 final class DeleteRoleAction
 {

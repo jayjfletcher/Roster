@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Models;
+namespace RefactorCircus\Roster\Domains\User\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-use JayI\Roster\Domains\User\Concerns\HasRoster;
+use RefactorCircus\Roster\Domains\User\Concerns\HasRoster;
 
 /**
  * A ready-made user model for apps without one of their own.

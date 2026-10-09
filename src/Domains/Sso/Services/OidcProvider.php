@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Services;
+namespace RefactorCircus\Roster\Domains\Sso\Services;
 
 use Firebase\JWT\JWK;
 use Firebase\JWT\JWT;

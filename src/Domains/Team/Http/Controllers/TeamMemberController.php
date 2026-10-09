@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Team\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Team\Http\Requests\DestroyTeamMemberRequest;
-use JayI\Roster\Domains\Team\Http\Requests\StoreTeamMemberRequest;
+use RefactorCircus\Roster\Domains\Team\Http\Requests\DestroyTeamMemberRequest;
+use RefactorCircus\Roster\Domains\Team\Http\Requests\StoreTeamMemberRequest;
 
 final class TeamMemberController
 {

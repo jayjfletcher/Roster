@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Data;
+namespace RefactorCircus\Roster\Domains\Sso\Data;
 
 /**
  * Who the identity provider says the person is.

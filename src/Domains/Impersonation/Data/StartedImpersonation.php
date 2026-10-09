@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation\Data;
+namespace RefactorCircus\Roster\Domains\Impersonation\Data;
 
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
 use SensitiveParameter;
 
 /**

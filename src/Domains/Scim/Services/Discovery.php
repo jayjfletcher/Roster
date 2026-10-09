@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Services;
+namespace RefactorCircus\Roster\Domains\Scim\Services;
 
 /**
  * ServiceProviderConfig, ResourceTypes and Schemas (RFC 7643 §5–7).
@@ -16,7 +16,7 @@ final class Discovery
     {
         return [
             'schemas' => [Scim::CONFIG],
-            'documentationUri' => 'https://github.com/jayjfletcher/roster#scim-provisioning',
+            'documentationUri' => 'https://github.com/Refactor-Circus/roster#scim-provisioning',
             'patch' => ['supported' => true],
             'bulk' => [
                 'supported' => true,

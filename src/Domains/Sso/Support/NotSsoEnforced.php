@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Support;
+namespace RefactorCircus\Roster\Domains\Sso\Support;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Roster;
+use RefactorCircus\Roster\Roster;
 
 /**
  * For the app's password login form: fails when the email's organization

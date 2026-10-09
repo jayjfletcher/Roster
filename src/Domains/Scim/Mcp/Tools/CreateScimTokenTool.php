@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Scim\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Scim\Mcp\Requests\CreateScimTokenMcpRequest;
-use JayI\Roster\Mcp\Concerns\DescribesOrganization;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Scim\Mcp\Requests\CreateScimTokenMcpRequest;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesOrganization;
 
 #[Description('Issue a SCIM token for an identity provider to provision the organization. The token is returned once; hand it to the operator configuring the identity provider, along with base_url.')]
 final class CreateScimTokenTool extends Tool

@@ -7,7 +7,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /*
- * Only for apps using JayI\Roster\Domains\User\Models\UserModel without a users table of their
+ * Only for apps using RefactorCircus\Roster\Domains\User\Models\UserModel without a users table of their
  * own. Published with the `roster-users-migration` tag; never loaded
  * automatically.
  */

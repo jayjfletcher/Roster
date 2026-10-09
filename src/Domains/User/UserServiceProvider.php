@@ -2,21 +2,20 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User;
+namespace RefactorCircus\Roster\Domains\User;
 
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Router;
-use JayI\Foundation\Support\ServiceProvider;
-use JayI\Roster\Domains\Organization\Models\MembershipModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\User\Http\Middleware\EnsureUserIsActive;
-use JayI\Roster\Domains\User\Listeners\ApplyRegistrationStatus;
-use JayI\Roster\Domains\User\Models\ProfileModel;
-use JayI\Roster\Domains\User\Models\UserModel;
+use RefactorCircus\Foundation\Support\ServiceProvider;
+use RefactorCircus\Roster\Domains\Organization\Models\MembershipModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\User\Http\Middleware\EnsureUserIsActive;
+use RefactorCircus\Roster\Domains\User\Listeners\ApplyRegistrationStatus;
+use RefactorCircus\Roster\Domains\User\Models\ProfileModel;
 
 /**
  * Users and their profiles, status and approval.
@@ -25,11 +24,6 @@ class UserServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        $this->keepMorphAliases([
-            'JayI\Roster\Models\User' => UserModel::class,
-            'JayI\Roster\Models\Profile' => ProfileModel::class,
-        ]);
-
         $this->registerProfileRelation();
 
         $this->app->make(Router::class)->aliasMiddleware('roster.active', EnsureUserIsActive::class);

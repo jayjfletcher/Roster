@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Events;
+namespace RefactorCircus\Roster\Domains\Sso\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use JayI\Foundation\Contracts\ActionStartingEvent;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Foundation\Contracts\ActionStartingEvent;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 /**
  * An SSO connection is about to be created.

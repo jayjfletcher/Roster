@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation\Actions;
+namespace RefactorCircus\Roster\Domains\Impersonation\Actions;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\Impersonation\Events\ImpersonationStoppedActionEvent;
-use JayI\Roster\Domains\Impersonation\Events\ImpersonationStoppingActionEvent;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\Impersonation\Events\ImpersonationStoppedActionEvent;
+use RefactorCircus\Roster\Domains\Impersonation\Events\ImpersonationStoppingActionEvent;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
 
 final class StopImpersonationAction
 {

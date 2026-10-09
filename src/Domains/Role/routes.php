@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Role\Http\Controllers\RoleController;
-use JayI\Roster\Domains\Role\Http\Controllers\UserRoleController;
+use RefactorCircus\Roster\Domains\Role\Http\Controllers\RoleController;
+use RefactorCircus\Roster\Domains\Role\Http\Controllers\UserRoleController;
 
 Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
 Route::post('roles', [RoleController::class, 'store'])->name('roles.store');

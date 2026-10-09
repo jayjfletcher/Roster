@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Transfer\Mcp\Requests;
 
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\Transfer\Actions\ConfirmImportAction;
-use JayI\Roster\Domains\Transfer\Resources\TransferResource;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Transfer\Actions\ConfirmImportAction;
+use RefactorCircus\Roster\Domains\Transfer\Resources\TransferResource;
 
 final class ConfirmImportMcpRequest extends TransferMcpRequest
 {

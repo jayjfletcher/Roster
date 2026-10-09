@@ -18,11 +18,11 @@ Reference: Impex's Cortex integration, `../Impex/src/Cortex/CortexIntegration.ph
   - It is optional and active only when Cortex's provider is loaded and `roster.cortex.enabled === true` (default true).
   - It registers `RosterServer` with Cortex's `McpServerRegistry` under `roster.cortex.server` (default `roster`), and every `RosterServer::TOOLS` tool in `ToolRegistry`, tagged with the server name.
   - `roster.cortex.tools` (null or a list of names) limits which tools are offered.
-  - Published Cortex overrides replace the server instructions (`createContext`) and tool descriptions, through a new `JayI\Roster\Mcp\Tool` base class that all 49 tools extend.
+  - Published Cortex overrides replace the server instructions (`createContext`) and tool descriptions, through a new `RefactorCircus\Roster\Mcp\Tool` base class that all 49 tools extend.
 - **Agents act as the authenticated user.** Roster's authorization applies unchanged, so an agent run with no signed-in user is denied ("Unauthorized."). This is documented.
 - **API hardening:**
   - A named rate limiter, `roster`, keyed by user id or IP. It is configurable (`roster.rate_limit.per_minute`, default 120; null disables) and included in the default `roster.routes.middleware` and `roster.mcp.web.middleware` as `throttle:roster`.
-  - Not-found inside Roster's API and MCP returns a generic `{"message": "Not found."}` (HTTP 404), never Laravel's `No query results for model [JayI\Roster\...]`, which leaks class names.
+  - Not-found inside Roster's API and MCP returns a generic `{"message": "Not found."}` (HTTP 404), never Laravel's `No query results for model [RefactorCircus\Roster\...]`, which leaks class names.
   - A docs test checks that every `roster.*` API route name appears in the README route table.
 - **Browser tests:**
   - `pestphp/pest-plugin-browser` with Playwright, following Atrium's `BrowserTestCase` (it copies Atrium's public assets).
@@ -40,9 +40,9 @@ Reference: Impex's Cortex integration, `../Impex/src/Cortex/CortexIntegration.ph
 ## Task 2: Cortex integration
 
 - `composer.json`:
-  - `require-dev` `jayi/cortex: dev-main`
+  - `require-dev` `refactor-circus/cortex: dev-main`
   - a `suggest` entry
-  - a vcs repository `https://github.com/jayjfletcher/cortex.git`
+  - a vcs repository `https://github.com/Refactor-Circus/cortex.git`
   - then `composer update`
 - `src/Cortex/CortexIntegration.php`: a copy of the Impex class, adapted (`active`, `register`, `serverName`, `tools`, `instructions`, `description`).
 - `src/Mcp/Tool.php`: an abstract base overriding `description()` with the Cortex override. All `src/Mcp/Tools/*Tool.php` switch from `Laravel\Mcp\Server\Tool` to it (mechanical).
@@ -67,7 +67,7 @@ Reference: Impex's Cortex integration, `../Impex/src/Cortex/CortexIntegration.ph
 ## Task 4: Browser tests
 
 - Dev deps: `pestphp/pest-plugin-browser ^5.0`. `package.json` with `playwright` (postinstall `playwright install chromium`), as Atrium has.
-- `tests/BrowserTestCase.php`: extends `AuthorizationTestCase`, copies Atrium's `vendor/jayi/atrium/public` assets into `public_path('vendor/atrium')`, and logs in as a seeded super-admin.
+- `tests/BrowserTestCase.php`: extends `AuthorizationTestCase`, copies Atrium's `vendor/refactor-circus/atrium/public` assets into `public_path('vendor/atrium')`, and logs in as a seeded super-admin.
 - `tests/Browser/*`:
   - `UsersBrowserTest` (list, search, create, suspend → badge)
   - `OrganizationsBrowserTest` (create org, add team, send invitation)

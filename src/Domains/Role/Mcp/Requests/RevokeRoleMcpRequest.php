@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Role\Mcp\Requests;
 
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Role\Actions\RevokeRoleAction;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Domains\User\Mcp\Requests\UserMcpRequest;
 use Laravel\Mcp\Response;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Role\Actions\RevokeRoleAction;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\User\Mcp\Requests\UserMcpRequest;
 
 final class RevokeRoleMcpRequest extends UserMcpRequest
 {

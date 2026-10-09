@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 require_once __DIR__.'/fixtures.php';
 
-use JayI\Roster\Domains\Invitation\Mcp\Tools\AcceptInvitationTool;
-use JayI\Roster\Domains\Invitation\Mcp\Tools\DeclineInvitationTool;
-use JayI\Roster\Mcp\RosterServer;
-use JayI\Roster\Mcp\Tools\ListRosterHistoryTool;
+use RefactorCircus\Roster\Domains\Invitation\Mcp\Tools\AcceptInvitationTool;
+use RefactorCircus\Roster\Domains\Invitation\Mcp\Tools\DeclineInvitationTool;
+use RefactorCircus\Roster\Mcp\RosterServer;
+use RefactorCircus\Roster\Mcp\Tools\ListRosterHistoryTool;
 
 /**
  * Arguments that name existing records for every tool.

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation\Actions;
+namespace RefactorCircus\Roster\Domains\Impersonation\Actions;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use JayI\Roster\Domains\Impersonation\Events\ImpersonationsListedActionEvent;
-use JayI\Roster\Domains\Impersonation\Events\ImpersonationsListingActionEvent;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
-use JayI\Roster\Support\Concerns\ResolvesScopes;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Impersonation\Events\ImpersonationsListedActionEvent;
+use RefactorCircus\Roster\Domains\Impersonation\Events\ImpersonationsListingActionEvent;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Support\Concerns\ResolvesScopes;
+use RefactorCircus\Roster\Support\Users;
 
 final class ListImpersonationsAction
 {

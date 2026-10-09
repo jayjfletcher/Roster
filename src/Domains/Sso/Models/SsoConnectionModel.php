@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Models;
+namespace RefactorCircus\Roster\Domains\Sso\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
-use JayI\Roster\Database\Factories\SsoConnectionFactory;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Database\Factories\SsoConnectionFactory;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 /**
  * An organization's identity provider: OIDC, SAML or Microsoft Entra ID.

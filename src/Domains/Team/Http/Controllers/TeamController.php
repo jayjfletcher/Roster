@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Team\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Team\Http\Requests\DestroyTeamRequest;
-use JayI\Roster\Domains\Team\Http\Requests\IndexTeamsRequest;
-use JayI\Roster\Domains\Team\Http\Requests\ShowTeamRequest;
-use JayI\Roster\Domains\Team\Http\Requests\StoreTeamRequest;
-use JayI\Roster\Domains\Team\Http\Requests\UpdateTeamRequest;
+use RefactorCircus\Roster\Domains\Team\Http\Requests\DestroyTeamRequest;
+use RefactorCircus\Roster\Domains\Team\Http\Requests\IndexTeamsRequest;
+use RefactorCircus\Roster\Domains\Team\Http\Requests\ShowTeamRequest;
+use RefactorCircus\Roster\Domains\Team\Http\Requests\StoreTeamRequest;
+use RefactorCircus\Roster\Domains\Team\Http\Requests\UpdateTeamRequest;
 
 final class TeamController
 {

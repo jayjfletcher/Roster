@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Tests;
+namespace RefactorCircus\Roster\Tests;
 
 /**
  * Atrium in a real browser, with Roster's authorization on.
@@ -30,7 +30,7 @@ abstract class BrowserTestCase extends AuthorizationTestCase
             mkdir($target, 0777, true);
         }
 
-        foreach (glob(dirname(__DIR__).'/vendor/jayi/atrium/public/*.{css,js}', GLOB_BRACE) ?: [] as $asset) {
+        foreach (glob(dirname(__DIR__).'/vendor/refactor-circus/atrium/public/*.{css,js}', GLOB_BRACE) ?: [] as $asset) {
             copy($asset, $target.'/'.basename($asset));
         }
     }

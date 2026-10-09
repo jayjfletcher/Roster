@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Organization\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Organization\Mcp\Requests\SyncOrganizationsMcpRequest;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Requests\SyncOrganizationsMcpRequest;
 
 #[Description('Sync a batch of external records (each with the fields of sync-organization-tool). Each record succeeds or fails on its own; the result lists created, updated, unchanged or error (with messages) per record, in order.')]
 final class SyncOrganizationsTool extends Tool

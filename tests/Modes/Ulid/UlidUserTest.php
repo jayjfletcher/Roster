@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\User\Actions\CreateUserAction;
-use JayI\Roster\Domains\User\Actions\SuspendUserAction;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Tests\Fixtures\UlidUser;
+use RefactorCircus\Roster\Domains\User\Actions\CreateUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\SuspendUserAction;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Tests\Fixtures\UlidUser;
 
 beforeEach(function (): void {
     config()->set('roster.users.columns', ['name' => 'full_name', 'email' => 'email_address', 'password' => 'secret']);

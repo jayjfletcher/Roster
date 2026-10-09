@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Sso\Mcp\Requests;
 
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Domains\Sso\Resources\SsoConnectionResource;
-use JayI\Roster\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Resources\SsoConnectionResource;
+use RefactorCircus\Roster\Mcp\Request;
 
 abstract class SsoConnectionMcpRequest extends Request
 {

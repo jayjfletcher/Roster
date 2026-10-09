@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Organization\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Organization\Http\Requests\LinkOrganizationRequest;
-use JayI\Roster\Domains\Organization\Http\Requests\SyncOrganizationRequest;
-use JayI\Roster\Domains\Organization\Http\Requests\SyncOrganizationsRequest;
-use JayI\Roster\Domains\Organization\Http\Requests\UnlinkOrganizationRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\LinkOrganizationRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\SyncOrganizationRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\SyncOrganizationsRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\UnlinkOrganizationRequest;
 
 final class OrganizationSyncController
 {

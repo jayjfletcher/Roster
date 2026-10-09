@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Permission\Http\Requests;
 
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
-use JayI\Roster\Http\Request;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Http\Request;
 
 abstract class PermissionRequest extends Request
 {

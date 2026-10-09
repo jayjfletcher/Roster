@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Transfer\Mcp\Requests;
 
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Mcp\Request;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Mcp\Request;
 
 /**
  * A call about one transfer: allowed for whoever started it, or anyone

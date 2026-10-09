@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
-use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
-use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoIdentityModel;
+use RefactorCircus\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use RefactorCircus\Roster\Domains\Team\Actions\CreateTeamAction;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
 
 /**
  * One of everything, for exercising every route and tool: an organization

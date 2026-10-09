@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Team\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Team\Actions\UpdateTeamAction;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Domains\Team\Resources\TeamResource;
+use RefactorCircus\Roster\Domains\Team\Actions\UpdateTeamAction;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Team\Resources\TeamResource;
 
 final class UpdateTeamRequest extends TeamRequest
 {

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Actions;
+namespace RefactorCircus\Roster\Domains\Role\Actions;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use JayI\Roster\Domains\Role\Events\RoleAssignmentsListedActionEvent;
-use JayI\Roster\Domains\Role\Events\RoleAssignmentsListingActionEvent;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Support\Concerns\ResolvesScopes;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Role\Events\RoleAssignmentsListedActionEvent;
+use RefactorCircus\Roster\Domains\Role\Events\RoleAssignmentsListingActionEvent;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Support\Concerns\ResolvesScopes;
+use RefactorCircus\Roster\Support\Users;
 
 final class ListRoleAssignmentsAction
 {

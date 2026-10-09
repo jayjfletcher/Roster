@@ -5,8 +5,8 @@ declare(strict_types=1);
 require_once __DIR__.'/helpers.php';
 
 use Illuminate\Support\Facades\Notification;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 beforeEach(fn () => signInAsSuperAdmin());
 

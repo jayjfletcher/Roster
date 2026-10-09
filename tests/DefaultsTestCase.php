@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Tests;
+namespace RefactorCircus\Roster\Tests;
 
 /**
  * Boots Roster with its shipped config untouched, for the defaults the

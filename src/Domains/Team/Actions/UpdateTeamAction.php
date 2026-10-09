@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Actions;
+namespace RefactorCircus\Roster\Domains\Team\Actions;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\Team\Events\TeamUpdatedActionEvent;
-use JayI\Roster\Domains\Team\Events\TeamUpdatingActionEvent;
-use JayI\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Team\Events\TeamUpdatedActionEvent;
+use RefactorCircus\Roster\Domains\Team\Events\TeamUpdatingActionEvent;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
 
 final class UpdateTeamAction
 {

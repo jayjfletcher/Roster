@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Actions;
+namespace RefactorCircus\Roster\Domains\Role\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Permission\Services\Authorizer;
-use JayI\Roster\Domains\Permission\Services\Permissions;
-use JayI\Roster\Domains\Role\Concerns\GuardsEscalation;
-use JayI\Roster\Domains\Role\Events\RoleRevokedActionEvent;
-use JayI\Roster\Domains\Role\Events\RoleRevokingActionEvent;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
+use RefactorCircus\Roster\Domains\Permission\Services\Permissions;
+use RefactorCircus\Roster\Domains\Role\Concerns\GuardsEscalation;
+use RefactorCircus\Roster\Domains\Role\Events\RoleRevokedActionEvent;
+use RefactorCircus\Roster\Domains\Role\Events\RoleRevokingActionEvent;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
 
 final class RevokeRoleAction
 {

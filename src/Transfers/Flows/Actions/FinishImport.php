@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Transfers\Flows\Actions;
+namespace RefactorCircus\Roster\Transfers\Flows\Actions;
 
-use JayI\Impex\Impex;
-use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
-use JayI\Roster\Domains\Transfer\Events\TransferFinishedActionEvent;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Models\TransferRowModel;
-use JayI\Roster\Domains\Transfer\Services\PlanCache;
+use RefactorCircus\Impex\Impex;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferStatus;
+use RefactorCircus\Roster\Domains\Transfer\Events\TransferFinishedActionEvent;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferRowModel;
+use RefactorCircus\Roster\Domains\Transfer\Services\PlanCache;
 
 /**
  * Fold each row's outcome back into the report.

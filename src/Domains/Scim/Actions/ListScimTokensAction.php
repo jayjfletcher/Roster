@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Actions;
+namespace RefactorCircus\Roster\Domains\Scim\Actions;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Scim\Events\ScimTokensListedActionEvent;
-use JayI\Roster\Domains\Scim\Events\ScimTokensListingActionEvent;
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Scim\Events\ScimTokensListedActionEvent;
+use RefactorCircus\Roster\Domains\Scim\Events\ScimTokensListingActionEvent;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
 
 final class ListScimTokensAction
 {

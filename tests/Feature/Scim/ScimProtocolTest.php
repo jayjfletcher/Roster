@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__.'/helpers.php';
 
-use JayI\Roster\Domains\Scim\Models\ScimUserModel;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimUserModel;
 
 beforeEach(function (): void {
     [$this->acme, $this->scimToken] = scimOrg();

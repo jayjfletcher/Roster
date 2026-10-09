@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Actions;
+namespace RefactorCircus\Roster\Domains\Role\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Permission\Services\Authorizer;
-use JayI\Roster\Domains\Permission\Services\Permissions;
-use JayI\Roster\Domains\Role\Concerns\GuardsEscalation;
-use JayI\Roster\Domains\Role\Enums\RoleScope;
-use JayI\Roster\Domains\Role\Events\RoleAssignedActionEvent;
-use JayI\Roster\Domains\Role\Events\RoleAssigningActionEvent;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Support\Concerns\ResolvesScopes;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
+use RefactorCircus\Roster\Domains\Permission\Services\Permissions;
+use RefactorCircus\Roster\Domains\Role\Concerns\GuardsEscalation;
+use RefactorCircus\Roster\Domains\Role\Enums\RoleScope;
+use RefactorCircus\Roster\Domains\Role\Events\RoleAssignedActionEvent;
+use RefactorCircus\Roster\Domains\Role\Events\RoleAssigningActionEvent;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Support\Concerns\ResolvesScopes;
 
 final class AssignRoleAction
 {

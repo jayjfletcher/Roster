@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Role\Http\Requests;
 
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Http\Request;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Http\Request;
 
 abstract class RoleRequest extends Request
 {

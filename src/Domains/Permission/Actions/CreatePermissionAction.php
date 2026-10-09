@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Actions;
+namespace RefactorCircus\Roster\Domains\Permission\Actions;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\Permission\Events\PermissionCreatedActionEvent;
-use JayI\Roster\Domains\Permission\Events\PermissionCreatingActionEvent;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
-use JayI\Roster\Domains\Permission\Services\Permissions;
+use RefactorCircus\Roster\Domains\Permission\Events\PermissionCreatedActionEvent;
+use RefactorCircus\Roster\Domains\Permission\Events\PermissionCreatingActionEvent;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Domains\Permission\Services\Permissions;
 
 final class CreatePermissionAction
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Services;
+namespace RefactorCircus\Roster\Domains\Transfer\Services;
 
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
 
 /**
  * The import being applied right now, for the audit trail. Bound per

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use JayI\Atrium\Support\Icons;
-use JayI\Roster\Atrium\RosterPlugin;
+use RefactorCircus\Atrium\Support\Icons;
+use RefactorCircus\Roster\Atrium\RosterPlugin;
 
 it('gives its sidebar section its own icon', function (): void {
     [$group] = app(RosterPlugin::class)->navigationGroups();

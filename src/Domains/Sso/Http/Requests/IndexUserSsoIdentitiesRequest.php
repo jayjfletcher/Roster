@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Sso\Http\Requests;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Sso\Actions\ListSsoIdentitiesAction;
-use JayI\Roster\Domains\Sso\Resources\SsoIdentityResource;
-use JayI\Roster\Domains\User\Http\Requests\UserRequest;
+use RefactorCircus\Roster\Domains\Sso\Actions\ListSsoIdentitiesAction;
+use RefactorCircus\Roster\Domains\Sso\Resources\SsoIdentityResource;
+use RefactorCircus\Roster\Domains\User\Http\Requests\UserRequest;
 
 final class IndexUserSsoIdentitiesRequest extends UserRequest
 {

@@ -6,18 +6,18 @@ env:
 
 providers:
   - Laravel\Mcp\Server\McpServiceProvider
-  - JayI\Atrium\AtriumServiceProvider
-  - JayI\Roster\RosterServiceProvider
+  - RefactorCircus\Atrium\AtriumServiceProvider
+  - RefactorCircus\Roster\RosterServiceProvider
   - Workbench\App\Providers\WorkbenchServiceProvider
 
 migrations:
   - workbench/database/migrations
   - database/migrations
-  # jayi/cortex is a dev dependency and auto-discovered, so the demo runs with it.
-  - vendor/jayi/cortex/database/migrations
-  # jayi/impex (dev dependency, auto-discovered) runs CSV imports and exports.
-  - vendor/jayi/impex/database/migrations
-  # jayi/pennantplus (dev dependency, auto-discovered) decides RosterSupportFeature
+  # refactor-circus/cortex is a dev dependency and auto-discovered, so the demo runs with it.
+  - vendor/refactor-circus/cortex/database/migrations
+  # refactor-circus/impex (dev dependency, auto-discovered) runs CSV imports and exports.
+  - vendor/refactor-circus/impex/database/migrations
+  # refactor-circus/pennantplus (dev dependency, auto-discovered) decides RosterSupportFeature
   # through Pennant, whose features table lives here.
   - vendor/laravel/pennant/database/migrations
 

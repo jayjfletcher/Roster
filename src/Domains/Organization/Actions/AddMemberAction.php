@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Actions;
+namespace RefactorCircus\Roster\Domains\Organization\Actions;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Concerns\ManagesMemberships;
-use JayI\Roster\Domains\Organization\Enums\MembershipSource;
-use JayI\Roster\Domains\Organization\Events\MemberAddedActionEvent;
-use JayI\Roster\Domains\Organization\Events\MemberAddingActionEvent;
-use JayI\Roster\Domains\Organization\Models\MembershipModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Organization\Concerns\ManagesMemberships;
+use RefactorCircus\Roster\Domains\Organization\Enums\MembershipSource;
+use RefactorCircus\Roster\Domains\Organization\Events\MemberAddedActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Events\MemberAddingActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Models\MembershipModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Support\Users;
 
 final class AddMemberAction
 {

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Organization\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Organization\Mcp\Requests\JoinByDomainMcpRequest;
-use JayI\Roster\Mcp\Concerns\DescribesUser;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Requests\JoinByDomainMcpRequest;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesUser;
 
 #[Description('Join a user to every auto-join organization that owns their email\'s domain. Does nothing unless their email is verified. Returns the organizations newly joined.')]
 final class JoinByDomainTool extends Tool

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Listeners;
+namespace RefactorCircus\Roster\Domains\User\Listeners;
 
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Domains\User\Services\Approvals;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Domains\User\Services\Approvals;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * People who sign up through the app's own registration start with

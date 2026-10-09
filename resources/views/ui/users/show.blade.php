@@ -1,5 +1,5 @@
-@use(JayI\Roster\Domains\User\Enums\UserStatus)
-@use(JayI\Roster\Atrium\ScreenAccess)
+@use(RefactorCircus\Roster\Domains\User\Enums\UserStatus)
+@use(RefactorCircus\Roster\Atrium\ScreenAccess)
 
 @php($title = $profile?->display_name ?? $directory->name($user) ?? $directory->email($user) ?? __('roster::roster.user'))
 
@@ -256,7 +256,7 @@
                 <div class="flex flex-col gap-3">
                     @include('roster::ui.partials.redirect-domains', [
                         'domains' => $redirectDomains,
-                        'manage' => \JayI\Roster\Atrium\ScreenAccess::allows('roster.users.update'),
+                        'manage' => \RefactorCircus\Roster\Atrium\ScreenAccess::allows('roster.users.update'),
                         'storeRoute' => route('atrium.roster.users.redirect-domains.store', $user->getRouteKey()),
                         'destroyRoute' => fn ($domain) => route('atrium.roster.users.redirect-domains.destroy', [$user->getRouteKey(), $domain->id]),
                     ])

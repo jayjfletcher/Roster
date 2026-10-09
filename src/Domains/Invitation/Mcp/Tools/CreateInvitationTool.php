@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Invitation\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Invitation\Mcp\Requests\CreateInvitationMcpRequest;
-use JayI\Roster\Mcp\Concerns\DescribesOrganization;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Invitation\Mcp\Requests\CreateInvitationMcpRequest;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesOrganization;
 
 #[Description('Invite an email address into an organization, optionally onto some of its teams, and email them the link. Works for people who have not registered yet.')]
 final class CreateInvitationTool extends Tool

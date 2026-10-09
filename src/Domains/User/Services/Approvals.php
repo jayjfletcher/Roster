@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Services;
+namespace RefactorCircus\Roster\Domains\User\Services;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Notification;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\User\Notifications\UserApprovedNotification;
-use JayI\Roster\Domains\User\Notifications\UserAwaitingApprovalNotification;
-use JayI\Roster\Domains\User\Notifications\UserRejectedNotification;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\User\Notifications\UserApprovedNotification;
+use RefactorCircus\Roster\Domains\User\Notifications\UserAwaitingApprovalNotification;
+use RefactorCircus\Roster\Domains\User\Notifications\UserRejectedNotification;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * Who approves new accounts, and the emails around approval. Each email is

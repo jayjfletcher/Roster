@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Scim\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Scim\Actions\RevokeScimTokenAction;
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
-use JayI\Roster\Domains\Scim\Resources\ScimTokenResource;
-use JayI\Roster\Http\Request;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Scim\Actions\RevokeScimTokenAction;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Roster\Domains\Scim\Resources\ScimTokenResource;
+use RefactorCircus\Roster\Http\Request;
 
 final class RevokeScimTokenRequest extends Request
 {

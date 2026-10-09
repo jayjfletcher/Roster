@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Transfer\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Transfer\Actions\ShowTransferAction;
-use JayI\Roster\Domains\Transfer\Resources\TransferResource;
+use RefactorCircus\Roster\Domains\Transfer\Actions\ShowTransferAction;
+use RefactorCircus\Roster\Domains\Transfer\Resources\TransferResource;
 
 final class ShowTransferRequest extends TransferRequest
 {

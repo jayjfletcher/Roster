@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Invitation\Http\Requests;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Http\Request;
+use RefactorCircus\Roster\Http\Request;
 
 /**
  * Accepting or declining acts as the signed-in user, so a guest gets a 401

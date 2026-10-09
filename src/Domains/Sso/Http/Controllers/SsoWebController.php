@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Sso\Http\Controllers;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,11 +11,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Sso\Actions\LinkSsoIdentityAction;
-use JayI\Roster\Domains\Sso\Actions\SsoLoginAction;
-use JayI\Roster\Domains\Sso\Events\SsoLoginFailedActionEvent;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Domains\Sso\Services\Sso;
+use RefactorCircus\Roster\Domains\Sso\Actions\LinkSsoIdentityAction;
+use RefactorCircus\Roster\Domains\Sso\Actions\SsoLoginAction;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoLoginFailedActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Services\Sso;
 use SocialiteProviders\Saml2\Provider;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;

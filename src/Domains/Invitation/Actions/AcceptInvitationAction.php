@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Actions;
+namespace RefactorCircus\Roster\Domains\Invitation\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use JayI\Roster\Domains\Invitation\Concerns\ResolvesInvitations;
-use JayI\Roster\Domains\Invitation\Events\InvitationAcceptedActionEvent;
-use JayI\Roster\Domains\Invitation\Events\InvitationAcceptingActionEvent;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
-use JayI\Roster\Domains\Organization\Concerns\ManagesMemberships;
-use JayI\Roster\Domains\Organization\Enums\MembershipSource;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Invitation\Concerns\ResolvesInvitations;
+use RefactorCircus\Roster\Domains\Invitation\Events\InvitationAcceptedActionEvent;
+use RefactorCircus\Roster\Domains\Invitation\Events\InvitationAcceptingActionEvent;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Organization\Concerns\ManagesMemberships;
+use RefactorCircus\Roster\Domains\Organization\Enums\MembershipSource;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Support\Users;
 
 final class AcceptInvitationAction
 {

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Invitation\Mcp\Requests;
 
-use JayI\Roster\Domains\Invitation\Actions\ListInvitationsAction;
-use JayI\Roster\Domains\Invitation\Resources\InvitationResource;
-use JayI\Roster\Domains\Organization\Mcp\Requests\OrganizationMcpRequest;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Invitation\Actions\ListInvitationsAction;
+use RefactorCircus\Roster\Domains\Invitation\Resources\InvitationResource;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Requests\OrganizationMcpRequest;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 final class ListInvitationsMcpRequest extends OrganizationMcpRequest
 {

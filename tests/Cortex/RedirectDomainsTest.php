@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use JayI\Cortex\Domains\RedirectDomain\Actions\CreateRedirectDomainAction;
-use JayI\Cortex\Domains\RedirectDomain\Models\RedirectDomainModel;
-use JayI\Cortex\Domains\RedirectDomain\Services\RedirectDomains;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Cortex\Domains\RedirectDomain\Actions\CreateRedirectDomainAction;
+use RefactorCircus\Cortex\Domains\RedirectDomain\Models\RedirectDomainModel;
+use RefactorCircus\Cortex\Domains\RedirectDomain\Services\RedirectDomains;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
 use Workbench\App\Models\User;
 
 /**

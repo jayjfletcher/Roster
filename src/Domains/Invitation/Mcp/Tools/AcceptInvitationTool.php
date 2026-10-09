@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Invitation\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Invitation\Mcp\Requests\AcceptInvitationMcpRequest;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Invitation\Mcp\Requests\AcceptInvitationMcpRequest;
 
 #[Description('Accept an invitation as the authenticated user, whose email must match the invitation.')]
 final class AcceptInvitationTool extends Tool

@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Http\UploadedFile;
-use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferStatus;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
 use Workbench\App\Models\User;
 
 beforeEach(function (): void {

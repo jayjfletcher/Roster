@@ -39,7 +39,7 @@ Phase 2, feature 1. An append-only, hash-chained audit log of every Roster mutat
     Roster::audit('invoice.paid')->on($invoice)->in($organization)->by($user)->with(['amount' => 100])->changes(['status' => ['open', 'paid']])->record();
     ```
 
-    (the facade `JayI\Roster\Facades\Roster` → the `Roster::audit()` builder `Audit\PendingAuditEntry`), or `RecordAuditEventAction`.
+    (the facade `RefactorCircus\Roster\Facades\Roster` → the `Roster::audit()` builder `Audit\PendingAuditEntry`), or `RecordAuditEventAction`.
   - The same redaction, surface/IP capture and hash chain apply.
   - Each entry carries `source`: `roster` (recorded from Roster's Action events) or `app` (recorded through the API).
     - API-recorded entries are **always** `app`, so callers can't forge Roster's own entries.

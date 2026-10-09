@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Organization\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Organization\Http\Requests\JoinByDomainRequest;
-use JayI\Roster\Domains\Organization\Http\Requests\SwitchContextRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\JoinByDomainRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\SwitchContextRequest;
 
 final class UserContextController
 {

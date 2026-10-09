@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Actions;
+namespace RefactorCircus\Roster\Domains\Scim\Actions;
 
 use Illuminate\Support\Facades\DB;
-use JayI\Roster\Domains\Scim\Events\ScimTokenRevokedActionEvent;
-use JayI\Roster\Domains\Scim\Events\ScimTokenRevokingActionEvent;
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Roster\Domains\Scim\Events\ScimTokenRevokedActionEvent;
+use RefactorCircus\Roster\Domains\Scim\Events\ScimTokenRevokingActionEvent;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
 
 final class RevokeScimTokenAction
 {

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Actions;
+namespace RefactorCircus\Roster\Domains\Transfer\Actions;
 
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\Transfer\Enums\TransferType;
-use JayI\Roster\Domains\Transfer\Events\ImportTemplateShowingActionEvent;
-use JayI\Roster\Domains\Transfer\Events\ImportTemplateShownActionEvent;
-use JayI\Roster\Domains\Transfer\Services\Transfers;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferType;
+use RefactorCircus\Roster\Domains\Transfer\Events\ImportTemplateShowingActionEvent;
+use RefactorCircus\Roster\Domains\Transfer\Events\ImportTemplateShownActionEvent;
+use RefactorCircus\Roster\Domains\Transfer\Services\Transfers;
 
 final class ShowImportTemplateAction
 {
@@ -28,7 +28,7 @@ final class ShowImportTemplateAction
     }
 
     /**
-     * The CSV template for an import type, as text. Works without jayi/impex,
+     * The CSV template for an import type, as text. Works without refactor-circus/impex,
      * so files can be prepared before imports are set up.
      */
     public function execute(TransferType $type): string

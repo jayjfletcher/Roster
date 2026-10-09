@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
-use JayI\Roster\Domains\Permission\Actions\CreatePermissionAction;
-use JayI\Roster\Domains\Permission\Services\Permissions;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\SwitchContextAction;
+use RefactorCircus\Roster\Domains\Permission\Actions\CreatePermissionAction;
+use RefactorCircus\Roster\Domains\Permission\Services\Permissions;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Team\Actions\CreateTeamAction;
 
 it('answers can() for roster permissions in the given scope', function (): void {
     app(CreatePermissionAction::class)->execute(['name' => 'invoices.edit']);

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
-use JayI\Roster\Domains\Permission\Services\Permissions;
-use JayI\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Domains\Permission\Services\Permissions;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
 
 it('grants super-admin by email', function (): void {
     $ada = user(['email' => 'ada@example.com']);

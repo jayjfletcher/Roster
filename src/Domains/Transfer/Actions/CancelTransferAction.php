@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Actions;
+namespace RefactorCircus\Roster\Domains\Transfer\Actions;
 
 use Illuminate\Validation\ValidationException;
-use JayI\Impex\Domains\Run\Models\RunModel;
-use JayI\Impex\Impex;
-use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
-use JayI\Roster\Domains\Transfer\Events\TransferCancelledActionEvent;
-use JayI\Roster\Domains\Transfer\Events\TransferCancellingActionEvent;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Services\Transfers;
+use RefactorCircus\Impex\Domains\Run\Models\RunModel;
+use RefactorCircus\Impex\Impex;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferStatus;
+use RefactorCircus\Roster\Domains\Transfer\Events\TransferCancelledActionEvent;
+use RefactorCircus\Roster\Domains\Transfer\Events\TransferCancellingActionEvent;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Services\Transfers;
 
 final class CancelTransferAction
 {

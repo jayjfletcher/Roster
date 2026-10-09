@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Transfers\Flows;
+namespace RefactorCircus\Roster\Transfers\Flows;
 
 use Illuminate\Support\Carbon;
-use JayI\Impex\Domains\Flow\Support\Flow;
-use JayI\Roster\Transfers\Flows\Actions\ApplyImportRow;
-use JayI\Roster\Transfers\Flows\Actions\CloseTransfer;
-use JayI\Roster\Transfers\Flows\Actions\FinishImport;
-use JayI\Roster\Transfers\Flows\Actions\ValidateImport;
+use RefactorCircus\Impex\Domains\Flow\Support\Flow;
+use RefactorCircus\Roster\Transfers\Flows\Actions\ApplyImportRow;
+use RefactorCircus\Roster\Transfers\Flows\Actions\CloseTransfer;
+use RefactorCircus\Roster\Transfers\Flows\Actions\FinishImport;
+use RefactorCircus\Roster\Transfers\Flows\Actions\ValidateImport;
 
 /**
  * Validate every row, wait for a person to confirm the preview, then apply

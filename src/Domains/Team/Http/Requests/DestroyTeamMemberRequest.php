@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Team\Http\Requests;
 
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Team\Actions\RemoveTeamMemberAction;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Team\Actions\RemoveTeamMemberAction;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Support\Users;
 
 final class DestroyTeamMemberRequest extends TeamRequest
 {

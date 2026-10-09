@@ -2,21 +2,20 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer;
+namespace RefactorCircus\Roster\Domains\Transfer;
 
 use Illuminate\Contracts\Events\Dispatcher;
-use JayI\Foundation\Support\ServiceProvider;
-use JayI\Impex\Domains\Flow\Services\FlowRegistry;
-use JayI\Impex\Domains\Run\Events\RunFailed;
-use JayI\Roster\Domains\Transfer\Console\Commands\PruneTransfersCommand;
-use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Models\TransferRowModel;
-use JayI\Roster\Domains\Transfer\Services\PlanCache;
-use JayI\Roster\Domains\Transfer\Services\TransferContext;
-use JayI\Roster\Domains\Transfer\Services\Transfers;
-use JayI\Roster\Transfers\Flows\ExportFlow;
-use JayI\Roster\Transfers\Flows\ImportFlow;
+use RefactorCircus\Foundation\Support\ServiceProvider;
+use RefactorCircus\Impex\Domains\Flow\Services\FlowRegistry;
+use RefactorCircus\Impex\Domains\Run\Events\RunFailed;
+use RefactorCircus\Roster\Domains\Transfer\Console\Commands\PruneTransfersCommand;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferStatus;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Services\PlanCache;
+use RefactorCircus\Roster\Domains\Transfer\Services\TransferContext;
+use RefactorCircus\Roster\Domains\Transfer\Services\Transfers;
+use RefactorCircus\Roster\Transfers\Flows\ExportFlow;
+use RefactorCircus\Roster\Transfers\Flows\ImportFlow;
 
 /**
  * CSV imports and exports, run as Impex flows.
@@ -31,11 +30,6 @@ class TransferServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->keepMorphAliases([
-            'JayI\Roster\Models\Transfer' => TransferModel::class,
-            'JayI\Roster\Models\TransferRow' => TransferRowModel::class,
-        ]);
-
         $this->registerTransfers();
 
         $this->loadApiRoutesFrom(__DIR__.'/routes.php');
@@ -50,7 +44,7 @@ class TransferServiceProvider extends ServiceProvider
      * Register the import and export flows with Impex, when it is installed,
      * and mark a transfer failed if its run fails.
      *
-     * The flows keep their `JayI\Roster\Transfers\Flows` class names: Impex
+     * The flows keep their `RefactorCircus\Roster\Transfers\Flows` class names: Impex
      * stores them on every run and batch, and replays in-flight runs by them.
      */
     private function registerTransfers(): void

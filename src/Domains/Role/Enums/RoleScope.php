@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Enums;
+namespace RefactorCircus\Roster\Domains\Role\Enums;
 
 /**
  * Where a role applies: everywhere, within one organization, or within one

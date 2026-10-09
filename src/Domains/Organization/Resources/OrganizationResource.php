@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Resources;
+namespace RefactorCircus\Roster\Domains\Organization\Resources;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use JayI\Roster\Domains\Organization\Models\OrganizationDomainModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationLinkModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationDomainModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationLinkModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 /**
  * @mixin OrganizationModel

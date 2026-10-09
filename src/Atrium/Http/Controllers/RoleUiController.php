@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Atrium\Http\Controllers;
+namespace RefactorCircus\Roster\Atrium\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use JayI\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
-use JayI\Roster\Domains\Permission\Actions\ListPermissionsAction;
-use JayI\Roster\Domains\Role\Actions\AssignRoleAction;
-use JayI\Roster\Domains\Role\Actions\CreateRoleAction;
-use JayI\Roster\Domains\Role\Actions\DeleteRoleAction;
-use JayI\Roster\Domains\Role\Actions\ListRolesAction;
-use JayI\Roster\Domains\Role\Actions\RevokeRoleAction;
-use JayI\Roster\Domains\Role\Actions\ShowRoleAction;
-use JayI\Roster\Domains\Role\Actions\UpdateRoleAction;
-use JayI\Roster\Domains\Role\Enums\RoleScope;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Support\Scopes;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
+use RefactorCircus\Roster\Domains\Permission\Actions\ListPermissionsAction;
+use RefactorCircus\Roster\Domains\Role\Actions\AssignRoleAction;
+use RefactorCircus\Roster\Domains\Role\Actions\CreateRoleAction;
+use RefactorCircus\Roster\Domains\Role\Actions\DeleteRoleAction;
+use RefactorCircus\Roster\Domains\Role\Actions\ListRolesAction;
+use RefactorCircus\Roster\Domains\Role\Actions\RevokeRoleAction;
+use RefactorCircus\Roster\Domains\Role\Actions\ShowRoleAction;
+use RefactorCircus\Roster\Domains\Role\Actions\UpdateRoleAction;
+use RefactorCircus\Roster\Domains\Role\Enums\RoleScope;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Support\Scopes;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * The Atrium screens for roles, and for assigning them to users.

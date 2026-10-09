@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Permission\Mcp\Requests;
 
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\Permission\Actions\ListUserPermissionsAction;
-use JayI\Roster\Domains\User\Mcp\Requests\UserMcpRequest;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Permission\Actions\ListUserPermissionsAction;
+use RefactorCircus\Roster\Domains\User\Mcp\Requests\UserMcpRequest;
 
 final class ListUserPermissionsMcpRequest extends UserMcpRequest
 {

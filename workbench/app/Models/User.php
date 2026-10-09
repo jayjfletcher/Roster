@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use JayI\Roster\Domains\User\Concerns\HasRoster;
+use RefactorCircus\Roster\Domains\User\Concerns\HasRoster;
 use Workbench\Database\Factories\UserFactory;
 
 #[Fillable(['name', 'email', 'password'])]

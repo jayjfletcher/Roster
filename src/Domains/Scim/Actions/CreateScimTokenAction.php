@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Actions;
+namespace RefactorCircus\Roster\Domains\Scim\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Scim\Data\IssuedScimToken;
-use JayI\Roster\Domains\Scim\Events\ScimTokenCreatedActionEvent;
-use JayI\Roster\Domains\Scim\Events\ScimTokenCreatingActionEvent;
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Scim\Data\IssuedScimToken;
+use RefactorCircus\Roster\Domains\Scim\Events\ScimTokenCreatedActionEvent;
+use RefactorCircus\Roster\Domains\Scim\Events\ScimTokenCreatingActionEvent;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
 
 final class CreateScimTokenAction
 {

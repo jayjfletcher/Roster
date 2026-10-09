@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Services;
+namespace RefactorCircus\Roster\Domains\Scim\Services;
 
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\Scim\Models\ScimGroupModel;
-use JayI\Roster\Domains\Scim\Models\ScimUserModel;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimGroupModel;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimUserModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * Roster records as SCIM resources (RFC 7643 §4).

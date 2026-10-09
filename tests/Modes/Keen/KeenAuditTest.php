@@ -3,26 +3,26 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Gate;
-use JayI\Foundation\Audit\History;
-use JayI\Foundation\Packages\Package;
-use JayI\Foundation\Packages\PackageRegistry;
-use JayI\Keen\Domains\Audit\Data\PendingAuditEntry;
-use JayI\Keen\Domains\Audit\Models\AuditEntryModel;
-use JayI\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
-use JayI\Roster\Domains\Role\Actions\AssignRoleAction;
-use JayI\Roster\Domains\Role\Actions\UpdateRoleAction;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Domains\Sso\Actions\CreateSsoConnectionAction;
-use JayI\Roster\Domains\Sso\Actions\UpdateSsoConnectionAction;
-use JayI\Roster\Domains\Transfer\Enums\TransferType;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Services\TransferContext;
-use JayI\Roster\Domains\User\Actions\SuspendUserAction;
-use JayI\Roster\Domains\User\Actions\UpdateProfileAction;
-use JayI\Roster\Domains\User\Actions\UpdateUserAction;
-use JayI\Roster\Facades\Roster;
-use JayI\Roster\Tests\Fixtures\Billing\InvoicePaidActionEvent;
-use JayI\Roster\Tests\Fixtures\Billing\InvoicePayingActionEvent;
+use RefactorCircus\Foundation\Audit\History;
+use RefactorCircus\Foundation\Packages\Package;
+use RefactorCircus\Foundation\Packages\PackageRegistry;
+use RefactorCircus\Keen\Domains\Audit\Data\PendingAuditEntry;
+use RefactorCircus\Keen\Domains\Audit\Models\AuditEntryModel;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
+use RefactorCircus\Roster\Domains\Role\Actions\AssignRoleAction;
+use RefactorCircus\Roster\Domains\Role\Actions\UpdateRoleAction;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Sso\Actions\CreateSsoConnectionAction;
+use RefactorCircus\Roster\Domains\Sso\Actions\UpdateSsoConnectionAction;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferType;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Services\TransferContext;
+use RefactorCircus\Roster\Domains\User\Actions\SuspendUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\UpdateProfileAction;
+use RefactorCircus\Roster\Domains\User\Actions\UpdateUserAction;
+use RefactorCircus\Roster\Facades\Roster;
+use RefactorCircus\Roster\Tests\Fixtures\Billing\InvoicePaidActionEvent;
+use RefactorCircus\Roster\Tests\Fixtures\Billing\InvoicePayingActionEvent;
 
 require_once dirname(__DIR__, 2).'/Feature/Scim/helpers.php';
 
@@ -142,7 +142,7 @@ it('delegates Roster::audit() to Keen', function (): void {
 });
 
 it('leaves the subject and scope of other packages\' events to the audit log', function (): void {
-    app(PackageRegistry::class)->register(Package::make('billing', 'JayI\Roster\Tests\Fixtures\Billing'));
+    app(PackageRegistry::class)->register(Package::make('billing', 'RefactorCircus\Roster\Tests\Fixtures\Billing'));
     $ada = user(['name' => 'Ada']);
     organization($ada);
 

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Sso\Http\Requests;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Sso\Actions\UnlinkSsoIdentityAction;
-use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
-use JayI\Roster\Http\Request;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Sso\Actions\UnlinkSsoIdentityAction;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoIdentityModel;
+use RefactorCircus\Roster\Http\Request;
 
 final class DestroySsoIdentityRequest extends Request
 {

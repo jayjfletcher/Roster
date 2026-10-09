@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
 
 it('issues, shows once and revokes tokens from the organization page', function (): void {
     $this->actingAs(user());

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Role\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Permission\Http\Requests\ShowUserPermissionsRequest;
-use JayI\Roster\Domains\Role\Http\Requests\AssignRoleRequest;
-use JayI\Roster\Domains\Role\Http\Requests\IndexUserRolesRequest;
-use JayI\Roster\Domains\Role\Http\Requests\RevokeRoleRequest;
+use RefactorCircus\Roster\Domains\Permission\Http\Requests\ShowUserPermissionsRequest;
+use RefactorCircus\Roster\Domains\Role\Http\Requests\AssignRoleRequest;
+use RefactorCircus\Roster\Domains\Role\Http\Requests\IndexUserRolesRequest;
+use RefactorCircus\Roster\Domains\Role\Http\Requests\RevokeRoleRequest;
 
 final class UserRoleController
 {

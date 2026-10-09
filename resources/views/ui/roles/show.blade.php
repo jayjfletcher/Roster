@@ -12,7 +12,7 @@
         <x-atrium::card>
             @if ($role->super)
                 <p class="text-sm">{{ __('roster::roster.super_role_hint') }}</p>
-            @elseif (! \JayI\Roster\Atrium\ScreenAccess::allows('roster.roles.manage', $role->organization))
+            @elseif (! \RefactorCircus\Roster\Atrium\ScreenAccess::allows('roster.roles.manage', $role->organization))
                 {{-- Read only for those who may view roles but not change them. --}}
                 @if ($role->description)
                     <p class="mb-3 text-sm">{{ $role->description }}</p>
@@ -42,7 +42,7 @@
             @endif
         </x-atrium::card>
 
-        @if (! $role->system && \JayI\Roster\Atrium\ScreenAccess::allows('roster.roles.manage', $role->organization))
+        @if (! $role->system && \RefactorCircus\Roster\Atrium\ScreenAccess::allows('roster.roles.manage', $role->organization))
             <form method="POST" action="{{ route('atrium.roster.roles.destroy', $role->id) }}">
                 @csrf
                 @method('DELETE')

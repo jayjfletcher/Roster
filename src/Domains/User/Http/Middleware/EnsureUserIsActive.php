@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Http\Middleware;
+namespace RefactorCircus\Roster\Domains\User\Http\Middleware;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Support\Users;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

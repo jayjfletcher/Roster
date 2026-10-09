@@ -8,10 +8,10 @@
     banner component, because it shows on the application's own pages where
     Atrium's stylesheet is not loaded. Pass `bannerClass` to add classes.
 --}}
-@php($impersonation = $rosterImpersonation ?? app(\JayI\Roster\Domains\Impersonation\Services\ImpersonationContext::class)->active())
+@php($impersonation = $rosterImpersonation ?? app(\RefactorCircus\Roster\Domains\Impersonation\Services\ImpersonationContext::class)->active())
 
 @if ($impersonation)
-    @php($directory = app(\JayI\Roster\Support\Users::class))
+    @php($directory = app(\RefactorCircus\Roster\Support\Users::class))
     <x-atrium::banner standalone :class="$bannerClass ?? null" data-testid="impersonation-banner">
         {{ __('roster::roster.impersonation_banner', [
             'user' => $impersonation->user ? ($directory->name($impersonation->user) ?? $directory->email($impersonation->user)) : '?',

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Atrium\Http\Controllers;
+namespace RefactorCircus\Roster\Atrium\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use JayI\Cortex\Domains\RedirectDomain\Actions\CreateRedirectDomainAction;
-use JayI\Cortex\Domains\RedirectDomain\Actions\DeleteRedirectDomainAction;
-use JayI\Cortex\Domains\RedirectDomain\Models\RedirectDomainModel;
-use JayI\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
-use JayI\Roster\Atrium\RedirectDomains;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Cortex\Domains\RedirectDomain\Actions\CreateRedirectDomainAction;
+use RefactorCircus\Cortex\Domains\RedirectDomain\Actions\DeleteRedirectDomainAction;
+use RefactorCircus\Cortex\Domains\RedirectDomain\Models\RedirectDomainModel;
+use RefactorCircus\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
+use RefactorCircus\Roster\Atrium\RedirectDomains;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * An organization's and a user's MCP redirect domains, kept by Cortex. Each

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Http\Requests;
+namespace RefactorCircus\Roster\Domains\User\Http\Requests;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\User\Actions\ShowUserAction;
-use JayI\Roster\Domains\User\Resources\UserResource;
+use RefactorCircus\Roster\Domains\User\Actions\ShowUserAction;
+use RefactorCircus\Roster\Domains\User\Resources\UserResource;
 
 final class ShowUserRequest extends UserRequest
 {

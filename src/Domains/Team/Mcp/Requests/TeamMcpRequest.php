@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Team\Mcp\Requests;
 
-use JayI\Roster\Domains\Organization\Mcp\Requests\OrganizationMcpRequest;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Domains\Team\Resources\TeamResource;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Requests\OrganizationMcpRequest;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Team\Resources\TeamResource;
 
 abstract class TeamMcpRequest extends OrganizationMcpRequest
 {

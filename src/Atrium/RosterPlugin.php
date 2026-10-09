@@ -2,39 +2,39 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Atrium;
+namespace RefactorCircus\Roster\Atrium;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use JayI\Atrium\Domains\Navigation\Data\NavGroup;
-use JayI\Atrium\Domains\Navigation\Data\NavItem;
-use JayI\Atrium\Domains\Plugins\Support\Plugin;
-use JayI\Atrium\Domains\Search\Data\SearchResult;
-use JayI\Atrium\Domains\Search\Data\SearchSource;
-use JayI\Atrium\Domains\Widgets\Data\WidgetDefinition;
-use JayI\Atrium\Support\Icons;
-use JayI\Roster\Atrium\Http\Controllers\ImpersonationUiController;
-use JayI\Roster\Atrium\Http\Controllers\InvitationUiController;
-use JayI\Roster\Atrium\Http\Controllers\OrganizationUiController;
-use JayI\Roster\Atrium\Http\Controllers\PermissionUiController;
-use JayI\Roster\Atrium\Http\Controllers\RedirectDomainUiController;
-use JayI\Roster\Atrium\Http\Controllers\RoleUiController;
-use JayI\Roster\Atrium\Http\Controllers\ScimUiController;
-use JayI\Roster\Atrium\Http\Controllers\SsoUiController;
-use JayI\Roster\Atrium\Http\Controllers\TeamUiController;
-use JayI\Roster\Atrium\Http\Controllers\TransferUiController;
-use JayI\Roster\Atrium\Http\Controllers\UserUiController;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Permission\Services\Authorizer;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Domains\Transfer\Enums\TransferType;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Domains\User\Models\ProfileModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Atrium\Domains\Navigation\Data\NavGroup;
+use RefactorCircus\Atrium\Domains\Navigation\Data\NavItem;
+use RefactorCircus\Atrium\Domains\Plugins\Support\Plugin;
+use RefactorCircus\Atrium\Domains\Search\Data\SearchResult;
+use RefactorCircus\Atrium\Domains\Search\Data\SearchSource;
+use RefactorCircus\Atrium\Domains\Widgets\Data\WidgetDefinition;
+use RefactorCircus\Atrium\Support\Icons;
+use RefactorCircus\Roster\Atrium\Http\Controllers\ImpersonationUiController;
+use RefactorCircus\Roster\Atrium\Http\Controllers\InvitationUiController;
+use RefactorCircus\Roster\Atrium\Http\Controllers\OrganizationUiController;
+use RefactorCircus\Roster\Atrium\Http\Controllers\PermissionUiController;
+use RefactorCircus\Roster\Atrium\Http\Controllers\RedirectDomainUiController;
+use RefactorCircus\Roster\Atrium\Http\Controllers\RoleUiController;
+use RefactorCircus\Roster\Atrium\Http\Controllers\ScimUiController;
+use RefactorCircus\Roster\Atrium\Http\Controllers\SsoUiController;
+use RefactorCircus\Roster\Atrium\Http\Controllers\TeamUiController;
+use RefactorCircus\Roster\Atrium\Http\Controllers\TransferUiController;
+use RefactorCircus\Roster\Atrium\Http\Controllers\UserUiController;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferType;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Domains\User\Models\ProfileModel;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * Registers Roster inside the Atrium dashboard.
@@ -57,7 +57,7 @@ class RosterPlugin extends Plugin
     /**
      * Features from `roster.atrium.features` that switch Roster in Atrium on
      * and off as a whole. A feature class that is not installed, such as
-     * RosterSupportFeature without jayi/pennantplus, is skipped.
+     * RosterSupportFeature without refactor-circus/pennantplus, is skipped.
      *
      * @return array<int, string>
      */

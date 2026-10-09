@@ -10,11 +10,11 @@ Phase 1 MVP, feature 4 (last). Cortex becomes a fourth surface; the API gets rat
   - It is optional and active only when Cortex's provider is loaded and `roster.cortex.enabled === true` (default true).
   - It registers `RosterServer` with Cortex's `McpServerRegistry` under `roster.cortex.server` (default `roster`), and every `RosterServer::TOOLS` tool in `ToolRegistry`, tagged with the server name.
   - `roster.cortex.tools` (null or a list of names) limits which tools are offered.
-  - Published Cortex overrides replace the server instructions (`createContext`) and tool descriptions, through a new `JayI\Roster\Mcp\Tool` base class that all 49 tools extend.
+  - Published Cortex overrides replace the server instructions (`createContext`) and tool descriptions, through a new `RefactorCircus\Roster\Mcp\Tool` base class that all 49 tools extend.
 - **Agents act as the authenticated user.** Roster's authorization applies unchanged, so an agent run with no signed-in user is denied ("Unauthorized."). This is documented.
 - **API hardening:**
   - A named rate limiter, `roster`, keyed by user id or IP. It is configurable (`roster.rate_limit.per_minute`, default 120; null disables) and included in the default `roster.routes.middleware` and `roster.mcp.web.middleware` as `throttle:roster`.
-  - Not-found inside Roster's API and MCP returns a generic `{"message": "Not found."}` (HTTP 404), never Laravel's `No query results for model [JayI\Roster\...]`, which leaks class names.
+  - Not-found inside Roster's API and MCP returns a generic `{"message": "Not found."}` (HTTP 404), never Laravel's `No query results for model [RefactorCircus\Roster\...]`, which leaks class names.
   - A docs test checks that every `roster.*` API route name appears in the README route table.
 - **Browser tests:**
   - `pestphp/pest-plugin-browser` with Playwright, following Atrium's `BrowserTestCase` (it copies Atrium's public assets).
@@ -39,7 +39,7 @@ Phase 1 MVP, feature 4 (last). Cortex becomes a fourth surface; the API gets rat
 
 ## Decisions made during implementation
 
-- **All 49 tools now extend `JayI\Roster\Mcp\Tool`**, Roster's own base class, which applies Cortex description overrides. Without it, MCP clients would see the code description even when agents saw the published one.
+- **All 49 tools now extend `RefactorCircus\Roster\Mcp\Tool`**, Roster's own base class, which applies Cortex description overrides. Without it, MCP clients would see the code description even when agents saw the published one.
 - **The Cortex test case extends `AuthorizationTestCase`**, so agent calls are proven to go through Roster's permissions (guest refused, user without the permission refused, super-admin allowed).
 - **The not-found mapping hooks the handler with `callAfterResolving`** and applies only when it is Laravel's `Foundation\Exceptions\Handler`. Apps with a custom handler keep their own responses. It only touches routes named `roster.*`, and only when the 404 came from a `ModelNotFoundException`.
 - **Permission routes resolve the record in `prepareForValidation`**, so a missing permission is a 404, not a 422.

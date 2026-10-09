@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Role\Mcp\Requests;
 
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\Role\Actions\ListRoleAssignmentsAction;
-use JayI\Roster\Domains\Role\Resources\RoleAssignmentResource;
-use JayI\Roster\Domains\User\Mcp\Requests\UserMcpRequest;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Role\Actions\ListRoleAssignmentsAction;
+use RefactorCircus\Roster\Domains\Role\Resources\RoleAssignmentResource;
+use RefactorCircus\Roster\Domains\User\Mcp\Requests\UserMcpRequest;
 
 final class ListRoleAssignmentsMcpRequest extends UserMcpRequest
 {

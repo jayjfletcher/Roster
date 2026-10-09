@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\User\Mcp\Requests;
 
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\User\Actions\PurgeUserAction;
-use JayI\Roster\Mcp\Request;
-use JayI\Roster\Support\Users;
 use Laravel\Mcp\Response;
+use RefactorCircus\Roster\Domains\User\Actions\PurgeUserAction;
+use RefactorCircus\Roster\Mcp\Request;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * Works on deleted records too.

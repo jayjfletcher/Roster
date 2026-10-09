@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Atrium\Http\Controllers;
+namespace RefactorCircus\Roster\Atrium\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use JayI\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
-use JayI\Roster\Domains\Organization\Actions\ListMembersAction;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
-use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
-use JayI\Roster\Domains\Team\Actions\DeleteTeamAction;
-use JayI\Roster\Domains\Team\Actions\RemoveTeamMemberAction;
-use JayI\Roster\Domains\Team\Actions\ShowTeamAction;
-use JayI\Roster\Domains\Team\Actions\UpdateTeamAction;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
+use RefactorCircus\Roster\Domains\Organization\Actions\ListMembersAction;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use RefactorCircus\Roster\Domains\Team\Actions\CreateTeamAction;
+use RefactorCircus\Roster\Domains\Team\Actions\DeleteTeamAction;
+use RefactorCircus\Roster\Domains\Team\Actions\RemoveTeamMemberAction;
+use RefactorCircus\Roster\Domains\Team\Actions\ShowTeamAction;
+use RefactorCircus\Roster\Domains\Team\Actions\UpdateTeamAction;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Support\Users;
 
 final class TeamUiController
 {

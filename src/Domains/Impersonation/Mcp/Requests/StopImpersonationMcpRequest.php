@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Impersonation\Mcp\Requests;
 
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\Impersonation\Actions\StopImpersonationAction;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
-use JayI\Roster\Domains\Impersonation\Resources\ImpersonationResource;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\StopImpersonationAction;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\Impersonation\Resources\ImpersonationResource;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Mcp\Request;
 
 final class StopImpersonationMcpRequest extends Request
 {

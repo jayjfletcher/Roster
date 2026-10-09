@@ -2,38 +2,38 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Atrium\Http\Controllers;
+namespace RefactorCircus\Roster\Atrium\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use JayI\Cortex\Domains\RedirectDomain\Actions\ListRedirectDomainsAction;
-use JayI\Foundation\Audit\Contracts\AuditTrail;
-use JayI\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
-use JayI\Roster\Atrium\RedirectDomains;
-use JayI\Roster\Atrium\ScreenAccess;
-use JayI\Roster\Domains\Invitation\Actions\ListInvitationsAction;
-use JayI\Roster\Domains\Invitation\Enums\InvitationStatus;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\DeleteOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\LinkOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\ListMembersAction;
-use JayI\Roster\Domains\Organization\Actions\ListOrganizationsAction;
-use JayI\Roster\Domains\Organization\Actions\PurgeOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\RemoveMemberAction;
-use JayI\Roster\Domains\Organization\Actions\RestoreOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\ShowOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\TransferOwnershipAction;
-use JayI\Roster\Domains\Organization\Actions\UnlinkOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\UpdateOrganizationAction;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Role\Actions\ListRoleAssignmentsAction;
-use JayI\Roster\Domains\Role\Actions\ListRolesAction;
-use JayI\Roster\Domains\Scim\Actions\ListScimTokensAction;
-use JayI\Roster\Domains\Sso\Actions\ListSsoConnectionsAction;
-use JayI\Roster\Domains\Team\Actions\ListTeamsAction;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Cortex\Domains\RedirectDomain\Actions\ListRedirectDomainsAction;
+use RefactorCircus\Foundation\Audit\Contracts\AuditTrail;
+use RefactorCircus\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
+use RefactorCircus\Roster\Atrium\RedirectDomains;
+use RefactorCircus\Roster\Atrium\ScreenAccess;
+use RefactorCircus\Roster\Domains\Invitation\Actions\ListInvitationsAction;
+use RefactorCircus\Roster\Domains\Invitation\Enums\InvitationStatus;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\CreateOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\DeleteOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\LinkOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\ListMembersAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\ListOrganizationsAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\PurgeOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\RemoveMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\RestoreOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\ShowOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\TransferOwnershipAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\UnlinkOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\UpdateOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Role\Actions\ListRoleAssignmentsAction;
+use RefactorCircus\Roster\Domains\Role\Actions\ListRolesAction;
+use RefactorCircus\Roster\Domains\Scim\Actions\ListScimTokensAction;
+use RefactorCircus\Roster\Domains\Sso\Actions\ListSsoConnectionsAction;
+use RefactorCircus\Roster\Domains\Team\Actions\ListTeamsAction;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * The Atrium screens for organizations and their members. Each screen
@@ -46,8 +46,8 @@ final class OrganizationUiController
     /**
      * Each tab and the permission, in the organization, that opens it. The
      * activity tab shows the organization's history from the audit log, so
-     * it is offered only while one (jayi/keen) is installed; the MCP tab
-     * holds redirect domains Cortex keeps, so only while jayi/cortex is.
+     * it is offered only while one (refactor-circus/keen) is installed; the MCP tab
+     * holds redirect domains Cortex keeps, so only while refactor-circus/cortex is.
      */
     private const array TABS = [
         'members' => 'roster.members.view',

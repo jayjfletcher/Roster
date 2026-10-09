@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Actions;
+namespace RefactorCircus\Roster\Domains\Organization\Actions;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\Organization\Concerns\OrganizationRules;
-use JayI\Roster\Domains\Organization\Events\OrganizationUpdatedActionEvent;
-use JayI\Roster\Domains\Organization\Events\OrganizationUpdatingActionEvent;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Organization\Concerns\OrganizationRules;
+use RefactorCircus\Roster\Domains\Organization\Events\OrganizationUpdatedActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Events\OrganizationUpdatingActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 final class UpdateOrganizationAction
 {

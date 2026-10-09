@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\User\Mcp\Requests;
 
-use JayI\Roster\Domains\User\Actions\DeleteUserAction;
 use Laravel\Mcp\Response;
+use RefactorCircus\Roster\Domains\User\Actions\DeleteUserAction;
 
 final class DeleteUserMcpRequest extends UserMcpRequest
 {

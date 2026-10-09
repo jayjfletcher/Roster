@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Invitation\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Invitation\Actions\DeclineInvitationAction;
-use JayI\Roster\Domains\Invitation\Resources\InvitationResource;
+use RefactorCircus\Roster\Domains\Invitation\Actions\DeclineInvitationAction;
+use RefactorCircus\Roster\Domains\Invitation\Resources\InvitationResource;
 
 final class DeclineInvitationRequest extends InvitationResponseRequest
 {

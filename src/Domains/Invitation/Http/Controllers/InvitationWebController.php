@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Invitation\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use JayI\Roster\Domains\Invitation\Actions\AcceptInvitationAction;
-use JayI\Roster\Domains\Invitation\Actions\DeclineInvitationAction;
-use JayI\Roster\Domains\Invitation\Exceptions\InvalidInvitationException;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
-use JayI\Roster\Domains\Invitation\Services\InvitationTokens;
-use JayI\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Invitation\Actions\AcceptInvitationAction;
+use RefactorCircus\Roster\Domains\Invitation\Actions\DeclineInvitationAction;
+use RefactorCircus\Roster\Domains\Invitation\Exceptions\InvalidInvitationException;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Invitation\Services\InvitationTokens;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
 
 /**
  * The page an invitation email links to, for the invited user rather than

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Team\Http\Requests;
 
-use JayI\Roster\Domains\Organization\Http\Requests\OrganizationRequest;
-use JayI\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\OrganizationRequest;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
 
 abstract class TeamRequest extends OrganizationRequest
 {

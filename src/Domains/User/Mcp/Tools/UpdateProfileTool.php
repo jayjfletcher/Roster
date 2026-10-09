@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\User\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\User\Mcp\Requests\UpdateProfileMcpRequest;
-use JayI\Roster\Mcp\Concerns\DescribesProfilePayload;
-use JayI\Roster\Mcp\Concerns\DescribesUser;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\User\Mcp\Requests\UpdateProfileMcpRequest;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesProfilePayload;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesUser;
 
 #[Description('Update a user\'s profile. Only the fields given change; the profile is created if missing.')]
 final class UpdateProfileTool extends Tool

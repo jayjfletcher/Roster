@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Services;
+namespace RefactorCircus\Roster\Domains\Transfer\Services;
 
 use Closure;
 

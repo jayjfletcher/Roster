@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use JayI\Roster\Support\UserKey;
+use RefactorCircus\Roster\Support\UserKey;
 
 return new class extends Migration
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Enums;
+namespace RefactorCircus\Roster\Domains\Organization\Enums;
 
 /**
  * How a user joined an organization.

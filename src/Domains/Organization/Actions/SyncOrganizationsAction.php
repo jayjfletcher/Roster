@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Actions;
+namespace RefactorCircus\Roster\Domains\Organization\Actions;
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Data\OrganizationSyncResult;
-use JayI\Roster\Domains\Organization\Events\OrganizationsSyncedActionEvent;
-use JayI\Roster\Domains\Organization\Events\OrganizationsSyncingActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Data\OrganizationSyncResult;
+use RefactorCircus\Roster\Domains\Organization\Events\OrganizationsSyncedActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Events\OrganizationsSyncingActionEvent;
 
 final class SyncOrganizationsAction
 {

@@ -2,7 +2,7 @@
 
 ## Context
 
-Roster is a new jayi package for headless, Action-first user management (`agent-os/product/`). `src/` is still the Testbench skeleton. The user asked to work through the roadmap in order, shaping each feature with `/shape-spec` so decisions get logged. This plan covers **Phase 1, feature 1: Users + profiles**, the first slice. After it ships, orgs/teams/members gets shaped next, then roles & permissions, then surface hardening.
+Roster is a new Refactor Circus package for headless, Action-first user management (`agent-os/product/`). `src/` is still the Testbench skeleton. The user asked to work through the roadmap in order, shaping each feature with `/shape-spec` so decisions get logged. This plan covers **Phase 1, feature 1: Users + profiles**, the first slice. After it ships, orgs/teams/members gets shaped next, then roles & permissions, then surface hardening.
 
 Siblings (Impex, Cortex) set the patterns. Each operation is a plain `final` Action with `static rules()`. Thin HTTP FormRequest and MCP Request wrappers call `persist()`. JSON Resources use a `data` envelope. The Atrium plugin is a set of hand-written routes and controllers that call the Actions. Atrium has no user, role or screen layer, so Roster supplies the user-management screens.
 
@@ -11,14 +11,14 @@ Siblings (Impex, Cortex) set the patterns. Each operation is a plain `final` Act
 - **User model is flexible, with three modes.** The model class comes from `config('roster.users.model')`.
   1. **Host model + `HasRoster` trait** (default): typed helpers (`profile()`, `rosterStatus()`, `isActive()`).
   2. **Host model, no trait**: the provider registers the `rosterProfile` relation with `Model::resolveRelationUsing`, so Roster works untouched.
-  3. **Roster-owned**: optional `JayI\Roster\Models\User` (Authenticatable + HasRoster) plus an opt-in publishable migration, tag `roster-users-migration`, for apps without a users table.
+  3. **Roster-owned**: optional `RefactorCircus\Roster\Models\User` (Authenticatable + HasRoster) plus an opt-in publishable migration, tag `roster-users-migration`, for apps without a users table.
 - **Profiles live in a 1:1 `roster_profiles` table.** Columns: ULID id; `user_id` typed by `config('roster.users.key_type')` = `int|ulid|uuid`, unique; `display_name`, `avatar_url`, `timezone`, `locale`, `bio`, `meta` JSON; `status`, `status_reason`, `status_changed_at`. The profile is created lazily with `firstOrCreate`, and a missing profile means active.
 - **Status:** `UserStatus` enum `Active | Suspended | Deactivated`. Suspend, Deactivate and Reactivate Actions. A `roster.active` middleware (`EnsureUserIsActive`) rejects non-active users with 403.
 - **User column mapping:** `config('roster.users.columns')` (`name`, `email`, `password`) so Create/Update work on arbitrary host schemas.
 - **Users are referenced by route key** (`getRouteKeyName()`), not by slug. Host users have no slugs. This is a deliberate deviation from the Cortex `slug-references` standard.
 - **No authorization until feature 3.** Request `authorize()` returns true, and route middleware is the only gate. To fail closed meanwhile, HTTP routes (`roster.routes.enabled`) and MCP (`roster.mcp.web/local.enabled`) default to **off**. Atrium stays behind Atrium's own `viewAtrium` gate.
 - **Surfaces ship per feature.** Every Action is reachable from HTTP, MCP and the Atrium dashboard, and an arch parity test covers all three (stricter than Impex's MCP-only check). Feature 4 becomes hardening: Cortex hookup, docs, any gaps.
-- **Stack and conventions:** siblings' (PHP ^8.4, Laravel ^13.15, laravel/mcp, jayi/atrium). The generic Cortex standards are adopted.
+- **Stack and conventions:** siblings' (PHP ^8.4, Laravel ^13.15, laravel/mcp, refactor-circus/atrium). The generic Cortex standards are adopted.
 - **Events:** each Action dispatches `*ingActionEvent` / `*edActionEvent`. Writes are wrapped in `DB::transaction`. Business-rule failures throw `ValidationException::withMessages` (e.g. "cannot suspend yourself", "already suspended").
 
 ## Task 1: Save spec documentation + adopt standards
@@ -38,7 +38,7 @@ Siblings (Impex, Cortex) set the patterns. Each operation is a plain `final` Act
   - `routes` (enabled=false, prefix=`roster`, middleware=`['api']`)
   - `mcp` (web/local enabled=false, handle)
   - `ui` (enabled=true)
-- Composer `extra.atrium.plugins` → `JayI\Roster\Atrium\RosterPlugin`.
+- Composer `extra.atrium.plugins` → `RefactorCircus\Roster\Atrium\RosterPlugin`.
 
 ## Task 3: Domain — model, enum, migrations, trait
 

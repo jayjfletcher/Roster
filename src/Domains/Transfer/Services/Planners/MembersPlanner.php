@@ -2,30 +2,30 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Services\Planners;
+namespace RefactorCircus\Roster\Domains\Transfer\Services\Planners;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use JayI\Roster\Domains\Invitation\Actions\CreateInvitationAction;
-use JayI\Roster\Domains\Organization\Concerns\ManagesMemberships;
-use JayI\Roster\Domains\Organization\Enums\MembershipSource;
-use JayI\Roster\Domains\Organization\Events\MemberAddedActionEvent;
-use JayI\Roster\Domains\Organization\Events\MemberAddingActionEvent;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Permission\Services\Authorizer;
-use JayI\Roster\Domains\Permission\Services\Permissions;
-use JayI\Roster\Domains\Role\Actions\AssignRoleAction;
-use JayI\Roster\Domains\Role\Enums\RoleScope;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\User\Actions\CreateUserAction;
-use JayI\Roster\Domains\User\Actions\UpdateProfileAction;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Invitation\Actions\CreateInvitationAction;
+use RefactorCircus\Roster\Domains\Organization\Concerns\ManagesMemberships;
+use RefactorCircus\Roster\Domains\Organization\Enums\MembershipSource;
+use RefactorCircus\Roster\Domains\Organization\Events\MemberAddedActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Events\MemberAddingActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
+use RefactorCircus\Roster\Domains\Permission\Services\Permissions;
+use RefactorCircus\Roster\Domains\Role\Actions\AssignRoleAction;
+use RefactorCircus\Roster\Domains\Role\Enums\RoleScope;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\User\Actions\CreateUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\UpdateProfileAction;
+use RefactorCircus\Roster\Support\Users;
 use RuntimeException;
 
 /**

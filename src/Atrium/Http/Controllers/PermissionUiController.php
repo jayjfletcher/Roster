@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Atrium\Http\Controllers;
+namespace RefactorCircus\Roster\Atrium\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use JayI\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
-use JayI\Roster\Domains\Permission\Actions\CreatePermissionAction;
-use JayI\Roster\Domains\Permission\Actions\DeletePermissionAction;
-use JayI\Roster\Domains\Permission\Actions\ListPermissionsAction;
-use JayI\Roster\Domains\Permission\Actions\UpdatePermissionAction;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
+use RefactorCircus\Roster\Domains\Permission\Actions\CreatePermissionAction;
+use RefactorCircus\Roster\Domains\Permission\Actions\DeletePermissionAction;
+use RefactorCircus\Roster\Domains\Permission\Actions\ListPermissionsAction;
+use RefactorCircus\Roster\Domains\Permission\Actions\UpdatePermissionAction;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
 
 final class PermissionUiController
 {

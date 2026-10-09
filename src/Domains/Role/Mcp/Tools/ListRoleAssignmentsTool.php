@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Role\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Role\Mcp\Requests\ListRoleAssignmentsMcpRequest;
-use JayI\Roster\Mcp\Concerns\DescribesUser;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Requests\ListRoleAssignmentsMcpRequest;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesUser;
 
 #[Description('List the roles a user holds, with the organization or team each applies in.')]
 final class ListRoleAssignmentsTool extends Tool

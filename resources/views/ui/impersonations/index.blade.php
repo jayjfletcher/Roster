@@ -1,4 +1,4 @@
-@inject('directory', 'JayI\Roster\Support\Users')
+@inject('directory', 'RefactorCircus\Roster\Support\Users')
 
 <x-atrium::layout :title="__('roster::roster.impersonations')">
     <x-atrium::page-header :title="__('roster::roster.impersonations')" />
@@ -36,7 +36,7 @@
                         </x-atrium::table.cell>
                         <x-atrium::table.cell>
                             {{-- Your own impersonation, or anyone's with the permission in its organization. --}}
-                            @if (! $impersonation->ended_at && \JayI\Roster\Atrium\ScreenAccess::allows('roster.users.impersonate', $impersonation->organization, (string) $impersonation->impersonator_id === (string) auth()->id() ? auth()->user() : null))
+                            @if (! $impersonation->ended_at && \RefactorCircus\Roster\Atrium\ScreenAccess::allows('roster.users.impersonate', $impersonation->organization, (string) $impersonation->impersonator_id === (string) auth()->id() ? auth()->user() : null))
                                 <form method="POST" action="{{ route('atrium.roster.impersonations.stop', $impersonation->id) }}" class="flex justify-end">
                                     @csrf
                                     @method('DELETE')

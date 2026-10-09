@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Scim\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Scim\Exceptions\ScimException;
-use JayI\Roster\Domains\Scim\Models\ScimGroupModel;
-use JayI\Roster\Domains\Scim\Models\ScimUserModel;
-use JayI\Roster\Domains\Scim\Services\Bulk;
-use JayI\Roster\Domains\Scim\Services\Discovery;
-use JayI\Roster\Domains\Scim\Services\Scim;
-use JayI\Roster\Domains\Scim\Services\ScimGroups;
-use JayI\Roster\Domains\Scim\Services\ScimMapper;
-use JayI\Roster\Domains\Scim\Services\ScimUsers;
+use RefactorCircus\Roster\Domains\Scim\Exceptions\ScimException;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimGroupModel;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimUserModel;
+use RefactorCircus\Roster\Domains\Scim\Services\Bulk;
+use RefactorCircus\Roster\Domains\Scim\Services\Discovery;
+use RefactorCircus\Roster\Domains\Scim\Services\Scim;
+use RefactorCircus\Roster\Domains\Scim\Services\ScimGroups;
+use RefactorCircus\Roster\Domains\Scim\Services\ScimMapper;
+use RefactorCircus\Roster\Domains\Scim\Services\ScimUsers;
 use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
 /**

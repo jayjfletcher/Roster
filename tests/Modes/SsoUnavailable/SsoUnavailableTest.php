@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Sso\Exceptions\SsoUnavailableException;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Domains\Sso\Services\Sso;
+use RefactorCircus\Roster\Domains\Sso\Exceptions\SsoUnavailableException;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Services\Sso;
 
 it('registers no sign-in routes but still manages connections', function (): void {
     expect(Route::has('roster.sso.start'))->toBeFalse()

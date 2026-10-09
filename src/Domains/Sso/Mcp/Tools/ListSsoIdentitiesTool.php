@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Sso\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Sso\Mcp\Requests\ListSsoIdentitiesMcpRequest;
-use JayI\Roster\Mcp\Concerns\DescribesUser;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Sso\Mcp\Requests\ListSsoIdentitiesMcpRequest;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesUser;
 
 #[Description('List the identity-provider accounts linked to a user.')]
 final class ListSsoIdentitiesTool extends Tool

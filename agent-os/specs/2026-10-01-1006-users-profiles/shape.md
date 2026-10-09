@@ -9,7 +9,7 @@ Phase 1 MVP, feature 1. User CRUD, 1:1 profiles, and an active/suspended/deactiv
 - **Flexible user model (three modes)**, driven by `config('roster.users.model')`:
   1. Host model + `HasRoster` trait (default).
   2. Host model without the trait: the provider registers the `rosterProfile` relation dynamically via `resolveRelationUsing`.
-  3. Roster-owned `JayI\Roster\Models\User` plus an opt-in `roster-users-migration` publish tag for apps without a users table.
+  3. Roster-owned `RefactorCircus\Roster\Models\User` plus an opt-in `roster-users-migration` publish tag for apps without a users table.
 - **Profiles in `roster_profiles` (1:1)**, never columns on the host users table. The `user_id` column type comes from `roster.users.key_type` (`int|ulid|uuid`). Profiles are created lazily; a missing profile means active.
 - **Status: active / suspended / deactivated**, stored on the profile (`status`, `status_reason`, `status_changed_at`) so it works in every user mode. `roster.active` middleware blocks non-active users.
 - **Column mapping** (`roster.users.columns`) lets Create/Update work on host schemas that don't use `name/email/password`.

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Services;
+namespace RefactorCircus\Roster\Domains\Scim\Services;
 
-use JayI\Roster\Domains\Scim\Exceptions\ScimException;
+use RefactorCircus\Roster\Domains\Scim\Exceptions\ScimException;
 
 /**
  * Applies SCIM PATCH operations (RFC 7644 §3.5.2) to a resource's SCIM view.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Organization\Actions\SyncOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\SyncOrganizationAction;
 
 it('links, shows and unlinks external records on the settings tab', function (): void {
     $this->actingAs(user());

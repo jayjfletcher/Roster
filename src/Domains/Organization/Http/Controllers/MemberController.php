@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Organization\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Organization\Http\Requests\DestroyMemberRequest;
-use JayI\Roster\Domains\Organization\Http\Requests\IndexMembersRequest;
-use JayI\Roster\Domains\Organization\Http\Requests\StoreMemberRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\DestroyMemberRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\IndexMembersRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\StoreMemberRequest;
 
 final class MemberController
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster;
+namespace RefactorCircus\Roster;
 
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -16,18 +16,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
-use JayI\Foundation\Audit\AuditHooks;
-use JayI\Foundation\Audit\History;
-use JayI\Foundation\Packages\Package;
-use JayI\Foundation\Support\PackageServiceProvider;
-use JayI\Foundation\Support\Surface;
-use JayI\Roster\Atrium\ScreenAccess;
-use JayI\Roster\Console\Commands\PurgeDeletedCommand;
-use JayI\Roster\Domains\DomainServiceProvider;
-use JayI\Roster\Domains\Permission\Services\Authorizer;
-use JayI\Roster\Mcp\RosterServer;
-use JayI\Roster\Support\Audit;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Foundation\Audit\AuditHooks;
+use RefactorCircus\Foundation\Audit\History;
+use RefactorCircus\Foundation\Packages\Package;
+use RefactorCircus\Foundation\Support\PackageServiceProvider;
+use RefactorCircus\Foundation\Support\Surface;
+use RefactorCircus\Roster\Atrium\ScreenAccess;
+use RefactorCircus\Roster\Console\Commands\PurgeDeletedCommand;
+use RefactorCircus\Roster\Domains\DomainServiceProvider;
+use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
+use RefactorCircus\Roster\Mcp\RosterServer;
+use RefactorCircus\Roster\Support\Audit;
+use RefactorCircus\Roster\Support\Users;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -36,7 +36,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * under `Domains/` registers its own bindings, routes, listeners, commands
  * and morph aliases through its provider, listed in DomainServiceProvider.
  *
- * Roster describes itself to jayi/foundation in `definition()`, so the shared
+ * Roster describes itself to refactor-circus/foundation in `definition()`, so the shared
  * base classes find its config, routes and MCP server by namespace.
  */
 class RosterServiceProvider extends PackageServiceProvider
@@ -145,7 +145,7 @@ class RosterServiceProvider extends PackageServiceProvider
     }
 
     /**
-     * Teach the suite-wide audit log (jayi/keen) about Roster's models and
+     * Teach the suite-wide audit log (refactor-circus/keen) about Roster's models and
      * events, whether or not it is installed. Reading the whole log needs
      * Roster's global `roster.audit.view` unless the application defines
      * `viewAuditLog` itself; checked once the application has booted, so a

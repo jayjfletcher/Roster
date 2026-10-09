@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\User\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\User\Http\Requests\DestroyUserRequest;
-use JayI\Roster\Domains\User\Http\Requests\IndexUsersRequest;
-use JayI\Roster\Domains\User\Http\Requests\ShowUserRequest;
-use JayI\Roster\Domains\User\Http\Requests\StoreUserRequest;
-use JayI\Roster\Domains\User\Http\Requests\UpdateUserRequest;
+use RefactorCircus\Roster\Domains\User\Http\Requests\DestroyUserRequest;
+use RefactorCircus\Roster\Domains\User\Http\Requests\IndexUsersRequest;
+use RefactorCircus\Roster\Domains\User\Http\Requests\ShowUserRequest;
+use RefactorCircus\Roster\Domains\User\Http\Requests\StoreUserRequest;
+use RefactorCircus\Roster\Domains\User\Http\Requests\UpdateUserRequest;
 
 final class UserController
 {

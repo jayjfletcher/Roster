@@ -5,7 +5,7 @@ declare(strict_types=1);
 require_once __DIR__.'/fixtures.php';
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
 
 it('covers every roster API route', function (): void {
     $names = collect(Route::getRoutes()->getRoutesByName())
@@ -89,7 +89,7 @@ it('lets a team lead manage their team only', function (): void {
 });
 
 it('needs roster.audit.view for the shared history route', function (): void {
-    // Served by jayi/foundation, which answers 403 to guests rather than 401.
+    // Served by refactor-circus/foundation, which answers 403 to guests rather than 401.
     $this->getJson(route('roster.history.index'))->assertForbidden();
 
     $this->actingAs($viewer = user())->getJson(route('roster.history.index'))->assertForbidden();

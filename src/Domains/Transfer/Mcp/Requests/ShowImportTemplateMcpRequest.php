@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Transfer\Mcp\Requests;
 
-use JayI\Roster\Domains\Permission\Services\Authorizer;
-use JayI\Roster\Domains\Transfer\Actions\ShowImportTemplateAction;
-use JayI\Roster\Domains\Transfer\Enums\TransferType;
-use JayI\Roster\Mcp\Request;
 use Laravel\Mcp\Response;
+use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
+use RefactorCircus\Roster\Domains\Transfer\Actions\ShowImportTemplateAction;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferType;
+use RefactorCircus\Roster\Mcp\Request;
 
 /**
  * Templates hold no data, so any signed-in user may read them.

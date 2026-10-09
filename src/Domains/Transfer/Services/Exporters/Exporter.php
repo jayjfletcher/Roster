@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Services\Exporters;
+namespace RefactorCircus\Roster\Domains\Transfer\Services\Exporters;
 
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
 
 interface Exporter
 {

@@ -5,17 +5,17 @@ declare(strict_types=1);
 require_once __DIR__.'/Scim/helpers.php';
 
 use Illuminate\Support\Facades\DB;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
-use JayI\Roster\Domains\Organization\Actions\SyncOrganizationsAction;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Scim\Actions\CreateScimTokenAction;
-use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
-use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
-use JayI\Roster\Domains\Transfer\Actions\ConfirmImportAction;
-use JayI\Roster\Domains\Transfer\Actions\StartExportAction;
-use JayI\Roster\Domains\Transfer\Actions\StartImportAction;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\SwitchContextAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\SyncOrganizationsAction;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Scim\Actions\CreateScimTokenAction;
+use RefactorCircus\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use RefactorCircus\Roster\Domains\Team\Actions\CreateTeamAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\ConfirmImportAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\StartExportAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\StartImportAction;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
 use Workbench\App\Models\User;
 
 /*

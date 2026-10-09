@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Tests\Fixtures;
+namespace RefactorCircus\Roster\Tests\Fixtures;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 

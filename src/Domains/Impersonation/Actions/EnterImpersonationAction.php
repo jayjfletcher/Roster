@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation\Actions;
+namespace RefactorCircus\Roster\Domains\Impersonation\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Impersonation\Events\ImpersonationEnteredActionEvent;
-use JayI\Roster\Domains\Impersonation\Events\ImpersonationEnteringActionEvent;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Impersonation\Events\ImpersonationEnteredActionEvent;
+use RefactorCircus\Roster\Domains\Impersonation\Events\ImpersonationEnteringActionEvent;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Support\Users;
 
 final class EnterImpersonationAction
 {

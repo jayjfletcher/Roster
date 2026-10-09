@@ -4,7 +4,7 @@
 
 Phase 1 (users, orgs/teams, roles/permissions, surfaces) is complete. Specs are in `agent-os/specs/2026-10-01-*`. The first Phase 2 roadmap item is the audit log: record who changed users, roles and memberships, and offer an activity feed.
 
-Every Roster Action already dispatches a `*ingActionEvent` (implements `JayI\Roster\Contracts\ActionStartingEvent`) and a `*edActionEvent` (`ActionFinishedEvent`) around its work (`src/Events/Action/*`). The audit log hooks those events, so **no Action changes**. It adds read surfaces on HTTP, MCP and Atrium with the existing authorization model (`src/Access/Authorizer.php`, `Permissions`).
+Every Roster Action already dispatches a `*ingActionEvent` (implements `RefactorCircus\Roster\Contracts\ActionStartingEvent`) and a `*edActionEvent` (`ActionFinishedEvent`) around its work (`src/Events/Action/*`). The audit log hooks those events, so **no Action changes**. It adds read surfaces on HTTP, MCP and Atrium with the existing authorization model (`src/Access/Authorizer.php`, `Permissions`).
 
 ## Decisions (from shaping)
 
@@ -41,7 +41,7 @@ Every Roster Action already dispatches a `*ingActionEvent` (implements `JayI\Ros
     Roster::audit('invoice.paid')->on($invoice)->in($organization)->by($user)->with(['amount' => 100])->changes(['status' => ['open', 'paid']])->record();
     ```
 
-    (the facade `JayI\Roster\Facades\Roster` → the `Roster::audit()` builder `Audit\PendingAuditEntry`), or `RecordAuditEventAction`.
+    (the facade `RefactorCircus\Roster\Facades\Roster` → the `Roster::audit()` builder `Audit\PendingAuditEntry`), or `RecordAuditEventAction`.
   - The same redaction, surface/IP capture and hash chain apply.
   - Each entry carries `source`: `roster` (recorded from Roster's Action events) or `app` (recorded through the API).
     - API-recorded entries are **always** `app`, so callers can't forge Roster's own entries.

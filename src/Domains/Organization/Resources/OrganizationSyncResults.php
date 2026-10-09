@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Resources;
+namespace RefactorCircus\Roster\Domains\Organization\Resources;
 
-use JayI\Roster\Domains\Organization\Data\OrganizationSyncResult;
+use RefactorCircus\Roster\Domains\Organization\Data\OrganizationSyncResult;
 
 /**
  * A bulk sync's per-record results, in the order the records came:

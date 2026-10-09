@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once __DIR__.'/helpers.php';
 
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
 
 beforeEach(fn () => signInAsSuperAdmin());
 

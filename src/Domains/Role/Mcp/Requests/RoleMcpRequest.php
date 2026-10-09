@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Role\Mcp\Requests;
 
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Domains\Role\Resources\RoleResource;
-use JayI\Roster\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Role\Resources\RoleResource;
+use RefactorCircus\Roster\Mcp\Request;
 
 abstract class RoleMcpRequest extends Request
 {

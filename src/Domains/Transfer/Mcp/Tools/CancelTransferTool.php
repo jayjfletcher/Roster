@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Transfer\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Transfer\Mcp\Requests\CancelTransferMcpRequest;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Requests\CancelTransferMcpRequest;
 
 #[Description('Cancel an import or export that has not finished. An import awaiting confirmation is dropped with nothing applied.')]
 final class CancelTransferTool extends Tool

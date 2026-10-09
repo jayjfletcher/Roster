@@ -5,9 +5,9 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
-use JayI\Roster\Domains\Permission\Services\Authorizer;
-use JayI\Roster\Domains\User\Actions\UpdateUserAction;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
+use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
+use RefactorCircus\Roster\Domains\User\Actions\UpdateUserAction;
 
 beforeEach(function (): void {
     config()->set('roster.authorization', true);

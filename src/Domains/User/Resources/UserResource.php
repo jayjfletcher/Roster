@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Resources;
+namespace RefactorCircus\Roster\Domains\User\Resources;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Domains\User\Models\ProfileModel;
-use JayI\Roster\Roster;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Domains\User\Models\ProfileModel;
+use RefactorCircus\Roster\Roster;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * A user as every surface returns it: identity from the host model, profile

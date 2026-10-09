@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Actions;
+namespace RefactorCircus\Roster\Domains\Sso\Actions;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\Sso\Concerns\SsoConnectionRules;
-use JayI\Roster\Domains\Sso\Events\SsoConnectionUpdatedActionEvent;
-use JayI\Roster\Domains\Sso\Events\SsoConnectionUpdatingActionEvent;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Concerns\SsoConnectionRules;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoConnectionUpdatedActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoConnectionUpdatingActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
 
 final class UpdateSsoConnectionAction
 {

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Transfer\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Transfer\Mcp\Requests\ConfirmImportMcpRequest;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Requests\ConfirmImportMcpRequest;
 
 #[Description('Apply an import that is awaiting confirmation. Rows are applied as you, with your permissions checked again; errors are reported per row.')]
 final class ConfirmImportTool extends Tool

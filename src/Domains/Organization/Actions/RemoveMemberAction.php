@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Actions;
+namespace RefactorCircus\Roster\Domains\Organization\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Concerns\ManagesMemberships;
-use JayI\Roster\Domains\Organization\Events\MemberRemovedActionEvent;
-use JayI\Roster\Domains\Organization\Events\MemberRemovingActionEvent;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Organization\Concerns\ManagesMemberships;
+use RefactorCircus\Roster\Domains\Organization\Events\MemberRemovedActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Events\MemberRemovingActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 final class RemoveMemberAction
 {

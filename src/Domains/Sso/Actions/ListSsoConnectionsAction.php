@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Actions;
+namespace RefactorCircus\Roster\Domains\Sso\Actions;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use JayI\Roster\Domains\Sso\Events\SsoConnectionsListedActionEvent;
-use JayI\Roster\Domains\Sso\Events\SsoConnectionsListingActionEvent;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Support\Concerns\ResolvesScopes;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoConnectionsListedActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoConnectionsListingActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Support\Concerns\ResolvesScopes;
 
 final class ListSsoConnectionsAction
 {

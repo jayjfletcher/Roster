@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Tests;
+namespace RefactorCircus\Roster\Tests;
 
-use JayI\Roster\Domains\Transfer\Services\Transfers;
+use RefactorCircus\Roster\Domains\Transfer\Services\Transfers;
 
 /**
- * Roster as installed without the optional jayi/impex package.
+ * Roster as installed without the optional refactor-circus/impex package.
  */
 abstract class TransfersUnavailableTestCase extends TestCase
 {

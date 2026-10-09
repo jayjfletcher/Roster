@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use JayI\Foundation\Packages\PackageRegistry;
-use JayI\Roster\Mcp\RosterServer;
-use JayI\Roster\Mcp\Tools\ListRosterHistoryTool;
-use JayI\Roster\RosterServiceProvider;
+use RefactorCircus\Foundation\Packages\PackageRegistry;
+use RefactorCircus\Roster\Mcp\RosterServer;
+use RefactorCircus\Roster\Mcp\Tools\ListRosterHistoryTool;
+use RefactorCircus\Roster\RosterServiceProvider;
 
-it('registers Roster with jayi/foundation', function (): void {
+it('registers Roster with refactor-circus/foundation', function (): void {
     $package = app(PackageRegistry::class)->get('roster');
 
     expect($package->label)->toBe('Roster')
@@ -19,7 +19,7 @@ it('registers Roster with jayi/foundation', function (): void {
 it('answers the history route with 404 while no shared audit log is installed', function (): void {
     $this->getJson(route('roster.history.index'))
         ->assertNotFound()
-        ->assertJsonPath('message', 'No audit log is installed. Install jayi/keen to record history.');
+        ->assertJsonPath('message', 'No audit log is installed. Install refactor-circus/keen to record history.');
 });
 
 it('lists the history tool on the MCP server', function (): void {

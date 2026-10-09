@@ -2,22 +2,21 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission;
+namespace RefactorCircus\Roster\Domains\Permission;
 
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Model;
-use JayI\Foundation\Contracts\ActionFinishedEvent;
-use JayI\Foundation\Support\ServiceProvider;
-use JayI\Roster\Domains\Impersonation\Services\ImpersonationContext;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Permission\Console\Commands\SyncPermissionsCommand;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
-use JayI\Roster\Domains\Permission\Services\Authorizer;
-use JayI\Roster\Domains\Permission\Services\Permissions;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Roster;
+use RefactorCircus\Foundation\Contracts\ActionFinishedEvent;
+use RefactorCircus\Foundation\Support\ServiceProvider;
+use RefactorCircus\Roster\Domains\Impersonation\Services\ImpersonationContext;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Permission\Console\Commands\SyncPermissionsCommand;
+use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
+use RefactorCircus\Roster\Domains\Permission\Services\Permissions;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Roster;
 
 /**
  * Permissions, how they are checked, and Roster's place in Laravel's Gate.
@@ -34,10 +33,6 @@ class PermissionServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->keepMorphAliases([
-            'JayI\Roster\Models\Permission' => PermissionModel::class,
-        ]);
-
         $this->registerGate();
 
         $this->loadApiRoutesFrom(__DIR__.'/routes.php');

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Scim\Mcp\Requests;
 
-use JayI\Roster\Domains\Organization\Mcp\Requests\OrganizationMcpRequest;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Scim\Actions\ListScimTokensAction;
-use JayI\Roster\Domains\Scim\Resources\ScimTokenResource;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Organization\Mcp\Requests\OrganizationMcpRequest;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Scim\Actions\ListScimTokensAction;
+use RefactorCircus\Roster\Domains\Scim\Resources\ScimTokenResource;
 
 final class ListScimTokensMcpRequest extends OrganizationMcpRequest
 {

@@ -2,14 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso;
+namespace RefactorCircus\Roster\Domains\Sso;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
-use JayI\Foundation\Support\ServiceProvider;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
-use JayI\Roster\Domains\Sso\Services\Sso;
+use RefactorCircus\Foundation\Support\ServiceProvider;
+use RefactorCircus\Roster\Domains\Sso\Services\Sso;
 
 /**
  * Single sign-on connections (OIDC, SAML, Entra ID) and linked identities.
@@ -18,11 +16,6 @@ class SsoServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        $this->keepMorphAliases([
-            'JayI\Roster\Models\SsoConnection' => SsoConnectionModel::class,
-            'JayI\Roster\Models\SsoIdentity' => SsoIdentityModel::class,
-        ]);
-
         $this->loadApiRoutesFrom(__DIR__.'/routes.php');
 
         if (! $this->app->make(Sso::class)->available()) {

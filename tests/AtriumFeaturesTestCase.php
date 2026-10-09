@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Tests;
+namespace RefactorCircus\Roster\Tests;
 
 /**
  * Roster booted behind an Atrium feature, `roster.atrium.features`.

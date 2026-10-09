@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Http\Controllers;
+namespace RefactorCircus\Roster\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Organization\Http\Requests\PurgeOrganizationRequest;
-use JayI\Roster\Domains\Organization\Http\Requests\RestoreOrganizationRequest;
-use JayI\Roster\Domains\User\Http\Requests\PurgeUserRequest;
-use JayI\Roster\Domains\User\Http\Requests\RestoreUserRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\PurgeOrganizationRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\RestoreOrganizationRequest;
+use RefactorCircus\Roster\Domains\User\Http\Requests\PurgeUserRequest;
+use RefactorCircus\Roster\Domains\User\Http\Requests\RestoreUserRequest;
 
 /**
  * Restoring deleted users and organizations, and deleting them for good.

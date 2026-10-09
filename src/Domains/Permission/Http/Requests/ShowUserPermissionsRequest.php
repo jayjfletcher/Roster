@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Permission\Http\Requests;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Permission\Actions\ListUserPermissionsAction;
-use JayI\Roster\Domains\User\Http\Requests\UserRequest;
+use RefactorCircus\Roster\Domains\Permission\Actions\ListUserPermissionsAction;
+use RefactorCircus\Roster\Domains\User\Http\Requests\UserRequest;
 
 final class ShowUserPermissionsRequest extends UserRequest
 {

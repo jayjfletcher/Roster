@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Permission\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Permission\Actions\UpdatePermissionAction;
-use JayI\Roster\Domains\Permission\Resources\PermissionResource;
+use RefactorCircus\Roster\Domains\Permission\Actions\UpdatePermissionAction;
+use RefactorCircus\Roster\Domains\Permission\Resources\PermissionResource;
 
 final class UpdatePermissionRequest extends PermissionRequest
 {

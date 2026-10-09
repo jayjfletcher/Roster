@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Actions;
+namespace RefactorCircus\Roster\Domains\User\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Actions\PurgeOrganizationAction;
-use JayI\Roster\Domains\Organization\Models\MembershipModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\User\Events\UserDeletedActionEvent;
-use JayI\Roster\Domains\User\Events\UserDeletingActionEvent;
-use JayI\Roster\Domains\User\Models\ProfileModel;
+use RefactorCircus\Roster\Domains\Organization\Actions\PurgeOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Models\MembershipModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\User\Events\UserDeletedActionEvent;
+use RefactorCircus\Roster\Domains\User\Events\UserDeletingActionEvent;
+use RefactorCircus\Roster\Domains\User\Models\ProfileModel;
 
 final class DeleteUserAction
 {

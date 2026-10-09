@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Organization\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Organization\Actions\SyncOrganizationAction;
-use JayI\Roster\Domains\Organization\Data\OrganizationSyncResult;
-use JayI\Roster\Domains\Organization\Resources\OrganizationResource;
-use JayI\Roster\Http\Request;
+use RefactorCircus\Roster\Domains\Organization\Actions\SyncOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Data\OrganizationSyncResult;
+use RefactorCircus\Roster\Domains\Organization\Resources\OrganizationResource;
+use RefactorCircus\Roster\Http\Request;
 
 /**
  * Upsert one organization by its record in an external system, named in

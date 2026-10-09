@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Actions;
+namespace RefactorCircus\Roster\Domains\User\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\JoinOrganizationsByDomainAction;
-use JayI\Roster\Domains\User\Concerns\ProfileRules;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Domains\User\Events\UserCreatedActionEvent;
-use JayI\Roster\Domains\User\Events\UserCreatingActionEvent;
-use JayI\Roster\Domains\User\Models\ProfileModel;
-use JayI\Roster\Domains\User\Services\Approvals;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Organization\Actions\CreateOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\JoinOrganizationsByDomainAction;
+use RefactorCircus\Roster\Domains\User\Concerns\ProfileRules;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Domains\User\Events\UserCreatedActionEvent;
+use RefactorCircus\Roster\Domains\User\Events\UserCreatingActionEvent;
+use RefactorCircus\Roster\Domains\User\Models\ProfileModel;
+use RefactorCircus\Roster\Domains\User\Services\Approvals;
+use RefactorCircus\Roster\Support\Users;
 
 final class CreateUserAction
 {

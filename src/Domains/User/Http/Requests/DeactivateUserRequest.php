@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Http\Requests;
+namespace RefactorCircus\Roster\Domains\User\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\User\Actions\DeactivateUserAction;
-use JayI\Roster\Domains\User\Resources\UserResource;
+use RefactorCircus\Roster\Domains\User\Actions\DeactivateUserAction;
+use RefactorCircus\Roster\Domains\User\Resources\UserResource;
 
 final class DeactivateUserRequest extends UserRequest
 {

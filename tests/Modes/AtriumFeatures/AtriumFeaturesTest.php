@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use Illuminate\Http\Request;
-use JayI\Atrium\Domains\Navigation\Data\NavItem;
-use JayI\Atrium\Domains\Navigation\Services\NavigationRegistry;
-use JayI\Atrium\Domains\Plugins\Services\PluginRegistry;
-use JayI\Atrium\Facades\Atrium;
-use JayI\Roster\Atrium\RosterPlugin;
-use JayI\Roster\Tests\Fixtures\Features\OrphanFeature;
+use RefactorCircus\Atrium\Domains\Navigation\Data\NavItem;
+use RefactorCircus\Atrium\Domains\Navigation\Services\NavigationRegistry;
+use RefactorCircus\Atrium\Domains\Plugins\Services\PluginRegistry;
+use RefactorCircus\Atrium\Facades\Atrium;
+use RefactorCircus\Roster\Atrium\RosterPlugin;
+use RefactorCircus\Roster\Tests\Fixtures\Features\OrphanFeature;
 
 /**
  * @return array<int, string>

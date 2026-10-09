@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Permission\Mcp\Tools\CreatePermissionTool;
-use JayI\Roster\Domains\Permission\Mcp\Tools\DeletePermissionTool;
-use JayI\Roster\Domains\Permission\Mcp\Tools\ListPermissionsTool;
-use JayI\Roster\Domains\Permission\Mcp\Tools\ListUserPermissionsTool;
-use JayI\Roster\Domains\Permission\Mcp\Tools\UpdatePermissionTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\AssignRoleTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\CreateRoleTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\DeleteRoleTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\ListRoleAssignmentsTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\ListRolesTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\RevokeRoleTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\ShowRoleTool;
-use JayI\Roster\Domains\Role\Mcp\Tools\UpdateRoleTool;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Permission\Mcp\Tools\CreatePermissionTool;
+use RefactorCircus\Roster\Domains\Permission\Mcp\Tools\DeletePermissionTool;
+use RefactorCircus\Roster\Domains\Permission\Mcp\Tools\ListPermissionsTool;
+use RefactorCircus\Roster\Domains\Permission\Mcp\Tools\ListUserPermissionsTool;
+use RefactorCircus\Roster\Domains\Permission\Mcp\Tools\UpdatePermissionTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\AssignRoleTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\CreateRoleTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\DeleteRoleTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\ListRoleAssignmentsTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\ListRolesTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\RevokeRoleTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\ShowRoleTool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Tools\UpdateRoleTool;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
 
 it('manages permissions with parity to the http payload', function (): void {
     mcpTool(CreatePermissionTool::class, ['name' => 'invoices.edit'])->assertOk();

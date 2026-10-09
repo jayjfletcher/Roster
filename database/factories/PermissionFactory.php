@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Database\Factories;
+namespace RefactorCircus\Roster\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
 
 /**
  * @extends Factory<PermissionModel>

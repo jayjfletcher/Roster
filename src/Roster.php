@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster;
+namespace RefactorCircus\Roster;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use JayI\Keen\Domains\Audit\Data\PendingAuditEntry;
-use JayI\Keen\Facades\Keen;
-use JayI\Roster\Domains\Organization\Models\MembershipModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Permission\Services\Permissions;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Domains\Team\Models\TeamMemberModel;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Exceptions\AuditLogNotInstalledException;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Keen\Domains\Audit\Data\PendingAuditEntry;
+use RefactorCircus\Keen\Facades\Keen;
+use RefactorCircus\Roster\Domains\Organization\Models\MembershipModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Permission\Services\Permissions;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamMemberModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Exceptions\AuditLogNotInstalledException;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * Resolves a user's working context: the organization and team they have
@@ -82,9 +82,9 @@ class Roster
      * Start one of the app's own audit entries in the suite-wide audit log,
      * recorded as the signed-in user unless `by()` says otherwise.
      *
-     * @deprecated Use `Keen::record()` from jayi/keen, which this delegates to.
+     * @deprecated Use `Keen::record()` from refactor-circus/keen, which this delegates to.
      *
-     * @throws AuditLogNotInstalledException When jayi/keen is not installed.
+     * @throws AuditLogNotInstalledException When refactor-circus/keen is not installed.
      */
     public function audit(string $action): PendingAuditEntry
     {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use JayI\Atrium\Testing\AtriumStyles;
+use RefactorCircus\Atrium\Testing\AtriumStyles;
 
 /**
  * Roster ships no stylesheet: its views use Atrium's components and the

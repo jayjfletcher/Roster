@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Sso\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Sso\Http\Requests\DestroySsoConnectionRequest;
-use JayI\Roster\Domains\Sso\Http\Requests\DestroySsoIdentityRequest;
-use JayI\Roster\Domains\Sso\Http\Requests\IndexSsoConnectionsRequest;
-use JayI\Roster\Domains\Sso\Http\Requests\IndexUserSsoIdentitiesRequest;
-use JayI\Roster\Domains\Sso\Http\Requests\ShowSsoConnectionRequest;
-use JayI\Roster\Domains\Sso\Http\Requests\StoreSsoConnectionRequest;
-use JayI\Roster\Domains\Sso\Http\Requests\UpdateSsoConnectionRequest;
+use RefactorCircus\Roster\Domains\Sso\Http\Requests\DestroySsoConnectionRequest;
+use RefactorCircus\Roster\Domains\Sso\Http\Requests\DestroySsoIdentityRequest;
+use RefactorCircus\Roster\Domains\Sso\Http\Requests\IndexSsoConnectionsRequest;
+use RefactorCircus\Roster\Domains\Sso\Http\Requests\IndexUserSsoIdentitiesRequest;
+use RefactorCircus\Roster\Domains\Sso\Http\Requests\ShowSsoConnectionRequest;
+use RefactorCircus\Roster\Domains\Sso\Http\Requests\StoreSsoConnectionRequest;
+use RefactorCircus\Roster\Domains\Sso\Http\Requests\UpdateSsoConnectionRequest;
 
 final class SsoController
 {

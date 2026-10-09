@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Transfer\Mcp\Tools\CancelTransferTool;
-use JayI\Roster\Domains\Transfer\Mcp\Tools\ConfirmImportTool;
-use JayI\Roster\Domains\Transfer\Mcp\Tools\ListTransfersTool;
-use JayI\Roster\Domains\Transfer\Mcp\Tools\ShowTransferTool;
-use JayI\Roster\Domains\Transfer\Mcp\Tools\StartExportTool;
-use JayI\Roster\Domains\Transfer\Mcp\Tools\StartImportTool;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Tools\CancelTransferTool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Tools\ConfirmImportTool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Tools\ListTransfersTool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Tools\ShowTransferTool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Tools\StartExportTool;
+use RefactorCircus\Roster\Domains\Transfer\Mcp\Tools\StartImportTool;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
 
 beforeEach(function (): void {
     $this->actingAs(user());

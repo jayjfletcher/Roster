@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains;
+namespace RefactorCircus\Roster\Domains;
 
 use Illuminate\Support\ServiceProvider;
-use JayI\Roster\Domains\Impersonation\ImpersonationServiceProvider;
-use JayI\Roster\Domains\Invitation\InvitationServiceProvider;
-use JayI\Roster\Domains\Organization\OrganizationServiceProvider;
-use JayI\Roster\Domains\Permission\PermissionServiceProvider;
-use JayI\Roster\Domains\Role\RoleServiceProvider;
-use JayI\Roster\Domains\Scim\ScimServiceProvider;
-use JayI\Roster\Domains\Sso\SsoServiceProvider;
-use JayI\Roster\Domains\Team\TeamServiceProvider;
-use JayI\Roster\Domains\Transfer\TransferServiceProvider;
-use JayI\Roster\Domains\User\UserServiceProvider;
+use RefactorCircus\Roster\Domains\Impersonation\ImpersonationServiceProvider;
+use RefactorCircus\Roster\Domains\Invitation\InvitationServiceProvider;
+use RefactorCircus\Roster\Domains\Organization\OrganizationServiceProvider;
+use RefactorCircus\Roster\Domains\Permission\PermissionServiceProvider;
+use RefactorCircus\Roster\Domains\Role\RoleServiceProvider;
+use RefactorCircus\Roster\Domains\Scim\ScimServiceProvider;
+use RefactorCircus\Roster\Domains\Sso\SsoServiceProvider;
+use RefactorCircus\Roster\Domains\Team\TeamServiceProvider;
+use RefactorCircus\Roster\Domains\Transfer\TransferServiceProvider;
+use RefactorCircus\Roster\Domains\User\UserServiceProvider;
 
 class DomainServiceProvider extends ServiceProvider
 {

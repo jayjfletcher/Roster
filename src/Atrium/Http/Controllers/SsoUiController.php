@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Atrium\Http\Controllers;
+namespace RefactorCircus\Roster\Atrium\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use JayI\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Sso\Actions\CreateSsoConnectionAction;
-use JayI\Roster\Domains\Sso\Actions\DeleteSsoConnectionAction;
-use JayI\Roster\Domains\Sso\Actions\ShowSsoConnectionAction;
-use JayI\Roster\Domains\Sso\Actions\UnlinkSsoIdentityAction;
-use JayI\Roster\Domains\Sso\Actions\UpdateSsoConnectionAction;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
+use RefactorCircus\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Sso\Actions\CreateSsoConnectionAction;
+use RefactorCircus\Roster\Domains\Sso\Actions\DeleteSsoConnectionAction;
+use RefactorCircus\Roster\Domains\Sso\Actions\ShowSsoConnectionAction;
+use RefactorCircus\Roster\Domains\Sso\Actions\UnlinkSsoIdentityAction;
+use RefactorCircus\Roster\Domains\Sso\Actions\UpdateSsoConnectionAction;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoIdentityModel;
 
 /**
  * Atrium: an organization's SSO connections, and unlinking identities.

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Organization\Http\Requests;
 
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Organization\Actions\DeleteOrganizationAction;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Organization\Actions\DeleteOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 final class DestroyOrganizationRequest extends OrganizationRequest
 {

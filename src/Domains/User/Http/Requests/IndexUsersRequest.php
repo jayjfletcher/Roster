@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Http\Requests;
+namespace RefactorCircus\Roster\Domains\User\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\User\Actions\ListUsersAction;
-use JayI\Roster\Domains\User\Resources\UserResource;
-use JayI\Roster\Http\Request;
+use RefactorCircus\Roster\Domains\User\Actions\ListUsersAction;
+use RefactorCircus\Roster\Domains\User\Resources\UserResource;
+use RefactorCircus\Roster\Http\Request;
 
 final class IndexUsersRequest extends Request
 {

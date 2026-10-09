@@ -1,5 +1,5 @@
-@use(JayI\Roster\Domains\Transfer\Enums\TransferStatus)
-@inject('directory', 'JayI\Roster\Support\Users')
+@use(RefactorCircus\Roster\Domains\Transfer\Enums\TransferStatus)
+@inject('directory', 'RefactorCircus\Roster\Support\Users')
 
 <x-atrium::layout :title="$transfer->type->label()">
     <x-atrium::page-header :title="$transfer->type->label()" :description="$transfer->organization?->name">

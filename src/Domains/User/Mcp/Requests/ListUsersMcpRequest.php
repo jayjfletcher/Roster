@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\User\Mcp\Requests;
 
-use JayI\Roster\Domains\User\Actions\ListUsersAction;
-use JayI\Roster\Domains\User\Resources\UserResource;
-use JayI\Roster\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\User\Actions\ListUsersAction;
+use RefactorCircus\Roster\Domains\User\Resources\UserResource;
+use RefactorCircus\Roster\Mcp\Request;
 
 final class ListUsersMcpRequest extends Request
 {

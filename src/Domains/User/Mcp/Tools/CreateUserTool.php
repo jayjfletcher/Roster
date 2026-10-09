@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\User\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\User\Mcp\Requests\CreateUserMcpRequest;
-use JayI\Roster\Mcp\Concerns\DescribesProfilePayload;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\User\Mcp\Requests\CreateUserMcpRequest;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesProfilePayload;
 
 #[Description('Create a user and their profile. Without a password a random one is set; the user must reset it to sign in.')]
 final class CreateUserTool extends Tool

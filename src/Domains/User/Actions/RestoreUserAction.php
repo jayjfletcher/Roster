@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Actions;
+namespace RefactorCircus\Roster\Domains\User\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\User\Events\UserRestoredActionEvent;
-use JayI\Roster\Domains\User\Events\UserRestoringActionEvent;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\User\Events\UserRestoredActionEvent;
+use RefactorCircus\Roster\Domains\User\Events\UserRestoringActionEvent;
+use RefactorCircus\Roster\Support\Users;
 
 final class RestoreUserAction
 {

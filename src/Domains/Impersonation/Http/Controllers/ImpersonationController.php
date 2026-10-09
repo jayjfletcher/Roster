@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Impersonation\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Impersonation\Http\Requests\IndexImpersonationsRequest;
-use JayI\Roster\Domains\Impersonation\Http\Requests\StartImpersonationRequest;
-use JayI\Roster\Domains\Impersonation\Http\Requests\StopImpersonationRequest;
+use RefactorCircus\Roster\Domains\Impersonation\Http\Requests\IndexImpersonationsRequest;
+use RefactorCircus\Roster\Domains\Impersonation\Http\Requests\StartImpersonationRequest;
+use RefactorCircus\Roster\Domains\Impersonation\Http\Requests\StopImpersonationRequest;
 
 final class ImpersonationController
 {

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Actions;
+namespace RefactorCircus\Roster\Domains\User\Actions;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Domains\User\Events\UsersListedActionEvent;
-use JayI\Roster\Domains\User\Events\UsersListingActionEvent;
-use JayI\Roster\Domains\User\Models\ProfileModel;
-use JayI\Roster\Roster;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Domains\User\Events\UsersListedActionEvent;
+use RefactorCircus\Roster\Domains\User\Events\UsersListingActionEvent;
+use RefactorCircus\Roster\Domains\User\Models\ProfileModel;
+use RefactorCircus\Roster\Roster;
+use RefactorCircus\Roster\Support\Users;
 
 final class ListUsersAction
 {

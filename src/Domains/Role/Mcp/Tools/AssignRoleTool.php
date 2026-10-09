@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Role\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Role\Mcp\Requests\AssignRoleMcpRequest;
-use JayI\Roster\Mcp\Concerns\DescribesUser;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Requests\AssignRoleMcpRequest;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesUser;
 
 #[Description('Give a user a role: a global role with no organization; an organization role with organization (the user must be a member); a team role with organization and team (the user must sit on it). You can only assign roles whose permissions you hold.')]
 final class AssignRoleTool extends Tool

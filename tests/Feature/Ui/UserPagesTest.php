@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Atrium\RosterPlugin;
-use JayI\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Atrium\RosterPlugin;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
 use Workbench\App\Models\User;
 
 beforeEach(function (): void {

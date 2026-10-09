@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Tests\Fixtures\Billing;
+namespace RefactorCircus\Roster\Tests\Fixtures\Billing;
 
 use Illuminate\Database\Eloquent\Model;
-use JayI\Foundation\Contracts\ActionFinishedEvent;
+use RefactorCircus\Foundation\Contracts\ActionFinishedEvent;
 
 /**
  * Another package's finished event, about a user Roster also knows.

@@ -5,8 +5,8 @@ declare(strict_types=1);
 require_once __DIR__.'/fixtures.php';
 
 use Illuminate\Http\Request;
-use JayI\Roster\Atrium\RosterPlugin;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Atrium\RosterPlugin;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
 
 /**
  * Atrium screens: [method, name, parameters].

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Scim\Mcp\Requests;
 
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Scim\Actions\RevokeScimTokenAction;
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
-use JayI\Roster\Domains\Scim\Resources\ScimTokenResource;
-use JayI\Roster\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Scim\Actions\RevokeScimTokenAction;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Roster\Domains\Scim\Resources\ScimTokenResource;
+use RefactorCircus\Roster\Mcp\Request;
 
 final class RevokeScimTokenMcpRequest extends Request
 {

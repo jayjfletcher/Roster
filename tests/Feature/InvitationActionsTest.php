@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Invitation\Actions\AcceptInvitationAction;
-use JayI\Roster\Domains\Invitation\Actions\CreateInvitationAction;
-use JayI\Roster\Domains\Invitation\Actions\DeclineInvitationAction;
-use JayI\Roster\Domains\Invitation\Actions\ListInvitationsAction;
-use JayI\Roster\Domains\Invitation\Actions\RevokeInvitationAction;
-use JayI\Roster\Domains\Invitation\Enums\InvitationStatus;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
-use JayI\Roster\Domains\Invitation\Notifications\InvitationNotification;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Organization\Enums\MembershipSource;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
-use JayI\Roster\Roster;
+use RefactorCircus\Roster\Domains\Invitation\Actions\AcceptInvitationAction;
+use RefactorCircus\Roster\Domains\Invitation\Actions\CreateInvitationAction;
+use RefactorCircus\Roster\Domains\Invitation\Actions\DeclineInvitationAction;
+use RefactorCircus\Roster\Domains\Invitation\Actions\ListInvitationsAction;
+use RefactorCircus\Roster\Domains\Invitation\Actions\RevokeInvitationAction;
+use RefactorCircus\Roster\Domains\Invitation\Enums\InvitationStatus;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Invitation\Notifications\InvitationNotification;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Enums\MembershipSource;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Team\Actions\CreateTeamAction;
+use RefactorCircus\Roster\Roster;
 
 beforeEach(function (): void {
     Notification::fake();

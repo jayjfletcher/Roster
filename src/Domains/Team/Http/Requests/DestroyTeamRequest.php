@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Team\Http\Requests;
 
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Team\Actions\DeleteTeamAction;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Team\Actions\DeleteTeamAction;
 
 final class DestroyTeamRequest extends TeamRequest
 {

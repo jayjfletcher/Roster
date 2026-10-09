@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Tests;
+namespace RefactorCircus\Roster\Tests;
 
-use JayI\Cortex\CortexServiceProvider;
 use Laravel\Ai\AiServiceProvider;
+use RefactorCircus\Cortex\CortexServiceProvider;
 
 /**
  * Roster with Cortex installed and loaded, authorization on.
@@ -33,6 +33,6 @@ abstract class CortexTestCase extends AuthorizationTestCase
 
     protected function migrationPaths(): array
     {
-        return [...parent::migrationPaths(), dirname(__DIR__).'/vendor/jayi/cortex/database/migrations'];
+        return [...parent::migrationPaths(), dirname(__DIR__).'/vendor/refactor-circus/cortex/database/migrations'];
     }
 }

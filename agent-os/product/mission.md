@@ -8,7 +8,7 @@ Laravel apps re-implement user management every time: users and profiles, organi
 
 - Laravel developers building multi-tenant SaaS apps that need users, teams, and roles out of the box.
 - Teams building internal/admin Laravel tools that need user administration quickly.
-- The jayi package ecosystem (Atrium, Impex, Cortex) as a shared user-management layer.
+- The Refactor Circus package ecosystem (Atrium, Impex, Cortex) as a shared user-management layer.
 
 ## Solution
 

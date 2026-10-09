@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
 
 it('creates, edits and deletes a connection from the organization page', function (): void {
     $this->actingAs(user());

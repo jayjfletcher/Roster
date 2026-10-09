@@ -1,4 +1,4 @@
-@php($resource = (new \JayI\Roster\Domains\Sso\Resources\SsoConnectionResource($connection))->resolve())
+@php($resource = (new \RefactorCircus\Roster\Domains\Sso\Resources\SsoConnectionResource($connection))->resolve())
 
 <x-atrium::layout :title="$connection->name">
     <x-atrium::page-header :title="$connection->name" :description="__('roster::roster.protocol_'.$connection->protocol).' · '.$connection->organization?->name">

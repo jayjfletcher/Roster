@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Models;
+namespace RefactorCircus\Roster\Domains\Organization\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
-use JayI\Roster\Database\Factories\OrganizationLinkFactory;
+use RefactorCircus\Roster\Database\Factories\OrganizationLinkFactory;
 
 /**
  * An organization's record in an external system: which system (`source`),

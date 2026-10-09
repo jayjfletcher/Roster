@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Actions;
+namespace RefactorCircus\Roster\Domains\Transfer\Actions;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\Transfer\Enums\TransferStatus;
-use JayI\Roster\Domains\Transfer\Enums\TransferType;
-use JayI\Roster\Domains\Transfer\Events\TransfersListedActionEvent;
-use JayI\Roster\Domains\Transfer\Events\TransfersListingActionEvent;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Services\Transfers;
-use JayI\Roster\Support\Concerns\ResolvesScopes;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferStatus;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferType;
+use RefactorCircus\Roster\Domains\Transfer\Events\TransfersListedActionEvent;
+use RefactorCircus\Roster\Domains\Transfer\Events\TransfersListingActionEvent;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Services\Transfers;
+use RefactorCircus\Roster\Support\Concerns\ResolvesScopes;
 
 final class ListTransfersAction
 {

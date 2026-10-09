@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Actions;
+namespace RefactorCircus\Roster\Domains\Organization\Actions;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Events\OrganizationUnlinkedActionEvent;
-use JayI\Roster\Domains\Organization\Events\OrganizationUnlinkingActionEvent;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Organization\Events\OrganizationUnlinkedActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Events\OrganizationUnlinkingActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 final class UnlinkOrganizationAction
 {

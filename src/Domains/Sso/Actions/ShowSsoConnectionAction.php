@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Actions;
+namespace RefactorCircus\Roster\Domains\Sso\Actions;
 
-use JayI\Roster\Domains\Sso\Events\SsoConnectionShowingActionEvent;
-use JayI\Roster\Domains\Sso\Events\SsoConnectionShownActionEvent;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoConnectionShowingActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoConnectionShownActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
 
 final class ShowSsoConnectionAction
 {

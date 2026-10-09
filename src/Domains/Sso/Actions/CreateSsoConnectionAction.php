@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Actions;
+namespace RefactorCircus\Roster\Domains\Sso\Actions;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Sso\Concerns\SsoConnectionRules;
-use JayI\Roster\Domains\Sso\Events\SsoConnectionCreatedActionEvent;
-use JayI\Roster\Domains\Sso\Events\SsoConnectionCreatingActionEvent;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Support\Slugs;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Sso\Concerns\SsoConnectionRules;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoConnectionCreatedActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoConnectionCreatingActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Support\Slugs;
 
 final class CreateSsoConnectionAction
 {

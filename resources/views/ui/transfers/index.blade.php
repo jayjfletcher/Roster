@@ -1,4 +1,4 @@
-@inject('directory', 'JayI\Roster\Support\Users')
+@inject('directory', 'RefactorCircus\Roster\Support\Users')
 
 <x-atrium::layout :title="__('roster::roster.transfers')">
     <x-atrium::page-header :title="__('roster::roster.transfers')" :description="$organization?->name" />
@@ -9,11 +9,11 @@
 
         @unless ($available)
             <x-atrium::alert variant="warning" :title="__('roster::roster.transfers_unavailable')">
-                <code>composer require jayi/impex</code> · {{ __('roster::roster.transfers_unavailable_hint') }}
+                <code>composer require refactor-circus/impex</code> · {{ __('roster::roster.transfers_unavailable_hint') }}
             </x-atrium::alert>
         @else
             {{-- Only the types the viewer may start here: each type's permission, in this organization when it needs one. --}}
-            @php($allowed = fn (array $types) => collect($types)->filter(fn ($type) => \JayI\Roster\Atrium\ScreenAccess::allows($type->permission(), \JayI\Roster\Domains\Transfer\Services\Transfers::scope($type, $organization)))->values())
+            @php($allowed = fn (array $types) => collect($types)->filter(fn ($type) => \RefactorCircus\Roster\Atrium\ScreenAccess::allows($type->permission(), \RefactorCircus\Roster\Domains\Transfer\Services\Transfers::scope($type, $organization)))->values())
             @php($imports = $allowed($imports))
             @php($exports = $allowed($exports))
 

@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Actions;
+namespace RefactorCircus\Roster\Domains\Organization\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Concerns\ManagesMemberships;
-use JayI\Roster\Domains\Organization\Concerns\OrganizationRules;
-use JayI\Roster\Domains\Organization\Enums\MembershipSource;
-use JayI\Roster\Domains\Organization\Events\OrganizationCreatedActionEvent;
-use JayI\Roster\Domains\Organization\Events\OrganizationCreatingActionEvent;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Support\Slugs;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Organization\Concerns\ManagesMemberships;
+use RefactorCircus\Roster\Domains\Organization\Concerns\OrganizationRules;
+use RefactorCircus\Roster\Domains\Organization\Enums\MembershipSource;
+use RefactorCircus\Roster\Domains\Organization\Events\OrganizationCreatedActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Events\OrganizationCreatingActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Support\Slugs;
+use RefactorCircus\Roster\Support\Users;
 
 final class CreateOrganizationAction
 {

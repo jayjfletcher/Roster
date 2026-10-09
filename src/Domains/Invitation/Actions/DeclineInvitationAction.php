@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Actions;
+namespace RefactorCircus\Roster\Domains\Invitation\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use JayI\Roster\Domains\Invitation\Concerns\ResolvesInvitations;
-use JayI\Roster\Domains\Invitation\Events\InvitationDeclinedActionEvent;
-use JayI\Roster\Domains\Invitation\Events\InvitationDecliningActionEvent;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Invitation\Concerns\ResolvesInvitations;
+use RefactorCircus\Roster\Domains\Invitation\Events\InvitationDeclinedActionEvent;
+use RefactorCircus\Roster\Domains\Invitation\Events\InvitationDecliningActionEvent;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
 
 final class DeclineInvitationAction
 {

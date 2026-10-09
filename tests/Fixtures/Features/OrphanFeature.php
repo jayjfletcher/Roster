@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Tests\Fixtures\Features;
+namespace RefactorCircus\Roster\Tests\Fixtures\Features;
 
-use JayI\Missing\LayeredFeature;
+use RefactorCircus\Missing\LayeredFeature;
 
 /**
  * A feature whose parent class isn't installed, as RosterSupportFeature is
- * without jayi/pennantplus. Loading it throws.
+ * without refactor-circus/pennantplus. Loading it throws.
  */
 class OrphanFeature extends LayeredFeature {}

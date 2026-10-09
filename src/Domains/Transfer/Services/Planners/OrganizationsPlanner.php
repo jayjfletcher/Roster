@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Services\Planners;
+namespace RefactorCircus\Roster\Domains\Transfer\Services\Planners;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Actions\SyncOrganizationAction;
-use JayI\Roster\Domains\Organization\Data\OrganizationSyncResult;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Organization\Actions\SyncOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Data\OrganizationSyncResult;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * Organizations from an external system:

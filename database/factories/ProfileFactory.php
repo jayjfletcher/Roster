@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Database\Factories;
+namespace RefactorCircus\Roster\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Domains\User\Models\ProfileModel;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Domains\User\Models\ProfileModel;
 
 /**
  * @extends Factory<ProfileModel>

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Sso\Http\Requests;
 
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Sso\Actions\DeleteSsoConnectionAction;
+use RefactorCircus\Roster\Domains\Sso\Actions\DeleteSsoConnectionAction;
 
 final class DestroySsoConnectionRequest extends SsoConnectionRequest
 {

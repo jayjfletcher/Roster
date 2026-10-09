@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Actions;
+namespace RefactorCircus\Roster\Domains\User\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Impersonation\Services\ImpersonationContext;
-use JayI\Roster\Domains\User\Events\UserUpdatedActionEvent;
-use JayI\Roster\Domains\User\Events\UserUpdatingActionEvent;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Impersonation\Services\ImpersonationContext;
+use RefactorCircus\Roster\Domains\User\Events\UserUpdatedActionEvent;
+use RefactorCircus\Roster\Domains\User\Events\UserUpdatingActionEvent;
+use RefactorCircus\Roster\Support\Users;
 
 final class UpdateUserAction
 {

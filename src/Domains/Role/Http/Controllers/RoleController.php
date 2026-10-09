@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Role\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Role\Http\Requests\DestroyRoleRequest;
-use JayI\Roster\Domains\Role\Http\Requests\IndexRolesRequest;
-use JayI\Roster\Domains\Role\Http\Requests\ShowRoleRequest;
-use JayI\Roster\Domains\Role\Http\Requests\StoreRoleRequest;
-use JayI\Roster\Domains\Role\Http\Requests\UpdateRoleRequest;
+use RefactorCircus\Roster\Domains\Role\Http\Requests\DestroyRoleRequest;
+use RefactorCircus\Roster\Domains\Role\Http\Requests\IndexRolesRequest;
+use RefactorCircus\Roster\Domains\Role\Http\Requests\ShowRoleRequest;
+use RefactorCircus\Roster\Domains\Role\Http\Requests\StoreRoleRequest;
+use RefactorCircus\Roster\Domains\Role\Http\Requests\UpdateRoleRequest;
 
 final class RoleController
 {

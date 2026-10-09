@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Actions;
+namespace RefactorCircus\Roster\Domains\Sso\Actions;
 
 use Illuminate\Support\Facades\DB;
-use JayI\Roster\Domains\Sso\Events\SsoIdentityUnlinkedActionEvent;
-use JayI\Roster\Domains\Sso\Events\SsoIdentityUnlinkingActionEvent;
-use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoIdentityUnlinkedActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoIdentityUnlinkingActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoIdentityModel;
 
 final class UnlinkSsoIdentityAction
 {

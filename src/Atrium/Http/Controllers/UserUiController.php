@@ -2,39 +2,39 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Atrium\Http\Controllers;
+namespace RefactorCircus\Roster\Atrium\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use JayI\Cortex\Domains\RedirectDomain\Actions\ListRedirectDomainsAction;
-use JayI\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
-use JayI\Roster\Atrium\RedirectDomains;
-use JayI\Roster\Domains\Organization\Actions\JoinOrganizationsByDomainAction;
-use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
-use JayI\Roster\Domains\Organization\Models\MembershipModel;
-use JayI\Roster\Domains\Permission\Actions\ListUserPermissionsAction;
-use JayI\Roster\Domains\Role\Actions\ListRoleAssignmentsAction;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Domains\Sso\Actions\ListSsoIdentitiesAction;
-use JayI\Roster\Domains\User\Actions\ApproveUserAction;
-use JayI\Roster\Domains\User\Actions\CreateUserAction;
-use JayI\Roster\Domains\User\Actions\DeactivateUserAction;
-use JayI\Roster\Domains\User\Actions\DeleteUserAction;
-use JayI\Roster\Domains\User\Actions\ListUsersAction;
-use JayI\Roster\Domains\User\Actions\PurgeUserAction;
-use JayI\Roster\Domains\User\Actions\ReactivateUserAction;
-use JayI\Roster\Domains\User\Actions\RejectUserAction;
-use JayI\Roster\Domains\User\Actions\RestoreUserAction;
-use JayI\Roster\Domains\User\Actions\ShowUserAction;
-use JayI\Roster\Domains\User\Actions\SuspendUserAction;
-use JayI\Roster\Domains\User\Actions\UpdateProfileAction;
-use JayI\Roster\Domains\User\Actions\UpdateUserAction;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Roster;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Cortex\Domains\RedirectDomain\Actions\ListRedirectDomainsAction;
+use RefactorCircus\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
+use RefactorCircus\Roster\Atrium\RedirectDomains;
+use RefactorCircus\Roster\Domains\Organization\Actions\JoinOrganizationsByDomainAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\SwitchContextAction;
+use RefactorCircus\Roster\Domains\Organization\Models\MembershipModel;
+use RefactorCircus\Roster\Domains\Permission\Actions\ListUserPermissionsAction;
+use RefactorCircus\Roster\Domains\Role\Actions\ListRoleAssignmentsAction;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Sso\Actions\ListSsoIdentitiesAction;
+use RefactorCircus\Roster\Domains\User\Actions\ApproveUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\CreateUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\DeactivateUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\DeleteUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\ListUsersAction;
+use RefactorCircus\Roster\Domains\User\Actions\PurgeUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\ReactivateUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\RejectUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\RestoreUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\ShowUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\SuspendUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\UpdateProfileAction;
+use RefactorCircus\Roster\Domains\User\Actions\UpdateUserAction;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Roster;
+use RefactorCircus\Roster\Support\Users;
 
 /**
  * The Atrium screens for users. Every screen validates with its Action's own

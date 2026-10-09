@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Console\Commands;
+namespace RefactorCircus\Roster\Domains\Role\Console\Commands;
 
 use Illuminate\Console\Command;
-use JayI\Roster\Domains\Role\Enums\RoleScope;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Domains\Role\Support\BuiltInRoles;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Role\Enums\RoleScope;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Role\Support\BuiltInRoles;
+use RefactorCircus\Roster\Support\Users;
 
 final class GrantSuperAdminCommand extends Command
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Actions;
+namespace RefactorCircus\Roster\Domains\Organization\Actions;
 
-use JayI\Roster\Domains\Organization\Events\OrganizationShowingActionEvent;
-use JayI\Roster\Domains\Organization\Events\OrganizationShownActionEvent;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Organization\Events\OrganizationShowingActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Events\OrganizationShownActionEvent;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 final class ShowOrganizationAction
 {

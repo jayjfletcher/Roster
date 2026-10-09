@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Console\Commands;
+namespace RefactorCircus\Roster\Domains\Permission\Console\Commands;
 
 use Illuminate\Console\Command;
-use JayI\Roster\Domains\Role\Support\BuiltInRoles;
+use RefactorCircus\Roster\Domains\Role\Support\BuiltInRoles;
 
 final class SyncPermissionsCommand extends Command
 {

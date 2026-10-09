@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Invitation\Http\Controllers\InvitationController;
+use RefactorCircus\Roster\Domains\Invitation\Http\Controllers\InvitationController;
 
 Route::get('organizations/{organization}/invitations', [InvitationController::class, 'index'])->name('organizations.invitations.index');
 Route::post('organizations/{organization}/invitations', [InvitationController::class, 'store'])->name('organizations.invitations.store');

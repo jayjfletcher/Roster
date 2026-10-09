@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Organization\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use JayI\Roster\Domains\Organization\Http\Requests\DestroyOrganizationRequest;
-use JayI\Roster\Domains\Organization\Http\Requests\IndexOrganizationsRequest;
-use JayI\Roster\Domains\Organization\Http\Requests\ShowOrganizationRequest;
-use JayI\Roster\Domains\Organization\Http\Requests\StoreOrganizationRequest;
-use JayI\Roster\Domains\Organization\Http\Requests\TransferOwnershipRequest;
-use JayI\Roster\Domains\Organization\Http\Requests\UpdateOrganizationRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\DestroyOrganizationRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\IndexOrganizationsRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\ShowOrganizationRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\StoreOrganizationRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\TransferOwnershipRequest;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\UpdateOrganizationRequest;
 
 final class OrganizationController
 {

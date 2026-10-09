@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Organization\Mcp\Requests;
 
-use JayI\Roster\Domains\Organization\Actions\SyncOrganizationsAction;
-use JayI\Roster\Domains\Organization\Resources\OrganizationSyncResults;
-use JayI\Roster\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Organization\Actions\SyncOrganizationsAction;
+use RefactorCircus\Roster\Domains\Organization\Resources\OrganizationSyncResults;
+use RefactorCircus\Roster\Mcp\Request;
 
 final class SyncOrganizationsMcpRequest extends Request
 {

@@ -2,7 +2,7 @@
     <x-atrium::page-header :title="$organization->name" :description="$organization->slug">
         <x-slot:actions>
             {{-- Members and teams are what an organization imports and exports. --}}
-            @if (in_array($tab, ['members', 'teams'], true) && \JayI\Roster\Atrium\ScreenAccess::allows('roster.members.view', $organization))
+            @if (in_array($tab, ['members', 'teams'], true) && \RefactorCircus\Roster\Atrium\ScreenAccess::allows('roster.members.view', $organization))
                 <x-atrium::icon-button icon="arrows-up-down" :label="__('roster::roster.import_export')" :href="route('atrium.roster.transfers.index', ['organization' => $organization->slug])" data-testid="organization-transfers" />
             @endif
         </x-slot:actions>
@@ -80,7 +80,7 @@
                                         @include('roster::ui.users.partials.activate', ['user' => $member, 'status' => $directory->status($member)])
                                     @endif
                                     @if ($member && ! $organization->isOwnedBy($member))
-                                        @if (! $organization->personal && \JayI\Roster\Atrium\ScreenAccess::allows('roster.organizations.transfer', $organization))
+                                        @if (! $organization->personal && \RefactorCircus\Roster\Atrium\ScreenAccess::allows('roster.organizations.transfer', $organization))
                                             <form method="POST" action="{{ route('atrium.roster.organizations.transfer', $organization) }}">
                                                 @csrf
                                                 <input type="hidden" name="user" value="{{ $member->getRouteKey() }}">
@@ -180,7 +180,7 @@
                             <x-atrium::table.cell>@include('roster::ui.partials.status-dot', ['status' => $invitation->status(), 'testid' => 'invitation-status', 'variant' => null, 'label' => null])</x-atrium::table.cell>
                             <x-atrium::table.cell>{{ $invitation->expires_at->diffForHumans() }}</x-atrium::table.cell>
                             <x-atrium::table.cell>
-                                @if ($invitation->status() === $pending && \JayI\Roster\Atrium\ScreenAccess::allows('roster.invitations.manage', $organization))
+                                @if ($invitation->status() === $pending && \RefactorCircus\Roster\Atrium\ScreenAccess::allows('roster.invitations.manage', $organization))
                                     <form method="POST" action="{{ route('atrium.roster.invitations.revoke', [$organization, $invitation->id]) }}" class="flex justify-end">
                                         @csrf
                                         @method('DELETE')
@@ -365,7 +365,7 @@
                         name="provisioned_status"
                         :label="__('roster::roster.provisioned_status')"
                         :hint="__('roster::roster.provisioned_status_hint')"
-                        :options="[\JayI\Roster\Domains\User\Enums\UserStatus::Active->value => \JayI\Roster\Domains\User\Enums\UserStatus::Active->label(), \JayI\Roster\Domains\User\Enums\UserStatus::Pending->value => \JayI\Roster\Domains\User\Enums\UserStatus::Pending->label()]"
+                        :options="[\RefactorCircus\Roster\Domains\User\Enums\UserStatus::Active->value => \RefactorCircus\Roster\Domains\User\Enums\UserStatus::Active->label(), \RefactorCircus\Roster\Domains\User\Enums\UserStatus::Pending->value => \RefactorCircus\Roster\Domains\User\Enums\UserStatus::Pending->label()]"
                         :selected="old('provisioned_status', $organization->provisioned_status)"
                         wrapper="w-72" />
 
@@ -423,7 +423,7 @@
                 @endrosterCan
             </x-atrium::card>
 
-            @if (! $organization->personal && \JayI\Roster\Atrium\ScreenAccess::allows('roster.organizations.delete', $organization))
+            @if (! $organization->personal && \RefactorCircus\Roster\Atrium\ScreenAccess::allows('roster.organizations.delete', $organization))
                 <x-atrium::card :title="__('roster::roster.danger_zone')" data-testid="danger-zone">
                     <x-atrium::alert variant="warning" :title="__('roster::roster.delete_organization_soft_title')">
                         {{ __('roster::roster.delete_organization_soft_warning') }}

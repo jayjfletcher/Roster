@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Tests;
+namespace RefactorCircus\Roster\Tests;
 
-use JayI\Roster\Tests\Fixtures\PlainUser;
+use RefactorCircus\Roster\Tests\Fixtures\PlainUser;
 
 /**
  * A host user model without the HasRoster trait. The relation must be

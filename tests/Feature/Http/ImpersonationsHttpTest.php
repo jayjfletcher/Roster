@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Impersonation\Mcp\Tools\ListImpersonationsTool;
-use JayI\Roster\Domains\Impersonation\Mcp\Tools\StartImpersonationTool;
-use JayI\Roster\Domains\Impersonation\Mcp\Tools\StopImpersonationTool;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\Impersonation\Mcp\Tools\ListImpersonationsTool;
+use RefactorCircus\Roster\Domains\Impersonation\Mcp\Tools\StartImpersonationTool;
+use RefactorCircus\Roster\Domains\Impersonation\Mcp\Tools\StopImpersonationTool;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
 
 it('starts over HTTP, returning the link once', function (): void {
     $admin = user();

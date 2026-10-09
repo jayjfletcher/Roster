@@ -5,11 +5,11 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
-use JayI\Roster\Domains\Invitation\Actions\CreateInvitationAction;
-use JayI\Roster\Domains\Invitation\Enums\InvitationStatus;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
-use JayI\Roster\Domains\Invitation\Notifications\InvitationNotification;
-use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use RefactorCircus\Roster\Domains\Invitation\Actions\CreateInvitationAction;
+use RefactorCircus\Roster\Domains\Invitation\Enums\InvitationStatus;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Invitation\Notifications\InvitationNotification;
+use RefactorCircus\Roster\Domains\Team\Actions\CreateTeamAction;
 
 beforeEach(function (): void {
     Notification::fake();

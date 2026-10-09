@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Resources;
+namespace RefactorCircus\Roster\Domains\Transfer\Resources;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Models\TransferRowModel;
-use JayI\Roster\Domains\Transfer\Services\Transfers;
-use JayI\Roster\Domains\User\Resources\UserSummaryResource;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferRowModel;
+use RefactorCircus\Roster\Domains\Transfer\Services\Transfers;
+use RefactorCircus\Roster\Domains\User\Resources\UserSummaryResource;
 
 /**
  * A single transfer includes its rows, a page at a time (`rows_page`, 100

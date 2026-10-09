@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Impersonation\Http\Controllers\ImpersonationWebController;
+use RefactorCircus\Roster\Domains\Impersonation\Http\Controllers\ImpersonationWebController;
 
 // Impersonation: the one-time link (signed, and only for the impersonator who
 // asked for it) and the way back.

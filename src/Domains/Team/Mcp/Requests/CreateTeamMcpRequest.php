@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Team\Mcp\Requests;
 
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Team\Actions\CreateTeamAction;
 
 final class CreateTeamMcpRequest extends TeamMcpRequest
 {

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Impersonation\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Impersonation\Actions\EnterImpersonationAction;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
-use JayI\Roster\Domains\Impersonation\Services\Impersonator;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\EnterImpersonationAction;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\Impersonation\Services\Impersonator;
 
 /**
  * The browser side of impersonation: using the one-time link, and returning
  * to your own account. Leaving ends the record through
- * \JayI\Roster\Domains\Impersonation\Actions\StopImpersonationAction (via Impersonator::leave()).
+ * \RefactorCircus\Roster\Domains\Impersonation\Actions\StopImpersonationAction (via Impersonator::leave()).
  */
 final class ImpersonationWebController
 {

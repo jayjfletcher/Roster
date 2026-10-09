@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Actions;
+namespace RefactorCircus\Roster\Domains\Team\Actions;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use JayI\Roster\Domains\Team\Events\TeamShowingActionEvent;
-use JayI\Roster\Domains\Team\Events\TeamShownActionEvent;
-use JayI\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Team\Events\TeamShowingActionEvent;
+use RefactorCircus\Roster\Domains\Team\Events\TeamShownActionEvent;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
 
 final class ShowTeamAction
 {

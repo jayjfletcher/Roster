@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Impersonation\Mcp\Requests;
 
-use JayI\Roster\Domains\Impersonation\Actions\ListImpersonationsAction;
-use JayI\Roster\Domains\Impersonation\Resources\ImpersonationResource;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Mcp\Request;
-use JayI\Roster\Support\Scopes;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\ListImpersonationsAction;
+use RefactorCircus\Roster\Domains\Impersonation\Resources\ImpersonationResource;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Mcp\Request;
+use RefactorCircus\Roster\Support\Scopes;
 
 final class ListImpersonationsMcpRequest extends Request
 {

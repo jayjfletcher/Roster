@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Transfer\Mcp\Requests;
 
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Transfer\Enums\TransferType;
-use JayI\Roster\Domains\Transfer\Services\Transfers;
-use JayI\Roster\Mcp\Request;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Transfer\Enums\TransferType;
+use RefactorCircus\Roster\Domains\Transfer\Services\Transfers;
+use RefactorCircus\Roster\Mcp\Request;
 
 /**
  * Starting an import or export needs the type's permission, in the

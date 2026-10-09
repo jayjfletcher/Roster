@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
 
 it('manages permissions', function (): void {
     $this->postJson(route('roster.permissions.store'), ['name' => 'invoices.edit'])

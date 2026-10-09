@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Data;
+namespace RefactorCircus\Roster\Domains\Scim\Data;
 
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
 use SensitiveParameter;
 
 /**

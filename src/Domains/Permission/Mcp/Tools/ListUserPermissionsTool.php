@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Permission\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Permission\Mcp\Requests\ListUserPermissionsMcpRequest;
-use JayI\Roster\Mcp\Concerns\DescribesUser;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Permission\Mcp\Requests\ListUserPermissionsMcpRequest;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesUser;
 
 #[Description('The permissions a user effectively holds: globally, or in an organization or one of its teams. Includes whether they are a super-admin.')]
 final class ListUserPermissionsTool extends Tool

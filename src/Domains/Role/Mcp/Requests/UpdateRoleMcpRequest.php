@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Role\Mcp\Requests;
 
-use JayI\Roster\Domains\Role\Actions\UpdateRoleAction;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Role\Actions\UpdateRoleAction;
 
 final class UpdateRoleMcpRequest extends RoleMcpRequest
 {

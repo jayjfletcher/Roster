@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Role\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Role\Actions\CreateRoleAction;
-use JayI\Roster\Domains\Role\Resources\RoleResource;
-use JayI\Roster\Domains\Team\Models\TeamModel;
-use JayI\Roster\Http\Request;
-use JayI\Roster\Support\Scopes;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Role\Actions\CreateRoleAction;
+use RefactorCircus\Roster\Domains\Role\Resources\RoleResource;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Http\Request;
+use RefactorCircus\Roster\Support\Scopes;
 
 final class StoreRoleRequest extends Request
 {

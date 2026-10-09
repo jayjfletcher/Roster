@@ -7,18 +7,18 @@ require_once __DIR__.'/Sso/helpers.php';
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\DeleteOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\JoinOrganizationsByDomainAction;
-use JayI\Roster\Domains\Organization\Actions\PurgeOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\RestoreOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
-use JayI\Roster\Domains\User\Actions\DeleteUserAction;
-use JayI\Roster\Domains\User\Actions\PurgeUserAction;
-use JayI\Roster\Roster;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\CreateOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\DeleteOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\JoinOrganizationsByDomainAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\PurgeOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\RestoreOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\SwitchContextAction;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\User\Actions\DeleteUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\PurgeUserAction;
+use RefactorCircus\Roster\Roster;
 use Workbench\App\Models\User;
 
 it('stops a deleted user signing in, and keeps them out of member lists', function (): void {

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Team\Actions;
+namespace RefactorCircus\Roster\Domains\Team\Actions;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Team\Events\TeamsListedActionEvent;
-use JayI\Roster\Domains\Team\Events\TeamsListingActionEvent;
-use JayI\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Team\Events\TeamsListedActionEvent;
+use RefactorCircus\Roster\Domains\Team\Events\TeamsListingActionEvent;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
 
 final class ListTeamsAction
 {

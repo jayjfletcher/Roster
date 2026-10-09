@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Actions;
+namespace RefactorCircus\Roster\Domains\Role\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
-use JayI\Roster\Domains\Permission\Services\Permissions;
-use JayI\Roster\Domains\Role\Concerns\GuardsEscalation;
-use JayI\Roster\Domains\Role\Events\RoleUpdatedActionEvent;
-use JayI\Roster\Domains\Role\Events\RoleUpdatingActionEvent;
-use JayI\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Domains\Permission\Services\Permissions;
+use RefactorCircus\Roster\Domains\Role\Concerns\GuardsEscalation;
+use RefactorCircus\Roster\Domains\Role\Events\RoleUpdatedActionEvent;
+use RefactorCircus\Roster\Domains\Role\Events\RoleUpdatingActionEvent;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
 
 final class UpdateRoleAction
 {

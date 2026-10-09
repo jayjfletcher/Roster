@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Scim\Mcp\Tools\CreateScimTokenTool;
-use JayI\Roster\Domains\Scim\Mcp\Tools\ListScimTokensTool;
-use JayI\Roster\Domains\Scim\Mcp\Tools\RevokeScimTokenTool;
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Roster\Domains\Scim\Mcp\Tools\CreateScimTokenTool;
+use RefactorCircus\Roster\Domains\Scim\Mcp\Tools\ListScimTokensTool;
+use RefactorCircus\Roster\Domains\Scim\Mcp\Tools\RevokeScimTokenTool;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
 
 it('issues a token once, lists without it, and revokes', function (): void {
     organization(attributes: ['name' => 'Acme']);

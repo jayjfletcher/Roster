@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use JayI\Roster\Atrium\Features\RosterSupportFeature;
+use RefactorCircus\Roster\Atrium\Features\RosterSupportFeature;
 
 return [
 
@@ -13,10 +13,10 @@ return [
     | Roster manages the host application's users rather than owning them.
     |
     | model:    The Eloquent user model. Three modes are supported:
-    |           - your own model using the JayI\Roster\Domains\User\Concerns\HasRoster trait
+    |           - your own model using the RefactorCircus\Roster\Domains\User\Concerns\HasRoster trait
     |           - your own model without the trait (Roster registers the
     |             `rosterProfile` relation on it dynamically)
-    |           - JayI\Roster\Domains\User\Models\UserModel, for apps without a users table of
+    |           - RefactorCircus\Roster\Domains\User\Models\UserModel, for apps without a users table of
     |             their own; publish its migration with the
     |             `roster-users-migration` tag
     | key_type: The user model's primary key type - `int`, `ulid` or `uuid`.
@@ -204,7 +204,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Bulk imports (members, users, teams, organizations) and exports (members,
-    | users, organizations), run as Impex flows. Requires the optional package jayi/impex with
+    | users, organizations), run as Impex flows. Requires the optional package refactor-circus/impex with
     | its migrations published, a queue worker and the scheduler.
     |
     | disk:                 Where uploads and exports are kept. SECURITY: use
@@ -345,7 +345,7 @@ return [
     | Cortex
     |--------------------------------------------------------------------------
     |
-    | When jayi/cortex is installed, the MCP server is registered with it, so
+    | When refactor-circus/cortex is installed, the MCP server is registered with it, so
     | its instructions can be overridden, and the tools join its registry,
     | so Cortex agents can manage users, organizations and roles. Agents act
     | as the signed-in user: Roster's permission checks apply, and a run
@@ -369,13 +369,13 @@ return [
     | features: Features that must all be on for Roster to appear in
     |           Atrium at all - its navigation, widgets, search, and pages
     |           (which answer 404 otherwise). Atrium asks its feature
-    |           resolver, so Pennant (through jayi/pennantplus) or any other
+    |           resolver, so Pennant (through refactor-circus/pennantplus) or any other
     |           flag system decides.
     |
     |           RosterSupportFeature is on until its global value is set, and
     |           only its global value counts. Swap in a subclass to change
     |           that, or your own feature names. Feature classes that do not
-    |           exist (without jayi/pennantplus) are skipped, so nothing is
+    |           exist (without refactor-circus/pennantplus) are skipped, so nothing is
     |           checked until Pennant is installed. Empty always shows Roster.
     |
     | Individual pages are still shown per Roster permission.

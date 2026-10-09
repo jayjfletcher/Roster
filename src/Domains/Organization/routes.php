@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Organization\Http\Controllers\MemberController;
-use JayI\Roster\Domains\Organization\Http\Controllers\OrganizationController;
-use JayI\Roster\Domains\Organization\Http\Controllers\OrganizationSyncController;
-use JayI\Roster\Domains\Organization\Http\Controllers\UserContextController;
-use JayI\Roster\Http\Controllers\TrashController;
+use RefactorCircus\Roster\Domains\Organization\Http\Controllers\MemberController;
+use RefactorCircus\Roster\Domains\Organization\Http\Controllers\OrganizationController;
+use RefactorCircus\Roster\Domains\Organization\Http\Controllers\OrganizationSyncController;
+use RefactorCircus\Roster\Domains\Organization\Http\Controllers\UserContextController;
+use RefactorCircus\Roster\Http\Controllers\TrashController;
 
 Route::put('users/{user}/context', [UserContextController::class, 'update'])->name('users.context.update');
 Route::post('users/{user}/domain-join', [UserContextController::class, 'domainJoin'])->name('users.domain-join');

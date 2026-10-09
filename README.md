@@ -3,29 +3,29 @@
 </div>
 
 <p align="center">
-    <a href="https://packagist.org/packages/jayi/roster"><img src="https://img.shields.io/packagist/v/jayi/roster.svg?style=flat-square" alt="Packagist"></a>
-    <a href="https://packagist.org/packages/jayi/roster"><img src="https://img.shields.io/packagist/php-v/jayi/roster.svg?style=flat-square" alt="PHP from Packagist"></a>
-    <a href="https://packagist.org/packages/jayi/roster"><img src="https://badge.laravel.cloud/badge/jayi/roster?style=flat" alt="Laravel versions"></a>
-    <a href="https://github.com/jayjfletcher/roster/actions"><img alt="GitHub Workflow Status (main)" src="https://img.shields.io/github/actions/workflow/status/jayi/roster/tests.yml?branch=main&label=Tests&style=flat-square"></a>
-    <a href="https://packagist.org/packages/jayi/roster"><img src="https://img.shields.io/packagist/dt/jayi/roster.svg?style=flat-square" alt="Total Downloads"></a>
+    <a href="https://packagist.org/packages/refactor-circus/roster"><img src="https://img.shields.io/packagist/v/refactor-circus/roster.svg?style=flat-square" alt="Packagist"></a>
+    <a href="https://packagist.org/packages/refactor-circus/roster"><img src="https://img.shields.io/packagist/php-v/refactor-circus/roster.svg?style=flat-square" alt="PHP from Packagist"></a>
+    <a href="https://packagist.org/packages/refactor-circus/roster"><img src="https://badge.laravel.cloud/badge/refactor-circus/roster?style=flat" alt="Laravel versions"></a>
+    <a href="https://github.com/Refactor-Circus/roster/actions"><img alt="GitHub Workflow Status (main)" src="https://img.shields.io/github/actions/workflow/status/refactor-circus/roster/tests.yml?branch=main&label=Tests&style=flat-square"></a>
+    <a href="https://packagist.org/packages/refactor-circus/roster"><img src="https://img.shields.io/packagist/dt/refactor-circus/roster.svg?style=flat-square" alt="Total Downloads"></a>
 </p>
 
-Headless, Action-first user management for Laravel. Every operation is a single Action class, reachable from PHP, a JSON API, an MCP server, and the [Atrium](https://github.com/jayjfletcher/Atrium) dashboard.
+Headless, Action-first user management for Laravel. Every operation is a single Action class, reachable from PHP, a JSON API, an MCP server, and the [Atrium](https://github.com/Refactor-Circus/Atrium) dashboard.
 
 - User create, update, delete and listing on **your own** user model
 - Profiles (display name, avatar, timezone, locale, bio, meta) in a side table, so your `users` table is never altered
 - An active / suspended / deactivated lifecycle with a `roster.active` middleware
 - Organizations with teams, members, email invitations, optional domain auto-join, and a per-user current organization/team
 - Roles and permissions at global, organization and team scope, resolved through Laravel's Gate (`$user->can()`, `@can`)
-- Every change recorded in the suite-wide audit log of [`jayi/keen`](https://github.com/jayjfletcher/Keen), when installed, with each record's history on its Atrium page
-- Impersonation through one-time links, with time limits, a banner, blocked abilities and a full audit trail (with jayi/keen)
+- Every change recorded in the suite-wide audit log of [`refactor-circus/keen`](https://github.com/Refactor-Circus/Keen), when installed, with each record's history on its Atrium page
+- Impersonation through one-time links, with time limits, a banner, blocked abilities and a full audit trail (with refactor-circus/keen)
 - Single sign-on per organization: OpenID Connect, SAML 2.0 and Microsoft Entra ID, with just-in-time accounts and optional enforcement
 - SCIM 2.0 provisioning per organization: identity providers create, update and deprovision members and teams
 
 ## Installation
 
 ```bash
-composer require jayi/roster
+composer require refactor-circus/roster
 ```
 
 Publish the config and migrations, then migrate:
@@ -40,7 +40,7 @@ Set `roster.users.key_type` (`int`, `ulid` or `uuid`) to match your user model's
 
 The views and translations can be published with `roster-views` and `roster-lang`.
 
-Roster stands on [`jayi/foundation`](https://github.com/jayjfletcher/Foundation), the shared runtime of the jayi package suite, which Composer installs with it. Roster's Action events implement Foundation's `ActionStartingEvent` and `ActionFinishedEvent` contracts, so one listener hears every package of the suite.
+Roster stands on [`refactor-circus/foundation`](https://github.com/Refactor-Circus/Foundation), the shared runtime of the Refactor Circus package suite, which Composer installs with it. Roster's Action events implement Foundation's `ActionStartingEvent` and `ActionFinishedEvent` contracts, so one listener hears every package of the suite.
 
 ## Choosing a user mode
 
@@ -49,7 +49,7 @@ Roster manages whatever model `roster.users.model` points at (default `App\Model
 **1. Your model with the trait (recommended).** This gives typed helpers:
 
 ```php
-use JayI\Roster\Domains\User\Concerns\HasRoster;
+use RefactorCircus\Roster\Domains\User\Concerns\HasRoster;
 
 class User extends Authenticatable
 {
@@ -61,9 +61,9 @@ $user->rosterStatus();    // UserStatus::Active | Suspended | Deactivated
 $user->isRosterActive();
 ```
 
-**2. Your model, untouched.** Without the trait, Roster registers the `rosterProfile` relation on the configured model at boot. Everything works the same; use `app(JayI\Roster\Support\Users::class)->profile($user)` / `->status($user)` in place of the helpers.
+**2. Your model, untouched.** Without the trait, Roster registers the `rosterProfile` relation on the configured model at boot. Everything works the same; use `app(RefactorCircus\Roster\Support\Users::class)->profile($user)` / `->status($user)` in place of the helpers.
 
-**3. Roster's model.** For apps without a users table, point `roster.users.model` and your auth provider at `JayI\Roster\Domains\User\Models\UserModel`, then publish its migration:
+**3. Roster's model.** For apps without a users table, point `roster.users.model` and your auth provider at `RefactorCircus\Roster\Domains\User\Models\UserModel`, then publish its migration:
 
 ```bash
 php artisan vendor:publish --tag="roster-users-migration"
@@ -77,11 +77,11 @@ If your users table names its columns differently, map them:
 
 ## Actions
 
-Every operation is an Action in its domain's `Actions` namespace (`JayI\Roster\Domains\{Domain}\Actions`, e.g. `Domains\User\Actions\CreateUserAction`). Each has a static `rules()` method, and every surface validates with those same rules.
+Every operation is an Action in its domain's `Actions` namespace (`RefactorCircus\Roster\Domains\{Domain}\Actions`, e.g. `Domains\User\Actions\CreateUserAction`). Each has a static `rules()` method, and every surface validates with those same rules.
 
 ```php
-use JayI\Roster\Domains\User\Actions\CreateUserAction;
-use JayI\Roster\Domains\User\Actions\SuspendUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\CreateUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\SuspendUserAction;
 
 $user = app(CreateUserAction::class)->execute([
     'name' => 'Ada Lovelace',
@@ -104,15 +104,15 @@ app(SuspendUserAction::class)->execute($user, ['reason' => 'Chargeback'], actor:
 | `ApproveUserAction` / `RejectUserAction` | Accept or turn down an account awaiting approval (see below) |
 | `ReactivateUserAction` | Back to active |
 
-Business-rule failures, such as suspending yourself or suspending a user who is already suspended, throw a field-keyed `ValidationException`. Each Action dispatches an event before and after it runs (`JayI\Roster\Domains\{Domain}\Events\*ActionEvent`). They implement `ActionStartingEvent` / `ActionFinishedEvent`, so you can listen to every action at once.
+Business-rule failures, such as suspending yourself or suspending a user who is already suspended, throw a field-keyed `ValidationException`. Each Action dispatches an event before and after it runs (`RefactorCircus\Roster\Domains\{Domain}\Events\*ActionEvent`). They implement `ActionStartingEvent` / `ActionFinishedEvent`, so you can listen to every action at once.
 
 ## Organizations and teams
 
 An organization is the tenant. Users join it as members, and teams group members inside it. A user can belong to many organizations. Organizations and teams are identified by slug; team slugs are unique within their organization.
 
 ```php
-use JayI\Roster\Domains\Organization\Actions\{AddMemberAction, CreateOrganizationAction};
-use JayI\Roster\Domains\Team\Actions\{AddTeamMemberAction, CreateTeamAction};
+use RefactorCircus\Roster\Domains\Organization\Actions\{AddMemberAction, CreateOrganizationAction};
+use RefactorCircus\Roster\Domains\Team\Actions\{AddTeamMemberAction, CreateTeamAction};
 
 $acme = app(CreateOrganizationAction::class)->execute(['name' => 'Acme'], owner: $user);
 app(AddMemberAction::class)->execute($acme, ['user' => $ada->getRouteKey()]);
@@ -135,7 +135,7 @@ $user->currentOrganization(); // falls back to the first organization joined
 $user->currentTeam();         // null unless set and the user still holds a seat
 ```
 
-Without the trait, use `app(JayI\Roster\Roster::class)->organization($user)` and `->team($user)`. Add the `roster.organization` middleware to routes that need a tenant; users who belong to no organization get a 403.
+Without the trait, use `app(RefactorCircus\Roster\Roster::class)->organization($user)` and `->team($user)`. Add the `roster.organization` middleware to routes that need a tenant; users who belong to no organization get a 403.
 
 ### Invitations
 
@@ -156,8 +156,8 @@ Give an organization domains and turn on `auto_join`. Users then join automatica
 Permissions are named abilities (`roster.users.update`, or your own `invoices.edit`). Roles bundle permissions and are assigned **globally**, **in an organization**, or **on a team**. Both live in the database and can be edited from Atrium, the API or MCP.
 
 ```php
-use JayI\Roster\Domains\Permission\Actions\CreatePermissionAction;
-use JayI\Roster\Domains\Role\Actions\{AssignRoleAction, CreateRoleAction};
+use RefactorCircus\Roster\Domains\Permission\Actions\CreatePermissionAction;
+use RefactorCircus\Roster\Domains\Role\Actions\{AssignRoleAction, CreateRoleAction};
 
 app(CreatePermissionAction::class)->execute(['name' => 'invoices.edit']);
 
@@ -209,14 +209,14 @@ If your app hasn't defined Atrium's `viewAtrium` gate, Roster defines it as the 
 
 ## Audit log
 
-Roster keeps no audit log of its own. Install [`jayi/keen`](https://github.com/jayjfletcher/Keen), the audit log of the jayi suite, and every change Roster makes is recorded there: users, profiles and status, organizations, members, teams, invitations, roles, permissions and assignments. Reads are not recorded.
+Roster keeps no audit log of its own. Install [`refactor-circus/keen`](https://github.com/Refactor-Circus/Keen), the audit log of the Refactor Circus suite, and every change Roster makes is recorded there: users, profiles and status, organizations, members, teams, invitations, roles, permissions and assignments. Reads are not recorded.
 
 ```bash
-composer require jayi/keen
+composer require refactor-circus/keen
 php artisan migrate
 ```
 
-Roster teaches Keen about its records through jayi/foundation's `AuditHooks`, whether or not Keen is installed:
+Roster teaches Keen about its records through refactor-circus/foundation's `AuditHooks`, whether or not Keen is installed:
 
 - **Labels:** users by name or email, organizations, teams and roles by name, invitations by email, role assignments by role, transfers by type.
 - **Field changes** include profile fields (`profile.status`), a role's permissions, an organization's domains, and the role, organization and team of an assignment.
@@ -239,7 +239,7 @@ If your app hasn't defined the `viewAuditLog` Gate ability that Keen and every p
 Record them with Keen:
 
 ```php
-use JayI\Keen\Facades\Keen;
+use RefactorCircus\Keen\Facades\Keen;
 
 Keen::record('invoice.paid')->on($invoice)->in($organization)->with(['amount' => 4200])->save();
 ```
@@ -298,7 +298,7 @@ The user becomes a member of the organization. Suspended or deactivated users ar
 Turn on `enforced` to make SSO mandatory for an organization's domains. Roster has no password login of its own; add the rule to yours:
 
 ```php
-use JayI\Roster\Domains\Sso\Support\NotSsoEnforced;
+use RefactorCircus\Roster\Domains\Sso\Support\NotSsoEnforced;
 
 $request->validate(['email' => ['required', 'email', new NotSsoEnforced]]);
 ```
@@ -310,7 +310,7 @@ It fails with a link to the organization's SSO sign-in. Super-admins are never f
 When your organizations live in another system of record, such as an ERP or a CRM, Roster can create and update them from those records. It remembers each organization's id and account number in every system it comes from.
 
 ```php
-use JayI\Roster\Domains\Organization\Actions\SyncOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\SyncOrganizationAction;
 
 $result = app(SyncOrganizationAction::class)->execute([
     'source' => 'erp',              // which system, lower case
@@ -371,7 +371,7 @@ Tokens are shown **once**, stored only as a hash, can expire, can be revoked, an
 Holders of `roster.users.impersonate` can temporarily act as another user to see what they see. Nobody gets it by default, so grant it deliberately: globally to impersonate anyone, or in an organization to impersonate its members.
 
 ```php
-use JayI\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
 
 $started = app(StartImpersonationAction::class)->execute($user, ['reason' => 'Ticket #4521'], actor: $admin);
 
@@ -402,10 +402,10 @@ The `roster.impersonation` middleware, which ends expired or revoked sessions, i
 
 ## CSV import and export
 
-Bulk-add members, users and teams from a CSV, and export members, users or organizations. Imports and exports run in the background as [`jayi/impex`](https://github.com/jayjfletcher/Impex) flows, so Impex is needed for this feature:
+Bulk-add members, users and teams from a CSV, and export members, users or organizations. Imports and exports run in the background as [`refactor-circus/impex`](https://github.com/Refactor-Circus/Impex) flows, so Impex is needed for this feature:
 
 ```bash
-composer require jayi/impex
+composer require refactor-circus/impex
 php artisan vendor:publish --tag="impex-migrations"
 php artisan migrate
 ```
@@ -446,9 +446,9 @@ The published copies in `resources/roster/import-templates/{type}.csv` are serve
 Separate lists (`teams`, `members`, `domains`) with `;`, `,` or `|`. Teams are matched by slug or name, and roles by slug. You can only assign roles whose permissions you hold.
 
 ```php
-use JayI\Roster\Domains\Transfer\Actions\ConfirmImportAction;
-use JayI\Roster\Domains\Transfer\Actions\StartExportAction;
-use JayI\Roster\Domains\Transfer\Actions\StartImportAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\ConfirmImportAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\StartExportAction;
+use RefactorCircus\Roster\Domains\Transfer\Actions\StartImportAction;
 
 $import = app(StartImportAction::class)->execute([
     'type' => 'import_members',
@@ -477,7 +477,7 @@ $export = app(StartExportAction::class)->execute(['type' => 'export_members', 'o
 
 Deleting a user or an organization is recoverable. It goes to **Deleted** (Atrium's lists have a Show: Current / Deleted filter), and can be restored with everything it had until it's deleted permanently.
 
-- **Users** need Laravel's `SoftDeletes` on the user model. Roster's bundled `JayI\Roster\Domains\User\Models\UserModel` has it; add it to your own model and a `deleted_at` column (`$table->softDeletes()`):
+- **Users** need Laravel's `SoftDeletes` on the user model. Roster's bundled `RefactorCircus\Roster\Domains\User\Models\UserModel` has it; add it to your own model and a `deleted_at` column (`$table->softDeletes()`):
 
   ```php
   use Illuminate\Database\Eloquent\SoftDeletes;
@@ -587,7 +587,7 @@ Suspended and deactivated users get a 403, and so do users awaiting approval (wi
 | POST | `/roster/users/{user}/impersonate` | `roster.users.impersonate` |
 | GET | `/roster/impersonations` | `roster.impersonations.index` |
 | DELETE | `/roster/impersonations/{impersonation}` | `roster.impersonations.destroy` |
-| GET | `/roster/history` | `roster.history.index` (the shared jayi/keen history; 404 until it is installed) |
+| GET | `/roster/history` | `roster.history.index` (the shared refactor-circus/keen history; 404 until it is installed) |
 | POST | `/roster/imports` | `roster.imports.store` (multipart `file`, or `content`) |
 | GET | `/roster/imports/templates/{type}` | `roster.imports.templates.show` (CSV template; any signed-in user) |
 | POST | `/roster/imports/{transfer}/confirm` | `roster.imports.confirm` |
@@ -610,7 +610,7 @@ MCP tools (all behind Laravel MCP's tool search):
 | Single sign-on | `list-sso-connections-tool`, `show-sso-connection-tool`, `create-sso-connection-tool`, `update-sso-connection-tool`, `delete-sso-connection-tool`, `list-sso-identities-tool`, `unlink-sso-identity-tool` |
 | SCIM | `list-scim-tokens-tool`, `create-scim-token-tool`, `revoke-scim-token-tool` |
 | Impersonation | `start-impersonation-tool`, `list-impersonations-tool`, `stop-impersonation-tool` |
-| History | `list-roster-history-tool` (reads jayi/keen) |
+| History | `list-roster-history-tool` (reads refactor-circus/keen) |
 | CSV import and export | `show-import-template-tool`, `start-import-tool`, `confirm-import-tool`, `start-export-tool`, `list-transfers-tool`, `show-transfer-tool`, `cancel-transfer-tool` |
 | Roles | `list-permissions-tool`, `create-permission-tool`, `update-permission-tool`, `delete-permission-tool`, `list-roles-tool`, `show-role-tool`, `create-role-tool`, `update-role-tool`, `delete-role-tool`, `list-role-assignments-tool`, `assign-role-tool`, `revoke-role-tool`, `list-user-permissions-tool` |
 
@@ -620,7 +620,7 @@ The default API and MCP middleware include `throttle:roster`: 120 requests per m
 
 ## Cortex
 
-When [`jayi/cortex`](https://github.com/jayjfletcher/cortex) is installed, Roster registers its MCP server and every tool with Cortex. Nothing needs registering in your app. Cortex agents can then manage users, organizations and roles, and you can publish new versions of the server instructions and tool descriptions in Cortex.
+When [`refactor-circus/cortex`](https://github.com/Refactor-Circus/cortex) is installed, Roster registers its MCP server and every tool with Cortex. Nothing needs registering in your app. Cortex agents can then manage users, organizations and roles, and you can publish new versions of the server instructions and tool descriptions in Cortex.
 
 - Agents act as the **signed-in user**, so Roster's permission checks apply. A run with no signed-in user is refused.
 - Limit what agents see with `roster.cortex.tools` (a list of tool names), or turn the integration off with `roster.cortex.enabled`.
@@ -642,7 +642,7 @@ Roster registers itself with Atrium automatically. It adds:
 - an **Organizations** section: members, ownership, teams, invitations, settings (domains, auto-join) and external records (link, unlink; filter the list by source, external id or account number)
 - **Roles** and **Permissions** sections, a Roles card on each user, and a Roles tab on each organization
 - **Impersonations** (active and history, end any) and an Impersonate card on each user
-- each user, team and role's history, and an Activity tab on each organization, read from jayi/keen when it is installed
+- each user, team and role's history, and an Activity tab on each organization, read from refactor-circus/keen when it is installed
 - an **SSO** tab on each organization (connections with their callback and metadata URLs) and SSO identities on each user
 - a **SCIM** tab on each organization (base URL, issue tokens that are shown once, revoke)
 - **Imports & exports**: upload a CSV, review the preview, confirm or cancel, follow progress, and download exports, also reached from each organization and from Users
@@ -651,14 +651,14 @@ Roster registers itself with Atrium automatically. It adds:
 - on every page, only the controls the viewer may use: each form, button and organization tab asks the same permission, in the same organization or team, as the action behind it (Impersonate needs `roster.users.impersonate`, the Roles card `roster.roles.view`, assigning `roster.roles.assign`, each import or export type its own permission, and so on). Opening a tab you may not see is refused. Published views can do the same with `@rosterCan('roster.users.update', $organization, $self) ... @endrosterCan`
 - search over users and organizations
 
-Access follows Atrium's `viewAtrium` gate. To hide it, add `'roster'` to `atrium.disabled`. Roster can also be switched by feature flag. `roster.atrium.features` lists the features that must all be on: while any is off, Roster's navigation, widgets and search disappear and its pages answer 404. Atrium asks its feature resolver, so Pennant (through `jayi/pennantplus`) or any other flag system decides.
+Access follows Atrium's `viewAtrium` gate. To hide it, add `'roster'` to `atrium.disabled`. Roster can also be switched by feature flag. `roster.atrium.features` lists the features that must all be on: while any is off, Roster's navigation, widgets and search disappear and its pages answer 404. Atrium asks its feature resolver, so Pennant (through `refactor-circus/pennantplus`) or any other flag system decides.
 
-By default it lists `JayI\Roster\Atrium\Features\RosterSupportFeature`, a PennantPlus feature that is on until its global value is set. Its `SupportFeature` suffix matches PennantPlus's `gate.global_only` pattern, so only the global value counts and who sees which page stays with Roster's permissions. Turn Roster off for everyone with `Feature::for(null)->deactivate(RosterSupportFeature::class)` or from the Feature flags page. Without `jayi/pennantplus` the class is skipped and nothing is checked.
+By default it lists `RefactorCircus\Roster\Atrium\Features\RosterSupportFeature`, a PennantPlus feature that is on until its global value is set. Its `SupportFeature` suffix matches PennantPlus's `gate.global_only` pattern, so only the global value counts and who sees which page stays with Roster's permissions. Turn Roster off for everyone with `Feature::for(null)->deactivate(RosterSupportFeature::class)` or from the Feature flags page. Without `refactor-circus/pennantplus` the class is skipped and nothing is checked.
 
 To change the default, point the config at a subclass:
 
 ```php
-use JayI\Roster\Atrium\Features\RosterSupportFeature;
+use RefactorCircus\Roster\Atrium\Features\RosterSupportFeature;
 
 class RosterFeature extends RosterSupportFeature
 {

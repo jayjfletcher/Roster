@@ -2,7 +2,7 @@
 
 ## Context
 
-This is the last Phase 2 roadmap item, "bulk user/member import and export via `jayi/impex`". Impex (`../Impex`) is a durable workflow engine. It provides flows, `batch()` with per-item results and idempotent item keys, `signal()`/`wait()` for human confirmation, a ledger, and run tracking in its own Atrium pages.
+This is the last Phase 2 roadmap item, "bulk user/member import and export via `refactor-circus/impex`". Impex (`../Impex`) is a durable workflow engine. It provides flows, `batch()` with per-item results and idempotent item keys, `signal()`/`wait()` for human confirmation, a ledger, and run tracking in its own Atrium pages.
 
 It does **not** provide CSV reading or writing, file downloads, or a user-facing progress view (its run page is an operator view that exposes payloads). Roster builds those.
 
@@ -65,8 +65,8 @@ Builds on:
 
 ## Task 2: Dependencies, storage, config
 
-- **composer:** a vcs repo `https://github.com/jayjfletcher/Impex.git`, `suggest` and `require-dev` `jayi/impex: dev-main`, then `composer update`.
-- **TestCase:** load Impex's migrations from `vendor/jayi/impex/database/migrations`.
+- **composer:** a vcs repo `https://github.com/Refactor-Circus/Impex.git`, `suggest` and `require-dev` `refactor-circus/impex: dev-main`, then `composer update`.
+- **TestCase:** load Impex's migrations from `vendor/refactor-circus/impex/database/migrations`.
 - **Migration** `2026_01_01_000008_create_roster_transfer_tables.php`, creating `roster_transfers`:
   - ulid, `type`, `organization_id` nullable FK nullOnDelete, `requested_by` (UserKey)
   - `status` (`validating|awaiting_confirmation|running|completed|failed|cancelled|expired`), `impex_run_id` nullable
@@ -140,7 +140,7 @@ Plus:
 ## Task 7: Docs
 
 README "CSV import and export" section:
-- Impex setup: `composer require jayi/impex`, publish and migrate Impex's tables, run a queue worker and the scheduler
+- Impex setup: `composer require refactor-circus/impex`, publish and migrate Impex's tables, run a queue worker and the scheduler
 - the column formats for each type, the preview/confirm flow, permissions, limits, formula safety, downloads and retention, audit
 
 Plus CHANGELOG, Boost skill, the spec's decisions, the roadmap (Phase 2 complete), and the memory note.

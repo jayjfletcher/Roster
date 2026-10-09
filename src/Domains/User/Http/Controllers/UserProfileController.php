@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\User\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\User\Http\Requests\UpdateProfileRequest;
+use RefactorCircus\Roster\Domains\User\Http\Requests\UpdateProfileRequest;
 
 final class UserProfileController
 {

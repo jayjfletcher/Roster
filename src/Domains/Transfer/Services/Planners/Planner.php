@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Services\Planners;
+namespace RefactorCircus\Roster\Domains\Transfer\Services\Planners;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Services\PlanCache;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Services\PlanCache;
 
 /**
  * Decides what one imported row would do, and does it.

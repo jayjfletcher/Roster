@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Concerns;
+namespace RefactorCircus\Roster\Domains\Sso\Concerns;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
 
 /**
  * Validation and storage of a connection's protocol settings.

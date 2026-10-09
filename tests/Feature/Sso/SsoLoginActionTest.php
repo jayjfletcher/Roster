@@ -6,13 +6,13 @@ require_once __DIR__.'/helpers.php';
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Sso\Actions\SsoLoginAction;
-use JayI\Roster\Domains\Sso\Data\IdentityClaims;
-use JayI\Roster\Domains\Sso\Events\SsoLoginFailedActionEvent;
-use JayI\Roster\Domains\Sso\Events\SsoLoginSucceededActionEvent;
-use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
-use JayI\Roster\Domains\User\Actions\ApproveUserAction;
-use JayI\Roster\Domains\User\Actions\SuspendUserAction;
+use RefactorCircus\Roster\Domains\Sso\Actions\SsoLoginAction;
+use RefactorCircus\Roster\Domains\Sso\Data\IdentityClaims;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoLoginFailedActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoLoginSucceededActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoIdentityModel;
+use RefactorCircus\Roster\Domains\User\Actions\ApproveUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\SuspendUserAction;
 use Workbench\App\Models\User;
 
 function claims(string $email = 'ada@acme.test', string $subject = 'sub-1'): IdentityClaims

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\User\Models\ProfileModel;
+use RefactorCircus\Roster\Domains\User\Models\ProfileModel;
 
 it('lists users', function (): void {
     user(['name' => 'Ada']);

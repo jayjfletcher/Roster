@@ -33,7 +33,7 @@ This builds on:
 - **Optional enforcement** (per connection `enforced`): users whose email domain belongs to the organization must use SSO.
   - Roster has no password login, so it provides:
     - `Roster::ssoRequiredFor(string $email): ?SsoConnection`
-    - a validation rule `JayI\Roster\Rules\NotSsoEnforced` for the app's login form, which fails with a link to the SSO login
+    - a validation rule `RefactorCircus\Roster\Rules\NotSsoEnforced` for the app's login form, which fails with a link to the SSO login
   - Super-admins are exempt, so you can't lock yourself out.
 - **Inactive users** (suspended/deactivated) are refused at the SSO callback.
 - **Secrets:**

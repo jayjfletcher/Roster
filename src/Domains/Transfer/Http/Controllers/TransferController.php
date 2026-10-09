@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Transfer\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Transfer\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Transfer\Http\Requests\CancelTransferRequest;
-use JayI\Roster\Domains\Transfer\Http\Requests\ConfirmImportRequest;
-use JayI\Roster\Domains\Transfer\Http\Requests\DownloadTransferRequest;
-use JayI\Roster\Domains\Transfer\Http\Requests\IndexTransfersRequest;
-use JayI\Roster\Domains\Transfer\Http\Requests\ShowImportTemplateRequest;
-use JayI\Roster\Domains\Transfer\Http\Requests\ShowTransferRequest;
-use JayI\Roster\Domains\Transfer\Http\Requests\StartExportRequest;
-use JayI\Roster\Domains\Transfer\Http\Requests\StartImportRequest;
+use RefactorCircus\Roster\Domains\Transfer\Http\Requests\CancelTransferRequest;
+use RefactorCircus\Roster\Domains\Transfer\Http\Requests\ConfirmImportRequest;
+use RefactorCircus\Roster\Domains\Transfer\Http\Requests\DownloadTransferRequest;
+use RefactorCircus\Roster\Domains\Transfer\Http\Requests\IndexTransfersRequest;
+use RefactorCircus\Roster\Domains\Transfer\Http\Requests\ShowImportTemplateRequest;
+use RefactorCircus\Roster\Domains\Transfer\Http\Requests\ShowTransferRequest;
+use RefactorCircus\Roster\Domains\Transfer\Http\Requests\StartExportRequest;
+use RefactorCircus\Roster\Domains\Transfer\Http\Requests\StartImportRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 

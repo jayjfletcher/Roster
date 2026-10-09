@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\User\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\User\Mcp\Requests\SuspendUserMcpRequest;
-use JayI\Roster\Mcp\Concerns\DescribesUser;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\User\Mcp\Requests\SuspendUserMcpRequest;
+use RefactorCircus\Roster\Mcp\Concerns\DescribesUser;
 
 #[Description('Suspend a user: a temporary block lifted by reactivate-user-tool. Suspended users are rejected by the roster.active middleware. You cannot suspend yourself.')]
 final class SuspendUserTool extends Tool

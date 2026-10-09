@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use JayI\Roster\Domains\Sso\Http\Controllers\SsoWebController;
+use RefactorCircus\Roster\Domains\Sso\Http\Controllers\SsoWebController;
 
 /** @var array<int, string> $middleware */
 $middleware = config('roster.sso.middleware', ['web']);

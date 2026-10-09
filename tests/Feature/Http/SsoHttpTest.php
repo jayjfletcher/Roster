@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\Sso\Mcp\Tools\CreateSsoConnectionTool;
-use JayI\Roster\Domains\Sso\Mcp\Tools\ListSsoIdentitiesTool;
-use JayI\Roster\Domains\Sso\Mcp\Tools\ShowSsoConnectionTool;
-use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
+use RefactorCircus\Roster\Domains\Sso\Mcp\Tools\CreateSsoConnectionTool;
+use RefactorCircus\Roster\Domains\Sso\Mcp\Tools\ListSsoIdentitiesTool;
+use RefactorCircus\Roster\Domains\Sso\Mcp\Tools\ShowSsoConnectionTool;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoIdentityModel;
 
 it('manages connections over HTTP and MCP without exposing secrets', function (): void {
     $acme = organization(attributes: ['name' => 'Acme']);

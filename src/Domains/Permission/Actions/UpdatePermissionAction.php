@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Actions;
+namespace RefactorCircus\Roster\Domains\Permission\Actions;
 
 use Illuminate\Support\Facades\DB;
-use JayI\Roster\Domains\Permission\Events\PermissionUpdatedActionEvent;
-use JayI\Roster\Domains\Permission\Events\PermissionUpdatingActionEvent;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Domains\Permission\Events\PermissionUpdatedActionEvent;
+use RefactorCircus\Roster\Domains\Permission\Events\PermissionUpdatingActionEvent;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
 
 final class UpdatePermissionAction
 {

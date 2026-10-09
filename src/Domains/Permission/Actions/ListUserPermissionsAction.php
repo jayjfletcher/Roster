@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Actions;
+namespace RefactorCircus\Roster\Domains\Permission\Actions;
 
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\Permission\Events\UserPermissionsListedActionEvent;
-use JayI\Roster\Domains\Permission\Events\UserPermissionsListingActionEvent;
-use JayI\Roster\Domains\Permission\Services\Permissions;
-use JayI\Roster\Support\Concerns\ResolvesScopes;
+use RefactorCircus\Roster\Domains\Permission\Events\UserPermissionsListedActionEvent;
+use RefactorCircus\Roster\Domains\Permission\Events\UserPermissionsListingActionEvent;
+use RefactorCircus\Roster\Domains\Permission\Services\Permissions;
+use RefactorCircus\Roster\Support\Concerns\ResolvesScopes;
 
 final class ListUserPermissionsAction
 {

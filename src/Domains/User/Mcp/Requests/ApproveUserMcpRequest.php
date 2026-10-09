@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\User\Mcp\Requests;
 
-use JayI\Roster\Domains\User\Actions\ApproveUserAction;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\User\Actions\ApproveUserAction;
 
 final class ApproveUserMcpRequest extends UserMcpRequest
 {

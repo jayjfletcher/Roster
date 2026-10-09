@@ -3,18 +3,18 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Organization\Actions\CreateOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\DeleteOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\ListOrganizationsAction;
-use JayI\Roster\Domains\Organization\Actions\PurgeOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\RestoreOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\ShowOrganizationAction;
-use JayI\Roster\Domains\Organization\Actions\TransferOwnershipAction;
-use JayI\Roster\Domains\Organization\Actions\UpdateOrganizationAction;
-use JayI\Roster\Domains\Organization\Enums\MembershipSource;
-use JayI\Roster\Domains\Organization\Models\MembershipModel;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\CreateOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\DeleteOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\ListOrganizationsAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\PurgeOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\RestoreOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\ShowOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\TransferOwnershipAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\UpdateOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Enums\MembershipSource;
+use RefactorCircus\Roster\Domains\Organization\Models\MembershipModel;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 it('creates an organization with its owner as first member', function (): void {
     $owner = user();

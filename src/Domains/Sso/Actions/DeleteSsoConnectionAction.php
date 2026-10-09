@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Actions;
+namespace RefactorCircus\Roster\Domains\Sso\Actions;
 
 use Illuminate\Support\Facades\DB;
-use JayI\Roster\Domains\Sso\Events\SsoConnectionDeletedActionEvent;
-use JayI\Roster\Domains\Sso\Events\SsoConnectionDeletingActionEvent;
-use JayI\Roster\Domains\Sso\Models\SsoConnectionModel;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoConnectionDeletedActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoConnectionDeletingActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoConnectionModel;
 
 final class DeleteSsoConnectionAction
 {

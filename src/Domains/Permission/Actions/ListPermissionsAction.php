@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Actions;
+namespace RefactorCircus\Roster\Domains\Permission\Actions;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use JayI\Roster\Domains\Permission\Events\PermissionsListedActionEvent;
-use JayI\Roster\Domains\Permission\Events\PermissionsListingActionEvent;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Domains\Permission\Events\PermissionsListedActionEvent;
+use RefactorCircus\Roster\Domains\Permission\Events\PermissionsListingActionEvent;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
 
 final class ListPermissionsAction
 {

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Console\Commands;
+namespace RefactorCircus\Roster\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Actions\PurgeOrganizationAction;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\User\Actions\PurgeUserAction;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Organization\Actions\PurgeOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\User\Actions\PurgeUserAction;
+use RefactorCircus\Roster\Support\Users;
 
 final class PurgeDeletedCommand extends Command
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Concerns;
+namespace RefactorCircus\Roster\Domains\User\Concerns;
 
 /**
  * Profile field rules, shared by every Action that writes a profile.

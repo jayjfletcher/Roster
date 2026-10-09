@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Role\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Role\Actions\UpdateRoleAction;
-use JayI\Roster\Domains\Role\Resources\RoleResource;
+use RefactorCircus\Roster\Domains\Role\Actions\UpdateRoleAction;
+use RefactorCircus\Roster\Domains\Role\Resources\RoleResource;
 
 final class UpdateRoleRequest extends RoleRequest
 {

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Concerns;
+namespace RefactorCircus\Roster\Domains\Organization\Concerns;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Validation\Rule;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
 
 /**
  * Validation shared by the Actions that write an organization's settings.

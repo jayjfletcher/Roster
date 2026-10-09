@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Http;
+namespace RefactorCircus\Roster\Http;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\Model;
-use JayI\Foundation\Http\Requests\Request as BaseRequest;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Permission\Services\Authorizer;
-use JayI\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Foundation\Http\Requests\Request as BaseRequest;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
 
 /**
- * Base HTTP request for Roster, on jayi/foundation's shared request.
+ * Base HTTP request for Roster, on refactor-circus/foundation's shared request.
  *
  * Validation rules come from the Action the request wraps, and `persist()`
  * calls that same Action. The MCP surface does the same, so both speak to one

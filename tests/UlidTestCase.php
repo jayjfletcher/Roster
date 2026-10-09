@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Tests;
+namespace RefactorCircus\Roster\Tests;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use JayI\Roster\Tests\Fixtures\UlidUser;
+use RefactorCircus\Roster\Tests\Fixtures\UlidUser;
 
 /**
  * A host user model keyed by ULID, with roster_profiles migrated to match.

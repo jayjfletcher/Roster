@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Tests;
+namespace RefactorCircus\Roster\Tests;
 
-use JayI\Keen\KeenServiceProvider;
+use RefactorCircus\Keen\KeenServiceProvider;
 
 /**
- * Roster booted with jayi/keen recording the suite-wide audit log.
+ * Roster booted with refactor-circus/keen recording the suite-wide audit log.
  */
 abstract class KeenTestCase extends TestCase
 {

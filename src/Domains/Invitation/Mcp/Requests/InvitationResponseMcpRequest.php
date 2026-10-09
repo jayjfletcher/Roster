@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Invitation\Mcp\Requests;
 
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
-use JayI\Roster\Domains\Invitation\Resources\InvitationResource;
-use JayI\Roster\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Invitation\Resources\InvitationResource;
+use RefactorCircus\Roster\Mcp\Request;
 
 /**
  * Accepting or declining acts as the authenticated MCP user.

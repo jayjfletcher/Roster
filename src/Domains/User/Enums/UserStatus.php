@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Enums;
+namespace RefactorCircus\Roster\Domains\User\Enums;
 
 enum UserStatus: string
 {

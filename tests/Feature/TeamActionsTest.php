@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
-use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
-use JayI\Roster\Domains\Team\Actions\DeleteTeamAction;
-use JayI\Roster\Domains\Team\Actions\ListTeamsAction;
-use JayI\Roster\Domains\Team\Actions\RemoveTeamMemberAction;
-use JayI\Roster\Domains\Team\Actions\ShowTeamAction;
-use JayI\Roster\Domains\Team\Actions\UpdateTeamAction;
-use JayI\Roster\Domains\Team\Models\TeamModel;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use RefactorCircus\Roster\Domains\Team\Actions\CreateTeamAction;
+use RefactorCircus\Roster\Domains\Team\Actions\DeleteTeamAction;
+use RefactorCircus\Roster\Domains\Team\Actions\ListTeamsAction;
+use RefactorCircus\Roster\Domains\Team\Actions\RemoveTeamMemberAction;
+use RefactorCircus\Roster\Domains\Team\Actions\ShowTeamAction;
+use RefactorCircus\Roster\Domains\Team\Actions\UpdateTeamAction;
+use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
 
 it('creates teams with slugs unique within the organization', function (): void {
     $acme = organization(attributes: ['name' => 'Acme']);

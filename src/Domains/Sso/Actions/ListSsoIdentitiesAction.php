@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Actions;
+namespace RefactorCircus\Roster\Domains\Sso\Actions;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
-use JayI\Roster\Domains\Sso\Events\SsoIdentitiesListedActionEvent;
-use JayI\Roster\Domains\Sso\Events\SsoIdentitiesListingActionEvent;
-use JayI\Roster\Domains\Sso\Models\SsoIdentityModel;
-use JayI\Roster\Support\Concerns\ResolvesScopes;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoIdentitiesListedActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Events\SsoIdentitiesListingActionEvent;
+use RefactorCircus\Roster\Domains\Sso\Models\SsoIdentityModel;
+use RefactorCircus\Roster\Support\Concerns\ResolvesScopes;
+use RefactorCircus\Roster\Support\Users;
 
 final class ListSsoIdentitiesAction
 {

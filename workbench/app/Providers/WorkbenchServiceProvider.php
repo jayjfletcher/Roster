@@ -5,7 +5,7 @@ namespace Workbench\App\Providers;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
-use JayI\Roster\Atrium\RosterPlugin;
+use RefactorCircus\Roster\Atrium\RosterPlugin;
 use Workbench\App\Http\Middleware\SignInWorkbenchUser;
 use Workbench\App\Models\User;
 
@@ -22,7 +22,7 @@ class WorkbenchServiceProvider extends ServiceProvider
     {
         config([
             'auth.providers.users.model' => User::class,
-            // jayi/pennantplus's layered store: users who follow a feature's
+            // refactor-circus/pennantplus's layered store: users who follow a feature's
             // global value store nothing, as in a real application.
             'pennant.default' => 'pennantplus',
             'pennant.stores.pennantplus' => [

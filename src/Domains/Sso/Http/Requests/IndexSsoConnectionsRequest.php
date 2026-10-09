@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Sso\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Organization\Http\Requests\OrganizationRequest;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
-use JayI\Roster\Domains\Sso\Actions\ListSsoConnectionsAction;
-use JayI\Roster\Domains\Sso\Resources\SsoConnectionResource;
+use RefactorCircus\Roster\Domains\Organization\Http\Requests\OrganizationRequest;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
+use RefactorCircus\Roster\Domains\Sso\Actions\ListSsoConnectionsAction;
+use RefactorCircus\Roster\Domains\Sso\Resources\SsoConnectionResource;
 
 final class IndexSsoConnectionsRequest extends OrganizationRequest
 {

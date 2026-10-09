@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Role\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Role\Mcp\Requests\UpdateRoleMcpRequest;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Role\Mcp\Requests\UpdateRoleMcpRequest;
 
 #[Description('Rename a role or replace its permissions. A given permissions list replaces the old one; you can only add permissions you hold.')]
 final class UpdateRoleTool extends Tool

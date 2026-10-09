@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Actions;
+namespace RefactorCircus\Roster\Domains\User\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use JayI\Roster\Domains\User\Concerns\ProfileRules;
-use JayI\Roster\Domains\User\Events\ProfileUpdatedActionEvent;
-use JayI\Roster\Domains\User\Events\ProfileUpdatingActionEvent;
-use JayI\Roster\Support\Users;
+use RefactorCircus\Roster\Domains\User\Concerns\ProfileRules;
+use RefactorCircus\Roster\Domains\User\Events\ProfileUpdatedActionEvent;
+use RefactorCircus\Roster\Domains\User\Events\ProfileUpdatingActionEvent;
+use RefactorCircus\Roster\Support\Users;
 
 final class UpdateProfileAction
 {

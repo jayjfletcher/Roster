@@ -2,17 +2,16 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation;
+namespace RefactorCircus\Roster\Domains\Impersonation;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Routing\Router;
-use JayI\Foundation\Support\ServiceProvider;
-use JayI\Roster\Domains\Impersonation\Http\Middleware\SyncImpersonation;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
-use JayI\Roster\Domains\Impersonation\Services\ImpersonationContext;
-use JayI\Roster\Domains\Impersonation\Services\Impersonator;
+use RefactorCircus\Foundation\Support\ServiceProvider;
+use RefactorCircus\Roster\Domains\Impersonation\Http\Middleware\SyncImpersonation;
+use RefactorCircus\Roster\Domains\Impersonation\Services\ImpersonationContext;
+use RefactorCircus\Roster\Domains\Impersonation\Services\Impersonator;
 
 /**
  * Signing in as another user, and the way back.
@@ -27,10 +26,6 @@ class ImpersonationServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->keepMorphAliases([
-            'JayI\Roster\Models\Impersonation' => ImpersonationModel::class,
-        ]);
-
         $this->registerMiddleware();
 
         $this->loadApiRoutesFrom(__DIR__.'/routes.php');

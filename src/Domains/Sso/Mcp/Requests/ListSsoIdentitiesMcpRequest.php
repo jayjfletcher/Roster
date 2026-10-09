@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Sso\Mcp\Requests;
 
 use Illuminate\Database\Eloquent\Model;
-use JayI\Roster\Domains\Sso\Actions\ListSsoIdentitiesAction;
-use JayI\Roster\Domains\Sso\Resources\SsoIdentityResource;
-use JayI\Roster\Domains\User\Mcp\Requests\UserMcpRequest;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Sso\Actions\ListSsoIdentitiesAction;
+use RefactorCircus\Roster\Domains\Sso\Resources\SsoIdentityResource;
+use RefactorCircus\Roster\Domains\User\Mcp\Requests\UserMcpRequest;
 
 final class ListSsoIdentitiesMcpRequest extends UserMcpRequest
 {

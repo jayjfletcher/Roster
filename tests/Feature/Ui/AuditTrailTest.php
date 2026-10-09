@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use Carbon\CarbonImmutable;
-use JayI\Foundation\Audit\Contracts\AuditTrail;
-use JayI\Foundation\Audit\Data\AuditEntry;
-use JayI\Foundation\Audit\Data\AuditFilter;
-use JayI\Foundation\Audit\Data\AuditPage;
-use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use RefactorCircus\Foundation\Audit\Contracts\AuditTrail;
+use RefactorCircus\Foundation\Audit\Data\AuditEntry;
+use RefactorCircus\Foundation\Audit\Data\AuditFilter;
+use RefactorCircus\Foundation\Audit\Data\AuditPage;
+use RefactorCircus\Roster\Domains\Team\Actions\CreateTeamAction;
 
 /**
  * An installed audit log holding one entry, whatever is asked.

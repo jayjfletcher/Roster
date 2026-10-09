@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Auth;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
 
 it('impersonates from the user page and ends from the list', function (): void {
     $admin = user(['name' => 'Admin']);

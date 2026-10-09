@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Organization\Http\Requests;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Organization\Actions\SyncOrganizationsAction;
-use JayI\Roster\Domains\Organization\Resources\OrganizationSyncResults;
-use JayI\Roster\Http\Request;
+use RefactorCircus\Roster\Domains\Organization\Actions\SyncOrganizationsAction;
+use RefactorCircus\Roster\Domains\Organization\Resources\OrganizationSyncResults;
+use RefactorCircus\Roster\Http\Request;
 
 /**
  * Sync a batch of external records; each record succeeds or fails alone.

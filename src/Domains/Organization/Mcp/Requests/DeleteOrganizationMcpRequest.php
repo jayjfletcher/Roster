@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Organization\Mcp\Requests;
 
-use JayI\Roster\Domains\Organization\Actions\DeleteOrganizationAction;
-use JayI\Roster\Domains\Organization\Models\OrganizationModel;
 use Laravel\Mcp\Response;
+use RefactorCircus\Roster\Domains\Organization\Actions\DeleteOrganizationAction;
+use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 final class DeleteOrganizationMcpRequest extends OrganizationMcpRequest
 {

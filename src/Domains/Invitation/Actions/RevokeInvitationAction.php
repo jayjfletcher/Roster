@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Actions;
+namespace RefactorCircus\Roster\Domains\Invitation\Actions;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Invitation\Enums\InvitationStatus;
-use JayI\Roster\Domains\Invitation\Events\InvitationRevokedActionEvent;
-use JayI\Roster\Domains\Invitation\Events\InvitationRevokingActionEvent;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Invitation\Enums\InvitationStatus;
+use RefactorCircus\Roster\Domains\Invitation\Events\InvitationRevokedActionEvent;
+use RefactorCircus\Roster\Domains\Invitation\Events\InvitationRevokingActionEvent;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
 
 final class RevokeInvitationAction
 {

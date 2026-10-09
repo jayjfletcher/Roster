@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Role\Actions;
+namespace RefactorCircus\Roster\Domains\Role\Actions;
 
-use JayI\Roster\Domains\Role\Events\RoleShowingActionEvent;
-use JayI\Roster\Domains\Role\Events\RoleShownActionEvent;
-use JayI\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Role\Events\RoleShowingActionEvent;
+use RefactorCircus\Roster\Domains\Role\Events\RoleShownActionEvent;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
 
 final class ShowRoleAction
 {

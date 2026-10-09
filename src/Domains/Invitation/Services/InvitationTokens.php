@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Services;
+namespace RefactorCircus\Roster\Domains\Invitation\Services;
 
 use Illuminate\Support\Str;
-use JayI\Roster\Domains\Invitation\Exceptions\InvalidInvitationException;
-use JayI\Roster\Domains\Invitation\Models\InvitationModel;
+use RefactorCircus\Roster\Domains\Invitation\Exceptions\InvalidInvitationException;
+use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
 
 /**
  * Invitation tokens: only their hash is stored, so a database leak cannot

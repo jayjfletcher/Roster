@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Scim\Http\Middleware;
+namespace RefactorCircus\Roster\Domains\Scim\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use JayI\Roster\Domains\Scim\Exceptions\ScimException;
-use JayI\Roster\Domains\Scim\Models\ScimTokenModel;
-use JayI\Roster\Domains\Scim\Services\ScimContext;
+use RefactorCircus\Roster\Domains\Scim\Exceptions\ScimException;
+use RefactorCircus\Roster\Domains\Scim\Models\ScimTokenModel;
+use RefactorCircus\Roster\Domains\Scim\Services\ScimContext;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

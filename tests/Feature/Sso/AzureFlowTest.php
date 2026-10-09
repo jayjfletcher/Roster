@@ -10,7 +10,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Sso\Actions\CreateSsoConnectionAction;
+use RefactorCircus\Roster\Domains\Sso\Actions\CreateSsoConnectionAction;
 
 beforeEach(function (): void {
     $this->connection = acmeWithSso(protocol: 'azure');

@@ -3,22 +3,22 @@
 declare(strict_types=1);
 
 use Illuminate\Validation\ValidationException;
-use JayI\Roster\Domains\Organization\Actions\AddMemberAction;
-use JayI\Roster\Domains\Permission\Actions\CreatePermissionAction;
-use JayI\Roster\Domains\Permission\Actions\DeletePermissionAction;
-use JayI\Roster\Domains\Permission\Actions\ListUserPermissionsAction;
-use JayI\Roster\Domains\Permission\Actions\UpdatePermissionAction;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
-use JayI\Roster\Domains\Role\Actions\AssignRoleAction;
-use JayI\Roster\Domains\Role\Actions\CreateRoleAction;
-use JayI\Roster\Domains\Role\Actions\DeleteRoleAction;
-use JayI\Roster\Domains\Role\Actions\ListRolesAction;
-use JayI\Roster\Domains\Role\Actions\RevokeRoleAction;
-use JayI\Roster\Domains\Role\Actions\UpdateRoleAction;
-use JayI\Roster\Domains\Role\Models\RoleAssignmentModel;
-use JayI\Roster\Domains\Role\Models\RoleModel;
-use JayI\Roster\Domains\Team\Actions\AddTeamMemberAction;
-use JayI\Roster\Domains\Team\Actions\CreateTeamAction;
+use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
+use RefactorCircus\Roster\Domains\Permission\Actions\CreatePermissionAction;
+use RefactorCircus\Roster\Domains\Permission\Actions\DeletePermissionAction;
+use RefactorCircus\Roster\Domains\Permission\Actions\ListUserPermissionsAction;
+use RefactorCircus\Roster\Domains\Permission\Actions\UpdatePermissionAction;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Domains\Role\Actions\AssignRoleAction;
+use RefactorCircus\Roster\Domains\Role\Actions\CreateRoleAction;
+use RefactorCircus\Roster\Domains\Role\Actions\DeleteRoleAction;
+use RefactorCircus\Roster\Domains\Role\Actions\ListRolesAction;
+use RefactorCircus\Roster\Domains\Role\Actions\RevokeRoleAction;
+use RefactorCircus\Roster\Domains\Role\Actions\UpdateRoleAction;
+use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
+use RefactorCircus\Roster\Domains\Role\Models\RoleModel;
+use RefactorCircus\Roster\Domains\Team\Actions\AddTeamMemberAction;
+use RefactorCircus\Roster\Domains\Team\Actions\CreateTeamAction;
 
 it('manages app permissions but keeps built-ins', function (): void {
     $permission = app(CreatePermissionAction::class)->execute(['name' => 'invoices.edit', 'description' => 'Edit invoices']);

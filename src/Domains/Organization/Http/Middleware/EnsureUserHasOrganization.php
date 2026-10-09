@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Http\Middleware;
+namespace RefactorCircus\Roster\Domains\Organization\Http\Middleware;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use JayI\Roster\Roster;
+use RefactorCircus\Roster\Roster;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

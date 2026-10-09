@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use JayI\Roster\Domains\User\Actions\DeleteUserAction;
-use JayI\Roster\Domains\User\Actions\SuspendUserAction;
-use JayI\Roster\Domains\User\Actions\UpdateProfileAction;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Domains\User\Models\ProfileModel;
-use JayI\Roster\Support\Users;
-use JayI\Roster\Tests\Fixtures\PlainUser;
+use RefactorCircus\Roster\Domains\User\Actions\DeleteUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\SuspendUserAction;
+use RefactorCircus\Roster\Domains\User\Actions\UpdateProfileAction;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Domains\User\Models\ProfileModel;
+use RefactorCircus\Roster\Support\Users;
+use RefactorCircus\Roster\Tests\Fixtures\PlainUser;
 
 it('gives a model without the trait a profile relation', function (): void {
     $user = PlainUser::query()->create(['name' => 'Ada', 'email' => 'ada@example.com', 'password' => 'x']);

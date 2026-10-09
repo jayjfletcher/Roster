@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Permission\Mcp\Requests;
+namespace RefactorCircus\Roster\Domains\Permission\Mcp\Requests;
 
-use JayI\Roster\Domains\Permission\Actions\UpdatePermissionAction;
-use JayI\Roster\Domains\Permission\Models\PermissionModel;
-use JayI\Roster\Domains\Permission\Resources\PermissionResource;
-use JayI\Roster\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
+use RefactorCircus\Roster\Domains\Permission\Actions\UpdatePermissionAction;
+use RefactorCircus\Roster\Domains\Permission\Models\PermissionModel;
+use RefactorCircus\Roster\Domains\Permission\Resources\PermissionResource;
+use RefactorCircus\Roster\Mcp\Request;
 
 final class UpdatePermissionMcpRequest extends Request
 {

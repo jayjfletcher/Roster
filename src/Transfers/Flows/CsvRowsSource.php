@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Transfers\Flows;
+namespace RefactorCircus\Roster\Transfers\Flows;
 
-use JayI\Impex\Domains\Batch\Contracts\BatchSource;
-use JayI\Impex\Domains\Batch\Data\BatchChunk;
-use JayI\Impex\Domains\Batch\Data\BatchChunkItem;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Services\Transfers;
-use JayI\Roster\Domains\Transfer\Support\Csv\Reader;
+use RefactorCircus\Impex\Domains\Batch\Contracts\BatchSource;
+use RefactorCircus\Impex\Domains\Batch\Data\BatchChunk;
+use RefactorCircus\Impex\Domains\Batch\Data\BatchChunkItem;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Services\Transfers;
+use RefactorCircus\Roster\Domains\Transfer\Support\Csv\Reader;
 
 /**
  * Feeds an import's CSV into a batch, resuming by byte offset. Each item is

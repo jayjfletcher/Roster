@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Sso\Mcp\Tools;
+namespace RefactorCircus\Roster\Domains\Sso\Mcp\Tools;
 
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use JayI\Foundation\Mcp\Tool;
-use JayI\Roster\Domains\Sso\Mcp\Requests\UnlinkSsoIdentityMcpRequest;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
+use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Roster\Domains\Sso\Mcp\Requests\UnlinkSsoIdentityMcpRequest;
 
 #[Description('Unlink an identity-provider account from its user. Users may unlink their own.')]
 final class UnlinkSsoIdentityTool extends Tool

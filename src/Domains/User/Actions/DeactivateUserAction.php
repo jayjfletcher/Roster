@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\User\Actions;
+namespace RefactorCircus\Roster\Domains\User\Actions;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use JayI\Roster\Domains\User\Concerns\ChangesStatus;
-use JayI\Roster\Domains\User\Enums\UserStatus;
-use JayI\Roster\Domains\User\Events\UserDeactivatedActionEvent;
-use JayI\Roster\Domains\User\Events\UserDeactivatingActionEvent;
+use RefactorCircus\Roster\Domains\User\Concerns\ChangesStatus;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Domains\User\Events\UserDeactivatedActionEvent;
+use RefactorCircus\Roster\Domains\User\Events\UserDeactivatingActionEvent;
 
 final class DeactivateUserAction
 {

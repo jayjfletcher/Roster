@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Invitation\Http\Controllers;
+namespace RefactorCircus\Roster\Domains\Invitation\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Invitation\Http\Requests\AcceptInvitationRequest;
-use JayI\Roster\Domains\Invitation\Http\Requests\DeclineInvitationRequest;
-use JayI\Roster\Domains\Invitation\Http\Requests\IndexInvitationsRequest;
-use JayI\Roster\Domains\Invitation\Http\Requests\RevokeInvitationRequest;
-use JayI\Roster\Domains\Invitation\Http\Requests\StoreInvitationRequest;
+use RefactorCircus\Roster\Domains\Invitation\Http\Requests\AcceptInvitationRequest;
+use RefactorCircus\Roster\Domains\Invitation\Http\Requests\DeclineInvitationRequest;
+use RefactorCircus\Roster\Domains\Invitation\Http\Requests\IndexInvitationsRequest;
+use RefactorCircus\Roster\Domains\Invitation\Http\Requests\RevokeInvitationRequest;
+use RefactorCircus\Roster\Domains\Invitation\Http\Requests\StoreInvitationRequest;
 
 final class InvitationController
 {

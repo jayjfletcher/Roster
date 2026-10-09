@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Impersonation\Services;
+namespace RefactorCircus\Roster\Domains\Impersonation\Services;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Http\Request;
-use JayI\Roster\Domains\Impersonation\Actions\StopImpersonationAction;
-use JayI\Roster\Domains\Impersonation\Models\ImpersonationModel;
+use RefactorCircus\Roster\Domains\Impersonation\Actions\StopImpersonationAction;
+use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
 
 /**
  * Swaps the browser session between the impersonator and the user they act

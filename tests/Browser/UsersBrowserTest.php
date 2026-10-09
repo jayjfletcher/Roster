@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require_once __DIR__.'/helpers.php';
 
-use JayI\Roster\Domains\User\Actions\CreateUserAction;
-use JayI\Roster\Domains\User\Enums\UserStatus;
+use RefactorCircus\Roster\Domains\User\Actions\CreateUserAction;
+use RefactorCircus\Roster\Domains\User\Enums\UserStatus;
 use Workbench\App\Models\User;
 
 beforeEach(fn () => signInAsSuperAdmin());

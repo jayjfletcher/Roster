@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Transfers\Flows\Actions;
+namespace RefactorCircus\Roster\Transfers\Flows\Actions;
 
-use JayI\Impex\Domains\Flow\Support\ResumableAction;
-use JayI\Roster\Domains\Transfer\Models\TransferModel;
-use JayI\Roster\Domains\Transfer\Services\Transfers;
-use JayI\Roster\Domains\Transfer\Support\Csv\Writer;
+use RefactorCircus\Impex\Domains\Flow\Support\ResumableAction;
+use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
+use RefactorCircus\Roster\Domains\Transfer\Services\Transfers;
+use RefactorCircus\Roster\Domains\Transfer\Support\Csv\Writer;
 
 /**
  * Write the export in chunks, yielding when the step's time runs short and

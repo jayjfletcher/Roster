@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JayI\Roster\Domains\Organization\Http\Requests;
+namespace RefactorCircus\Roster\Domains\Organization\Http\Requests;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
-use JayI\Roster\Domains\Organization\Actions\SwitchContextAction;
-use JayI\Roster\Domains\User\Http\Requests\UserRequest;
-use JayI\Roster\Domains\User\Resources\UserResource;
+use RefactorCircus\Roster\Domains\Organization\Actions\SwitchContextAction;
+use RefactorCircus\Roster\Domains\User\Http\Requests\UserRequest;
+use RefactorCircus\Roster\Domains\User\Resources\UserResource;
 
 final class SwitchContextRequest extends UserRequest
 {
