@@ -8,7 +8,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
-use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Keystone\Mcp\Tool;
 use RefactorCircus\Roster\Domains\Role\Mcp\Requests\CreateRoleMcpRequest;
 
 #[Description('Create a role. scope is global, organization or team. Give organization to make it that organization\'s own; omit to share it with every organization. You can only grant permissions you hold.')]

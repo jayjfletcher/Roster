@@ -8,7 +8,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
-use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Keystone\Mcp\Tool;
 use RefactorCircus\Roster\Domains\Organization\Mcp\Requests\LinkOrganizationMcpRequest;
 
 #[Description('Record or change an organization\'s id and account number in one external system. An id already linked to another organization is refused.')]

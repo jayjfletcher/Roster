@@ -16,11 +16,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
-use RefactorCircus\Foundation\Audit\AuditHooks;
-use RefactorCircus\Foundation\Audit\History;
-use RefactorCircus\Foundation\Packages\Package;
-use RefactorCircus\Foundation\Support\PackageServiceProvider;
-use RefactorCircus\Foundation\Support\Surface;
+use RefactorCircus\Keystone\Audit\AuditHooks;
+use RefactorCircus\Keystone\Audit\History;
+use RefactorCircus\Keystone\Packages\Package;
+use RefactorCircus\Keystone\Support\PackageServiceProvider;
+use RefactorCircus\Keystone\Support\Surface;
 use RefactorCircus\Roster\Atrium\ScreenAccess;
 use RefactorCircus\Roster\Console\Commands\PurgeDeletedCommand;
 use RefactorCircus\Roster\Domains\DomainServiceProvider;
@@ -36,7 +36,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * under `Domains/` registers its own bindings, routes, listeners, commands
  * and morph aliases through its provider, listed in DomainServiceProvider.
  *
- * Roster describes itself to refactor-circus/foundation in `definition()`, so the shared
+ * Roster describes itself to refactor-circus/keystone in `definition()`, so the shared
  * base classes find its config, routes and MCP server by namespace.
  */
 class RosterServiceProvider extends PackageServiceProvider

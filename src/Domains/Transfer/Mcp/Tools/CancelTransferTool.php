@@ -8,7 +8,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
-use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Keystone\Mcp\Tool;
 use RefactorCircus\Roster\Domains\Transfer\Mcp\Requests\CancelTransferMcpRequest;
 
 #[Description('Cancel an import or export that has not finished. An import awaiting confirmation is dropped with nothing applied.')]

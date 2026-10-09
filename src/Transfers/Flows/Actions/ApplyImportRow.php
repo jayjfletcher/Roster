@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
-use RefactorCircus\Foundation\Support\Surface;
+use RefactorCircus\Keystone\Support\Surface;
 use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;
 use RefactorCircus\Roster\Domains\Transfer\Models\TransferRowModel;
 use RefactorCircus\Roster\Domains\Transfer\Services\PlanCache;

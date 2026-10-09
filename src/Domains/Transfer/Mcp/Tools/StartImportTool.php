@@ -8,7 +8,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
-use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Keystone\Mcp\Tool;
 use RefactorCircus\Roster\Domains\Transfer\Mcp\Requests\StartImportMcpRequest;
 
 #[Description('Import a CSV of members, users or teams. Nothing changes yet: every row is checked and a preview is returned (create, link, invite, update, skip or error per row). Review it with show-transfer-tool, then apply it with confirm-import-tool. Members and teams imports need an organization. A password column is refused.')]

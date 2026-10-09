@@ -9,7 +9,7 @@ use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Version;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\ToolSearch;
-use RefactorCircus\Foundation\Mcp\Server;
+use RefactorCircus\Keystone\Mcp\Server;
 use RefactorCircus\Roster\Domains\Impersonation\Mcp\Tools\ListImpersonationsTool;
 use RefactorCircus\Roster\Domains\Impersonation\Mcp\Tools\StartImpersonationTool;
 use RefactorCircus\Roster\Domains\Impersonation\Mcp\Tools\StopImpersonationTool;

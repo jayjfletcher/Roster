@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use RefactorCircus\Foundation\Packages\PackageRegistry;
+use RefactorCircus\Keystone\Packages\PackageRegistry;
 use RefactorCircus\Roster\Mcp\RosterServer;
 use RefactorCircus\Roster\Mcp\Tools\ListRosterHistoryTool;
 use RefactorCircus\Roster\RosterServiceProvider;
 
-it('registers Roster with refactor-circus/foundation', function (): void {
+it('registers Roster with refactor-circus/keystone', function (): void {
     $package = app(PackageRegistry::class)->get('roster');
 
     expect($package->label)->toBe('Roster')

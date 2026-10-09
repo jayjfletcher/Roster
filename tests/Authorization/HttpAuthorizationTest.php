@@ -89,7 +89,7 @@ it('lets a team lead manage their team only', function (): void {
 });
 
 it('needs roster.audit.view for the shared history route', function (): void {
-    // Served by refactor-circus/foundation, which answers 403 to guests rather than 401.
+    // Served by refactor-circus/keystone, which answers 403 to guests rather than 401.
     $this->getJson(route('roster.history.index'))->assertForbidden();
 
     $this->actingAs($viewer = user())->getJson(route('roster.history.index'))->assertForbidden();

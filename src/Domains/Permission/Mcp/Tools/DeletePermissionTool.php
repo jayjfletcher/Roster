@@ -8,7 +8,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
-use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Keystone\Mcp\Tool;
 use RefactorCircus\Roster\Domains\Permission\Mcp\Requests\DeletePermissionMcpRequest;
 
 #[Description('Delete an app permission. Built-in roster.* permissions cannot be deleted.')]

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace RefactorCircus\Roster\Mcp;
 
 use Illuminate\Database\Eloquent\Model;
-use RefactorCircus\Foundation\Mcp\Requests\Request as BaseRequest;
+use RefactorCircus\Keystone\Mcp\Requests\Request as BaseRequest;
 use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
 use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
 
 /**
- * Base MCP request for Roster, on refactor-circus/foundation's shared request.
+ * Base MCP request for Roster, on refactor-circus/keystone's shared request.
  *
  * Mirrors the HTTP request's `persist()` pattern so tools stay one line and
  * both surfaces resolve the same Actions; the shared base marks every call

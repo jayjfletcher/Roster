@@ -6,7 +6,7 @@ namespace RefactorCircus\Roster\Domains\Team\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use RefactorCircus\Foundation\Contracts\ActionFinishedEvent;
+use RefactorCircus\Keystone\Contracts\ActionFinishedEvent;
 use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 
 /**

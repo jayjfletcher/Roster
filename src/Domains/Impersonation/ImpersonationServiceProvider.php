@@ -8,7 +8,7 @@ use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Http\Kernel;
 use Illuminate\Routing\Router;
-use RefactorCircus\Foundation\Support\ServiceProvider;
+use RefactorCircus\Keystone\Support\ServiceProvider;
 use RefactorCircus\Roster\Domains\Impersonation\Http\Middleware\SyncImpersonation;
 use RefactorCircus\Roster\Domains\Impersonation\Services\ImpersonationContext;
 use RefactorCircus\Roster\Domains\Impersonation\Services\Impersonator;

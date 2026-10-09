@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace RefactorCircus\Roster\Tests\Fixtures\Billing;
 
 use Illuminate\Database\Eloquent\Model;
-use RefactorCircus\Foundation\Contracts\ActionFinishedEvent;
+use RefactorCircus\Keystone\Contracts\ActionFinishedEvent;
 
 /**
  * Another package's finished event, about a user Roster also knows.

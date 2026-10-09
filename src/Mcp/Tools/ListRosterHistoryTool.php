@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace RefactorCircus\Roster\Mcp\Tools;
 
-use RefactorCircus\Foundation\Mcp\Tools\ListHistoryTool;
+use RefactorCircus\Keystone\Mcp\Tools\ListHistoryTool;
 
 /**
  * Roster's history as the suite-wide audit log records it, once refactor-circus/keen is

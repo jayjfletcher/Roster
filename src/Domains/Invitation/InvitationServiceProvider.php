@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace RefactorCircus\Roster\Domains\Invitation;
 
-use RefactorCircus\Foundation\Support\ServiceProvider;
+use RefactorCircus\Keystone\Support\ServiceProvider;
 
 /**
  * Email invitations to an organization, and the page they link to.

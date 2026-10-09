@@ -8,7 +8,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
-use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Keystone\Mcp\Tool;
 use RefactorCircus\Roster\Domains\Organization\Mcp\Requests\PurgeOrganizationMcpRequest;
 
 #[Description('Permanently delete a deleted organization with its teams, memberships, invitations, roles, SSO connections and SCIM tokens. Cannot be undone. It must be deleted (delete-organization-tool) first.')]

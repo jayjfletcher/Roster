@@ -7,7 +7,7 @@ namespace RefactorCircus\Roster\Domains\Invitation\Events;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use RefactorCircus\Foundation\Contracts\ActionFinishedEvent;
+use RefactorCircus\Keystone\Contracts\ActionFinishedEvent;
 use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
 
 /**

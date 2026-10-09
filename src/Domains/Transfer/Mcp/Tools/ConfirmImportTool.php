@@ -8,7 +8,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
-use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Keystone\Mcp\Tool;
 use RefactorCircus\Roster\Domains\Transfer\Mcp\Requests\ConfirmImportMcpRequest;
 
 #[Description('Apply an import that is awaiting confirmation. Rows are applied as you, with your permissions checked again; errors are reported per row.')]

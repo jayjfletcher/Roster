@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace RefactorCircus\Roster\Domains\Team;
 
-use RefactorCircus\Foundation\Support\ServiceProvider;
+use RefactorCircus\Keystone\Support\ServiceProvider;
 
 /**
  * Teams inside an organization and their members.

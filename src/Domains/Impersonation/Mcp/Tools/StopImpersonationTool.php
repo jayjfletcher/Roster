@@ -8,7 +8,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
-use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Keystone\Mcp\Tool;
 use RefactorCircus\Roster\Domains\Impersonation\Mcp\Requests\StopImpersonationMcpRequest;
 
 #[Description('End an impersonation (or cancel an unused link). Ending someone else\'s needs roster.users.impersonate; their browser switches back on its next request.')]

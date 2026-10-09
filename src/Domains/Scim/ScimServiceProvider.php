@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace RefactorCircus\Roster\Domains\Scim;
 
-use RefactorCircus\Foundation\Support\ServiceProvider;
+use RefactorCircus\Keystone\Support\ServiceProvider;
 use RefactorCircus\Roster\Domains\Scim\Services\ScimContext;
 
 /**

@@ -9,8 +9,8 @@ use RefactorCircus\Cortex\Domains\McpServer\Actions\CreateMcpInstructionVersionA
 use RefactorCircus\Cortex\Domains\McpServer\Services\McpServerRegistry;
 use RefactorCircus\Cortex\Domains\Tool\Actions\CreateToolDescriptionVersionAction;
 use RefactorCircus\Cortex\Domains\Tool\Services\ToolRegistry;
-use RefactorCircus\Foundation\Cortex\CortexIntegration;
-use RefactorCircus\Foundation\Packages\PackageRegistry;
+use RefactorCircus\Keystone\Cortex\CortexIntegration;
+use RefactorCircus\Keystone\Packages\PackageRegistry;
 use RefactorCircus\Roster\Domains\User\Mcp\Tools\ListUsersTool;
 use RefactorCircus\Roster\Mcp\RosterServer;
 

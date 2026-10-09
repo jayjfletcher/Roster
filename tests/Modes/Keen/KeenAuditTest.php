@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Gate;
-use RefactorCircus\Foundation\Audit\History;
-use RefactorCircus\Foundation\Packages\Package;
-use RefactorCircus\Foundation\Packages\PackageRegistry;
 use RefactorCircus\Keen\Domains\Audit\Data\PendingAuditEntry;
 use RefactorCircus\Keen\Domains\Audit\Models\AuditEntryModel;
+use RefactorCircus\Keystone\Audit\History;
+use RefactorCircus\Keystone\Packages\Package;
+use RefactorCircus\Keystone\Packages\PackageRegistry;
 use RefactorCircus\Roster\Domains\Impersonation\Actions\StartImpersonationAction;
 use RefactorCircus\Roster\Domains\Role\Actions\AssignRoleAction;
 use RefactorCircus\Roster\Domains\Role\Actions\UpdateRoleAction;

@@ -8,7 +8,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
-use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Keystone\Mcp\Tool;
 use RefactorCircus\Roster\Domains\Transfer\Mcp\Requests\ShowImportTemplateMcpRequest;
 
 #[Description('Get the CSV template for an import type: its header row and commented example rows (rows starting with # are ignored on import). Fill it in and pass it to start-import-tool.')]

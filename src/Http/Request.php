@@ -6,13 +6,13 @@ namespace RefactorCircus\Roster\Http;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\Model;
-use RefactorCircus\Foundation\Http\Requests\Request as BaseRequest;
+use RefactorCircus\Keystone\Http\Requests\Request as BaseRequest;
 use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 use RefactorCircus\Roster\Domains\Permission\Services\Authorizer;
 use RefactorCircus\Roster\Domains\Team\Models\TeamModel;
 
 /**
- * Base HTTP request for Roster, on refactor-circus/foundation's shared request.
+ * Base HTTP request for Roster, on refactor-circus/keystone's shared request.
  *
  * Validation rules come from the Action the request wraps, and `persist()`
  * calls that same Action. The MCP surface does the same, so both speak to one

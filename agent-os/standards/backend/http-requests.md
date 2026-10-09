@@ -28,7 +28,7 @@ final class StorePromptRequest extends Request
 }
 ```
 
-- Extend `RefactorCircus\Roster\Http\Request` (abstract persist() enforces the shape); it extends `RefactorCircus\Foundation\Http\Requests\Request` and authorizes through Roster's permission `Authorizer` (`ability()`, `scope()`, `self()`), not the Gate
+- Extend `RefactorCircus\Roster\Http\Request` (abstract persist() enforces the shape); it extends `RefactorCircus\Keystone\Http\Requests\Request` and authorizes through Roster's permission `Authorizer` (`ability()`, `scope()`, `self()`), not the Gate
 - One request class per operation; controllers stay identical across models and mirror the MCP request layer 1:1
 - `rules()` always delegates to the action's static rules — never inline
 - Status codes: 201 create, 200 default, 204 (Response) for deletes

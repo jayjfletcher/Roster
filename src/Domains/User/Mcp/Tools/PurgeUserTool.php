@@ -8,7 +8,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
-use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Keystone\Mcp\Tool;
 use RefactorCircus\Roster\Domains\User\Mcp\Requests\PurgeUserMcpRequest;
 
 #[Description('Permanently delete a deleted user: their personal organization, memberships, role assignments and profile go too. Cannot be undone. A user must be deleted (delete-user-tool) first.')]

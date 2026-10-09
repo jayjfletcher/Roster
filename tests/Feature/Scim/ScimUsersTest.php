@@ -5,7 +5,7 @@ declare(strict_types=1);
 require_once __DIR__.'/helpers.php';
 
 use Illuminate\Support\Facades\Event;
-use RefactorCircus\Foundation\Contracts\ActionFinishedEvent;
+use RefactorCircus\Keystone\Contracts\ActionFinishedEvent;
 use RefactorCircus\Roster\Domains\Organization\Actions\AddMemberAction;
 use RefactorCircus\Roster\Domains\Scim\Actions\CreateScimTokenAction;
 use RefactorCircus\Roster\Domains\Scim\Models\ScimUserModel;

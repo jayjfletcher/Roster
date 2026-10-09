@@ -8,7 +8,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use RefactorCircus\Cortex\Domains\RedirectDomain\Actions\ListRedirectDomainsAction;
-use RefactorCircus\Foundation\Audit\Contracts\AuditTrail;
+use RefactorCircus\Keystone\Audit\Contracts\AuditTrail;
 use RefactorCircus\Roster\Atrium\Http\Controllers\Concerns\AuthorizesScreens;
 use RefactorCircus\Roster\Atrium\RedirectDomains;
 use RefactorCircus\Roster\Atrium\ScreenAccess;

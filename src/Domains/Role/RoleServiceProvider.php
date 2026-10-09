@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace RefactorCircus\Roster\Domains\Role;
 
-use RefactorCircus\Foundation\Support\ServiceProvider;
+use RefactorCircus\Keystone\Support\ServiceProvider;
 use RefactorCircus\Roster\Domains\Role\Console\Commands\GrantSuperAdminCommand;
 
 /**

@@ -6,7 +6,7 @@ namespace RefactorCircus\Roster\Domains\Sso;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
-use RefactorCircus\Foundation\Support\ServiceProvider;
+use RefactorCircus\Keystone\Support\ServiceProvider;
 use RefactorCircus\Roster\Domains\Sso\Services\Sso;
 
 /**

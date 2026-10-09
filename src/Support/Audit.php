@@ -6,8 +6,8 @@ namespace RefactorCircus\Roster\Support;
 
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
-use RefactorCircus\Foundation\Audit\AuditHooks;
-use RefactorCircus\Foundation\Packages\PackageRegistry;
+use RefactorCircus\Keystone\Audit\AuditHooks;
+use RefactorCircus\Keystone\Packages\PackageRegistry;
 use RefactorCircus\Roster\Domains\Impersonation\Models\ImpersonationModel;
 use RefactorCircus\Roster\Domains\Impersonation\Services\ImpersonationContext;
 use RefactorCircus\Roster\Domains\Invitation\Models\InvitationModel;
@@ -23,7 +23,7 @@ use RefactorCircus\Roster\Roster;
 
 /**
  * What Roster teaches the suite-wide audit log (refactor-circus/keen) about its models
- * and events, through refactor-circus/foundation's AuditHooks.
+ * and events, through refactor-circus/keystone's AuditHooks.
  *
  * Registered whether or not Keen is installed; the hooks cost nothing until
  * it records. Subjects and scopes are picked for Roster's own events only;

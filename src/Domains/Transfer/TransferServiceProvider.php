@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace RefactorCircus\Roster\Domains\Transfer;
 
 use Illuminate\Contracts\Events\Dispatcher;
-use RefactorCircus\Foundation\Support\ServiceProvider;
 use RefactorCircus\Impex\Domains\Flow\Services\FlowRegistry;
 use RefactorCircus\Impex\Domains\Run\Events\RunFailed;
+use RefactorCircus\Keystone\Support\ServiceProvider;
 use RefactorCircus\Roster\Domains\Transfer\Console\Commands\PruneTransfersCommand;
 use RefactorCircus\Roster\Domains\Transfer\Enums\TransferStatus;
 use RefactorCircus\Roster\Domains\Transfer\Models\TransferModel;

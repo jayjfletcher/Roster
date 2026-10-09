@@ -40,7 +40,7 @@ Set `roster.users.key_type` (`int`, `ulid` or `uuid`) to match your user model's
 
 The views and translations can be published with `roster-views` and `roster-lang`.
 
-Roster stands on [`refactor-circus/foundation`](https://github.com/Refactor-Circus/Foundation), the shared runtime of the Refactor Circus package suite, which Composer installs with it. Roster's Action events implement Foundation's `ActionStartingEvent` and `ActionFinishedEvent` contracts, so one listener hears every package of the suite.
+Roster stands on [`refactor-circus/keystone`](https://github.com/Refactor-Circus/Keystone), the shared runtime of the Refactor Circus package suite, which Composer installs with it. Roster's Action events implement Keystone's `ActionStartingEvent` and `ActionFinishedEvent` contracts, so one listener hears every package of the suite.
 
 ## Choosing a user mode
 
@@ -216,7 +216,7 @@ composer require refactor-circus/keen
 php artisan migrate
 ```
 
-Roster teaches Keen about its records through refactor-circus/foundation's `AuditHooks`, whether or not Keen is installed:
+Roster teaches Keen about its records through refactor-circus/keystone's `AuditHooks`, whether or not Keen is installed:
 
 - **Labels:** users by name or email, organizations, teams and roles by name, invitations by email, role assignments by role, transfers by type.
 - **Field changes** include profile fields (`profile.status`), a role's permissions, an organization's domains, and the role, organization and team of an assignment.

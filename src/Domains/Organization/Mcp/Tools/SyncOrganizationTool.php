@@ -8,7 +8,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 use Laravel\Mcp\Server\Attributes\Description;
-use RefactorCircus\Foundation\Mcp\Tool;
+use RefactorCircus\Keystone\Mcp\Tool;
 use RefactorCircus\Roster\Domains\Organization\Mcp\Requests\SyncOrganizationMcpRequest;
 
 #[Description('Create or update one organization from its record in an external system (ERP, CRM, ...), matched by source + external_id. Only the fields given are written; the result says created, updated or unchanged. A new organization has no owner unless one is given.')]

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__.'/fixtures.php';
 
-use RefactorCircus\Foundation\Audit\Contracts\AuditTrail;
-use RefactorCircus\Foundation\Audit\Data\AuditFilter;
-use RefactorCircus\Foundation\Audit\Data\AuditPage;
+use RefactorCircus\Keystone\Audit\Contracts\AuditTrail;
+use RefactorCircus\Keystone\Audit\Data\AuditFilter;
+use RefactorCircus\Keystone\Audit\Data\AuditPage;
 use RefactorCircus\Roster\Domains\Organization\Models\OrganizationModel;
 use RefactorCircus\Roster\Domains\Role\Models\RoleAssignmentModel;
 use Workbench\App\Models\User;
