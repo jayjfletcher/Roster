@@ -241,6 +241,6 @@
 - `Roster::audit()` / `RecordAuditEventAction` for the app's own events (`source: app`), plus `roster.audit.view` / `roster.audit.record` permissions and HTTP, MCP and Atrium surfaces.
 
 
-## [v0.1.0](https://github.com/jayi/roster/compare/...v0.1.0) - 202x-xx-xx
+## [v0.1.0](https://github.com/Refactor-Circus/Roster/compare/...v0.1.0) - 202x-xx-xx
 
 Initial pre-release.
