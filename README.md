@@ -709,7 +709,7 @@ Please review [our security policy](.github/SECURITY.md) on how to report securi
 
 ## Credits
 
-- [Jay Fletcher](https://github.com/jayjfletcher)
+- [Refactor Circus](https://github.com/Refactor-Circus)
 - [All Contributors](../../contributors)
 
 ## License
