@@ -1,4 +1,5 @@
 <div align="center">
+    <img src="art/icon.png" width="160" alt="Roster icon">
     <h1>Roster</h1>
 </div>
 
